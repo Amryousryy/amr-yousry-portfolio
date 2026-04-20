@@ -1,0 +1,48 @@
+import mongoose, { Schema, Document } from "mongoose";
+
+const BilingualSchema = new Schema({
+  en: { type: String, required: true },
+  ar: { type: String, required: true },
+}, { _id: false });
+
+export interface IProject extends Document {
+  title: { en: string; ar: string };
+  slug: string;
+  shortDescription: { en: string; ar: string };
+  fullDescription: { en: string; ar: string };
+  category: string;
+  image: string;
+  video?: string;
+  problem?: { en: string; ar: string };
+  solution?: { en: string; ar: string };
+  results?: { en: string; ar: string };
+  gallery: string[];
+  featured: boolean;
+  status: "draft" | "published";
+  displayOrder: number;
+  year?: string;
+  clientName?: string;
+  createdAt: Date;
+}
+
+const ProjectSchema: Schema = new Schema({
+  title: { type: BilingualSchema, required: true },
+  slug: { type: String, required: true, unique: true },
+  shortDescription: { type: BilingualSchema, required: true },
+  fullDescription: { type: BilingualSchema, required: true },
+  category: { type: String, required: true },
+  image: { type: String, required: true },
+  video: { type: String },
+  problem: { type: BilingualSchema },
+  solution: { type: BilingualSchema },
+  results: { type: BilingualSchema },
+  gallery: { type: [String], default: [] },
+  featured: { type: Boolean, default: false },
+  status: { type: String, enum: ["draft", "published"], default: "draft" },
+  displayOrder: { type: Number, default: 0 },
+  year: { type: String },
+  clientName: { type: String },
+  createdAt: { type: Date, default: Date.now },
+});
+
+export default mongoose.models.Project || mongoose.model<IProject>("Project", ProjectSchema);
