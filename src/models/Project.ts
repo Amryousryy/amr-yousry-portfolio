@@ -31,6 +31,11 @@ export interface IProject extends Document {
   displayOrder: number;
   year?: string;
   clientName?: string;
+  seo?: {
+    title?: string;
+    description?: string;
+    keywords?: string[];
+  };
   createdAt: Date;
 }
 
@@ -65,6 +70,11 @@ const ProjectSchema: Schema = new Schema({
   displayOrder: { type: Number, default: 0 },
   year: { type: String },
   clientName: { type: String },
+  seo: {
+    title: { type: String },
+    description: { type: String },
+    keywords: { type: [String] },
+  },
   createdAt: { type: Date, default: Date.now },
 });
 

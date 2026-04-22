@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Upload, Loader2, Save, Settings2, FileText, Layout, Plus, RefreshCw, AlertCircle } from "lucide-react";
+import { Upload, Loader2, Save, Settings2, FileText, Layout, Plus, RefreshCw, AlertCircle, Globe, Search } from "lucide-react";
 import { CldUploadWidget } from "next-cloudinary";
 import { toast } from "sonner";
 import Image from "next/image";
@@ -25,7 +25,7 @@ interface ProjectEditorProps {
 const emptyBilingual = (): BilingualString => ({ en: "", ar: "" });
 
 export default function ProjectEditor({ initialData, onSave, isSaving }: ProjectEditorProps) {
-  const [activeTab, setActiveTab] = useState<"general" | "case-study" | "sections" | "media">("general");
+  const [activeTab, setActiveTab] = useState<"general" | "case-study" | "sections" | "media" | "seo">("general");
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [hasRecoveredData, setHasRecoveredData] = useState(false);
   const [formData, setFormData] = useState<NewProject>({
@@ -46,6 +46,13 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
     sections: [],
     status: "draft",
     displayOrder: 0,
+    year: new Date().getFullYear().toString(),
+    clientName: "",
+    seo: {
+      title: "",
+      description: "",
+      keywords: [],
+    },
   });
 
   // Track the last successfully saved data to avoid redundant auto-saves
@@ -118,6 +125,9 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
         sections: initialData.sections || [],
         status: initialData.status || "draft",
         displayOrder: initialData.displayOrder || 0,
+        year: initialData.year || new Date().getFullYear().toString(),
+        clientName: initialData.clientName || "",
+        seo: initialData.seo || { title: "", description: "", keywords: [] },
       };
       setFormData(data);
       lastSavedRef.current = JSON.stringify(data);
@@ -214,6 +224,7 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
           { id: "case-study", label: "Case Study", icon: FileText },
           { id: "sections", label: "Sections", icon: Layout },
           { id: "media", label: "Media", icon: Upload },
+          { id: "seo", label: "SEO", icon: Search },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -281,6 +292,29 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
                     tags={formData.tags}
                     onChange={(tags) => setFormData({ ...formData, tags })}
                   />
+                </div>
+
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <label className="pixel-text text-[10px] text-accent block mb-2 uppercase tracking-widest">Year</label>
+                    <input
+                      type="text"
+                      value={formData.year}
+                      onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+                      className="w-full bg-primary/5 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm"
+                      placeholder="2024"
+                    />
+                  </div>
+                  <div>
+                    <label className="pixel-text text-[10px] text-accent block mb-2 uppercase tracking-widest">Client Name</label>
+                    <input
+                      type="text"
+                      value={formData.clientName}
+                      onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
+                      className="w-full bg-primary/5 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm"
+                      placeholder="Client Name"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -439,6 +473,59 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
                  }))}
                />
             </div>
+          </div>
+        )}
+
+        {activeTab === "seo" && (
+          <div className="space-y-12 animate-in fade-in duration-500">
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div className="space-y-8">
+                   <div>
+                      <label className="pixel-text text-[10px] text-accent block mb-2 uppercase tracking-widest">Meta Title</label>
+                      <input
+                        type="text"
+                        value={formData.seo.title}
+                        onChange={(e) => setFormData({ ...formData, seo: { ...formData.seo, title: e.target.value } })}
+                        className="w-full bg-primary/5 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm"
+                        placeholder="Page title for search engines"
+                      />
+                   </div>
+                   <div>
+                      <label className="pixel-text text-[10px] text-accent block mb-2 uppercase tracking-widest">Meta Description</label>
+                      <textarea
+                        value={formData.seo.description}
+                        onChange={(e) => setFormData({ ...formData, seo: { ...formData.seo, description: e.target.value } })}
+                        className="w-full bg-primary/5 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm min-h-[120px]"
+                        placeholder="Summary for search results"
+                      />
+                   </div>
+                </div>
+
+                <div className="space-y-8">
+                   <div className="p-8 bg-primary/5 border border-primary/10">
+                      <h3 className="pixel-text text-[10px] text-accent mb-4 uppercase tracking-widest">Google Preview</h3>
+                      <div className="bg-white p-6 rounded-lg space-y-2">
+                         <p className="text-[#1a0dab] text-xl font-medium hover:underline cursor-pointer truncate">
+                           {formData.seo.title || formData.title.en || "Project Title"}
+                         </p>
+                         <p className="text-[#006621] text-sm truncate">
+                           https://amr-yousry.com/projects/{formData.title.en.toLowerCase().replace(/[^a-z0-9]+/g, "-")}
+                         </p>
+                         <p className="text-[#545454] text-sm line-clamp-2">
+                           {formData.seo.description || formData.shortDescription.en || "No description set yet."}
+                         </p>
+                      </div>
+                   </div>
+
+                   <div className="space-y-4">
+                      <label className="pixel-text text-[10px] text-accent block uppercase tracking-widest">SEO Keywords</label>
+                      <TagsInput
+                        tags={formData.seo.keywords || []}
+                        onChange={(keywords) => setFormData({ ...formData, seo: { ...formData.seo, keywords } })}
+                      />
+                   </div>
+                </div>
+             </div>
           </div>
         )}
 

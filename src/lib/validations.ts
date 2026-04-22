@@ -22,6 +22,11 @@ export const projectSchema = z.object({
   displayOrder: z.number().default(0),
   year: z.string().optional(),
   clientName: z.string().optional(),
+  seo: z.object({
+    title: z.string().optional(),
+    description: z.string().optional(),
+    keywords: z.array(z.string()).default([]),
+  }).default({ keywords: [] }),
   gallery: z.array(z.string().url()).default([]),
   tags: z.array(z.string()).default([]),
   sections: z.array(z.object({
@@ -52,6 +57,16 @@ export const heroSchema = z.object({
   posterImage: z.string().url().optional().or(z.literal("")),
   showreelVideo: z.string().url().optional().or(z.literal("")),
   status: z.enum(["draft", "published"]).default("draft"),
+});
+
+export const showreelSchema = z.object({
+  title: bilingualString,
+  subtitle: bilingualString,
+  videoUrl: z.string().url("Valid video URL is required"),
+  thumbnailUrl: z.string().url("Valid thumbnail URL is required"),
+  isActive: z.boolean().default(false),
+  ctaText: bilingualString.optional(),
+  ctaLink: z.string().default("/#contact"),
 });
 
 export const siteContentSchema = z.object({

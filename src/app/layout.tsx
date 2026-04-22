@@ -6,6 +6,7 @@ import SmoothScroll from "@/components/ui/SmoothScroll";
 import Navbar from "@/components/ui/Navbar";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import Footer from "@/components/ui/Footer";
+import FloatingCTA from "@/components/ui/FloatingCTA";
 import SessionProviderWrapper from "@/components/providers/SessionProviderWrapper";
 import QueryProvider from "@/components/providers/QueryProvider";
 import { Toaster } from "sonner";
@@ -52,6 +53,7 @@ export default function RootLayout({
               <Navbar />
               <main className="min-h-screen">{children}</main>
               <Footer />
+              <FloatingCTA />
             </SmoothScroll>
           </QueryProvider>
         </SessionProviderWrapper>

@@ -2,16 +2,16 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
-import { HeroSettings } from "@/models/Settings";
+import Settings from "@/models/Settings";
 import { heroSchema } from "@/lib/validations";
 
 export async function GET() {
   try {
     await dbConnect();
-    let settings = await HeroSettings.findOne({}).lean();
+    const settings = await Settings.findOne({}).lean();
     
-    // If no settings exist yet, return null (admin will create via PUT)
-    return NextResponse.json(settings || {});
+    // Return just the hero part or an empty object
+    return NextResponse.json({ data: settings?.hero || {} });
   } catch (error) {
     console.error("GET_HERO_SETTINGS_ERROR:", error);
     return NextResponse.json({ error: "Failed to fetch settings" }, { status: 500 });
@@ -34,13 +34,13 @@ export async function PUT(req: Request) {
 
     await dbConnect();
     
-    const settings = await HeroSettings.findOneAndUpdate(
+    const settings = await Settings.findOneAndUpdate(
       {}, 
-      validation.data, 
+      { $set: { hero: validation.data, updatedAt: new Date() } }, 
       { upsert: true, new: true }
     );
     
-    return NextResponse.json(settings);
+    return NextResponse.json({ data: settings.hero });
   } catch (error) {
     console.error("PUT_HERO_SETTINGS_ERROR:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

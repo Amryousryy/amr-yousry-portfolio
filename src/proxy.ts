@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 
 export default withAuth(
   function middleware() {
-    // Optional: Add custom logic here if needed
     return NextResponse.next();
   },
   {
@@ -16,7 +15,8 @@ export default withAuth(
   }
 );
 
-// Protect all routes under /admin EXCEPT for /admin/login
 export const config = {
-  matcher: ["/admin/:path*", "/admin/projects/:path*"],
+  matcher: [
+    "/admin/:path*",
+  ],
 };

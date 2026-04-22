@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Save, Loader2, Play, Image as ImageIcon } from "lucide-react";
+import { Save, Loader2, Play, Image as ImageIcon, Upload, Link as LinkIcon } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SettingsService } from "@/lib/api-client";
 import { heroSchema } from "@/lib/validations";
@@ -13,6 +13,7 @@ import Image from "next/image";
 
 export default function HeroManagerPage() {
   const queryClient = useQueryClient();
+  const [videoMode, setVideoMode] = useState<"upload" | "url">("url");
   const [formData, setFormData] = useState<Partial<HeroSettings>>({
     headline: { en: "", ar: "" },
     subheadline: { en: "", ar: "" },
@@ -164,28 +165,78 @@ export default function HeroManagerPage() {
         <div className="space-y-8">
           {/* Media Assets */}
           <div className="p-8 bg-primary/5 border border-primary/10 space-y-8">
-            <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-accent border-b border-primary/10 pb-4 mb-4">Media Assets</h3>
+            <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-accent border-b border-primary/10 pb-4 mb-4">Cinematic Assets</h3>
             
             {/* Showreel Video */}
             <div className="space-y-4">
-              <label className="pixel-text text-[10px] text-foreground/40 block uppercase">Showreel Video (Direct URL)</label>
-              <div className="relative aspect-video bg-black pixel-border flex items-center justify-center group overflow-hidden">
-                {formData.showreelVideo ? (
-                  <video src={formData.showreelVideo} className="w-full h-full object-cover" muted />
-                ) : (
-                  <Play size={40} className="text-primary/20" />
-                )}
-                <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
-                   <input 
-                    type="text" 
-                    placeholder="Paste Video URL..."
-                    value={formData.showreelVideo}
-                    onChange={(e) => setFormData({ ...formData, showreelVideo: e.target.value })}
-                    className="w-full bg-background border border-accent p-2 text-xs outline-none"
-                   />
+              <div className="flex justify-between items-center mb-2">
+                <label className="pixel-text text-[10px] text-foreground/40 block uppercase">Showreel Video</label>
+                <div className="flex bg-primary/10 p-1 pixel-border">
+                  <button
+                    onClick={() => setVideoMode("url")}
+                    className={`p-1.5 transition-all ${videoMode === 'url' ? 'bg-accent text-background' : 'text-foreground/40'}`}
+                    title="External URL"
+                  >
+                    <LinkIcon size={12} />
+                  </button>
+                  <button
+                    onClick={() => setVideoMode("upload")}
+                    className={`p-1.5 transition-all ${videoMode === 'upload' ? 'bg-accent text-background' : 'text-foreground/40'}`}
+                    title="Cloudinary Upload"
+                  >
+                    <Upload size={12} />
+                  </button>
                 </div>
               </div>
-              <p className="text-[9px] text-foreground/30 uppercase tracking-tighter">Support for YouTube, Vimeo or direct MP4 links</p>
+
+              {videoMode === "url" ? (
+                <div className="space-y-4">
+                  <div className="relative aspect-video bg-black pixel-border flex items-center justify-center group overflow-hidden">
+                    {formData.showreelVideo ? (
+                      <video src={formData.showreelVideo} className="w-full h-full object-cover" muted />
+                    ) : (
+                      <Play size={40} className="text-primary/20" />
+                    )}
+                    <div className="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
+                       <input 
+                        type="text" 
+                        placeholder="Paste Direct Video URL (mp4)..."
+                        value={formData.showreelVideo}
+                        onChange={(e) => setFormData({ ...formData, showreelVideo: e.target.value })}
+                        className="w-full bg-background border border-accent p-3 text-xs outline-none"
+                       />
+                    </div>
+                  </div>
+                  <p className="text-[9px] text-foreground/30 uppercase tracking-tighter">Use direct .mp4 links for best performance</p>
+                </div>
+              ) : (
+                <CldUploadWidget 
+                  uploadPreset="amr_portfolio_preset"
+                  options={{ resourceType: "video" }}
+                  onSuccess={(result) => {
+                    if (typeof result.info === 'object' && 'secure_url' in result.info) {
+                      setFormData({ ...formData, showreelVideo: result.info.secure_url as string });
+                      toast.success("Showreel uploaded!");
+                    }
+                  }}
+                >
+                  {({ open }) => (
+                    <div 
+                      onClick={() => open()}
+                      className="relative aspect-video bg-primary/5 border-2 border-dashed border-primary/20 flex flex-col items-center justify-center cursor-pointer hover:border-accent transition-colors overflow-hidden"
+                    >
+                      {formData.showreelVideo ? (
+                        <video src={formData.showreelVideo} className="w-full h-full object-cover" muted />
+                      ) : (
+                        <>
+                          <Upload className="text-primary/40 mb-2" />
+                          <span className="text-[10px] text-foreground/40 font-bold uppercase">Upload Showreel</span>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </CldUploadWidget>
+              )}
             </div>
 
             {/* Poster Image */}
@@ -203,7 +254,7 @@ export default function HeroManagerPage() {
                 {({ open }) => (
                   <div 
                     onClick={() => open()}
-                    className="relative aspect-[4/3] bg-primary/5 border-2 border-dashed border-primary/20 flex flex-col items-center justify-center cursor-pointer hover:border-accent transition-colors overflow-hidden"
+                    className="relative aspect-video bg-primary/5 border-2 border-dashed border-primary/20 flex flex-col items-center justify-center cursor-pointer hover:border-accent transition-colors overflow-hidden"
                   >
                     {formData.posterImage ? (
                       <Image src={formData.posterImage} alt="Poster" fill className="object-cover" />
@@ -217,6 +268,18 @@ export default function HeroManagerPage() {
                 )}
               </CldUploadWidget>
             </div>
+          </div>
+
+          {/* Quick Preview */}
+          <div className="p-8 bg-accent text-background pixel-border">
+             <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4">Cinematic Preview</h3>
+             <p className="text-xs mb-6 opacity-80">Check how your showreel looks with the entrance headlines.</p>
+             <button 
+              onClick={() => window.open('/', '_blank')}
+              className="w-full py-3 border-2 border-background text-[10px] font-bold uppercase tracking-widest hover:bg-background hover:text-accent transition-all"
+             >
+               View Live Site
+             </button>
           </div>
         </div>
       </div>

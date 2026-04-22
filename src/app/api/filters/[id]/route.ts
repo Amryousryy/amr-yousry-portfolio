@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
-import { Filter } from "@/models/Settings";
+import Filter from "@/models/Filter";
 import { filterSchema } from "@/lib/validations";
 
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -43,11 +43,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     }
 
     await dbConnect();
-    const filter = await Filter.findByIdAndDelete(id);
-    
-    if (!filter) {
-      return NextResponse.json({ error: "Filter not found" }, { status: 404 });
-    }
+    await Filter.findByIdAndDelete(id);
     
     return NextResponse.json({ message: "Filter deleted successfully" });
   } catch (error) {

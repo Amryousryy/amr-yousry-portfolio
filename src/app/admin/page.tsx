@@ -17,6 +17,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { ProjectService, FilterService, SettingsService } from "@/lib/api-client";
 import Link from "next/link";
+import StatsChart from "@/components/admin/StatsChart";
 
 export default function AdminOverview() {
   const { data: projects } = useQuery({
@@ -34,39 +35,54 @@ export default function AdminOverview() {
     queryFn: () => SettingsService.getHero(),
   });
 
-  const { data: activity } = useQuery({
-    queryKey: ["activity-logs"],
+  const { data: analytics } = useQuery({
+    queryKey: ["analytics-dashboard"],
     queryFn: async () => {
-      const res = await fetch("/api/activity");
+      const res = await fetch("/api/analytics");
+      if (!res.ok) return { data: { dailyViews: [], topProjects: [] } };
       return res.json();
     },
   });
 
+  const { data: activityData } = useQuery({
+    queryKey: ["activity-logs"],
+    queryFn: async () => {
+      const res = await fetch("/api/activity");
+      if (!res.ok) return { data: [] };
+      return res.json();
+    },
+  });
+
+  const projectsData = projects?.data ?? [];
+  const filtersData = filters?.data ?? [];
+  const analyticsData = analytics?.data ?? { dailyViews: [], topProjects: [] };
+  const activityList = activityData?.data ?? [];
+
   const stats = [
     { 
       name: "Total Projects", 
-      value: projects?.data?.length || 0, 
+      value: Array.isArray(projectsData) ? projectsData.length : 0, 
       icon: FolderKanban, 
       color: "text-blue-500",
       href: "/admin/projects"
     },
     { 
       name: "Featured Works", 
-      value: projects?.data?.filter((p: any) => p.featured).length || 0, 
+      value: Array.isArray(projectsData) ? projectsData.filter((p: any) => p.featured).length : 0, 
       icon: CheckCircle, 
       color: "text-green-500",
       href: "/admin/projects"
     },
     { 
       name: "Draft Projects", 
-      value: projects?.data?.filter((p: any) => p.status === "draft").length || 0, 
+      value: Array.isArray(projectsData) ? projectsData.filter((p: any) => p.status === "draft").length : 0, 
       icon: Eye, 
       color: "text-yellow-500",
       href: "/admin/projects"
     },
     { 
       name: "Active Filters", 
-      value: filters?.data?.length || 0, 
+      value: Array.isArray(filtersData) ? filtersData.length : 0, 
       icon: FilterIcon, 
       color: "text-purple-500",
       href: "/admin/filters"
@@ -89,7 +105,7 @@ export default function AdminOverview() {
           <Plus size={14} />
           <span>New Project</span>
         </Link>
-      </header>
+      </header> 
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (
@@ -110,8 +126,11 @@ export default function AdminOverview() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Logs & Activity */}
         <div className="lg:col-span-2 space-y-8">
+          {analyticsData.dailyViews && analyticsData.dailyViews.length > 0 && (
+            <StatsChart data={analyticsData.dailyViews} title="Traffic Overview" />
+          )}
+
           <div className="p-8 bg-primary/5 border border-primary/10 h-full">
             <div className="flex items-center justify-between mb-8">
                <h3 className="font-display font-bold uppercase tracking-tight flex items-center gap-3">
@@ -121,7 +140,7 @@ export default function AdminOverview() {
             </div>
             
             <div className="space-y-4">
-              {activity?.slice(0, 8).map((log: any) => (
+              {Array.isArray(activityList) && activityList.length > 0 ? activityList.slice(0, 8).map((log: any) => (
                 <div key={log._id} className="flex items-center justify-between p-4 bg-background/40 border border-primary/5 hover:border-primary/20 transition-colors">
                    <div className="flex items-center space-x-4">
                       <div className={`p-2 rounded-sm ${
@@ -135,15 +154,14 @@ export default function AdminOverview() {
                          <p className="text-[10px] font-bold uppercase tracking-tight">
                            {log.adminEmail} <span className="text-foreground/40 font-normal">{log.action}d</span> {log.targetName}
                          </p>
-                         <p className="text-[8px] text-foreground/30 uppercase">{new Date(log.timestamp).toLocaleString()}</p>
+                         <p className="text-[8px] text-foreground/30 uppercase">{log.timestamp ? new Date(log.timestamp).toLocaleString() : 'N/A'}</p>
                       </div>
                    </div>
                    <span className="text-[8px] px-2 py-0.5 border border-primary/10 text-foreground/40 uppercase">
                      {log.targetType}
                    </span>
                 </div>
-              ))}
-              {(!activity || activity.length === 0) && (
+              )) : (
                 <div className="text-center py-12 text-foreground/20 text-[10px] uppercase tracking-widest">
                   No activity recorded yet.
                 </div>
@@ -152,9 +170,35 @@ export default function AdminOverview() {
           </div>
         </div>
 
-        {/* Right Column: Hero & Actions */}
         <div className="space-y-8">
-          {/* Quick Hero Status */}
+          <div className="p-8 bg-primary/5 border border-primary/10">
+            <h3 className="font-display font-bold uppercase tracking-tight flex items-center gap-3 mb-8">
+              <Eye className="text-accent" size={20} />
+              Top Projects
+            </h3>
+            <div className="space-y-4">
+              {Array.isArray(analyticsData.topProjects) && analyticsData.topProjects.length > 0 ? analyticsData.topProjects.map((item: any) => (
+                <div key={item._id} className="p-4 bg-background/50 border border-primary/5 flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-primary/20 pixel-border overflow-hidden">
+                      {item.project?.image && <img src={item.project.image} alt="" className="w-full h-full object-cover" />}
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase truncate max-w-[120px]">{item.project?.title?.en || 'Untitled'}</p>
+                      <p className="text-[8px] text-accent pixel-text">{item.project?.category || 'N/A'}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-bold">{item.count || 0}</p>
+                    <p className="text-[8px] text-foreground/30 uppercase">Views</p>
+                  </div>
+                </div>
+              )) : (
+                <div className="text-center py-8 text-foreground/20 text-[10px] uppercase">No data</div>
+              )}
+            </div>
+          </div>
+
           <div className="p-8 bg-primary/5 border border-primary/10">
             <div className="flex items-center justify-between mb-8">
               <h3 className="font-display font-bold uppercase tracking-tight flex items-center gap-3">
@@ -180,7 +224,6 @@ export default function AdminOverview() {
             </Link>
           </div>
 
-          {/* Quick Shortcuts */}
           <div className="p-8 bg-primary/5 border border-primary/10">
             <h3 className="font-display font-bold uppercase tracking-tight flex items-center gap-3 mb-8">
               <FileText className="text-accent" size={20} />

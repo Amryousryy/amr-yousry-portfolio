@@ -34,6 +34,11 @@ export interface Project {
   displayOrder: number;
   year?: string;
   clientName?: string;
+  seo: {
+    title?: string;
+    description?: string;
+    keywords?: string[];
+  };
   createdAt: string;
 }
 

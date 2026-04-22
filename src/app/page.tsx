@@ -1,4 +1,4 @@
-import Hero from "@/components/sections/Hero";
+import ShowreelHero from "@/components/sections/ShowreelHero";
 import ClientMarquee from "@/components/ui/Marquee";
 import Services from "@/components/sections/Services";
 import PortfolioPreview from "@/components/sections/PortfolioPreview";
@@ -8,7 +8,7 @@ import CTA from "@/components/sections/CTA";
 export default function Home() {
   return (
     <>
-      <Hero />
+      <ShowreelHero />
       <ClientMarquee />
       <Services />
       <PortfolioPreview />

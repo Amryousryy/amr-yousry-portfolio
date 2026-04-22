@@ -11,15 +11,19 @@ import {
   BarChart3, 
   LogOut,
   ExternalLink,
-  Plus
+  Plus,
+  Clapperboard,
+  Users
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 
 const menuItems = [
   { name: "Overview", icon: LayoutDashboard, href: "/admin" },
+  { name: "Leads", icon: Users, href: "/admin/leads" },
   { name: "Projects", icon: FolderKanban, href: "/admin/projects" },
   { name: "Hero", icon: MonitorPlay, href: "/admin/hero" },
+  { name: "Showreel", icon: Clapperboard, href: "/admin/showreels" },
   { name: "Content", icon: Settings, href: "/admin/content" },
   { name: "Analytics", icon: BarChart3, href: "/admin/analytics" },
 ];

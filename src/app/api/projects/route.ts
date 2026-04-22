@@ -8,40 +8,57 @@ import { logActivity } from "@/lib/activity";
 
 export async function GET(req: Request) {
   try {
+    await dbConnect();
+  } catch (error) {
+    console.error("DB_CONNECT_ERROR:", error);
+    return NextResponse.json({ data: [] });
+  }
+
+  try {
     const { searchParams } = new URL(req.url);
     const isAdmin = searchParams.get("admin") === "true";
-    
-    await dbConnect();
-    
-    // Public users only see published projects
     const query = isAdmin ? {} : { status: "published" };
     const projects = await Project.find(query).sort({ displayOrder: 1, createdAt: -1 }).lean();
     
-    return NextResponse.json(projects);
+    return NextResponse.json({ data: Array.isArray(projects) ? projects : [] });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Failed to fetch projects";
-    console.error("DATABASE_ERROR:", errorMessage);
-    return NextResponse.json({ error: "Failed to fetch projects" }, { status: 500 });
+    console.error("GET_PROJECTS_ERROR:", error);
+    return NextResponse.json({ data: [] });
   }
 }
 
 export async function POST(req: Request) {
+  let session = null;
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    session = await getServerSession(authOptions);
+  } catch (error) {
+    console.error("SESSION_ERROR:", error);
+  }
 
-    const body = await req.json();
-    const validation = projectSchema.safeParse(body);
-    
-    if (!validation.success) {
-      return NextResponse.json({ error: validation.error.format() }, { status: 400 });
-    }
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
+  let body;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+  }
+
+  const validation = projectSchema.safeParse(body);
+  if (!validation.success) {
+    return NextResponse.json({ error: validation.error.format() }, { status: 400 });
+  }
+
+  try {
     await dbConnect();
-    
-    // Generate slug from English title
+  } catch (error) {
+    console.error("DB_CONNECT_ERROR:", error);
+    return NextResponse.json({ error: "Database error" }, { status: 500 });
+  }
+
+  try {
     const slug = validation.data.title.en
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
@@ -49,18 +66,21 @@ export async function POST(req: Request) {
 
     const project = await Project.create({ ...validation.data, slug });
 
-    await logActivity({
-      action: "create",
-      targetType: "project",
-      targetName: validation.data.title.en,
-      adminEmail: session.user?.email || "unknown",
-      metadata: { id: project._id, status: project.status }
-    });
+    try {
+      await logActivity({
+        action: "create",
+        targetType: "project",
+        targetName: validation.data.title.en,
+        adminEmail: session.user?.email || "unknown",
+        metadata: { id: project._id, status: project.status }
+      });
+    } catch (logError) {
+      console.error("LOG_ACTIVITY_ERROR:", logError);
+    }
 
-    return NextResponse.json(project, { status: 201 });
+    return NextResponse.json({ data: project }, { status: 201 });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Internal Server Error";
-    console.error("POST_PROJECT_ERROR:", errorMessage);
+    console.error("POST_PROJECT_ERROR:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
