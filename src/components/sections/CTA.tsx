@@ -18,7 +18,7 @@ export default function CTA() {
             whileInView={{ opacity: 1, scale: 1 }}
             className="text-5xl md:text-7xl font-display font-bold mb-12 leading-tight"
           >
-            Let us grow your brand with content that <span className="text-accent italic underline">converts.</span>
+            Ready to turn your content into a <span className="text-accent italic underline">revenue engine?</span>
           </motion.h2>
 
           <div className="flex flex-col md:flex-row items-center justify-center gap-8">
@@ -29,7 +29,7 @@ export default function CTA() {
               className="flex items-center space-x-4 px-10 py-5 bg-accent text-background font-bold uppercase tracking-widest pixel-border"
             >
               <MessageSquare size={24} />
-              <span>WhatsApp Me</span>
+              <span>Start Your Transformation</span>
             </motion.a>
 
             <motion.a

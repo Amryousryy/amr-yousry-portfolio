@@ -72,10 +72,10 @@ export default function Hero() {
         </p>
 
         <div ref={ctaRef} className="flex flex-col md:flex-row items-center justify-center gap-6">
-          <button className="group relative px-10 py-4 bg-accent text-background font-bold uppercase tracking-widest overflow-hidden pixel-border transition-transform hover:scale-105 active:scale-95">
-            <span className="relative z-10">Work With Me</span>
+          <a href="https://wa.me/your-number" className="group relative px-10 py-4 bg-accent text-background font-bold uppercase tracking-widest overflow-hidden pixel-border transition-transform hover:scale-105 active:scale-95">
+            <span className="relative z-10">Start Your Transformation</span>
             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-          </button>
+          </a>
 
           <button
             onClick={() => setShowModal(true)}
@@ -87,6 +87,23 @@ export default function Hero() {
             <span>Watch Showreel</span>
           </button>
         </div>
+      </div>
+
+      {/* Proof Stripe */}
+      <div className="absolute bottom-0 left-0 w-full bg-accent/90 backdrop-blur-md py-4 z-40 border-t border-white/10 hidden md:block">
+         <div className="container mx-auto px-6 flex justify-around items-center">
+            {[
+               { label: "Total Views Generated", value: "50M+" },
+               { label: "Brands Scaled", value: "100+" },
+               { label: "Avg. ROI Increase", value: "3.5X" },
+               { label: "Content Strategy", value: "100% Proven" }
+            ].map((stat, i) => (
+               <div key={i} className="flex flex-col items-center">
+                  <span className="text-background font-display font-bold text-2xl tracking-tighter leading-none">{stat.value}</span>
+                  <span className="text-background/60 text-[8px] uppercase font-bold tracking-widest">{stat.label}</span>
+               </div>
+            ))}
+         </div>
       </div>
 
       <AnimatePresence>

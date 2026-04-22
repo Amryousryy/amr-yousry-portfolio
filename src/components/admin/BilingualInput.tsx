@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { Copy } from "lucide-react";
 
 interface BilingualInputProps {
   label: string;
@@ -21,6 +22,10 @@ export default function BilingualInput({
 }: BilingualInputProps) {
   const handleChange = (lang: "en" | "ar", val: string) => {
     onChange({ ...value, [lang]: val });
+  };
+
+  const copyEnglishToArabic = () => {
+    onChange({ ...value, ar: value.en });
   };
 
   const InputComponent = type === "textarea" ? "textarea" : "input";
@@ -51,6 +56,17 @@ export default function BilingualInput({
         <div className="space-y-2" dir="rtl">
           <div className="flex justify-between items-center" dir="ltr">
             <span className="text-[10px] font-bold uppercase text-foreground/40">Arabic</span>
+            {value.en && !value.ar && (
+              <button
+                type="button"
+                onClick={copyEnglishToArabic}
+                className="flex items-center space-x-1 text-[8px] uppercase font-bold text-accent hover:text-white transition-colors"
+                title="Copy English to Arabic"
+              >
+                <Copy size={10} />
+                <span>Copy EN</span>
+              </button>
+            )}
           </div>
           <InputComponent
             required={required}

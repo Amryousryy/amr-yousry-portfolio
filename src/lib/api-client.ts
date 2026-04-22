@@ -29,6 +29,9 @@ export const ProjectService = {
   getById: async (id: string) => {
     return apiRequest<Project>(`/api/projects/${id}`);
   },
+  getBySlug: async (slug: string) => {
+    return apiRequest<Project>(`/api/projects/${slug}`);
+  },
   create: (data: NewProject) =>
     apiRequest<Project>("/api/projects", {
       method: "POST",

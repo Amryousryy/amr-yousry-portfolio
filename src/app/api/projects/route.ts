@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Project from "@/models/Project";
 import { projectSchema } from "@/lib/validations";
+import { logActivity } from "@/lib/activity";
 
 export async function GET(req: Request) {
   try {
@@ -47,6 +48,15 @@ export async function POST(req: Request) {
       .replace(/(^-|-$)/g, "");
 
     const project = await Project.create({ ...validation.data, slug });
+
+    await logActivity({
+      action: "create",
+      targetType: "project",
+      targetName: validation.data.title.en,
+      adminEmail: session.user?.email || "unknown",
+      metadata: { id: project._id, status: project.status }
+    });
+
     return NextResponse.json(project, { status: 201 });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Internal Server Error";

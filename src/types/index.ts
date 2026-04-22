@@ -5,6 +5,13 @@ export interface BilingualString {
 
 export type ContentStatus = "draft" | "published";
 
+export interface ProjectSection {
+  id: string;
+  title: BilingualString;
+  content: BilingualString;
+  media: { type: "image" | "video"; url: string }[];
+}
+
 export interface Project {
   _id: string;
   title: BilingualString;
@@ -15,9 +22,13 @@ export interface Project {
   image: string;
   video?: string;
   problem?: BilingualString;
-  solution?: BilingualString;
+  strategy?: BilingualString;
+  solution?: BilingualString; // Keep for backward compatibility
+  execution?: BilingualString;
   results?: BilingualString;
   gallery: string[];
+  tags: string[];
+  sections: ProjectSection[];
   featured: boolean;
   status: ContentStatus;
   displayOrder: number;

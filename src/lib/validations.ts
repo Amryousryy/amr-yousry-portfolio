@@ -13,7 +13,9 @@ export const projectSchema = z.object({
   image: z.string().url("Valid cover image URL is required"),
   video: z.string().url().optional().or(z.literal("")),
   problem: bilingualString.optional(),
+  strategy: bilingualString.optional(),
   solution: bilingualString.optional(),
+  execution: bilingualString.optional(),
   results: bilingualString.optional(),
   featured: z.boolean().default(false),
   status: z.enum(["draft", "published"]).default("draft"),
@@ -21,6 +23,16 @@ export const projectSchema = z.object({
   year: z.string().optional(),
   clientName: z.string().optional(),
   gallery: z.array(z.string().url()).default([]),
+  tags: z.array(z.string()).default([]),
+  sections: z.array(z.object({
+    id: z.string(),
+    title: bilingualString,
+    content: bilingualString,
+    media: z.array(z.object({
+      type: z.enum(["image", "video"]),
+      url: z.string().url()
+    })).default([])
+  })).default([]),
 });
 
 export const filterSchema = z.object({

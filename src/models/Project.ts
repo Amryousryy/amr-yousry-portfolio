@@ -14,9 +14,18 @@ export interface IProject extends Document {
   image: string;
   video?: string;
   problem?: { en: string; ar: string };
+  strategy?: { en: string; ar: string };
   solution?: { en: string; ar: string };
+  execution?: { en: string; ar: string };
   results?: { en: string; ar: string };
   gallery: string[];
+  tags: string[];
+  sections: {
+    id: string;
+    title: { en: string; ar: string };
+    content: { en: string; ar: string };
+    media: { type: "image" | "video"; url: string }[];
+  }[];
   featured: boolean;
   status: "draft" | "published";
   displayOrder: number;
@@ -24,6 +33,16 @@ export interface IProject extends Document {
   clientName?: string;
   createdAt: Date;
 }
+
+const ProjectSectionSchema = new Schema({
+  id: { type: String, required: true },
+  title: { type: BilingualSchema, required: true },
+  content: { type: BilingualSchema, required: true },
+  media: [{
+    type: { type: String, enum: ["image", "video"], required: true },
+    url: { type: String, required: true }
+  }]
+}, { _id: false });
 
 const ProjectSchema: Schema = new Schema({
   title: { type: BilingualSchema, required: true },
@@ -34,9 +53,13 @@ const ProjectSchema: Schema = new Schema({
   image: { type: String, required: true },
   video: { type: String },
   problem: { type: BilingualSchema },
+  strategy: { type: BilingualSchema },
   solution: { type: BilingualSchema },
+  execution: { type: BilingualSchema },
   results: { type: BilingualSchema },
   gallery: { type: [String], default: [] },
+  tags: { type: [String], default: [] },
+  sections: { type: [ProjectSectionSchema], default: [] },
   featured: { type: Boolean, default: false },
   status: { type: String, enum: ["draft", "published"], default: "draft" },
   displayOrder: { type: Number, default: 0 },
