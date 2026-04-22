@@ -3,7 +3,6 @@ import dbConnect from "@/lib/db";
 import Lead from "@/models/Lead";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-import { logActivity } from "@/lib/activity";
 
 export async function POST(req: Request) {
   try {
@@ -24,7 +23,6 @@ export async function POST(req: Request) {
       offerType: offerType || "general"
     });
 
-    // Track as a conversion interaction
     try {
       await fetch(`${process.env.NEXTAUTH_URL}/api/analytics`, {
         method: "POST",
@@ -40,7 +38,7 @@ export async function POST(req: Request) {
       console.error("Analytics conversion tracking failed");
     }
 
-    return NextResponse.json(lead, { status: 201 });
+    return NextResponse.json({ data: lead }, { status: 201 });
   } catch (error) {
     console.error("LEAD_POST_ERROR:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
@@ -48,17 +46,29 @@ export async function POST(req: Request) {
 }
 
 export async function GET(req: Request) {
+  let session = null;
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    await dbConnect();
-    const leads = await Lead.find({}).sort({ createdAt: -1 }).lean();
-    
-    return NextResponse.json(leads);
+    session = await getServerSession(authOptions);
   } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch leads" }, { status: 500 });
+    console.error("SESSION_ERROR:", error);
+  }
+
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    await dbConnect();
+  } catch (error) {
+    console.error("DB_CONNECT_ERROR:", error);
+    return NextResponse.json({ data: [] });
+  }
+
+  try {
+    const leads = await Lead.find({}).sort({ createdAt: -1 }).lean();
+    return NextResponse.json({ data: Array.isArray(leads) ? leads : [] });
+  } catch (error) {
+    console.error("LEAD_GET_ERROR:", error);
+    return NextResponse.json({ data: [] });
   }
 }
