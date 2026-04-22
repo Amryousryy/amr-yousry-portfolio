@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ProjectService } from "@/lib/api-client";
 import { 
@@ -18,11 +18,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { toast } from "sonner";
 import { Project } from "@/types";
+import AdminLoadingSkeleton from "@/components/admin/AdminLoadingSkeleton";
+import AdminErrorState from "@/components/admin/AdminErrorState";
+import AdminEmptyState from "@/components/admin/AdminEmptyState";
 
 export default function ProjectsPage() {
   const queryClient = useQueryClient();
   
-  const { data: projects, isLoading } = useQuery({
+  const { data: projects, isLoading, isError, refetch } = useQuery({
     queryKey: ["projects", "admin"],
     queryFn: () => ProjectService.getAll(true),
   });
@@ -44,10 +47,35 @@ export default function ProjectsPage() {
     }
   };
 
+  // Safe data extraction
+  const projectsData = Array.isArray(projects?.data) ? projects.data : [];
+
   if (isLoading) {
+    return <AdminLoadingSkeleton />;
+  }
+
+  if (isError) {
+    return <AdminErrorState message="Failed to load projects" onRetry={() => refetch()} />;
+  }
+
+  if (projectsData.length === 0) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent"></div>
+      <div className="space-y-12">
+        <header className="flex justify-between items-center">
+          <div>
+            <Link href="/admin" className="flex items-center space-x-2 text-accent group mb-4">
+              <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+              <span className="pixel-text text-[10px] uppercase">Dashboard</span>
+            </Link>
+            <h1 className="text-4xl font-display font-bold uppercase tracking-tighter">Project Vault</h1>
+          </div>
+        </header>
+        <AdminEmptyState 
+          title="No Projects Yet"
+          description="Start building your portfolio by adding your first project."
+          actionLabel="Add Project"
+          actionHref="/admin/projects/new"
+        />
       </div>
     );
   }
@@ -69,22 +97,23 @@ export default function ProjectsPage() {
           <Plus size={18} />
           <span>New Project</span>
         </Link>
-      </header>
+      </header> 
 
       <div className="grid grid-cols-1 gap-6">
-        {projects?.data?.map((project: Project) => (
+        {projectsData.map((project: Project) => (
           <div 
             key={project._id}
             className="group bg-primary/5 border border-primary/10 p-6 flex flex-col md:flex-row items-center gap-8 hover:border-accent/50 transition-all"
           >
-            {/* Thumbnail */}
             <div className="relative w-full md:w-48 aspect-video bg-background overflow-hidden pixel-border">
-              <Image 
-                src={project.image} 
-                alt={project.title.en} 
-                fill 
-                className="object-cover group-hover:scale-110 transition-transform duration-500" 
-              />
+              {project.image && (
+                <Image 
+                  src={project.image} 
+                  alt={project.title?.en || "Project"} 
+                  fill 
+                  className="object-cover group-hover:scale-110 transition-transform duration-500" 
+                />
+              )}
               <div className="absolute top-2 right-2 flex space-x-2">
                 {project.featured && (
                   <div className="p-1 bg-yellow-500 text-background rounded-sm">
@@ -97,17 +126,20 @@ export default function ProjectsPage() {
               </div>
             </div>
 
-            {/* Info */}
             <div className="flex-1 space-y-2 text-center md:text-left">
               <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                <h3 className="text-xl font-display font-bold uppercase tracking-tight">{project.title.en}</h3>
+                <h3 className="text-xl font-display font-bold uppercase tracking-tight">
+                  {project.title?.en || "Untitled"}
+                </h3>
                 <span className="text-[10px] px-2 py-0.5 bg-primary/10 text-accent font-bold uppercase tracking-widest w-fit mx-auto md:mx-0">
-                  {project.category}
+                  {project.category || "Uncategorized"}
                 </span>
               </div>
-              <p className="text-sm text-foreground/50 line-clamp-1 italic">{project.shortDescription.en}</p>
+              <p className="text-sm text-foreground/50 line-clamp-1 italic">
+                {project.shortDescription?.en || "No description"}
+              </p>
               <div className="flex flex-wrap justify-center md:justify-start gap-2 pt-2">
-                {project.tags?.map(tag => (
+                {Array.isArray(project.tags) && project.tags.map((tag: string) => (
                   <span key={tag} className="text-[8px] text-foreground/40 uppercase tracking-tighter border border-primary/10 px-1">
                     #{tag}
                   </span>
@@ -115,7 +147,6 @@ export default function ProjectsPage() {
               </div>
             </div>
 
-            {/* Actions */}
             <div className="flex items-center space-x-4">
               <Link 
                 href={`/projects/${project.slug}`} 
@@ -133,7 +164,7 @@ export default function ProjectsPage() {
                 <Edit2 size={18} />
               </Link>
               <button 
-                onClick={() => handleDelete(project._id, project.title.en)}
+                onClick={() => handleDelete(project._id, project.title?.en || "this project")}
                 className="p-3 bg-primary/10 hover:bg-red-500 hover:text-white transition-all pixel-border"
                 title="Delete Project"
               >
@@ -142,13 +173,6 @@ export default function ProjectsPage() {
             </div>
           </div>
         ))}
-
-        {(!projects?.data || projects.data.length === 0) && (
-          <div className="text-center py-32 bg-primary/5 border border-primary/10 border-dashed">
-            <FolderKanban size={48} className="mx-auto text-foreground/20 mb-4" />
-            <p className="text-foreground/40 uppercase tracking-widest text-xs">No projects found in the vault.</p>
-          </div>
-        )}
       </div>
     </div>
   );

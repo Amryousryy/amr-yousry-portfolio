@@ -10,6 +10,8 @@ import { HeroSettings } from "@/types";
 import BilingualInput from "@/components/admin/BilingualInput";
 import { CldUploadWidget } from "next-cloudinary";
 import Image from "next/image";
+import AdminLoadingSkeleton from "@/components/admin/AdminLoadingSkeleton";
+import AdminErrorState from "@/components/admin/AdminErrorState";
 
 export default function HeroManagerPage() {
   const queryClient = useQueryClient();
@@ -26,14 +28,14 @@ export default function HeroManagerPage() {
     status: "draft",
   });
 
-  const { data: hero, isLoading } = useQuery({
+  const { data: hero, isLoading, isError, refetch } = useQuery({
     queryKey: ["hero-settings"],
     queryFn: () => SettingsService.getHero(),
   });
 
   useEffect(() => {
-    if (hero?.data && Object.keys(hero.data).length > 0) {
-      setFormData(hero.data);
+    if (hero?.data && typeof hero.data === 'object' && Object.keys(hero.data).length > 0) {
+      setFormData(hero.data as HeroSettings);
     }
   }, [hero]);
 
@@ -60,11 +62,11 @@ export default function HeroManagerPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="h-screen w-full flex items-center justify-center">
-        <Loader2 className="animate-spin text-accent" size={48} />
-      </div>
-    );
+    return <AdminLoadingSkeleton />;
+  }
+
+  if (isError) {
+    return <AdminErrorState message="Failed to load hero settings" onRetry={() => refetch()} />;
   }
 
   return (
@@ -79,12 +81,14 @@ export default function HeroManagerPage() {
         <div className="flex items-center gap-4">
           <div className="flex bg-primary/10 p-1 pixel-border">
             <button
+              type="button"
               onClick={() => setFormData({ ...formData, status: "draft" })}
               className={`px-4 py-2 text-[10px] font-bold uppercase transition-all ${formData.status === 'draft' ? 'bg-yellow-500 text-background' : 'text-foreground/40 hover:text-foreground'}`}
             >
               Draft
             </button>
             <button
+              type="button"
               onClick={() => setFormData({ ...formData, status: "published" })}
               className={`px-4 py-2 text-[10px] font-bold uppercase transition-all ${formData.status === 'published' ? 'bg-green-500 text-background' : 'text-foreground/40 hover:text-foreground'}`}
             >
@@ -100,79 +104,76 @@ export default function HeroManagerPage() {
             <span>Save Changes</span>
           </button>
         </div>
-      </header>
+      </header> 
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-12">
         <div className="xl:col-span-2 space-y-12">
-          {/* Headlines */}
           <div className="p-8 bg-primary/5 border border-primary/10 space-y-8">
              <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-accent border-b border-primary/10 pb-4 mb-4">Text Content</h3>
              <BilingualInput 
-                label="Headline" 
-                value={formData.headline as any} 
-                onChange={(val) => setFormData({ ...formData, headline: val })}
-                type="textarea"
-                rows={2}
+               label="Headline" 
+               value={formData.headline as any} 
+               onChange={(val) => setFormData({ ...formData, headline: val })}
+               type="textarea"
+               rows={2}
              />
              <BilingualInput 
-                label="Subheadline" 
-                value={formData.subheadline as any} 
-                onChange={(val) => setFormData({ ...formData, subheadline: val })}
-                type="textarea"
+               label="Subheadline" 
+               value={formData.subheadline as any} 
+               onChange={(val) => setFormData({ ...formData, subheadline: val })}
+               type="textarea"
              />
           </div>
 
-          {/* CTA Settings */}
           <div className="p-8 bg-primary/5 border border-primary/10 space-y-8">
              <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-accent border-b border-primary/10 pb-4 mb-4">Call to Action Buttons</h3>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                <div className="space-y-6">
-                  <BilingualInput 
-                    label="Primary CTA Label" 
-                    value={formData.primaryCTA as any} 
-                    onChange={(val) => setFormData({ ...formData, primaryCTA: val })}
-                  />
-                  <div>
-                    <label className="pixel-text text-[10px] text-foreground/40 block mb-2 uppercase">Link</label>
-                    <input 
-                      type="text" 
-                      value={formData.primaryCTALink} 
-                      onChange={(e) => setFormData({ ...formData, primaryCTALink: e.target.value })}
-                      className="w-full bg-background border border-primary/20 p-4 outline-none focus:border-accent text-sm"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-6">
-                  <BilingualInput 
-                    label="Secondary CTA Label" 
-                    value={formData.secondaryCTA as any} 
-                    onChange={(val) => setFormData({ ...formData, secondaryCTA: val })}
-                  />
-                  <div>
-                    <label className="pixel-text text-[10px] text-foreground/40 block mb-2 uppercase">Link</label>
-                    <input 
-                      type="text" 
-                      value={formData.secondaryCTALink} 
-                      onChange={(e) => setFormData({ ...formData, secondaryCTALink: e.target.value })}
-                      className="w-full bg-background border border-primary/20 p-4 outline-none focus:border-accent text-sm"
-                    />
-                  </div>
-                </div>
+               <div className="space-y-6">
+                 <BilingualInput 
+                   label="Primary CTA Label" 
+                   value={formData.primaryCTA as any} 
+                   onChange={(val) => setFormData({ ...formData, primaryCTA: val })}
+                 />
+                 <div>
+                   <label className="pixel-text text-[10px] text-foreground/40 block mb-2 uppercase">Link</label>
+                   <input 
+                     type="text" 
+                     value={formData.primaryCTALink} 
+                     onChange={(e) => setFormData({ ...formData, primaryCTALink: e.target.value })}
+                     className="w-full bg-background border border-primary/20 p-4 outline-none focus:border-accent text-sm"
+                   />
+                 </div>
+               </div>
+               <div className="space-y-6">
+                 <BilingualInput 
+                   label="Secondary CTA Label" 
+                   value={formData.secondaryCTA as any} 
+                   onChange={(val) => setFormData({ ...formData, secondaryCTA: val })}
+                 />
+                 <div>
+                   <label className="pixel-text text-[10px] text-foreground/40 block mb-2 uppercase">Link</label>
+                   <input 
+                     type="text" 
+                     value={formData.secondaryCTALink} 
+                     onChange={(e) => setFormData({ ...formData, secondaryCTALink: e.target.value })}
+                     className="w-full bg-background border border-primary/20 p-4 outline-none focus:border-accent text-sm"
+                   />
+                 </div>
+               </div>
              </div>
           </div>
         </div>
 
         <div className="space-y-8">
-          {/* Media Assets */}
           <div className="p-8 bg-primary/5 border border-primary/10 space-y-8">
             <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-accent border-b border-primary/10 pb-4 mb-4">Cinematic Assets</h3>
             
-            {/* Showreel Video */}
             <div className="space-y-4">
               <div className="flex justify-between items-center mb-2">
                 <label className="pixel-text text-[10px] text-foreground/40 block uppercase">Showreel Video</label>
                 <div className="flex bg-primary/10 p-1 pixel-border">
                   <button
+                    type="button"
                     onClick={() => setVideoMode("url")}
                     className={`p-1.5 transition-all ${videoMode === 'url' ? 'bg-accent text-background' : 'text-foreground/40'}`}
                     title="External URL"
@@ -180,6 +181,7 @@ export default function HeroManagerPage() {
                     <LinkIcon size={12} />
                   </button>
                   <button
+                    type="button"
                     onClick={() => setVideoMode("upload")}
                     className={`p-1.5 transition-all ${videoMode === 'upload' ? 'bg-accent text-background' : 'text-foreground/40'}`}
                     title="Cloudinary Upload"
@@ -239,7 +241,6 @@ export default function HeroManagerPage() {
               )}
             </div>
 
-            {/* Poster Image */}
             <div className="space-y-4">
               <label className="pixel-text text-[10px] text-foreground/40 block uppercase">Background / Poster Image</label>
               <CldUploadWidget 
@@ -270,15 +271,15 @@ export default function HeroManagerPage() {
             </div>
           </div>
 
-          {/* Quick Preview */}
           <div className="p-8 bg-accent text-background pixel-border">
              <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4">Cinematic Preview</h3>
              <p className="text-xs mb-6 opacity-80">Check how your showreel looks with the entrance headlines.</p>
              <button 
-              onClick={() => window.open('/', '_blank')}
-              className="w-full py-3 border-2 border-background text-[10px] font-bold uppercase tracking-widest hover:bg-background hover:text-accent transition-all"
+               type="button"
+               onClick={() => window.open('/', '_blank')}
+               className="w-full py-3 border-2 border-background text-[10px] font-bold uppercase tracking-widest hover:bg-background hover:text-accent transition-all"
              >
-               View Live Site
+                View Live Site
              </button>
           </div>
         </div>

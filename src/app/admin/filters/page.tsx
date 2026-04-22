@@ -7,10 +7,13 @@ import { FilterService } from "@/lib/api-client";
 import { filterSchema } from "@/lib/validations";
 import { toast } from "sonner";
 import { Filter } from "@/types";
+import AdminLoadingSkeleton from "@/components/admin/AdminLoadingSkeleton";
+import AdminErrorState from "@/components/admin/AdminErrorState";
+import AdminEmptyState from "@/components/admin/AdminEmptyState";
 
 export default function FiltersManagerPage() {
   const queryClient = useQueryClient();
-  const [isAdding, setIsOpen] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
   const [newFilter, setNewFilter] = useState({
     name: { en: "", ar: "" },
     slug: "",
@@ -18,7 +21,7 @@ export default function FiltersManagerPage() {
     isActive: true
   });
 
-  const { data: filters, isLoading } = useQuery({
+  const { data: filters, isLoading, isError, refetch } = useQuery({
     queryKey: ["filters", "admin"],
     queryFn: () => FilterService.getAll(true),
   });
@@ -28,7 +31,7 @@ export default function FiltersManagerPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["filters"] });
       toast.success("Filter created!");
-      setIsOpen(false);
+      setIsAdding(false);
       setNewFilter({ name: { en: "", ar: "" }, slug: "", displayOrder: 0, isActive: true });
     },
     onError: (error: Error) => toast.error(error.message)
@@ -60,8 +63,34 @@ export default function FiltersManagerPage() {
     createMutation.mutate({ ...newFilter, slug });
   };
 
+  // Safe data extraction
+  const filtersData = Array.isArray(filters?.data) ? filters.data : [];
+
   if (isLoading) {
-    return <div className="h-screen w-full flex items-center justify-center"><Loader2 className="animate-spin text-accent" size={48} /></div>;
+    return <AdminLoadingSkeleton />;
+  }
+
+  if (isError) {
+    return <AdminErrorState message="Failed to load filters" onRetry={() => refetch()} />;
+  }
+
+  if (filtersData.length === 0) {
+    return (
+      <div className="space-y-12">
+        <header className="flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-display font-bold mb-2 uppercase tracking-tighter">Filter Manager</h1>
+            <p className="text-foreground/50 pixel-text text-xs uppercase tracking-widest">Manage project categories</p>
+          </div>
+        </header>
+        <AdminEmptyState 
+          title="No Filters Yet"
+          description="Create your first filter to categorize projects."
+          actionLabel="Add Filter"
+          actionHref="#"
+        />
+      </div>
+    );
   }
 
   return (
@@ -72,7 +101,7 @@ export default function FiltersManagerPage() {
           <p className="text-foreground/50 pixel-text text-xs uppercase tracking-widest">Manage project categories</p>
         </div>
         <button 
-          onClick={() => setIsOpen(true)}
+          onClick={() => setIsAdding(true)}
           className="flex items-center space-x-3 px-8 py-3 bg-accent text-background font-bold uppercase tracking-widest text-xs pixel-border hover:scale-105 transition-transform"
         >
           <Plus size={16} />
@@ -83,29 +112,29 @@ export default function FiltersManagerPage() {
       {isAdding && (
         <div className="p-8 bg-primary/10 border-2 border-accent animate-in slide-in-from-top duration-300">
            <form onSubmit={handleAdd} className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase text-accent">English Name</label>
-                <input 
-                  required
-                  value={newFilter.name.en}
-                  onChange={(e) => setNewFilter({ ...newFilter, name: { ...newFilter.name, en: e.target.value } })}
-                  className="w-full bg-background border border-primary/20 p-3 outline-none focus:border-accent text-sm"
-                />
-              </div>
-              <div className="space-y-2 text-right" dir="rtl">
-                <label className="text-[10px] font-bold uppercase text-accent" dir="ltr">Arabic Name</label>
-                <input 
-                  required
-                  value={newFilter.name.ar}
-                  onChange={(e) => setNewFilter({ ...newFilter, name: { ...newFilter.name, ar: e.target.value } })}
-                  className="w-full bg-background border border-primary/20 p-3 outline-none focus:border-accent text-sm font-sans"
-                />
-              </div>
-              <div className="flex gap-4">
-                <button type="submit" className="flex-1 py-3 bg-accent text-background font-bold uppercase text-xs">Save</button>
-                <button onClick={() => setIsOpen(false)} className="px-4 py-3 border border-primary/20 text-foreground/40 hover:text-white">Cancel</button>
-              </div>
-           </form>
+             <div className="space-y-2">
+               <label className="text-[10px] font-bold uppercase text-accent">English Name</label>
+               <input 
+                 required
+                 value={newFilter.name.en}
+                 onChange={(e) => setNewFilter({ ...newFilter, name: { ...newFilter.name, en: e.target.value } })}
+                 className="w-full bg-background border border-primary/20 p-3 outline-none focus:border-accent text-sm"
+               />
+             </div>
+             <div className="space-y-2 text-right" dir="rtl">
+               <label className="text-[10px] font-bold uppercase text-accent" dir="ltr">Arabic Name</label>
+               <input 
+                 required
+                 value={newFilter.name.ar}
+                 onChange={(e) => setNewFilter({ ...newFilter, name: { ...newFilter.name, ar: e.target.value } })}
+                 className="w-full bg-background border border-primary/20 p-3 outline-none focus:border-accent text-sm font-sans"
+               />
+             </div>
+             <div className="flex gap-4">
+               <button type="submit" className="flex-1 py-3 bg-accent text-background font-bold uppercase text-xs">Save</button>
+               <button type="button" onClick={() => setIsAdding(false)} className="px-4 py-3 border border-primary/20 text-foreground/40 hover:text-white">Cancel</button>
+             </div>
+          </form>
         </div>
       )}
 
@@ -121,7 +150,7 @@ export default function FiltersManagerPage() {
             </tr>
           </thead>
           <tbody>
-            {filters?.data?.map((filter: Filter, index: number) => (
+            {filtersData.map((filter: Filter, index: number) => (
               <tr key={filter._id} className="border-b border-primary/5 hover:bg-primary/5 transition-colors group">
                 <td className="p-6">
                   <div className="flex items-center gap-4">
@@ -131,11 +160,11 @@ export default function FiltersManagerPage() {
                 </td>
                 <td className="p-6">
                   <div className="flex flex-col">
-                    <span className="text-sm font-bold">{filter.name.en}</span>
-                    <span className="text-xs text-foreground/40 font-sans">{filter.name.ar}</span>
+                    <span className="text-sm font-bold">{filter.name?.en || "N/A"}</span>
+                    <span className="text-xs text-foreground/40 font-sans">{filter.name?.ar || "N/A"}</span>
                   </div>
                 </td>
-                <td className="p-6 text-xs text-accent font-mono">{filter.slug}</td>
+                <td className="p-6 text-xs text-accent font-mono">{filter.slug || "N/A"}</td>
                 <td className="p-6 text-center">
                   <button 
                     onClick={() => toggleMutation.mutate({ id: filter._id, data: { isActive: !filter.isActive } })}
@@ -157,10 +186,6 @@ export default function FiltersManagerPage() {
             ))}
           </tbody>
         </table>
-        
-        {filters?.data?.length === 0 && (
-          <div className="py-20 text-center text-foreground/20 uppercase text-xs tracking-widest">No filters defined yet.</div>
-        )}
       </div>
     </div>
   );
