@@ -14,11 +14,12 @@ export default function PortfolioPreview() {
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        const { data, error } = await ProjectService.getAll();
-        if (data) {
-          setProjects(data.slice(0, 3));
-        } else if (error) {
-          console.warn("PortfolioPreview: Database fetch failed, using fallbacks if available.", error);
+const response = await ProjectService.getAll();
+        if (response?.data) {
+          const projectsArray = Array.isArray(response.data) ? response.data : [];
+setProjects(projectsArray.slice(0, 3));
+        } else if (response?.error) {
+          console.warn("PortfolioPreview: Database fetch failed, using fallbacks if available.", response.error);
         }
       } catch (err) {
         console.error("PortfolioPreview: Unexpected error", err);
