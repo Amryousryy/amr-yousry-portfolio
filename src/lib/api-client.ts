@@ -24,7 +24,14 @@ export async function apiRequest<T>(
 
 export const ProjectService = {
   getAll: async (isAdmin = false) => {
-    return apiRequest<Project[]>(`/api/projects${isAdmin ? "?admin=true" : ""}`);
+    try {
+      const res = await fetch(`/api/projects${isAdmin ? "?admin=true" : ""}`);
+      const json = await res.json();
+      const data = Array.isArray(json?.data) ? json.data : Array.isArray(json) ? json : [];
+      return { data, error: null };
+    } catch (err) {
+      return { data: [], error: String(err) };
+    }
   },
   getById: async (id: string) => {
     return apiRequest<Project>(`/api/projects/${id}`);

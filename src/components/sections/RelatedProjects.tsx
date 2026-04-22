@@ -19,8 +19,9 @@ export default function RelatedProjects({ currentSlug, category }: RelatedProjec
   useEffect(() => {
     const fetchRelated = async () => {
       try {
-        const { data } = await ProjectService.getAll();
-        if (data) {
+        const response = await ProjectService.getAll();
+        const data = Array.isArray(response?.data) ? response.data : [];
+        if (data.length > 0) {
           // Filter out current project and preferably show projects from same category
           const filtered = data
             .filter(p => p.slug !== currentSlug)

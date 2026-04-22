@@ -23,7 +23,7 @@ export default function ProjectArchiveClient({ initialProjects = [] }: ProjectAr
     queryKey: ["projects"],
     queryFn: async () => {
       const res = await ProjectService.getAll();
-      return res.data || [];
+      return Array.isArray(res?.data) ? res.data : [];
     },
     initialData: initialProjects,
   });
@@ -33,10 +33,10 @@ export default function ProjectArchiveClient({ initialProjects = [] }: ProjectAr
     if (!projectsData) return [];
     const filteredByCategory = activeCategory === "All" 
       ? projectsData 
-      : projectsData.filter(p => p.category === activeCategory);
+      : (projectsData || []).filter((p: Project) => p.category === activeCategory);
     
     const tags = new Set<string>();
-    filteredByCategory.forEach(p => p.tags?.forEach(t => tags.add(t)));
+    filteredByCategory.forEach((p: Project) => p.tags?.forEach((t: string) => tags.add(t)));
     return Array.from(tags);
   }, [projectsData, activeCategory]);
 
@@ -45,11 +45,11 @@ export default function ProjectArchiveClient({ initialProjects = [] }: ProjectAr
     let filtered = projectsData;
 
     if (activeCategory !== "All") {
-      filtered = filtered.filter((p) => p.category === activeCategory);
+      filtered = (filtered || []).filter((p: Project) => p.category === activeCategory);
     }
 
     if (activeTags.length > 0) {
-      filtered = filtered.filter((p) => 
+      filtered = (filtered || []).filter((p: Project) => 
         activeTags.every(tag => p.tags?.includes(tag))
       );
     }
@@ -218,7 +218,7 @@ export default function ProjectArchiveClient({ initialProjects = [] }: ProjectAr
 
                 <div className="space-y-3">
                   <div className="flex flex-wrap gap-2">
-                    {project.tags?.slice(0, 3).map(tag => (
+                    {(project.tags || []).slice(0, 3).map((tag: string) => (
                       <span key={tag} className="text-[8px] text-accent uppercase font-bold tracking-widest">#{tag}</span>
                     ))}
                   </div>
