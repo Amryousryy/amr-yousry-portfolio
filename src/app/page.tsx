@@ -1,8 +1,7 @@
-import { redirect } from 'next/navigation';
-import { routing } from '@/routing';
+import HomeClient from "./HomeClient";
 
 export const dynamic = 'force-dynamic';
 
-export default async function RootPage() {
-  redirect(routing.defaultLocale);
+export default function HomePage() {
+  return <HomeClient />;
 }

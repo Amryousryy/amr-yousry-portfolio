@@ -1,7 +1,4 @@
 import type { NextConfig } from "next";
-import createNextIntlPlugin from 'next-intl/plugin';
-
-const withNextIntl = createNextIntlPlugin('./src/i18n.ts');
 
 const securityHeaders = [
   {
@@ -34,7 +31,7 @@ const securityHeaders = [
   },
 ];
 
-const nextConfig: NextConfig = withNextIntl({
+const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dpax6u61z',
     NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'ml_default',
@@ -62,6 +59,6 @@ const nextConfig: NextConfig = withNextIntl({
       },
     ];
   },
-});
+};
 
 export default nextConfig;

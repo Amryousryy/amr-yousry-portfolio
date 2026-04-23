@@ -2,14 +2,21 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import LanguageToggle from "@/components/providers/LanguageToggle";
-import { Link } from '@/navigation';
-import { useTranslations } from "next-intl";
+
+const navLabels = {
+  home: "Home",
+  services: "Services",
+  projects: "Projects",
+  about: "About",
+  contact: "Contact",
+  hireMe: "Hire Me",
+};
 
 export default function Navbar() {
-  const t = useTranslations('nav');
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -22,11 +29,11 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: t('home'), href: "/" },
-    { name: t('services'), href: "/services" },
-    { name: t('projects'), href: "/projects" },
-    { name: t('about'), href: "/about" },
-    { name: t('contact'), href: "/contact" },
+    { name: navLabels.home, href: "/" },
+    { name: navLabels.services, href: "/services" },
+    { name: navLabels.projects, href: "/projects" },
+    { name: navLabels.about, href: "/about" },
+    { name: navLabels.contact, href: "/contact" },
   ];
 
   const navClasses = [
@@ -66,7 +73,7 @@ export default function Navbar() {
             href="/contact"
             className="px-6 py-2 bg-primary text-white text-xs font-bold uppercase tracking-widest pixel-border hover:bg-secondary transition-all"
           >
-            {t('hireMe')}
+            {navLabels.hireMe}
           </Link>
           <LanguageToggle />
         </div>
@@ -102,7 +109,7 @@ export default function Navbar() {
               className="px-8 py-3 bg-accent text-background font-bold uppercase tracking-widest pixel-border"
               onClick={() => setIsOpen(false)}
             >
-              {t('hireMe')}
+              {navLabels.hireMe}
             </Link>
           </motion.div>
         )}
