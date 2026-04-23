@@ -1,41 +1,30 @@
 "use client";
 
+import { useState } from "react";
 import dynamic from "next/dynamic";
-import ClientMarquee from "@/components/ui/Marquee";
-import Services from "@/components/sections/Services";
-import PortfolioPreview from "@/components/sections/PortfolioPreview";
-import About from "@/components/sections/About";
-import CTA from "@/components/sections/CTA";
+import "@/styles/pixel-system.css";
 
-const HeroScene = dynamic(() => import("@/components/three/HeroScene"), {
-  ssr: false,
-  loading: () => <div className="min-h-screen" />,
-});
-
-const FilmStripSection = dynamic(() => import("@/components/three/FilmStripSection"), {
+const SceneCanvas = dynamic(() => import("@/components/three/SceneCanvas"), {
   ssr: false,
 });
-
-const ClapperboardReveal = dynamic(() => import("@/components/three/ClapperboardReveal"), {
+const CinematicCursor = dynamic(() => import("@/components/ui/CinematicCursor"), {
   ssr: false,
 });
-
-const FilmReelAbout = dynamic(() => import("@/components/three/FilmReelAbout"), {
+const LoadingScreen = dynamic(() => import("@/components/ui/LoadingScreen"), {
   ssr: false,
 });
 
 export default function HomeClient() {
+  const [loading, setLoading] = useState(true);
+
   return (
-    <>
-      <HeroScene />
-      <ClientMarquee />
-      <Services />
-      <PortfolioPreview />
-      <FilmStripSection />
-      <ClapperboardReveal />
-      <FilmReelAbout />
-      <About />
-      <CTA />
-    </>
+    <main className="bg-[#050508] min-h-screen selection:bg-teal-500/30 selection:text-teal-200 overflow-hidden">
+      {loading && <LoadingScreen onComplete={() => setLoading(false)} />}
+      
+      <CinematicCursor />
+      
+      {/* 3D Scene + Scrollable Content */}
+      <SceneCanvas />
+    </main>
   );
 }

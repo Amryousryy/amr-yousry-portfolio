@@ -10,23 +10,30 @@ import CinematicCursor from "@/components/ui/CinematicCursor";
 import PageTransition from "@/components/ui/PageTransition";
 import dynamic from "next/dynamic";
 
-const SceneProvider = dynamic(() => import("@/components/three/SceneProvider"), {
-  ssr: false,
-});
-
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdminRoute = pathname?.startsWith("/admin");
+  const isHome = pathname === "/";
 
   if (isAdminRoute) {
     return <>{children}</>;
   }
 
+  // On Home page, we use our custom 3D ScrollControls, so we skip the global SmoothScroll
+  if (isHome) {
+    return (
+      <>
+        <CinematicCursor />
+        <Navbar />
+        {children}
+      </>
+    );
+  }
+
   return (
     <>
-      <SceneProvider />
       <CinematicCursor />
-      <LoadingScreen />
+      <LoadingScreen onComplete={() => {}} />
       <PageTransition>
         <SmoothScroll>
           <Navbar />
