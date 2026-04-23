@@ -1,37 +1,93 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
+import { useRef, useEffect, useState } from "react";
 
-const brands = [
-  "REAL ESTATE CO", "LUXURY LIVING", "TECH PULSE", "MODERN AGENCY", "VIBE MEDIA", "GLOBAL BRANDS"
+const CLIENTS = [
+  { name: "Nile Towers", seed: "nile-towers" },
+  { name: "AlRawabi", seed: "alrawabi-food" },
+  { name: "DriveX", seed: "drivex-cars" },
+  { name: "TechPulse", seed: "techpulse-eg" },
+  { name: "North Coast", seed: "north-coast" },
+  { name: "Mawjood", seed: "mawjood-tech" },
+  { name: "Sahel Vibes", seed: "sahel-vibes" },
+  { name: "CairoMotors", seed: "cairo-motors" },
 ];
 
-export default function ClientMarquee() {
+export default function Marquee() {
+  const [isPaused, setIsPaused] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleMouseEnter = () => setIsPaused(true);
+    const handleMouseLeave = () => setIsPaused(false);
+
+    container.addEventListener("mouseenter", handleMouseEnter);
+    container.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      container.removeEventListener("mouseenter", handleMouseEnter);
+      container.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, []);
+
   return (
-    <div className="py-12 bg-primary/5 border-y border-primary/10 overflow-hidden">
-      <div className="container mx-auto px-6 mb-6">
-        <p className="pixel-text text-[10px] text-accent/50 text-center tracking-[0.5em] uppercase">Trusted by Industry Leaders</p>
+    <section className="py-12 bg-[#050508] overflow-hidden">
+      <div className="max-w-6xl mx-auto px-4 mb-8">
+        <div className="text-center">
+          <div className="pixel-text text-white/50 text-xs mb-2">TRUSTED BY</div>
+          <h3 className="font-sora text-2xl text-white">Brands I&apos;ve Worked With</h3>
+        </div>
       </div>
-      
-      <div className="flex w-full overflow-hidden relative">
-        <motion.div 
-          initial={{ x: 0 }}
-          animate={{ x: "-50%" }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="flex whitespace-nowrap gap-20 items-center"
+
+      <div
+        ref={containerRef}
+        className="relative"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
+        <div
+          className={`flex gap-8 ${isPaused ? "" : "animate-marquee"}`}
+          style={{
+            animation: isPaused ? "none" : "marquee 30s linear infinite",
+          }}
         >
-          {/* Double the list for infinite effect */}
-          {[...brands, ...brands].map((brand, i) => (
-            <span 
-              key={i} 
-              className="text-2xl md:text-4xl font-display font-black text-foreground/20 hover:text-accent transition-colors cursor-default uppercase tracking-tighter"
+          {[...CLIENTS, ...CLIENTS].map((client, i) => (
+            <div
+              key={`${client.seed}-${i}`}
+              className="flex-shrink-0 px-8 py-4 pixel-box bg-[#0a0a0f] hover:bg-[#00ffcc]/10 transition-colors cursor-pointer"
             >
-              {brand}
-            </span>
+              <span className="pixel-text text-white text-sm whitespace-nowrap">
+                {client.name}
+              </span>
+            </div>
           ))}
-        </motion.div>
+        </div>
+
+        <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-[#050508] to-transparent z-10" />
+        <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-[#050508] to-transparent z-10" />
       </div>
-    </div>
+
+      <style jsx global>{`
+        @keyframes marquee {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+
+        .animate-marquee {
+          animation: marquee 30s linear infinite;
+        }
+
+        .animate-marquee:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
+    </section>
   );
 }

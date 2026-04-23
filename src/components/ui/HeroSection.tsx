@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import "@/styles/pixel-system.css";
 
@@ -9,11 +9,11 @@ const FilmStudioIsland = dynamic(() => import("@/components/three/FilmStudioIsla
   loading: () => <div className="fixed inset-0 bg-[#050508]" />,
 });
 
-const ROLES = ["Video Editor", "Motion Designer", "Content Strategist", "Visual Storyteller"];
+const ROLES = ["Video Editor", "Motion Designer", "Content Strategist", "Brand Filmmaker"];
 
 const STATS = [
-  { icon: "★", value: 20, suffix: "+", label: "BRANDS" },
-  { icon: "◆", value: 3, suffix: "+", label: "YEARS" },
+  { icon: "★", value: 50, suffix: "+", label: "FILMS EDITED" },
+  { icon: "◆", value: 3, suffix: "+", label: "YEARS EXP" },
   { icon: "▶", value: 1, suffix: "M+", label: "VIEWS" },
 ];
 
@@ -30,7 +30,7 @@ export default function HeroSection() {
 
     STATS.forEach((stat, index) => {
       let current = 0;
-      const increment = stat.value / 25;
+      const increment = stat.value / 30;
       const interval = setInterval(() => {
         current += increment;
         if (current >= stat.value) {
@@ -81,17 +81,8 @@ export default function HeroSection() {
         </h1>
 
         <div className="animate-fade-up-delay-1">
-          <div className="flex items-center gap-4 mb-6" role="list" aria-label="Skills">
-            {ROLES.map((role, i) => (
-              <span
-                key={role}
-                role="listitem"
-                className={`pixel-text text-sm ${i === currentRole ? "text-[#00ffcc]" : "text-white/40"}`}
-              >
-                {role}
-                {i < ROLES.length - 1 && <span className="text-white/20 mx-2" aria-hidden="true">·</span>}
-              </span>
-            ))}
+          <div className="pixel-text text-[#00ffcc] text-sm md:text-base mb-6">
+            VISUAL STORYTELLER
           </div>
 
           <div className="flex items-center gap-2 mb-8" aria-live="polite" aria-label="Current role">
@@ -104,7 +95,7 @@ export default function HeroSection() {
 
         <div className={`mb-6 animate-fade-up-delay-2 transition-opacity duration-500 ${showSocialProof ? "opacity-100" : "opacity-0"}`}>
           <div className="pixel-text text-[#00ffcc] text-xs" aria-label="Social proof">
-            ★ Trusted by 20+ brands across Egypt & Saudi Arabia
+            ★ Trusted by brands across Egypt & Saudi Arabia
           </div>
         </div>
 

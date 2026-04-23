@@ -14,51 +14,50 @@ interface Testimonial {
   quote: string;
   rating: number;
   project: string;
+  avatar: string;
+  projectLink: string;
 }
 
 const TESTIMONIALS: Testimonial[] = [
   {
     id: "1",
-    name: "Sarah Hassan",
+    name: "Karim El-Sayed",
     role: "Marketing Director",
-    company: "Nike Egypt",
-    quote: "Amr transformed our product launch into a viral sensation. The attention to detail and creative vision exceeded all our expectations.",
+    company: "Nile Towers Real Estate",
+    quote: "Amr delivered a 3-minute brand film for our new development that reached 2.4 million views in 72 hours. The quality was cinematic — felt like a movie trailer, not a real estate ad.",
     rating: 5,
-    project: "Air Max Campaign",
+    project: "Nile Towers Launch Campaign",
+    avatar: "https://i.pravatar.cc/80?img=11",
+    projectLink: "#project-1",
   },
   {
     id: "2",
-    name: "Mohamed Adel",
+    name: "Lina Mansour",
     role: "Brand Manager",
-    company: "Spotify MENA",
-    quote: "Working with Amr was seamless. He understood our brand voice and delivered content that resonated deeply with our audience.",
+    company: "AlRawabi Food Group",
+    quote: "Working with Amr on our Ramadan campaign was a game-changer. Every reel hit 6 figures. He understands both the creative AND the algorithm — rare combination.",
     rating: 5,
-    project: "Wrapped Video",
+    project: "AlRawabi Ramadan Series",
+    avatar: "https://i.pravatar.cc/80?img=47",
+    projectLink: "#project-2",
   },
   {
     id: "3",
-    name: "Layla Osman",
-    role: "Creative Lead",
-    company: "Tesla MENA",
-    quote: "The production quality was exceptional. Every frame told our story beautifully. Our engagement rates tripled after the campaign.",
+    name: "Omar Khalil",
+    role: "CEO & Co-Founder",
+    company: "Mawjood Tech",
+    quote: "The explainer video Amr made for our pitch deck was a crucial part of why investors said yes. Clean, clear, and beautifully animated. We raised $500K.",
     rating: 5,
-    project: "Model Y Reveal",
-  },
-  {
-    id: "4",
-    name: "Karim Mahmoud",
-    role: "CEO",
-    company: "Coca-Cola Egypt",
-    quote: "Amr doesn't just edit videos — he crafts experiences. His work on our summer campaign drove the highest ROAS we've seen.",
-    rating: 5,
-    project: "Summer Campaign",
+    project: "Mawjood App Explainer",
+    avatar: "https://i.pravatar.cc/80?img=33",
+    projectLink: "#project-6",
   },
 ];
 
 export default function TestimonialsSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const [visibleCards, setVisibleCards] = useState<boolean[]>(new Array(4).fill(false));
+  const [visibleCards, setVisibleCards] = useState<boolean[]>(new Array(3).fill(false));
 
   useEffect(() => {
     if (!sectionRef.current) return;
@@ -119,7 +118,7 @@ export default function TestimonialsSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {TESTIMONIALS.map((testimonial, i) => (
             <div
               key={testimonial.id}
@@ -137,25 +136,32 @@ export default function TestimonialsSection() {
             >
               <div className="flex items-center gap-1 mb-4">
                 {[...Array(testimonial.rating)].map((_, j) => (
-                  <span key={j} className="text-[#ffd700] text-lg">★</span>
+                  <span key={j} className="text-[#ffd700] text-lg" aria-label="5 stars">★</span>
                 ))}
               </div>
 
-              <blockquote className="text-white text-lg mb-4 leading-relaxed">
+              <blockquote className="text-white text-sm mb-4 leading-relaxed">
                 &quot;{testimonial.quote}&quot;
               </blockquote>
 
-              <div className="pixel-text text-[#00ffcc] text-xs mb-4">
+              <a
+                href={testimonial.projectLink}
+                className="pixel-text text-[#00ffcc] text-xs mb-4 block hover:text-white transition-colors"
+              >
                 PROJECT: {testimonial.project}
-              </div>
+              </a>
 
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#00ffcc] to-[#00ff88] flex items-center justify-center text-[#050508] font-bold text-lg">
-                  {testimonial.name.charAt(0)}
-                </div>
+                <img
+                  src={testimonial.avatar}
+                  alt={`${testimonial.name} avatar`}
+                  className="w-12 h-12 rounded-full object-cover"
+                  loading="lazy"
+                />
                 <div>
                   <div className="text-white font-sora">{testimonial.name}</div>
-                  <div className="text-white/50 text-sm">{testimonial.role}, {testimonial.company}</div>
+                  <div className="text-white/50 text-sm">{testimonial.role}</div>
+                  <div className="text-white/50 text-xs">{testimonial.company}</div>
                 </div>
               </div>
             </div>

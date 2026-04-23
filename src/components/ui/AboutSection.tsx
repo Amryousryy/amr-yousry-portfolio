@@ -7,11 +7,23 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 const SKILLS = [
-  { name: "Premiere Pro", level: 95 },
-  { name: "After Effects", level: 88 },
-  { name: "DaVinci Resolve", level: 82 },
-  { name: "Cinema 4D", level: 70 },
-  { name: "Photoshop", level: 85 },
+  { name: "Video Editing (Premiere Pro / DaVinci)", level: 95 },
+  { name: "Motion Graphics (After Effects)", level: 90 },
+  { name: "Color Grading", level: 85 },
+  { name: "Content Strategy", level: 88 },
+  { name: "Brand Storytelling", level: 92 },
+  { name: "Photography Direction", level: 80 },
+];
+
+const TOOLS = [
+  "Premiere Pro",
+  "After Effects",
+  "DaVinci Resolve",
+  "Photoshop",
+  "Illustrator",
+  "Cinema 4D",
+  "Figma",
+  "CapCut",
 ];
 
 export default function AboutSection() {
@@ -69,36 +81,43 @@ export default function AboutSection() {
                 )`,
               }}
             >
-              <div className="absolute inset-8 rounded-full bg-[#050508] flex items-center justify-center">
-                <div className="w-20 h-20 rounded-full bg-[#00ffcc]/20 flex items-center justify-center">
-                  <span className="pixel-text text-[#00ffcc] text-xs">PLAY</span>
-                </div>
+              <div className="absolute inset-8 rounded-full bg-[#050508] flex items-center justify-center overflow-hidden">
+                <img
+                  src="https://i.pravatar.cc/200?img=69"
+                  alt="Amr Yousry - Video Editor and Motion Designer"
+                  className="w-full h-full object-cover"
+                />
               </div>
-              
+
               <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#1a1a2e]" />
               <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-[#1a1a2e]" />
             </div>
-            
+
             <div className="absolute -top-6 -right-6 w-10 h-20 bg-[#1a1a2e] rounded-full animate-spin" style={{ animationDuration: "4s" }} />
             <div className="absolute -bottom-6 -left-6 w-10 h-20 bg-[#1a1a2e] rounded-full animate-spin" style={{ animationDuration: "4s", animationDirection: "reverse" }} />
           </div>
-          
+
           <div ref={contentRef} className="flex-1 space-y-8">
             <div>
               <div className="pixel-text text-[#00ffcc] text-sm mb-2">ABOUT ME</div>
               <h2 className="font-sora text-4xl md:text-5xl text-white mb-4">
-                Crafting Stories <br />
-                <span className="text-[#00ffcc]">Frame by Frame</span>
+                Based in Cairo,<br />
+                <span className="text-[#00ffcc]">Crafting Stories</span>
               </h2>
             </div>
-            
-            <p className="text-white/70 text-lg leading-relaxed">
-              With over 3 years of experience in video production and post-production, 
-              I specialize in transforming ideas into compelling visual narratives. 
-              From concept to final cut, I bring creativity, technical expertise, 
-              and a keen eye for detail to every project.
-            </p>
-            
+
+            <div className="space-y-4 text-white/70 text-lg leading-relaxed">
+              <p>
+                I&apos;m a video editor and motion designer with 3+ years of experience turning brand ideas into cinematic stories.
+              </p>
+              <p>
+                I&apos;ve worked with real estate developers, food brands, tech startups, and tourism boards across Egypt and Saudi Arabia.
+              </p>
+              <p>
+                My work lives at the intersection of storytelling, strategy, and visual craft — every frame is intentional.
+              </p>
+            </div>
+
             <div className="pixel-box bg-[#0a0a0f] p-6">
               <div className="pixel-text text-[#00ffcc] text-xs mb-4">SKILLS</div>
               <div className="space-y-4">
@@ -118,14 +137,23 @@ export default function AboutSection() {
                 ))}
               </div>
             </div>
-            
+
+            <div>
+              <div className="pixel-text text-[#00ffcc] text-xs mb-4">TOOLS I USE</div>
+              <div className="flex flex-wrap gap-2">
+                {TOOLS.map((tool, i) => (
+                  <span key={i} className="pixel-stat">{tool}</span>
+                ))}
+              </div>
+            </div>
+
             <div className="flex flex-wrap gap-4">
-              <button className="pixel-btn">
+              <a href="#contact" className="pixel-btn">
                 DOWNLOAD CV
-              </button>
-              <button className="pixel-btn-outline">
+              </a>
+              <a href="#projects" className="pixel-btn-outline">
                 VIEW PROJECTS
-              </button>
+              </a>
             </div>
           </div>
         </div>

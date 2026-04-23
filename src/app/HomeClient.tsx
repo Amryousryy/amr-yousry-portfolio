@@ -24,11 +24,16 @@ const ContactSection = dynamic(() => import("@/components/ui/ContactSection"), {
   ssr: false,
 });
 
+const Marquee = dynamic(() => import("@/components/ui/Marquee"), {
+  ssr: false,
+});
+
 export default function Home() {
   return (
     <>
       <SectionNarrator sections={["hero", "projects", "services", "testimonials", "about", "contact"]} />
       <HeroSection />
+      <Marquee />
       <FilmStripSection />
       <ServicesSection />
       <TestimonialsSection />
