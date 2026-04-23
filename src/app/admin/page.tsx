@@ -152,33 +152,33 @@ export default function AdminOverview() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 pb-6 border-b border-primary/10">
-        <div>
-          <h1 className="text-2xl font-display font-bold uppercase tracking-tight">Command Center</h1>
-          <p className="text-foreground/40 text-xs uppercase tracking-widest mt-1">
-            Your portfolio at a glance
+        <div className="space-y-1">
+          <h1 className="text-xl font-display font-bold uppercase tracking-tight">Command Center</h1>
+          <p className="text-[11px] text-foreground/40 uppercase tracking-wider">
+            {Array.isArray(projectsData) ? projectsData.length : 0} projects · {Array.isArray(filtersData) ? filtersData.length : 0} filters
           </p>
         </div>
-        <div className="flex items-stretch gap-2">
+        <div className="flex items-center gap-2">
           <Link
             href="/admin/projects/new"
             className="flex items-center gap-2 px-4 py-2.5 bg-accent text-background text-xs font-medium uppercase tracking-tight hover:bg-accent/90 transition-colors"
           >
             <Plus size={14} />
-            <span className="hidden sm:inline">Add Project</span>
+            <span>Add Project</span>
           </Link>
           <Link
             href="/admin/leads"
-            className="flex items-center gap-2 px-4 py-2.5 bg-primary/30 text-foreground/60 text-xs font-medium uppercase tracking-tight hover:text-foreground hover:bg-primary/50 transition-colors"
+            className="flex items-center gap-2 px-4 py-2.5 bg-primary/20 border border-primary/10 text-foreground/60 text-xs font-medium uppercase tracking-tight hover:text-foreground hover:border-primary/30 transition-colors"
           >
             <User size={14} />
-            <span className="hidden sm:inline">Leads</span>
+            <span>Leads</span>
           </Link>
           <Link
             href="/admin/analytics"
-            className="flex items-center gap-2 px-4 py-2.5 bg-primary/30 text-foreground/60 text-xs font-medium uppercase tracking-tight hover:text-foreground hover:bg-primary/50 transition-colors"
+            className="flex items-center gap-2 px-4 py-2.5 bg-primary/20 border border-primary/10 text-foreground/60 text-xs font-medium uppercase tracking-tight hover:text-foreground hover:border-primary/30 transition-colors"
           >
             <BarChart3 size={14} />
-            <span className="hidden sm:inline">Analytics</span>
+            <span>Analytics</span>
           </Link>
         </div>
       </div>
@@ -268,13 +268,13 @@ export default function AdminOverview() {
                   </span>
                 </div>
               )) : (
-                <div className="flex flex-col items-center justify-center py-10 text-center">
+                <div className="flex flex-col items-center justify-center py-10 text-center px-4">
                   <div className="p-3 bg-primary/20 rounded-full mb-4">
                     <Zap size={20} className="text-foreground/20" />
                   </div>
                   <p className="text-xs font-medium uppercase tracking-wide text-foreground/30 mb-1">No Recent Activity</p>
-                  <p className="text-[10px] text-foreground/20">Your actions will appear here</p>
-                  <Link href="/admin/projects/new" className="mt-4 text-[10px] text-accent font-medium uppercase tracking-wide hover:underline">
+                  <p className="text-[10px] text-foreground/20 mb-4">Your actions will appear here after you make changes</p>
+                  <Link href="/admin/projects/new" className="px-4 py-2 bg-accent/10 text-accent text-[10px] font-medium uppercase tracking-wide hover:bg-accent/20 transition-colors">
                     Create your first project
                   </Link>
                 </div>
