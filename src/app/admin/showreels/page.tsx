@@ -24,13 +24,16 @@ export default function ShowreelManagerPage() {
     ctaLink: "/#contact",
   });
 
-  const { data: showreels, isLoading } = useQuery({
+  const { data: showreelsResponse, isLoading } = useQuery({
     queryKey: ["showreels", "admin"],
     queryFn: async () => {
       const res = await fetch("/api/showreels?admin=true");
-      return await res.json();
+      const json = await res.json();
+      return Array.isArray(json) ? json : json?.showreels ?? json?.data ?? [];
     },
   });
+
+  const showreels = Array.isArray(showreelsResponse) ? showreelsResponse : [];
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -207,7 +210,7 @@ export default function ShowreelManagerPage() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-        {showreels?.map((reel: any) => (
+        {(showreels ?? []).map((reel: any) => (
           <div key={reel._id} className={`group bg-primary/5 border transition-all ${reel.isActive ? 'border-accent shadow-[0_0_30px_rgba(0,245,212,0.05)]' : 'border-primary/10 opacity-60 hover:opacity-100'}`}>
              <div className="relative aspect-video overflow-hidden">
                 <Image src={reel.thumbnailUrl} alt={reel.title.en} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
