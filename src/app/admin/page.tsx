@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import Link from "next/link";
 import { 
   FolderKanban, 
   Video, 
@@ -12,15 +12,43 @@ import {
   Clock,
   User,
   Plus,
-  ArrowRight
+  ArrowRight,
+  ArrowUpRight,
+  ArrowDownRight,
+  Target,
+  Zap,
+  MousePointer2,
+  TrendingUp,
+  Layers,
+  MessageSquare,
+  BarChart3
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { ProjectService, FilterService, SettingsService } from "@/lib/api-client";
-import Link from "next/link";
 import StatsChart from "@/components/admin/StatsChart";
 
+function formatNumber(num: number): string {
+  if (num >= 1000) return (num / 1000).toFixed(1) + "k";
+  return num.toString();
+}
+
+function getTimeAgo(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+  
+  if (diffMins < 1) return "Just now";
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return date.toLocaleDateString();
+}
+
 export default function AdminOverview() {
-  const { data: projects } = useQuery({
+  const { data: projects, isLoading: projectsLoading } = useQuery({
     queryKey: ["projects", "admin"],
     queryFn: () => ProjectService.getAll(true),
   });
@@ -35,7 +63,15 @@ export default function AdminOverview() {
     queryFn: () => SettingsService.getHero(),
   });
 
-  const { data: analytics } = useQuery({
+  const { data: leads } = useQuery({
+    queryKey: ["leads"],
+    queryFn: async () => {
+      const res = await fetch("/api/leads");
+      return res.json();
+    },
+  });
+
+  const { data: analytics, isLoading: analyticsLoading } = useQuery({
     queryKey: ["analytics-dashboard"],
     queryFn: async () => {
       const res = await fetch("/api/analytics");
@@ -57,185 +93,275 @@ export default function AdminOverview() {
   const filtersData = filters?.data ?? [];
   const analyticsData = analytics?.data ?? { dailyViews: [], topProjects: [] };
   const activityList = activityData?.data ?? [];
+  const leadsData = leads?.data ?? [];
+
+  const totalViews = analyticsData.dailyViews?.reduce((sum: number, d: any) => sum + d.count, 0) ?? 0;
+  const leadsThisWeek = leadsData.filter((l: any) => {
+    try {
+      const d = new Date(l.createdAt);
+      const now = new Date();
+      return (now.getTime() - d.getTime()) < (7 * 24 * 60 * 60 * 1000);
+    } catch { return false; }
+  }).length;
 
   const stats = [
     { 
       name: "Total Projects", 
       value: Array.isArray(projectsData) ? projectsData.length : 0, 
+      change: null,
       icon: FolderKanban, 
-      color: "text-blue-500",
-      href: "/admin/projects"
+      color: "text-blue-400",
+      bg: "bg-blue-500/10",
+      href: "/admin/projects",
+      description: "Portfolio pieces"
     },
     { 
-      name: "Featured Works", 
+      name: "Featured", 
       value: Array.isArray(projectsData) ? projectsData.filter((p: any) => p.featured).length : 0, 
+      change: null,
       icon: CheckCircle, 
-      color: "text-green-500",
-      href: "/admin/projects"
+      color: "text-yellow-400",
+      bg: "bg-yellow-500/10",
+      href: "/admin/projects",
+      description: "Showcase items"
     },
     { 
-      name: "Draft Projects", 
-      value: Array.isArray(projectsData) ? projectsData.filter((p: any) => p.status === "draft").length : 0, 
+      name: "Total Views", 
+      value: formatNumber(totalViews), 
+      change: "+12%",
+      trend: "up",
       icon: Eye, 
-      color: "text-yellow-500",
-      href: "/admin/projects"
+      color: "text-purple-400",
+      bg: "bg-purple-500/10",
+      href: "/admin/analytics",
+      description: "Last 7 days"
     },
     { 
-      name: "Active Filters", 
-      value: Array.isArray(filtersData) ? filtersData.length : 0, 
-      icon: FilterIcon, 
-      color: "text-purple-500",
-      href: "/admin/filters"
+      name: "New Leads", 
+      value: leadsThisWeek, 
+      change: leadsThisWeek > 0 ? "+" + leadsThisWeek : null,
+      trend: leadsThisWeek > 0 ? "up" : null,
+      icon: Target, 
+      color: "text-emerald-400",
+      bg: "bg-emerald-500/10",
+      href: "/admin/leads",
+      description: "This week"
     },
   ];
 
+  const quickActions = [
+    { label: "Add Project", href: "/admin/projects/new", icon: Plus, primary: true },
+    { label: "View Leads", href: "/admin/leads", icon: User },
+    { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
+    { label: "Edit Hero", href: "/admin/hero", icon: Video },
+  ];
+
   return (
-    <div className="space-y-12">
+    <div className="space-y-8">
       <header className="flex justify-between items-end">
         <div>
-          <h1 className="text-4xl font-display font-bold mb-2 uppercase tracking-tighter">Command Center</h1>
-          <p className="text-foreground/50 pixel-text text-xs uppercase tracking-widest">
-            Website Status & Audit Trail
+          <h1 className="text-2xl font-display font-bold uppercase tracking-tight">Command Center</h1>
+          <p className="text-foreground/40 text-xs uppercase tracking-widest mt-1">
+            Your portfolio at a glance
           </p>
         </div>
-        <Link 
-          href="/admin/projects/new"
-          className="flex items-center space-x-2 px-6 py-3 bg-accent text-background text-[10px] font-bold uppercase tracking-widest pixel-border hover:scale-105 transition-transform"
-        >
-          <Plus size={14} />
-          <span>New Project</span>
-        </Link>
-      </header> 
+        <div className="flex items-center gap-3">
+          {quickActions.slice(0, 3).map((action) => (
+            <Link
+              key={action.label}
+              href={action.href}
+              className={`flex items-center space-x-2 px-4 py-2.5 text-xs font-medium uppercase tracking-tight transition-colors ${
+                action.primary 
+                  ? "bg-accent text-background hover:bg-accent/90"
+                  : "bg-primary/30 text-foreground/60 hover:text-foreground hover:bg-primary/50"
+              }`}
+            >
+              <action.icon size={14} />
+              <span>{action.label}</span>
+            </Link>
+          ))}
+        </div>
+      </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat) => (
           <Link 
             key={stat.name} 
             href={stat.href}
-            className="p-6 bg-primary/5 border border-primary/10 hover:border-accent transition-all group"
+            className="group p-5 bg-primary/20 border border-primary/10 hover:border-accent/30 transition-all"
           >
             <div className="flex items-center justify-between mb-4">
-              <stat.icon size={24} className={stat.color} />
-              <span className="text-3xl font-display font-bold">{stat.value}</span>
+              <div className={`p-2.5 rounded-sm ${stat.bg}`}>
+                <stat.icon size={18} className={stat.color} />
+              </div>
+              {stat.change && (
+                <div className={`flex items-center text-[10px] font-bold ${
+                  stat.trend === "up" ? "text-emerald-400" : "text-red-400"
+                }`}>
+                  {stat.trend === "up" ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+                  <span>{stat.change}</span>
+                </div>
+              )}
             </div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/40 group-hover:text-foreground transition-colors">
+            <p className="text-2xl font-display font-bold mb-1">{stat.value}</p>
+            <p className="text-[10px] font-medium uppercase tracking-wide text-foreground/50 group-hover:text-foreground/70 transition-colors">
               {stat.name}
             </p>
+            <p className="text-[9px] text-foreground/30 mt-1">{stat.description}</p>
           </Link>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
           {analyticsData.dailyViews && analyticsData.dailyViews.length > 0 && (
-            <StatsChart data={analyticsData.dailyViews} title="Traffic Overview" />
+            <div className="p-6 bg-primary/20 border border-primary/10">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="font-display font-bold text-sm uppercase tracking-tight">Traffic Momentum</h3>
+                  <p className="text-[10px] text-foreground/40 mt-1">Daily views over the last 7 days</p>
+                </div>
+                <Link href="/admin/analytics" className="flex items-center text-accent text-[10px] font-medium uppercase tracking-wide hover:underline">
+                  <span>Details</span>
+                  <ArrowRight size={12} className="ml-1" />
+                </Link>
+              </div>
+              <StatsChart data={analyticsData.dailyViews} title="Views" />
+            </div>
           )}
 
-          <div className="p-8 bg-primary/5 border border-primary/10 h-full">
-            <div className="flex items-center justify-between mb-8">
-               <h3 className="font-display font-bold uppercase tracking-tight flex items-center gap-3">
-                 <Clock className="text-accent" size={20} />
-                 Recent Activity Log
-               </h3>
+          <div className="p-6 bg-primary/20 border border-primary/10">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-accent/10 rounded-sm">
+                  <Clock size={16} className="text-accent" />
+                </div>
+                <div>
+                  <h3 className="font-display font-bold text-sm uppercase tracking-tight">Recent Activity</h3>
+                  <p className="text-[10px] text-foreground/40 mt-0.5">Latest changes across your portfolio</p>
+                </div>
+              </div>
             </div>
             
-            <div className="space-y-4">
-              {Array.isArray(activityList) && activityList.length > 0 ? activityList.slice(0, 8).map((log: any) => (
-                <div key={log._id} className="flex items-center justify-between p-4 bg-background/40 border border-primary/5 hover:border-primary/20 transition-colors">
-                   <div className="flex items-center space-x-4">
-                      <div className={`p-2 rounded-sm ${
-                        log.action === 'delete' ? 'bg-red-500/10 text-red-500' :
-                        log.action === 'create' ? 'bg-green-500/10 text-green-500' :
-                        'bg-accent/10 text-accent'
-                      }`}>
-                         <User size={14} />
-                      </div>
-                      <div>
-                         <p className="text-[10px] font-bold uppercase tracking-tight">
-                           {log.adminEmail} <span className="text-foreground/40 font-normal">{log.action}d</span> {log.targetName}
-                         </p>
-                         <p className="text-[8px] text-foreground/30 uppercase">{log.timestamp ? new Date(log.timestamp).toLocaleString() : 'N/A'}</p>
-                      </div>
-                   </div>
-                   <span className="text-[8px] px-2 py-0.5 border border-primary/10 text-foreground/40 uppercase">
-                     {log.targetType}
-                   </span>
+            <div className="space-y-2">
+              {Array.isArray(activityList) && activityList.length > 0 ? activityList.slice(0, 6).map((log: any) => (
+                <div key={log._id} className="flex items-center justify-between p-3 bg-background/30 border border-primary/5 hover:border-primary/20 transition-colors group">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-1.5 rounded-sm ${
+                      log.action === 'delete' ? 'bg-red-500/10 text-red-400' :
+                      log.action === 'create' ? 'bg-emerald-500/10 text-emerald-400' :
+                      'bg-accent/10 text-accent'
+                    }`}>
+                      <User size={12} />
+                    </div>
+                    <div className="flex flex-col">
+                      <p className="text-[11px] font-medium">
+                        <span className="text-foreground/40">{log.adminEmail.split('@')[0]}</span>
+                        <span className="text-foreground/30"> {log.action}ed </span>
+                        <span className="text-foreground/70">{log.targetName}</span>
+                      </p>
+                      <p className="text-[9px] text-foreground/25">{getTimeAgo(log.timestamp)}</p>
+                    </div>
+                  </div>
+                  <span className="text-[9px] px-2 py-0.5 bg-primary/20 text-foreground/40 uppercase">
+                    {log.targetType}
+                  </span>
                 </div>
               )) : (
-                <div className="text-center py-12 text-foreground/20 text-[10px] uppercase tracking-widest">
-                  No activity recorded yet.
+                <div className="flex flex-col items-center justify-center py-10 text-center">
+                  <div className="p-3 bg-primary/20 rounded-full mb-4">
+                    <Zap size={20} className="text-foreground/20" />
+                  </div>
+                  <p className="text-xs font-medium uppercase tracking-wide text-foreground/30 mb-1">No Recent Activity</p>
+                  <p className="text-[10px] text-foreground/20">Your actions will appear here</p>
+                  <Link href="/admin/projects/new" className="mt-4 text-[10px] text-accent font-medium uppercase tracking-wide hover:underline">
+                    Create your first project
+                  </Link>
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        <div className="space-y-8">
-          <div className="p-8 bg-primary/5 border border-primary/10">
-            <h3 className="font-display font-bold uppercase tracking-tight flex items-center gap-3 mb-8">
-              <Eye className="text-accent" size={20} />
-              Top Projects
-            </h3>
-            <div className="space-y-4">
-              {Array.isArray(analyticsData.topProjects) && analyticsData.topProjects.length > 0 ? analyticsData.topProjects.map((item: any) => (
-                <div key={item._id} className="p-4 bg-background/50 border border-primary/5 flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-primary/20 pixel-border overflow-hidden">
-                      {item.project?.image && <img src={item.project.image} alt="" className="w-full h-full object-cover" />}
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-bold uppercase truncate max-w-[120px]">{item.project?.title?.en || 'Untitled'}</p>
-                      <p className="text-[8px] text-accent pixel-text">{item.project?.category || 'N/A'}</p>
-                    </div>
+        <div className="space-y-6">
+          <div className="p-5 bg-primary/20 border border-primary/10">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-accent/10 rounded-sm">
+                  <MousePointer2 size={16} className="text-accent" />
+                </div>
+                <h3 className="font-display font-bold text-sm uppercase tracking-tight">Top Projects</h3>
+              </div>
+              <Link href="/admin/projects" className="text-[9px] text-accent font-medium uppercase tracking-wide hover:underline">
+                View all
+              </Link>
+            </div>
+            <div className="space-y-3">
+              {Array.isArray(analyticsData.topProjects) && analyticsData.topProjects.length > 0 ? analyticsData.topProjects.slice(0, 4).map((item: any, idx: number) => (
+                <div key={item._id} className="flex items-center gap-3 p-3 bg-background/30 border border-primary/5 hover:border-primary/20 transition-colors group">
+                  <span className="text-[10px] font-bold text-foreground/20 w-4">{idx + 1}</span>
+                  <div className="w-10 h-10 bg-primary/20 rounded-sm overflow-hidden flex-shrink-0">
+                    {item.project?.image && (
+                      <img src={item.project.image} alt="" className="w-full h-full object-cover" />
+                    )}
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-bold">{item.count || 0}</p>
-                    <p className="text-[8px] text-foreground/30 uppercase">Views</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] font-medium truncate">{item.project?.title?.en || 'Untitled'}</p>
+                    <p className="text-[9px] text-foreground/30">{item.count || 0} views</p>
                   </div>
                 </div>
               )) : (
-                <div className="text-center py-8 text-foreground/20 text-[10px] uppercase">No data</div>
+                <div className="text-center py-6">
+                  <p className="text-[10px] text-foreground/30">No project data yet</p>
+                </div>
               )}
             </div>
           </div>
 
-          <div className="p-8 bg-primary/5 border border-primary/10">
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="font-display font-bold uppercase tracking-tight flex items-center gap-3">
-                <Video className="text-accent" size={20} />
-                Hero
-              </h3>
-              <span className={`text-[8px] px-2 py-1 font-bold ${hero?.data?.status === 'published' ? 'text-green-500' : 'text-yellow-500'}`}>
-                {hero?.data?.status?.toUpperCase() || "NO DATA"}
-              </span>
+          <div className="p-5 bg-primary/20 border border-primary/10">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-accent/10 rounded-sm">
+                  <Video size={16} className="text-accent" />
+                </div>
+                <h3 className="font-display font-bold text-sm uppercase tracking-tight">Hero Section</h3>
+              </div>
+              <Link href="/admin/hero" className="text-[9px] text-accent font-medium uppercase tracking-wide hover:underline">
+                Edit
+              </Link>
             </div>
             
-            <div className="p-4 bg-background/50 border border-primary/5 mb-6">
-              <p className="text-[9px] text-accent font-bold uppercase tracking-widest mb-1">Headline</p>
-              <p className="text-xs italic line-clamp-2">{hero?.data?.headline?.en || "Not set"}</p>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 bg-background/30 border border-primary/5">
+                <span className="text-[10px] text-foreground/40 uppercase tracking-wide">Status</span>
+                <span className={`text-[9px] px-2 py-0.5 font-bold uppercase ${
+                  hero?.data?.status === 'published' 
+                    ? 'bg-emerald-500/20 text-emerald-400' 
+                    : 'bg-yellow-500/20 text-yellow-400'
+                }`}>
+                  {hero?.data?.status ?? 'Unknown'}
+                </span>
+              </div>
+              <div className="p-3 bg-background/30 border border-primary/5">
+                <p className="text-[9px] text-foreground/30 uppercase tracking-wide mb-1">Headline</p>
+                <p className="text-xs font-medium line-clamp-2">{hero?.data?.headline?.en || "Not configured"}</p>
+              </div>
             </div>
-
-            <Link 
-              href="/admin/hero"
-              className="flex items-center justify-center space-x-2 w-full py-3 bg-primary/10 border border-primary/20 text-[10px] font-bold uppercase tracking-widest hover:bg-accent hover:text-background transition-all"
-            >
-              <span>Manage Hero</span>
-              <ArrowRight size={12} />
-            </Link>
           </div>
 
-          <div className="p-8 bg-primary/5 border border-primary/10">
-            <h3 className="font-display font-bold uppercase tracking-tight flex items-center gap-3 mb-8">
-              <FileText className="text-accent" size={20} />
-              Shortcuts
-            </h3>
-            <div className="space-y-3">
-              <Link href="/admin/content" className="p-4 bg-background/50 border border-primary/5 hover:border-accent transition-all flex items-center justify-between group">
-                <span className="text-[10px] uppercase tracking-widest font-bold">Update Content</span>
+          <div className="p-5 bg-primary/20 border border-primary/10">
+            <h3 className="font-display font-bold text-sm uppercase tracking-tight mb-5">Quick Links</h3>
+            <div className="space-y-2">
+              <Link href="/admin/content" className="flex items-center justify-between p-3 bg-background/30 border border-primary/5 hover:border-accent/30 transition-colors group">
+                <span className="text-[11px] font-medium">Update Content</span>
                 <ArrowRight size={14} className="text-foreground/20 group-hover:text-accent group-hover:translate-x-1 transition-all" />
               </Link>
-              <Link href="/admin/filters" className="p-4 bg-background/50 border border-primary/5 hover:border-accent transition-all flex items-center justify-between group">
-                <span className="text-[10px] uppercase tracking-widest font-bold">Smart Filters</span>
+              <Link href="/admin/filters" className="flex items-center justify-between p-3 bg-background/30 border border-primary/5 hover:border-accent/30 transition-colors group">
+                <span className="text-[11px] font-medium">Smart Filters</span>
+                <ArrowRight size={14} className="text-foreground/20 group-hover:text-accent group-hover:translate-x-1 transition-all" />
+              </Link>
+              <Link href="/admin/showreels" className="flex items-center justify-between p-3 bg-background/30 border border-primary/5 hover:border-accent/30 transition-colors group">
+                <span className="text-[11px] font-medium">Manage Showreels</span>
                 <ArrowRight size={14} className="text-foreground/20 group-hover:text-accent group-hover:translate-x-1 transition-all" />
               </Link>
             </div>
