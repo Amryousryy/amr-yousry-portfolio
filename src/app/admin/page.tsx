@@ -95,6 +95,9 @@ export default function AdminOverview() {
   const activityList = activityData?.data ?? [];
   const leadsData = leads?.data ?? [];
 
+  const totalProjects = Array.isArray(projectsData) ? projectsData.length : 0;
+  const totalFilters = Array.isArray(filtersData) ? filtersData.length : 0;
+  const totalLeads = Array.isArray(leadsData) ? leadsData.length : 0;
   const totalViews = analyticsData.dailyViews?.reduce((sum: number, d: any) => sum + d.count, 0) ?? 0;
   const leadsThisWeek = leadsData.filter((l: any) => {
     try {
@@ -106,14 +109,14 @@ export default function AdminOverview() {
 
   const stats = [
     { 
-      name: "Total Projects", 
-      value: Array.isArray(projectsData) ? projectsData.length : 0, 
+      name: "Projects", 
+      value: totalProjects, 
       change: null,
       icon: FolderKanban, 
       color: "text-blue-400",
       bg: "bg-blue-500/10",
       href: "/admin/projects",
-      description: "Portfolio pieces"
+      description: totalProjects > 0 ? "Active portfolio" : "Start building"
     },
     { 
       name: "Featured", 
@@ -126,7 +129,7 @@ export default function AdminOverview() {
       description: "Showcase items"
     },
     { 
-      name: "Total Views", 
+      name: "Views", 
       value: formatNumber(totalViews), 
       change: "+12%",
       trend: "up",
@@ -137,7 +140,7 @@ export default function AdminOverview() {
       description: "Last 7 days"
     },
     { 
-      name: "New Leads", 
+      name: "Leads", 
       value: leadsThisWeek, 
       change: leadsThisWeek > 0 ? "+" + leadsThisWeek : null,
       trend: leadsThisWeek > 0 ? "up" : null,
@@ -145,18 +148,22 @@ export default function AdminOverview() {
       color: "text-emerald-400",
       bg: "bg-emerald-500/10",
       href: "/admin/leads",
-      description: "This week"
+      description: leadsThisWeek > 0 ? "This week" : "No new leads"
     },
   ];
+
+  const subtitle = totalProjects === 0 
+    ? "Get started by adding your first project" 
+    : totalLeads > 0 
+      ? `${totalLeads} leads total · ${leadsThisWeek} this week`
+      : `${totalProjects} projects · ${totalFilters} filters`;
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 pb-6 border-b border-primary/10">
         <div className="space-y-1">
           <h1 className="text-xl font-display font-bold uppercase tracking-tight">Command Center</h1>
-          <p className="text-[11px] text-foreground/40 uppercase tracking-wider">
-            {Array.isArray(projectsData) ? projectsData.length : 0} projects · {Array.isArray(filtersData) ? filtersData.length : 0} filters
-          </p>
+          <p className="text-[11px] text-foreground/40 uppercase tracking-wider">{subtitle}</p>
         </div>
         <div className="flex items-center gap-2">
           <Link
@@ -171,7 +178,7 @@ export default function AdminOverview() {
             className="flex items-center gap-2 px-4 py-2.5 bg-primary/20 border border-primary/10 text-foreground/60 text-xs font-medium uppercase tracking-tight hover:text-foreground hover:border-primary/30 transition-colors"
           >
             <User size={14} />
-            <span>Leads</span>
+            <span>{totalLeads} Leads</span>
           </Link>
           <Link
             href="/admin/analytics"
