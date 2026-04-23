@@ -5,6 +5,7 @@ import SessionProviderWrapper from "@/components/providers/SessionProviderWrappe
 import QueryProvider from "@/components/providers/QueryProvider";
 import { Toaster } from "sonner";
 import RootLayoutClient from "@/components/layout/RootLayoutClient";
+import AnalyticsProvider from "@/components/providers/AnalyticsProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -50,6 +51,7 @@ export default function RootLayout({
           <QueryProvider>
             <Toaster richColors theme="dark" position="top-right" />
             <RootLayoutClient>{children}</RootLayoutClient>
+            <AnalyticsProvider />
           </QueryProvider>
         </SessionProviderWrapper>
       </body>
