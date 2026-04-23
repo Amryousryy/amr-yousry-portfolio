@@ -10,6 +10,7 @@ import FloatingCTA from "@/components/ui/FloatingCTA";
 import SessionProviderWrapper from "@/components/providers/SessionProviderWrapper";
 import QueryProvider from "@/components/providers/QueryProvider";
 import { Toaster } from "sonner";
+import LayoutWrapper from "@/components/layout/LayoutWrapper";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -47,14 +48,7 @@ export default function RootLayout({
         <SessionProviderWrapper>
           <QueryProvider>
             <Toaster richColors theme="dark" position="top-right" />
-            <LoadingScreen />
-            <SmoothScroll>
-              <CustomCursor />
-              <Navbar />
-              <main className="min-h-screen">{children}</main>
-              <Footer />
-              <FloatingCTA />
-            </SmoothScroll>
+            <LayoutWrapper>{children}</LayoutWrapper>
           </QueryProvider>
         </SessionProviderWrapper>
       </body>
