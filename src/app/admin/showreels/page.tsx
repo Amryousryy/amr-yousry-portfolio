@@ -8,8 +8,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 import Link from "next/link";
 import BilingualInput from "@/components/admin/BilingualInput";
-
-const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'ml_default';
+import { mediaConfig } from "@/lib/media/config";
 
 export default function ShowreelManagerPage() {
   const queryClient = useQueryClient();
@@ -154,7 +153,7 @@ export default function ShowreelManagerPage() {
                     <div className="space-y-4">
                        <label className="pixel-text text-[10px] text-accent block uppercase tracking-widest">Video Asset</label>
 <CldUploadWidget 
-                         uploadPreset={CLOUDINARY_UPLOAD_PRESET}
+                         uploadPreset={mediaConfig.uploadPreset}
                         options={{ resourceType: "video" }}
                         onSuccess={(result: any) => setFormData({ ...formData, videoUrl: result.info.secure_url })}
                        >
@@ -169,7 +168,7 @@ export default function ShowreelManagerPage() {
                     <div className="space-y-4">
                        <label className="pixel-text text-[10px] text-accent block uppercase tracking-widest">Thumbnail / Poster</label>
 <CldUploadWidget 
-                         uploadPreset={CLOUDINARY_UPLOAD_PRESET}
+                         uploadPreset={mediaConfig.uploadPreset}
                         onSuccess={(result: any) => setFormData({ ...formData, thumbnailUrl: result.info.secure_url })}
                        >
                          {({ open }) => (

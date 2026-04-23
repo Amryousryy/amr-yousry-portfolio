@@ -13,10 +13,9 @@ import RichTextEditor from "./RichTextEditor";
 import DraggableGallery from "./DraggableGallery";
 import TagsInput from "./TagsInput";
 import SectionsEditor from "./SectionsEditor";
+import { mediaConfig } from "@/lib/media/config";
 
 const categories = ["Real Estate", "UGC / Ads", "Social Media", "Corporate", "Brand Film"];
-
-const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'ml_default';
 
 interface ProjectEditorProps {
   initialData?: Project;
@@ -397,7 +396,7 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
                <div className="space-y-4">
                   <label className="pixel-text text-[10px] text-accent block uppercase tracking-widest">Cover Image</label>
 <CldUploadWidget
-                      uploadPreset={CLOUDINARY_UPLOAD_PRESET}
+                      uploadPreset={mediaConfig.uploadPreset}
                     onSuccess={(result) => {
                       if (result.info && typeof result.info === 'object' && 'secure_url' in result.info) {
                         setFormData({ ...formData, image: (result.info as any).secure_url });
@@ -442,7 +441,7 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
                <div className="flex justify-between items-center">
                   <label className="pixel-text text-[10px] text-accent block uppercase tracking-widest">Gallery Assets (Drag to reorder)</label>
 <CldUploadWidget
-                      uploadPreset={CLOUDINARY_UPLOAD_PRESET}
+                      uploadPreset={mediaConfig.uploadPreset}
                     onSuccess={(result) => {
                       if (result.info && typeof result.info === 'object' && 'secure_url' in result.info) {
                         setFormData(prev => ({ 

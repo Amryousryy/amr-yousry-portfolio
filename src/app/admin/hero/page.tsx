@@ -12,8 +12,7 @@ import { CldUploadWidget } from "next-cloudinary";
 import Image from "next/image";
 import AdminLoadingSkeleton from "@/components/admin/AdminLoadingSkeleton";
 import AdminErrorState from "@/components/admin/AdminErrorState";
-
-const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'ml_default';
+import { mediaConfig } from "@/lib/media/config";
 
 export default function HeroManagerPage() {
   const queryClient = useQueryClient();
@@ -215,7 +214,7 @@ export default function HeroManagerPage() {
                 </div>
               ) : (
                 <CldUploadWidget 
-                  uploadPreset={CLOUDINARY_UPLOAD_PRESET}
+                  uploadPreset={mediaConfig.uploadPreset}
                   options={{ resourceType: "video" }}
                   onSuccess={(result) => {
                     if (typeof result.info === 'object' && 'secure_url' in result.info) {
@@ -246,7 +245,7 @@ export default function HeroManagerPage() {
             <div className="space-y-4">
               <label className="pixel-text text-[10px] text-foreground/40 block uppercase">Background / Poster Image</label>
               <CldUploadWidget 
-                uploadPreset="amr_portfolio_preset"
+                uploadPreset={mediaConfig.uploadPreset}
                 onSuccess={(result) => {
                   if (typeof result.info === 'object' && 'secure_url' in result.info) {
                     setFormData({ ...formData, posterImage: result.info.secure_url as string });

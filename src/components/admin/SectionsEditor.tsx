@@ -8,8 +8,7 @@ import Image from "next/image";
 import { ProjectSection, BilingualString } from "@/types";
 import BilingualInput from "@/components/admin/BilingualInput";
 import RichTextEditor from "./RichTextEditor";
-
-const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'ml_default';
+import { mediaConfig } from "@/lib/media/config";
 
 interface SectionsEditorProps {
   sections: ProjectSection[];
@@ -109,7 +108,7 @@ export default function SectionsEditor({ sections, onChange }: SectionsEditorPro
                    <label className="pixel-text text-[10px] text-accent block uppercase tracking-widest">Section Media</label>
                    <div className="flex space-x-4">
 <CldUploadWidget
-                          uploadPreset={CLOUDINARY_UPLOAD_PRESET}
+                          uploadPreset={mediaConfig.uploadPreset}
                         onSuccess={(result) => {
                           if (typeof result.info === 'object' && 'secure_url' in result.info) {
                             addMedia(section.id, "image", result.info.secure_url as string);
