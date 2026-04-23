@@ -35,6 +35,8 @@ export default function MediaUploader({
     }
   };
 
+  const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'ml_default';
+
   const handleWidgetSuccess = (result: any) => {
     if (result.info && typeof result.info === "object" && "secure_url" in result.info) {
       onChange(result.info.secure_url);
@@ -101,7 +103,7 @@ export default function MediaUploader({
 
     return (
       <CldUploadWidget
-        uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+        uploadPreset={CLOUDINARY_UPLOAD_PRESET}
         options={cloudinaryOpts}
         onSuccess={handleWidgetSuccess}
         onError={handleWidgetError}

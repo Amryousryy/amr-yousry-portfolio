@@ -9,6 +9,8 @@ import Image from "next/image";
 import Link from "next/link";
 import BilingualInput from "@/components/admin/BilingualInput";
 
+const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'ml_default';
+
 export default function ShowreelManagerPage() {
   const queryClient = useQueryClient();
   const [isAdding, setIsAdding] = useState(false);
@@ -148,8 +150,8 @@ export default function ShowreelManagerPage() {
                  <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-4">
                        <label className="pixel-text text-[10px] text-accent block uppercase tracking-widest">Video Asset</label>
-                       <CldUploadWidget 
-                        uploadPreset="amr_portfolio_preset"
+<CldUploadWidget 
+                         uploadPreset={CLOUDINARY_UPLOAD_PRESET}
                         options={{ resourceType: "video" }}
                         onSuccess={(result: any) => setFormData({ ...formData, videoUrl: result.info.secure_url })}
                        >
@@ -163,8 +165,8 @@ export default function ShowreelManagerPage() {
                     </div>
                     <div className="space-y-4">
                        <label className="pixel-text text-[10px] text-accent block uppercase tracking-widest">Thumbnail / Poster</label>
-                       <CldUploadWidget 
-                        uploadPreset="amr_portfolio_preset"
+<CldUploadWidget 
+                         uploadPreset={CLOUDINARY_UPLOAD_PRESET}
                         onSuccess={(result: any) => setFormData({ ...formData, thumbnailUrl: result.info.secure_url })}
                        >
                          {({ open }) => (

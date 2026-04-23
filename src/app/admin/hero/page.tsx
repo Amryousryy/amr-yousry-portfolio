@@ -13,6 +13,8 @@ import Image from "next/image";
 import AdminLoadingSkeleton from "@/components/admin/AdminLoadingSkeleton";
 import AdminErrorState from "@/components/admin/AdminErrorState";
 
+const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'ml_default';
+
 export default function HeroManagerPage() {
   const queryClient = useQueryClient();
   const [videoMode, setVideoMode] = useState<"upload" | "url">("url");
@@ -213,7 +215,7 @@ export default function HeroManagerPage() {
                 </div>
               ) : (
                 <CldUploadWidget 
-                  uploadPreset="amr_portfolio_preset"
+                  uploadPreset={CLOUDINARY_UPLOAD_PRESET}
                   options={{ resourceType: "video" }}
                   onSuccess={(result) => {
                     if (typeof result.info === 'object' && 'secure_url' in result.info) {
