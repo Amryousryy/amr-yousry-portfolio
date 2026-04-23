@@ -479,11 +479,22 @@ export default function SceneCanvas({ children }: { children?: React.ReactNode }
         shadows
         dpr={[1, 2]}
         gl={{ antialias: true }}
+        aria-label="Interactive 3D cinematic scene showing a film studio island with floating platform, giant camera, film reel, director's chair, clapperboard, and holographic project screens"
+        role="img"
+        onCreated={({ gl }) => {
+          gl.domElement.addEventListener('webglcontextlost', (e) => {
+            e.preventDefault();
+            console.warn('WebGL context lost, attempting restore...');
+          });
+          gl.domElement.addEventListener('webglcontextrestored', () => {
+            console.log('WebGL context restored');
+          });
+        }}
       >
         <FilmStudioScene />
       </Canvas>
       
-      <div className="film-grain" />
+      <div className="film-grain" aria-hidden="true" />
       
       {children}
     </div>
