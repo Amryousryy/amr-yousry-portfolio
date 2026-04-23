@@ -19,30 +19,32 @@ export default function ProjectArchiveClient({ initialProjects = [] }: ProjectAr
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeTags, setActiveTags] = useState<string[]>([]);
 
-  const { data: projectsData, isLoading } = useQuery({
+  const projectsData: Project[] = Array.isArray(initialProjects) ? initialProjects : [];
+
+  const { data: liveData, isLoading } = useQuery({
     queryKey: ["projects"],
     queryFn: async () => {
       const res = await ProjectService.getAll();
       return Array.isArray(res?.data) ? res.data : [];
     },
-    initialData: initialProjects,
+    initialData: projectsData,
   });
+
+  const safeProjects = Array.isArray(liveData) ? liveData : [];
 
   // Extract all unique tags from currently filtered category
   const availableTags = useMemo(() => {
-    if (!projectsData) return [];
     const filteredByCategory = activeCategory === "All" 
-      ? projectsData 
-      : (projectsData || []).filter((p: Project) => p.category === activeCategory);
+      ? safeProjects 
+      : (safeProjects || []).filter((p: Project) => p.category === activeCategory);
     
     const tags = new Set<string>();
     filteredByCategory.forEach((p: Project) => p.tags?.forEach((t: string) => tags.add(t)));
     return Array.from(tags);
-  }, [projectsData, activeCategory]);
+  }, [safeProjects, activeCategory]);
 
   const filteredProjects = useMemo(() => {
-    if (!projectsData) return [];
-    let filtered = projectsData;
+    let filtered = safeProjects;
 
     if (activeCategory !== "All") {
       filtered = (filtered || []).filter((p: Project) => p.category === activeCategory);
@@ -55,11 +57,11 @@ export default function ProjectArchiveClient({ initialProjects = [] }: ProjectAr
     }
 
     return filtered.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
-  }, [projectsData, activeCategory, activeTags]);
+  }, [safeProjects, activeCategory, activeTags]);
 
   const featuredProject = useMemo(() => {
-    return projectsData?.find(p => p.featured && p.status === "published");
-  }, [projectsData]);
+    return safeProjects?.find(p => p.featured && p.status === "published");
+  }, [safeProjects]);
 
   const toggleTag = (tag: string) => {
     setActiveTags(prev => 
