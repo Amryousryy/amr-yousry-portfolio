@@ -1,13 +1,18 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import HeroText from "@/components/ui/HeroText";
+import HeroSection from "@/components/ui/HeroSection";
+import SectionNarrator from "@/components/ui/SectionNarrator";
 
 const FilmStripSection = dynamic(() => import("@/components/ui/FilmStripSection"), {
   ssr: false,
 });
 
 const ServicesSection = dynamic(() => import("@/components/ui/ServicesSection"), {
+  ssr: false,
+});
+
+const TestimonialsSection = dynamic(() => import("@/components/ui/TestimonialsSection"), {
   ssr: false,
 });
 
@@ -22,9 +27,11 @@ const ContactSection = dynamic(() => import("@/components/ui/ContactSection"), {
 export default function Home() {
   return (
     <>
-      <HeroText />
-      <ServicesSection />
+      <SectionNarrator sections={["hero", "projects", "services", "testimonials", "about", "contact"]} />
+      <HeroSection />
       <FilmStripSection />
+      <ServicesSection />
+      <TestimonialsSection />
       <AboutSection />
       <ContactSection />
     </>
