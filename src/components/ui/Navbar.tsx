@@ -1,20 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
-
-const navLinks = [
-  { name: "Home", href: "/" },
-  { name: "Services", href: "/#services" },
-  { name: "Portfolio", href: "/projects" },
-  { name: "About", href: "/#about" },
-  { name: "Contact", href: "/#contact" },
-];
+import LanguageToggle from "@/components/providers/LanguageToggle";
+import { Link } from '@/navigation';
+import { useTranslations } from "next-intl";
 
 export default function Navbar() {
+  const t = useTranslations('nav');
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -25,6 +20,14 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const navLinks = [
+    { name: t('home'), href: "/" },
+    { name: t('services'), href: "/services" },
+    { name: t('projects'), href: "/projects" },
+    { name: t('about'), href: "/about" },
+    { name: t('contact'), href: "/contact" },
+  ];
 
   const navClasses = [
     "fixed top-0 left-0 w-full z-50 transition-all duration-300",
@@ -60,11 +63,12 @@ export default function Navbar() {
             </Link>
           ))}
           <Link
-            href="/#contact"
+            href="/contact"
             className="px-6 py-2 bg-primary text-white text-xs font-bold uppercase tracking-widest pixel-border hover:bg-secondary transition-all"
           >
-            Hire Me
+            {t('hireMe')}
           </Link>
+          <LanguageToggle />
         </div>
 
         <button
@@ -94,11 +98,11 @@ export default function Navbar() {
               </Link>
             ))}
             <Link
-              href="/#contact"
+              href="/contact"
               className="px-8 py-3 bg-accent text-background font-bold uppercase tracking-widest pixel-border"
               onClick={() => setIsOpen(false)}
             >
-              Hire Me
+              {t('hireMe')}
             </Link>
           </motion.div>
         )}

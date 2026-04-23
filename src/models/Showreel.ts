@@ -25,9 +25,7 @@ const ShowreelSchema: Schema = new Schema({
   isActive: { type: Boolean, default: false },
   ctaText: { type: BilingualSchema, default: { en: "Work With Me", ar: "أعمل معي" } },
   ctaLink: { type: String, default: "/#contact" },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-});
+}, { timestamps: true });
 
 // Ensure only one showreel is active at a time
 ShowreelSchema.pre("save", async function() {

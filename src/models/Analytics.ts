@@ -7,6 +7,8 @@ export interface IAnalytics extends Document {
   interactionType?: string;
   timestamp: Date;
   metadata?: any;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const AnalyticsSchema: Schema = new Schema({
@@ -16,11 +18,10 @@ const AnalyticsSchema: Schema = new Schema({
   interactionType: { type: String },
   timestamp: { type: Date, default: Date.now },
   metadata: { type: Schema.Types.Mixed },
-});
+}, { timestamps: true });
 
-// Index for fast analytics queries
 AnalyticsSchema.index({ timestamp: -1 });
-AnalyticsSchema.index({ page: 1 });
-AnalyticsSchema.index({ type: 1 });
+AnalyticsSchema.index({ page: 1, timestamp: -1 });
+AnalyticsSchema.index({ type: 1, timestamp: -1 });
 
 export default mongoose.models.Analytics || mongoose.model<IAnalytics>("Analytics", AnalyticsSchema);

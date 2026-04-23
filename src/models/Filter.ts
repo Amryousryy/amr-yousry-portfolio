@@ -6,6 +6,7 @@ export interface IFilter extends Document {
   active: boolean;
   order: number;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 const BilingualSchema = new Schema({
@@ -18,7 +19,8 @@ const FilterSchema: Schema = new Schema({
   slug: { type: String, required: true, unique: true },
   active: { type: Boolean, default: true },
   order: { type: Number, default: 0 },
-  createdAt: { type: Date, default: Date.now },
-});
+}, { timestamps: true });
+
+FilterSchema.index({ active: 1, order: 1 });
 
 export default mongoose.models.Filter || mongoose.model<IFilter>("Filter", FilterSchema);

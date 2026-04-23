@@ -5,25 +5,68 @@ import dbConnect from "@/lib/db";
 import Project from "@/models/Project";
 import { projectSchema } from "@/lib/validations";
 import { logActivity } from "@/lib/activity";
+import { paginationSchema, getPagination } from "@/lib/pagination";
+
+function successResponse<T>(data: T, pagination?: ReturnType<typeof getPagination>) {
+  return NextResponse.json({
+    success: true,
+    data,
+    ...(pagination && {
+      meta: {
+        current: pagination.page,
+        pages: pagination.totalPages,
+        total: pagination.total,
+        hasNext: pagination.hasNextPage,
+        hasPrev: pagination.hasPrevPage,
+      }
+    })
+  });
+}
 
 export async function GET(req: Request) {
   try {
     await dbConnect();
   } catch (error) {
     console.error("DB_CONNECT_ERROR:", error);
-    return NextResponse.json({ data: [] });
+    return successResponse([]);
   }
 
   try {
     const { searchParams } = new URL(req.url);
     const isAdmin = searchParams.get("admin") === "true";
-    const query = isAdmin ? {} : { status: "published" };
-    const projects = await Project.find(query).sort({ displayOrder: 1, createdAt: -1 }).lean();
+    const featured = searchParams.get("featured");
+    const category = searchParams.get("category");
+    const search = searchParams.get("search");
     
-    return NextResponse.json({ data: Array.isArray(projects) ? projects : [] });
+    const query: Record<string, unknown> = isAdmin ? {} : { status: "published" };
+    
+    if (featured === "true") query.featured = true;
+    if (category) query.category = category;
+    if (search) {
+      query.$or = [
+        { "title.en": { $regex: search, $options: "i" } },
+        { "title.ar": { $regex: search, $options: "i" } },
+        { tags: { $regex: search, $options: "i" } }
+      ];
+    }
+    
+    const parsed = paginationSchema.safeParse({
+      page: searchParams.get("page") || 1,
+      limit: searchParams.get("limit") || 12,
+    });
+    const { page, limit } = parsed.success ? parsed.data : { page: 1, limit: 12 };
+    const skip = (page - 1) * limit;
+
+    const [projects, total] = await Promise.all([
+      Project.find(query).sort({ displayOrder: 1, createdAt: -1 }).skip(skip).limit(limit).lean(),
+      Project.countDocuments(query)
+    ]);
+
+    const pagination = getPagination(page, limit, total);
+    return successResponse(projects, pagination);
   } catch (error) {
     console.error("GET_PROJECTS_ERROR:", error);
-    return NextResponse.json({ data: [] });
+    return successResponse([]);
   }
 }
 

@@ -22,6 +22,7 @@ export interface ISettings extends Document {
     description: { en: string; ar: string };
     icon: string;
   }[];
+  createdAt: Date;
   updatedAt: Date;
 }
 
@@ -45,7 +46,6 @@ const SettingsSchema: Schema = new Schema({
     description: { type: BilingualSchema, required: true },
     icon: { type: String, required: true }
   }],
-  updatedAt: { type: Date, default: Date.now },
-});
+}, { timestamps: true });
 
 export default mongoose.models.Settings || mongoose.model<ISettings>("Settings", SettingsSchema);

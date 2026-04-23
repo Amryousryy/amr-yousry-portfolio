@@ -37,6 +37,7 @@ export interface IProject extends Document {
     keywords?: string[];
   };
   createdAt: Date;
+  updatedAt: Date;
 }
 
 const ProjectSectionSchema = new Schema({
@@ -75,7 +76,10 @@ const ProjectSchema: Schema = new Schema({
     description: { type: String },
     keywords: { type: [String] },
   },
-  createdAt: { type: Date, default: Date.now },
-});
+}, { timestamps: true });
+
+ProjectSchema.index({ slug: 1 }, { unique: true });
+ProjectSchema.index({ status: 1, displayOrder: 1 });
+ProjectSchema.index({ featured: 1, status: 1 });
 
 export default mongoose.models.Project || mongoose.model<IProject>("Project", ProjectSchema);

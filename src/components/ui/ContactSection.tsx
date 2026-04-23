@@ -1,10 +1,6 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 export default function ContactSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -14,21 +10,25 @@ export default function ContactSection() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
   useEffect(() => {
-    if (!sectionRef.current) return;
-
-    const ctx = gsap.context(() => {
-      gsap.from(headingRef.current, {
-        opacity: 0,
-        y: 50,
-        duration: 0.8,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 70%",
-        },
+    import("gsap").then(({ default: gsap }) => {
+      import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
+        gsap.registerPlugin(ScrollTrigger);
+        
+        const ctx = gsap.context(() => {
+          gsap.from(headingRef.current, {
+            opacity: 0,
+            y: 50,
+            duration: 0.8,
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 70%",
+            },
+          });
+        });
       });
     });
 
-    return () => ctx.revert();
+    return () => {};
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {

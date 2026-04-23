@@ -1,0 +1,115 @@
+{
+  "nav": {
+    "home": "Home",
+    "projects": "Portfolio",
+    "services": "Services",
+    "about": "About",
+    "contact": "Contact",
+    "hireMe": "Hire Me"
+  },
+  "hero": {
+    "headline": "CREATIVE STRATEGIST",
+    "subheadline": "I turn content into clients for brands. Helping you grow through high-converting video content.",
+    "cta_primary": "Start Your Project",
+    "cta_secondary": "View My Work",
+    "featured": "Featured"
+  },
+  "projects": {
+    "title": "The Archive",
+    "all": "All Projects",
+    "filter": "Filter by",
+    "search": "Search projects...",
+    "featured": "Featured",
+    "noResults": "No matches found in the archives.",
+    "resetFilters": "Reset Filters",
+    "category_realestate": "Real Estate",
+    "category_ugc": "UGC / Ads",
+    "category_social": "Social Media",
+    "category_corporate": "Corporate",
+    "category_brand": "Brand Film"
+  },
+  "services": {
+    "title": "Creative Services",
+    "videoEditing": {
+      "title": "Video Editing",
+      "description": "Cinematic edits that stop the scroll and drive action. From raw footage to a story that sells.",
+      "problem": "YOUR VIDEOS AREN'T CONVERTING?"
+    },
+    "motionDesign": {
+      "title": "Motion Design",
+      "description": "Animated logos, kinetic typography, and motion graphics that make your brand impossible to ignore.",
+      "problem": "YOUR BRAND LOOKS FORGETTABLE?"
+    },
+    "contentStrategy": {
+      "title": "Content Strategy",
+      "description": "Data-driven content plans that grow your audience and turn followers into paying customers.",
+      "problem": "YOUR CONTENT STRATEGY ISN'T WORKING?"
+    },
+    "brandStorytelling": {
+      "title": "Brand Storytelling",
+      "description": "Full brand narrative — from concept to final cut. I help brands find their voice and tell it cinematically.",
+      "problem": "YOUR SOCIAL MEDIA FEELS DEAD?"
+    }
+  },
+  "about": {
+    "title": "About Me",
+    "headline": "Based in Cairo,",
+    "highlight": "Crafting Stories",
+    "bio": "I'm a video editor and motion designer with 3+ years of experience turning brand ideas into cinematic stories. I've worked with real estate developers, food brands, tech startups, and tourism boards across Egypt and Saudi Arabia. My work lives at the intersection of storytelling, strategy, and visual craft — every frame is intentional.",
+    "skills": "Skills",
+    "tools": "Tools I Use",
+    "downloadCV": "Download CV",
+    "viewProjects": "View Projects"
+  },
+  "contact": {
+    "title": "Let's Work Together",
+    "subtitle": "Ready to start your project?",
+    "form": {
+      "name": "Your Name",
+      "email": "Your Email",
+      "phone": "Phone Number (WhatsApp)",
+      "projectType": "Project Type",
+      "message": "Tell me about your project, timeline, and budget...",
+      "submit": "Send Message",
+      "sending": "Sending...",
+      "success": "Message sent! I'll get back to you within 24 hours."
+    },
+    "location": "Location",
+    "locationDetail": "Cairo, Egypt",
+    "locationSubtitle": "Available for remote & travel",
+    "reply": "Reply within 24 hours",
+    "freeConsultation": "Free first consultation",
+    "noCommitment": "No commitment required"
+  },
+  "admin": {
+    "login": {
+      "title": "Terminal Access",
+      "email": "Email",
+      "password": "Passcode",
+      "submit": "Authenticate"
+    },
+    "dashboard": "Command Center",
+    "projects": "Projects",
+    "leads": "Leads",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "addProject": "Add Project",
+    "views": "Views",
+    "leads_count": "Leads"
+  },
+  "common": {
+    "back": "Back",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "publish": "Publish",
+    "draft": "Draft",
+    "published": "Published",
+    "new": "New",
+    "contacted": "Contacted",
+    "qualified": "Qualified",
+    "closed": "Closed",
+    "loading": "Loading..."
+  }
+}

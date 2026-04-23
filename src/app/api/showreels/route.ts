@@ -16,9 +16,9 @@ export async function GET(req: Request) {
     const query = isAdmin ? {} : { isActive: true };
     const showreels = await Showreel.find(query).sort({ createdAt: -1 }).lean();
     
-    return NextResponse.json(showreels);
+    return NextResponse.json({ success: true, data: showreels });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch showreels" }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Failed to fetch showreels" }, { status: 500 });
   }
 }
 
