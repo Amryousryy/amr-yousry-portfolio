@@ -149,39 +149,39 @@ export default function AdminOverview() {
     },
   ];
 
-  const quickActions = [
-    { label: "Add Project", href: "/admin/projects/new", icon: Plus, primary: true },
-    { label: "View Leads", href: "/admin/leads", icon: User },
-    { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
-    { label: "Edit Hero", href: "/admin/hero", icon: Video },
-  ];
-
   return (
-    <div className="space-y-8">
-      <header className="flex justify-between items-end">
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 pb-6 border-b border-primary/10">
         <div>
           <h1 className="text-2xl font-display font-bold uppercase tracking-tight">Command Center</h1>
           <p className="text-foreground/40 text-xs uppercase tracking-widest mt-1">
             Your portfolio at a glance
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          {quickActions.slice(0, 3).map((action) => (
-            <Link
-              key={action.label}
-              href={action.href}
-              className={`flex items-center space-x-2 px-4 py-2.5 text-xs font-medium uppercase tracking-tight transition-colors ${
-                action.primary 
-                  ? "bg-accent text-background hover:bg-accent/90"
-                  : "bg-primary/30 text-foreground/60 hover:text-foreground hover:bg-primary/50"
-              }`}
-            >
-              <action.icon size={14} />
-              <span>{action.label}</span>
-            </Link>
-          ))}
+        <div className="flex items-stretch gap-2">
+          <Link
+            href="/admin/projects/new"
+            className="flex items-center gap-2 px-4 py-2.5 bg-accent text-background text-xs font-medium uppercase tracking-tight hover:bg-accent/90 transition-colors"
+          >
+            <Plus size={14} />
+            <span className="hidden sm:inline">Add Project</span>
+          </Link>
+          <Link
+            href="/admin/leads"
+            className="flex items-center gap-2 px-4 py-2.5 bg-primary/30 text-foreground/60 text-xs font-medium uppercase tracking-tight hover:text-foreground hover:bg-primary/50 transition-colors"
+          >
+            <User size={14} />
+            <span className="hidden sm:inline">Leads</span>
+          </Link>
+          <Link
+            href="/admin/analytics"
+            className="flex items-center gap-2 px-4 py-2.5 bg-primary/30 text-foreground/60 text-xs font-medium uppercase tracking-tight hover:text-foreground hover:bg-primary/50 transition-colors"
+          >
+            <BarChart3 size={14} />
+            <span className="hidden sm:inline">Analytics</span>
+          </Link>
         </div>
-      </header>
+      </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat) => (
