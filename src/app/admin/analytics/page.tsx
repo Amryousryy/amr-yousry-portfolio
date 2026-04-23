@@ -32,7 +32,7 @@ export default function AnalyticsPage() {
     queryKey: ["business-insights"],
     queryFn: async () => {
       const res = await fetch("/api/analytics/insights");
-      return res.json();
+      return await res.json();
     }
   });
 
@@ -40,13 +40,14 @@ export default function AnalyticsPage() {
     queryKey: ["analytics-dashboard"],
     queryFn: async () => {
       const res = await fetch("/api/analytics");
-      return res.json();
+      return await res.json();
     },
   });
 
   if (isLoading) return <div className="p-20 text-center"><Loader2 className="animate-spin inline mr-2" /> Analysing Market Data...</div>;
 
-  const { insights, metrics } = insightsData;
+  const insights = insightsData?.insights ?? [];
+  const metrics = insightsData?.metrics ?? { globalCR: 0, completionRate: 0, totalViews: 0, totalLeads: 0 };
 
   const funnelData = [
     { name: "Total Visitors", value: metrics.totalViews, color: "#2D1B69" },

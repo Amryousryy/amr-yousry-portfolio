@@ -30,7 +30,9 @@ export default function LeadsPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      return true;
+      const res = await fetch(`/api/leads/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete lead");
+      return res.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["leads"] });
@@ -153,7 +155,14 @@ export default function LeadsPage() {
                            <MessageSquare size={16} />
                         </a>
                       )}
-                      <button className="p-2 text-foreground/20 hover:text-red-500 transition-colors">
+                      <button 
+                          onClick={() => {
+                            if (window.confirm("Are you sure you want to delete this lead?")) {
+                              deleteMutation.mutate(lead._id);
+                            }
+                          }}
+                          className="p-2 text-foreground/20 hover:text-red-500 transition-colors"
+                       >
                          <Trash2 size={16} />
                       </button>
                    </div>

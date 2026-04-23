@@ -40,7 +40,7 @@ export default function AdminOverview() {
     queryFn: async () => {
       const res = await fetch("/api/analytics");
       if (!res.ok) return { data: { dailyViews: [], topProjects: [] } };
-      return res.json();
+      return await res.json();
     },
   });
 
@@ -49,7 +49,7 @@ export default function AdminOverview() {
     queryFn: async () => {
       const res = await fetch("/api/activity");
       if (!res.ok) return { data: [] };
-      return res.json();
+      return await res.json();
     },
   });
 

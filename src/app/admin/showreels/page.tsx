@@ -26,7 +26,7 @@ export default function ShowreelManagerPage() {
     queryKey: ["showreels", "admin"],
     queryFn: async () => {
       const res = await fetch("/api/showreels?admin=true");
-      return res.json();
+      return await res.json();
     },
   });
 
