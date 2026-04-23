@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import SectionNarrator from "@/components/ui/SectionNarrator";
+import HeroSection from "@/components/ui/HeroSection";
 
 const FilmStripSection = dynamic(() => import("@/components/ui/FilmStripSection"), {
   ssr: false,
@@ -31,9 +32,7 @@ export default function Home() {
   return (
     <>
       <SectionNarrator sections={["hero", "projects", "services", "testimonials", "about", "contact"]} />
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <h1 className="text-4xl font-bold text-white">Hero Section Placeholder</h1>
-      </div>
+      <HeroSection />
       <Marquee />
       <FilmStripSection />
       <ServicesSection />
