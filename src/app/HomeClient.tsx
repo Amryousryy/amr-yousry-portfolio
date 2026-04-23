@@ -1,30 +1,32 @@
 "use client";
 
-import { useState } from "react";
 import dynamic from "next/dynamic";
-import "@/styles/pixel-system.css";
+import HeroText from "@/components/ui/HeroText";
 
-const SceneCanvas = dynamic(() => import("@/components/three/SceneCanvas"), {
-  ssr: false,
-});
-const CinematicCursor = dynamic(() => import("@/components/ui/CinematicCursor"), {
-  ssr: false,
-});
-const LoadingScreen = dynamic(() => import("@/components/ui/LoadingScreen"), {
+const FilmStripSection = dynamic(() => import("@/components/ui/FilmStripSection"), {
   ssr: false,
 });
 
-export default function HomeClient() {
-  const [loading, setLoading] = useState(true);
+const ServicesSection = dynamic(() => import("@/components/ui/ServicesSection"), {
+  ssr: false,
+});
 
+const AboutSection = dynamic(() => import("@/components/ui/AboutSection"), {
+  ssr: false,
+});
+
+const ContactSection = dynamic(() => import("@/components/ui/ContactSection"), {
+  ssr: false,
+});
+
+export default function Home() {
   return (
-    <main className="bg-[#050508] min-h-screen selection:bg-teal-500/30 selection:text-teal-200 overflow-hidden">
-      {loading && <LoadingScreen onComplete={() => setLoading(false)} />}
-      
-      <CinematicCursor />
-      
-      {/* 3D Scene + Scrollable Content */}
-      <SceneCanvas />
-    </main>
+    <>
+      <HeroText />
+      <ServicesSection />
+      <FilmStripSection />
+      <AboutSection />
+      <ContactSection />
+    </>
   );
 }

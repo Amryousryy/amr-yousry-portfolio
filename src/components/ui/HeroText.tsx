@@ -1,89 +1,204 @@
 "use client";
 
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
+import { useEffect, useState, useRef } from "react";
+import { useSpring, animated } from "@react-spring/web";
+import gsap from "gsap";
 
-const HeroText = () => {
+const ROLES = ["Video Editor", "Motion Designer", "Content Strategist", "Visual Storyteller"];
+
+const STATS = [
+  { icon: "★", value: 50, suffix: "+", label: "FILMS" },
+  { icon: "◆", value: 3, suffix: "+", label: "YEARS" },
+  { icon: "▶", value: 1, suffix: "M+", label: "VIEWS" },
+];
+
+export default function HeroText() {
+  const [currentRole, setCurrentRole] = useState(0);
+  const [displayedText, setDisplayedText] = useState("");
+  const [displayedStats, setDisplayedStats] = useState({ 0: 0, 1: 0, 2: 0 });
+  const [mounted, setMounted] = useState(false);
   const nameRef = useRef<HTMLHeadingElement>(null);
-  const subtitleRef = useRef<HTMLHeadingElement>(null);
-  const statsRef = useRef<HTMLDivElement>(null);
+  const subtitleRef = useRef<HTMLDivElement>(null);
+  const buttonsRef = useRef<HTMLDivElement>(null);
+
+  const nameSpring = useSpring({
+    opacity: mounted ? 1 : 0,
+    y: mounted ? 0 : 30,
+    config: { tension: 80, friction: 20 },
+    delay: 300,
+  });
+
+  const subtitleSpring = useSpring({
+    opacity: mounted ? 1 : 0,
+    y: mounted ? 0 : 20,
+    config: { tension: 80, friction: 20 },
+    delay: 600,
+  });
+
+  const statsSpring = useSpring({
+    opacity: mounted ? 1 : 0,
+    config: { tension: 80, friction: 20 },
+    delay: 900,
+  });
+
+  const buttonsSpring = useSpring({
+    opacity: mounted ? 1 : 0,
+    y: mounted ? 0 : 20,
+    config: { tension: 80, friction: 20 },
+    delay: 1200,
+  });
 
   useEffect(() => {
-    const tl = gsap.timeline({ delay: 0.5 });
-
-    tl.fromTo(nameRef.current, 
-      { opacity: 0, y: 50 }, 
-      { opacity: 1, y: 0, duration: 1, ease: "power3.out" }
-    );
-
-    tl.fromTo(subtitleRef.current,
-      { opacity: 0 },
-      { opacity: 1, duration: 0.5 },
-      "-=0.5"
-    );
-
-    tl.fromTo(statsRef.current?.children || [],
-      { opacity: 0, scale: 0.8 },
-      { opacity: 1, scale: 1, stagger: 0.2, duration: 0.5, ease: "back.out(1.7)" },
-      "-=0.3"
-    );
+    setMounted(true);
   }, []);
 
-  return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 text-white">
-      <div className="container mx-auto px-6 text-center md:text-left">
-        <div className="inline-flex items-center gap-2 mb-6 px-4 py-1 bg-teal-500/10 border border-teal-500/30 rounded-full">
-          <span className="w-2 h-2 bg-teal-500 rounded-full animate-pulse" />
-          <span className="text-[10px] font-mono tracking-widest uppercase text-teal-400">
-            Available for Projects
-          </span>
-        </div>
+  useEffect(() => {
+    if (!mounted) return;
+    
+    gsap.from(nameRef.current, {
+      opacity: 0,
+      y: 30,
+      duration: 0.8,
+      delay: 0.3,
+      ease: "power3.out",
+    });
+    
+    gsap.from(subtitleRef.current, {
+      opacity: 0,
+      y: 20,
+      duration: 0.6,
+      delay: 0.6,
+      ease: "power3.out",
+    });
+    
+    gsap.from(buttonsRef.current, {
+      opacity: 0,
+      y: 20,
+      duration: 0.6,
+      delay: 1.2,
+      ease: "power3.out",
+    });
+  }, [mounted]);
 
-        <h1 
+  useEffect(() => {
+    if (!mounted) return;
+    
+    const fullText = ROLES[currentRole];
+    let charIndex = 0;
+    setDisplayedText("");
+    
+    const typeInterval = setInterval(() => {
+      if (charIndex <= fullText.length) {
+        setDisplayedText(fullText.slice(0, charIndex));
+        charIndex++;
+      } else {
+        clearInterval(typeInterval);
+        setTimeout(() => {
+          setCurrentRole((prev) => (prev + 1) % ROLES.length);
+        }, 2500);
+      }
+    }, 70);
+    
+    return () => clearInterval(typeInterval);
+  }, [currentRole, mounted]);
+
+  useEffect(() => {
+    if (!mounted) return;
+    
+    STATS.forEach((stat, index) => {
+      let current = 0;
+      const increment = stat.value / 30;
+      const interval = setInterval(() => {
+        current += increment;
+        if (current >= stat.value) {
+          setDisplayedStats((prev) => ({ ...prev, [index]: stat.value }));
+          clearInterval(interval);
+        } else {
+          setDisplayedStats((prev) => ({ ...prev, [index]: Math.floor(current) }));
+        }
+      }, 50);
+    });
+  }, [mounted]);
+
+  return (
+    <div className="relative min-h-screen flex items-center justify-center px-4 md:px-8">
+      <div className="max-w-5xl w-full">
+        <div className="pixel-badge mb-8">
+          <span className="relative">AVAILABLE FOR PROJECTS</span>
+        </div>
+        
+        <animated.h1
           ref={nameRef}
-          className="text-6xl md:text-8xl font-bold mb-2 tracking-tighter"
-          style={{ fontFamily: 'Sora, sans-serif' }}
+          style={nameSpring}
+          className="font-sora text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-4 tracking-tight"
         >
           AMR YOUSRY
-        </h1>
-
-        <div className="h-1 w-32 bg-teal-500 mb-6" />
-
-        <h2 
-          ref={subtitleRef}
-          className="glitch-text text-xl md:text-2xl text-teal-400 mb-12 uppercase tracking-[0.2em]"
-          data-text="VISUAL STORYTELLER"
-          style={{ fontFamily: "'Press Start 2P', monospace" }}
+        </animated.h1>
+        
+        <animated.div ref={subtitleRef} style={subtitleSpring}>
+          <div className="h-1 w-32 bg-gradient-to-r from-[#00ffcc] to-transparent mb-6" />
+          
+          <div className="pixel-text text-[#00ffcc] text-sm md:text-base mb-4">
+            <span data-text="VISUAL STORYTELLER" className="glitch-text">
+              VISUAL STORYTELLER
+            </span>
+          </div>
+          
+          <div className="flex items-center gap-2 mb-8">
+            <span className="text-white text-lg md:text-xl font-light">
+              &quot;
+            </span>
+            <span className="text-white text-lg md:text-xl font-sora">
+              {displayedText}
+            </span>
+            <span className="typewriter text-[#00ffcc]">|</span>
+            <span className="text-white text-lg md:text-xl font-light">
+              &quot;
+            </span>
+          </div>
+        </animated.div>
+        
+        <animated.div
+          style={statsSpring}
+          className="flex flex-wrap gap-4 mb-10"
         >
-          VISUAL STORYTELLER
-        </h2>
-
-        <div ref={statsRef} className="flex flex-wrap gap-4 mb-12 justify-center md:justify-start">
-          <div className="pixel-stat">
-            <span className="text-teal-400">★</span>
-            <span>50+ FILMS</span>
-          </div>
-          <div className="pixel-stat">
-            <span className="text-teal-400">◆</span>
-            <span>3+ YEARS</span>
-          </div>
-          <div className="pixel-stat">
-            <span className="text-teal-400">▶</span>
-            <span>1M+ VIEWS</span>
-          </div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-6 pointer-events-auto justify-center md:justify-start">
-          <button className="pixel-btn">
-            ▶ Watch Showreel
+          {STATS.map((stat, i) => {
+            const index = i as keyof typeof displayedStats;
+            return (
+              <div key={i} className="pixel-stat">
+                <span className="text-[#00ffcc] mr-1">{stat.icon}</span>
+                <span className="text-white font-bold">
+                  {displayedStats[index]}{stat.suffix}
+                </span>
+                <span className="text-[#00ffcc] ml-1">{stat.label}</span>
+              </div>
+            );
+          })}
+        </animated.div>
+        
+        <animated.div
+          ref={buttonsRef}
+          style={buttonsSpring}
+          className="flex flex-wrap gap-4"
+        >
+          <button className="pixel-btn flex items-center gap-2">
+            <span>▶</span>
+            <span>WATCH SHOWREEL</span>
           </button>
-          <button className="pixel-btn outline">
-            → Get In Touch
+          
+          <button className="pixel-btn-outline flex items-center gap-2">
+            <span>→</span>
+            <span>GET IN TOUCH</span>
           </button>
+        </animated.div>
+      </div>
+      
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+        <span className="pixel-text text-[#00ffcc]/50 text-xs">SCROLL</span>
+        <div className="w-6 h-10 border-2 border-[#00ffcc]/30 rounded-full flex justify-center pt-2">
+          <div className="w-1 h-2 bg-[#00ffcc] rounded-full animate-bounce" />
         </div>
       </div>
     </div>
   );
-};
-
-export default HeroText;
+}
