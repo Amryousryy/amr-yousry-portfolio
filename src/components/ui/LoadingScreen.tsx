@@ -1,63 +1,91 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
+import { useEffect, useState, useRef } from "react";
+import { usePathname } from "next/navigation";
 
-export default function LoadingScreen() {
-  const [loading, setLoading] = useState(true);
+interface LoadingScreenProps {
+  minDuration?: number;
+}
+
+export default function LoadingScreen({ minDuration = 2000 }: LoadingScreenProps) {
+  const [progress, setProgress] = useState(0);
+  const [isComplete, setIsComplete] = useState(false);
+  const pathname = usePathname();
+  const hasShownRef = useRef(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2500);
-    return () => clearTimeout(timer);
-  }, []);
+    if (pathname.startsWith("/admin")) return;
+    if (hasShownRef.current) return;
+    
+    hasShownRef.current = true;
+    const startTime = Date.now();
+    
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const newProgress = Math.min((elapsed / minDuration) * 100, 100);
+      setProgress(newProgress);
+      
+      if (newProgress >= 100) {
+        clearInterval(interval);
+        setTimeout(() => setIsComplete(true), 500);
+      }
+    }, 30);
+    
+    return () => clearInterval(interval);
+  }, [minDuration, pathname]);
+
+  if (pathname.startsWith("/admin")) return null;
+  if (isComplete) return null;
 
   return (
-    <AnimatePresence>
-      {loading && (
-        <motion.div
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-background flex flex-col items-center justify-center"
-        >
-          <div className="relative w-32 h-32 mb-8">
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="relative w-full h-full"
-            >
-              <Image 
-                src="/Asset 4.png" 
-                alt="Loading Logo" 
-                fill 
-                className="object-contain"
-                priority
-              />
-            </motion.div>
-            <motion.div
-              animate={{
-                rotate: [0, 360],
+    <div className="fixed inset-0 z-[10000] bg-[#050508] flex flex-col items-center justify-center">
+      <div className="w-64 mb-8">
+        <div className="flex justify-between mb-2">
+          {[...Array(10)].map((_, i) => (
+            <div
+              key={i}
+              className="w-4 h-8 border-2 border-[#00ffcc]"
+              style={{
+                background: progress >= (i + 1) * 10 ? "#00ffcc" : "transparent",
+                transition: "background 0.1s",
               }}
-              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-              className="absolute -inset-4 border-2 border-accent border-dashed rounded-full opacity-20"
             />
-          </div>
-          <div className="w-48 h-1 bg-primary/10 relative overflow-hidden pixel-border">
-            <motion.div
-              initial={{ x: "-100%" }}
-              animate={{ x: "100%" }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute inset-0 bg-accent"
-            />
-          </div>
-          <div className="mt-4 pixel-text text-accent text-[10px] tracking-[0.5em] uppercase">
-            Initializing System
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+          ))}
+        </div>
+        <div className="w-full h-2 bg-[#1a1a2e]">
+          <div
+            className="h-full bg-[#00ffcc] transition-all duration-100"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
+      
+      <div className="pixel-text text-[#00ffcc] text-xs tracking-widest mb-4">
+        LOADING REEL...
+      </div>
+      
+      <div className="pixel-text text-white text-xl">
+        {Math.round(progress)}%
+      </div>
+      
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#00ffcc]/5" />
+        <div
+          className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#00ffcc] to-transparent"
+          style={{
+            top: `${progress}%`,
+            opacity: 0.5,
+          }}
+        />
+      </div>
+      
+      <style jsx>{`
+        @keyframes film-burn {
+          0% { opacity: 0.5; }
+          50% { opacity: 0.8; }
+          100% { opacity: 0.5; }
+        }
+      `}</style>
+    </div>
   );
 }

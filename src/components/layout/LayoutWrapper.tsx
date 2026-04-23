@@ -6,7 +6,13 @@ import Footer from "@/components/ui/Footer";
 import FloatingCTA from "@/components/ui/FloatingCTA";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import SmoothScroll from "@/components/ui/SmoothScroll";
-import CustomCursor from "@/components/ui/CustomCursor";
+import CinematicCursor from "@/components/ui/CinematicCursor";
+import PageTransition from "@/components/ui/PageTransition";
+import dynamic from "next/dynamic";
+
+const SceneProvider = dynamic(() => import("@/components/three/SceneProvider"), {
+  ssr: false,
+});
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -18,14 +24,17 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
 
   return (
     <>
+      <SceneProvider />
+      <CinematicCursor />
       <LoadingScreen />
-      <SmoothScroll>
-        <CustomCursor />
-        <Navbar />
-        <main className="min-h-screen">{children}</main>
-        <Footer />
-        <FloatingCTA />
-      </SmoothScroll>
+      <PageTransition>
+        <SmoothScroll>
+          <Navbar />
+          <main className="min-h-screen">{children}</main>
+          <Footer />
+          <FloatingCTA />
+        </SmoothScroll>
+      </PageTransition>
     </>
   );
 }
