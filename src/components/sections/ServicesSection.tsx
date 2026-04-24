@@ -12,16 +12,72 @@ const DEFAULT_SERVICES = [
 ];
 
 export default function ServicesSection() {
-  const { data: contentResponse } = useQuery({
+  const { data: contentResponse, error, isLoading } = useQuery({
     queryKey: ["site-content"],
     queryFn: () => SettingsService.getContent(),
   });
 
-  const servicesCards = contentResponse?.data?.servicesCards && contentResponse.data.servicesCards.length > 0 
+  if (isLoading) {
+    return (
+      <section className="py-24 bg-[#050508] relative">
+        <div className="container mx-auto px-6">
+          <h2 
+            className="text-4xl text-white mb-16 text-center md:text-left"
+            style={{ fontFamily: "'Press Start 2P', monospace" }}
+          >
+            SERVICES <span className="text-teal-400">SERVICES</span>
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            {DEFAULT_SERVICES.map((service, i) => (
+              <div key={i} className="pixel-box p-8 bg-zinc-900/50">
+                <div className="text-4xl mb-6">{service.icon}</div>
+                <h3 className="text-teal-400 text-sm mb-4" style={{ fontFamily: "'Press Start 2P', monospace" }}>
+                  {service.title.en}
+                </h3>
+                <p className="text-zinc-400 text-sm leading-relaxed">
+                  {service.description.en}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error || !contentResponse?.data) {
+    return (
+      <section className="py-24 bg-[#050508] relative">
+        <div className="container mx-auto px-6">
+          <h2 
+            className="text-4xl text-white mb-16 text-center md:text-left"
+            style={{ fontFamily: "'Press Start 2P', monospace" }}
+          >
+            SERVICES <span className="text-teal-400">SERVICES</span>
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            {DEFAULT_SERVICES.map((service, i) => (
+              <div key={i} className="pixel-box p-8 bg-zinc-900/50">
+                <div className="text-4xl mb-6">{service.icon}</div>
+                <h3 className="text-teal-400 text-sm mb-4" style={{ fontFamily: "'Press Start 2P', monospace" }}>
+                  {service.title.en}
+                </h3>
+                <p className="text-zinc-400 text-sm leading-relaxed">
+                  {service.description.en}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const servicesCards = contentResponse.data.servicesCards && contentResponse.data.servicesCards.length > 0 
     ? contentResponse.data.servicesCards 
     : DEFAULT_SERVICES;
 
-  const title = contentResponse?.data?.servicesTitle?.en 
+  const title = contentResponse.data.servicesTitle?.en 
     ? contentResponse.data.servicesTitle 
     : { en: "Services", ar: "خدمات" };
 
