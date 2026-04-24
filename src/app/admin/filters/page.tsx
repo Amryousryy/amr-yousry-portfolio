@@ -1,24 +1,48 @@
 "use client";
 
 import React, { useState } from "react";
+import { useForm, Controller, FieldErrors } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Save, Trash2, Loader2, GripVertical, Check, X } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FilterService } from "@/lib/api-client";
-import { filterSchema } from "@/lib/validations";
+import { filterCreateSchema, FilterCreateInput, filterDefaultValues, createFilterFormValues } from "@/lib/validation";
 import { toast } from "sonner";
 import { Filter } from "@/types";
 import AdminLoadingSkeleton from "@/components/admin/AdminLoadingSkeleton";
 import AdminErrorState from "@/components/admin/AdminErrorState";
 import AdminEmptyState from "@/components/admin/AdminEmptyState";
 
+type FormData = FilterCreateInput;
+
+// ============================================================================
+// HELPER: Get nested validation error message
+// ============================================================================
+
+function getFieldError(errors: FieldErrors<FormData>, path: string): string | undefined {
+  const parts = path.split(".");
+  let current: any = errors;
+  for (const part of parts) {
+    if (current === undefined) return undefined;
+    current = current[part];
+  }
+  return current?.message as string | undefined;
+}
+
 export default function FiltersManagerPage() {
   const queryClient = useQueryClient();
   const [isAdding, setIsAdding] = useState(false);
-  const [newFilter, setNewFilter] = useState({
-    name: { en: "", ar: "" },
-    slug: "",
-    displayOrder: 0,
-    isActive: true
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitting },
+    watch,
+    reset,
+  } = useForm<FormData>({
+    resolver: zodResolver(filterCreateSchema),
+    defaultValues: filterDefaultValues,
   });
 
   const { data: filters, isLoading, isError, refetch } = useQuery({
@@ -27,12 +51,12 @@ export default function FiltersManagerPage() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: any) => FilterService.create(data),
+    mutationFn: (data: FormData) => FilterService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["filters"] });
       toast.success("Filter created!");
       setIsAdding(false);
-      setNewFilter({ name: { en: "", ar: "" }, slug: "", displayOrder: 0, isActive: true });
+      reset(filterDefaultValues);
     },
     onError: (error: Error) => toast.error(error.message)
   });
@@ -47,24 +71,17 @@ export default function FiltersManagerPage() {
   });
 
   const toggleMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string, data: Partial<Filter> }) => FilterService.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: Partial<Filter> }) => FilterService.update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["filters"] }),
     onError: (error: Error) => toast.error(error.message)
   });
 
-  const handleAdd = (e: React.FormEvent) => {
-    e.preventDefault();
-    const slug = newFilter.name.en.toLowerCase().replace(/\s+/g, "-");
-    const validation = filterSchema.safeParse({ ...newFilter, slug });
-    if (!validation.success) {
-      toast.error("Please fill all fields.");
-      return;
-    }
-    createMutation.mutate({ ...newFilter, slug });
+  const onSubmit = (data: FormData) => {
+    createMutation.mutate(data);
   };
 
   // Safe data extraction
-  const filtersData = Array.isArray(filters?.data) ? filters.data : [];
+  const filtersData = Array?.isArray(filters?.data) ? filters.data : [];
 
   if (isLoading) {
     return <AdminLoadingSkeleton />;
@@ -109,35 +126,50 @@ export default function FiltersManagerPage() {
         </button>
       </header>
 
+      {/* Create Form - Canonical Pattern */}
       {isAdding && (
-        <div className="p-8 bg-primary/10 border-2 border-accent animate-in slide-in-from-top duration-300">
-           <form onSubmit={handleAdd} className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
+        <form onSubmit={handleSubmit(onSubmit)} className="p-8 bg-primary/10 border-2 border-accent animate-in slide-in-from-top duration-300">
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
              <div className="space-y-2">
-               <label className="text-[10px] font-bold uppercase text-accent">English Name</label>
+               <label className="text-[10px] font-bold uppercase text-accent">English Name <span className="text-red-500">*</span></label>
                <input 
-                 required
-                 value={newFilter.name.en}
-                 onChange={(e) => setNewFilter({ ...newFilter, name: { ...newFilter.name, en: e.target.value } })}
+                 {...register("name.en")}
                  className="w-full bg-background border border-primary/20 p-3 outline-none focus:border-accent text-sm"
+                 placeholder="Filter name (English)"
                />
+               {getFieldError(errors, "name.en") && (
+                 <p className="text-[10px] text-red-500">{getFieldError(errors, "name.en")}</p>
+               )}
              </div>
              <div className="space-y-2 text-right" dir="rtl">
                <label className="text-[10px] font-bold uppercase text-accent" dir="ltr">Arabic Name</label>
                <input 
-                 required
-                 value={newFilter.name.ar}
-                 onChange={(e) => setNewFilter({ ...newFilter, name: { ...newFilter.name, ar: e.target.value } })}
+                 {...register("name.ar")}
                  className="w-full bg-background border border-primary/20 p-3 outline-none focus:border-accent text-sm font-sans"
+                 placeholder="الاسم بالعربية"
                />
              </div>
              <div className="flex gap-4">
-               <button type="submit" className="flex-1 py-3 bg-accent text-background font-bold uppercase text-xs">Save</button>
-               <button type="button" onClick={() => setIsAdding(false)} className="px-4 py-3 border border-primary/20 text-foreground/40 hover:text-white">Cancel</button>
+               <button 
+                 type="submit" 
+                 disabled={createMutation.isPending || isSubmitting}
+                 className="flex-1 py-3 bg-accent text-background font-bold uppercase text-xs disabled:opacity-50"
+               >
+                 {createMutation.isPending || isSubmitting ? <Loader2 className="animate-spin inline" size={14} /> : "Save"}
+               </button>
+               <button 
+                 type="button" 
+                 onClick={() => { setIsAdding(false); reset(filterDefaultValues); }} 
+                 className="px-4 py-3 border border-primary/20 text-foreground/40 hover:text-white"
+               >
+                 Cancel
+               </button>
              </div>
-          </form>
-        </div>
+           </div>
+        </form>
       )}
 
+      {/* Filters List */}
       <div className="bg-primary/5 border border-primary/10 overflow-hidden">
         <table className="w-full text-left border-collapse">
           <thead>

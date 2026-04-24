@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Save, Loader2, Play, Image as ImageIcon, Upload, Link as LinkIcon } from "lucide-react";
+import { Save, Loader2, Play, Image as ImageIcon, Upload, Link as LinkIcon, Eye } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SettingsService } from "@/lib/api-client";
 import { heroSchema } from "@/lib/validations";
@@ -78,6 +78,23 @@ export default function HeroManagerPage() {
           <p className="text-foreground/50 pixel-text text-xs uppercase tracking-widest">
             Control your landing page entrance
           </p>
+          {formData.status && (
+            <div className="flex items-center gap-3 mt-2 text-[10px]">
+              <span className={`px-2 py-1 font-bold uppercase ${formData.status === 'published' ? 'bg-green-500/20 text-green-500' : 'bg-yellow-500/20 text-yellow-500'}`}>
+                {formData.status}
+              </span>
+              {formData.publishedAt && (
+                <span className="text-foreground/30">
+                  Published: {new Date(formData.publishedAt).toLocaleDateString()}
+                </span>
+              )}
+              {formData.lastStatusChangeAt && (
+                <span className="text-foreground/30">
+                  Updated: {new Date(formData.lastStatusChangeAt).toLocaleDateString()}
+                </span>
+              )}
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-4">
           <div className="flex bg-primary/10 p-1 pixel-border">
@@ -96,6 +113,15 @@ export default function HeroManagerPage() {
               Published
             </button>
           </div>
+          <a
+            href="/preview?preview=true"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center space-x-2 px-4 py-3 bg-yellow-500/20 text-yellow-500 font-bold uppercase tracking-widest text-xs pixel-border hover:bg-yellow-500/30 transition-colors"
+          >
+            <Eye size={14} />
+            <span>Preview</span>
+          </a>
           <button
             onClick={handleSubmit}
             disabled={mutation.isPending}

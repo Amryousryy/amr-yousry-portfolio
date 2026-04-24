@@ -107,7 +107,11 @@ export async function POST(req: Request) {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
 
-    const project = await Project.create({ ...validation.data, slug });
+    const statusMetadata = validation.data.status === "published" 
+      ? { publishedAt: new Date(), lastStatusChangeAt: new Date() }
+      : { lastStatusChangeAt: new Date() };
+
+    const project = await Project.create({ ...validation.data, slug, ...statusMetadata });
 
     try {
       await logActivity({

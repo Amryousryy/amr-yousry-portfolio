@@ -15,23 +15,58 @@ const DEFAULT_HERO = {
   status: "published"
 };
 
-export async function GET() {
+export async function GET(req: Request) {
+  const responseConfig: ResponseInit = {
+    headers: {
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      "Pragma": "no-cache",
+      "Expires": "0",
+    },
+  };
+
   try {
+    const { searchParams } = new URL(req.url);
+    const isAdmin = searchParams.get("admin") === "true";
+    const isPreview = searchParams.get("preview") === "true";
+
     if (!process.env.MONGODB_URI) {
-      return NextResponse.json({ success: true, data: DEFAULT_HERO });
+      return NextResponse.json({ success: true, data: { ...DEFAULT_HERO, _preview: isPreview } }, responseConfig);
     }
 
     await dbConnect();
-    const settings = await Settings.findOne({}).lean();
+    const settings = await Settings.findOne({}).lean() as any;
     
     if (!settings?.hero) {
-      return NextResponse.json({ success: true, data: DEFAULT_HERO });
+      return NextResponse.json({ success: true, data: { ...DEFAULT_HERO, _preview: isPreview } }, responseConfig);
     }
 
-    return NextResponse.json({ success: true, data: settings.hero });
+    // Non-admin, non-preview requests only return published content
+    if (!isAdmin && !isPreview && settings.hero.status !== "published") {
+      return NextResponse.json({ 
+        success: true, 
+        data: { 
+          ...DEFAULT_HERO, 
+          _preview: false 
+        } 
+      }, responseConfig);
+    }
+
+    return NextResponse.json({ 
+      success: true, 
+      data: { 
+        ...settings.hero, 
+        _preview: isPreview && settings.hero.status !== "published" 
+      } 
+    }, responseConfig);
   } catch (error) {
     console.error("GET_HERO_SETTINGS_ERROR:", error);
-    return NextResponse.json({ success: true, data: DEFAULT_HERO });
+    return NextResponse.json({ 
+      success: true, 
+      data: { 
+        ...DEFAULT_HERO, 
+        _preview: false 
+      } 
+    }, responseConfig);
   }
 }
 
@@ -55,9 +90,31 @@ export async function PUT(req: Request) {
 
     await dbConnect();
     
+    const currentSettings = await Settings.findOne({}).lean() as any;
+    const currentStatus = currentSettings?.hero?.status || "draft";
+    const newStatus = validation.data.status || "draft";
+    
+    const heroData = { ...validation.data };
+    delete (heroData as any).status;
+    
+    const statusMetadata: Record<string, Date> = {
+      lastStatusChangeAt: new Date(),
+    };
+    
+    if (newStatus === "published" && currentStatus !== "published") {
+      statusMetadata.publishedAt = new Date();
+    }
+    
     const settings = await Settings.findOneAndUpdate(
       {}, 
-      { $set: { hero: validation.data, updatedAt: new Date() } }, 
+      { $set: { 
+        hero: { 
+          ...heroData, 
+          status: newStatus,
+          ...statusMetadata,
+        }, 
+        updatedAt: new Date() 
+      } }, 
       { upsert: true, new: true }
     );
     

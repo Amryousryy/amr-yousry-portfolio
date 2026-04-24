@@ -1,558 +1,504 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Upload, Loader2, Save, Settings2, FileText, Layout, Plus, RefreshCw, AlertCircle, Globe, Search } from "lucide-react";
-import { CldUploadWidget } from "next-cloudinary";
+import React, { useEffect, useState } from "react";
+import { useForm, useFieldArray, Controller, FieldErrors } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Upload, Loader2, Save, Plus, X, Clock } from "lucide-react";
 import { toast } from "sonner";
+import { CldUploadWidget } from "next-cloudinary";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
-import { NewProject, Project, BilingualString } from "@/types";
-import BilingualInput from "@/components/admin/BilingualInput";
-import { projectSchema } from "@/lib/validations";
-import RichTextEditor from "./RichTextEditor";
-import DraggableGallery from "./DraggableGallery";
-import TagsInput from "./TagsInput";
-import SectionsEditor from "./SectionsEditor";
+import { Project } from "@/types";
+import { 
+  projectCreateSchema, 
+  projectUpdateSchema, 
+  ProjectCreateInput,
+  projectDefaultValues,
+  generateSlugFromTitle,
+  createEmptyProjectSection,
+} from "@/lib/validation";
 import { mediaConfig } from "@/lib/media/config";
+import { useUnsavedChanges } from "@/lib/hooks";
+import { ErrorSummary, scrollToFirstError } from "@/components/admin/ErrorSummary";
 
 const categories = ["Real Estate", "UGC / Ads", "Social Media", "Corporate", "Brand Film"];
 
 interface ProjectEditorProps {
   initialData?: Project;
-  onSave: (data: NewProject | Partial<Project>, options?: { isAutoSave?: boolean }) => void;
+  onSave: (data: Partial<ProjectCreateInput>, options?: { isAutoSave?: boolean }) => void;
+  onSaveSuccess?: () => void;
   isSaving: boolean;
 }
 
-const emptyBilingual = (): BilingualString => ({ en: "", ar: "" });
+type FormData = ProjectCreateInput;
 
-export default function ProjectEditor({ initialData, onSave, isSaving }: ProjectEditorProps) {
-  const [activeTab, setActiveTab] = useState<"general" | "case-study" | "sections" | "media" | "seo">("general");
-  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
-  const [hasRecoveredData, setHasRecoveredData] = useState(false);
-  const [formData, setFormData] = useState<NewProject>({
-    title: emptyBilingual(),
-    shortDescription: emptyBilingual(),
-    fullDescription: emptyBilingual(),
-    category: "Real Estate",
-    image: "",
-    video: "",
-    problem: emptyBilingual(),
-    strategy: emptyBilingual(),
-    solution: emptyBilingual(),
-    execution: emptyBilingual(),
-    results: emptyBilingual(),
-    featured: false,
-    gallery: [],
-    tags: [],
-    sections: [],
-    status: "draft",
-    displayOrder: 0,
-    year: new Date().getFullYear().toString(),
-    clientName: "",
-    seo: {
-      title: "",
-      description: "",
-      keywords: [],
-    },
+// ============================================================================
+// HELPER: Get nested validation error message
+// ============================================================================
+
+function getFieldError(errors: FieldErrors<FormData>, path: string): string | undefined {
+  const parts = path.split(".");
+  let current: any = errors;
+  for (const part of parts) {
+    if (current === undefined) return undefined;
+    current = current[part];
+  }
+  return current?.message as string | undefined;
+}
+
+// ============================================================================
+// COMPONENT: ProjectEditor
+// ============================================================================
+
+export default function ProjectEditor({ initialData, onSave, onSaveSuccess, isSaving }: ProjectEditorProps) {
+  const isEditMode = !!initialData?._id;
+  const [lastSaved, setLastSaved] = useState<string | null>(null);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+  
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitting },
+    watch,
+    setValue,
+    reset,
+  } = useForm<FormData>({
+    resolver: zodResolver(isEditMode ? projectUpdateSchema : projectCreateSchema),
+    defaultValues: projectDefaultValues,
   });
 
-  // Track the last successfully saved data to avoid redundant auto-saves
-  const lastSavedRef = React.useRef<string>(JSON.stringify(formData));
+  const { setSubmitting: setUnsavedSubmitting, markAsSaved } = useUnsavedChanges<FormData>({
+    watch,
+    reset,
+    defaultValues: projectDefaultValues,
+    enabled: true,
+  });
 
-  // Recovery logic: check for local storage data on mount
-  useEffect(() => {
-    if (!initialData?._id) return;
-    
-    const storageKey = `recovered_project_${initialData._id}`;
-    const savedData = localStorage.getItem(storageKey);
-    
-    if (savedData) {
-      try {
-        const parsed = JSON.parse(savedData);
-        // Compare with current database state
-        const currentDbState = JSON.stringify({
-           ...initialData,
-           createdAt: undefined, // ignore dates for comparison
-           _id: undefined
-        });
-        const recoveredState = JSON.stringify({
-           ...parsed,
-           createdAt: undefined,
-           _id: undefined
-        });
+  // ============================================================================
+  // FIELD ARRAYS - Sections (useFieldArray)
+  // ============================================================================
 
-        if (currentDbState !== recoveredState) {
-          setHasRecoveredData(true);
-        }
-      } catch (e) {
-        localStorage.removeItem(storageKey);
-      }
-    }
-  }, [initialData]);
+  const { fields: sectionFields, append: appendSection, remove: removeSection } = useFieldArray({
+    control,
+    name: "sections",
+  });
 
-  const restoreData = () => {
-    const storageKey = `recovered_project_${initialData?._id}`;
-    const savedData = localStorage.getItem(storageKey);
-    if (savedData) {
-      setFormData(JSON.parse(savedData));
-      setHasRecoveredData(false);
-      toast.success("Progress restored from local cache.");
-    }
-  };
+  // ============================================================================
+  // WATCHED VALUES
+  // ============================================================================
 
-  const clearRecoveredData = () => {
-    const storageKey = `recovered_project_${initialData?._id}`;
-    localStorage.removeItem(storageKey);
-    setHasRecoveredData(false);
-  };
+  const watchedTitleEn = watch("title.en");
+  const watchedSlug = watch("slug");
+  const watchedGallery = watch("gallery") || [];
+
+  // ============================================================================
+  // INITIAL DATA LOAD
+  // ============================================================================
 
   useEffect(() => {
     if (initialData) {
-      const data = {
-        title: initialData.title || emptyBilingual(),
-        shortDescription: initialData.shortDescription || emptyBilingual(),
-        fullDescription: initialData.fullDescription || emptyBilingual(),
+      reset({
+        title: initialData.title || { en: "", ar: "" },
+        slug: initialData.slug || "",
+        shortDescription: initialData.shortDescription || { en: "", ar: "" },
+        fullDescription: initialData.fullDescription || { en: "", ar: "" },
         category: initialData.category,
-        image: initialData.image,
+        image: initialData.image || "",
         video: initialData.video || "",
-        problem: initialData.problem || emptyBilingual(),
-        strategy: initialData.strategy || initialData.solution || emptyBilingual(),
-        solution: initialData.solution || emptyBilingual(),
-        execution: initialData.execution || emptyBilingual(),
-        results: initialData.results || emptyBilingual(),
-        featured: initialData.featured,
-        gallery: initialData.gallery || [],
-        tags: initialData.tags || [],
-        sections: initialData.sections || [],
+        problem: initialData.problem || { en: "", ar: "" },
+        strategy: initialData.strategy || { en: "", ar: "" },
+        solution: initialData.solution || { en: "", ar: "" },
+        execution: initialData.execution || { en: "", ar: "" },
+        results: initialData.results || { en: "", ar: "" },
+        featured: initialData.featured || false,
         status: initialData.status || "draft",
         displayOrder: initialData.displayOrder || 0,
         year: initialData.year || new Date().getFullYear().toString(),
         clientName: initialData.clientName || "",
-        seo: initialData.seo || { title: "", description: "", keywords: [] },
-      };
-      setFormData(data);
-      lastSavedRef.current = JSON.stringify(data);
+        seo: { title: "", description: "", keywords: [] },
+        gallery: initialData.gallery || [],
+        tags: initialData.tags || [],
+        sections: initialData.sections || [],
+      });
     }
-  }, [initialData]);
+  }, [initialData, reset]);
 
-  // Auto-save logic
+  // ============================================================================
+  // SLUG BEHAVIOR
+  // ============================================================================
+
   useEffect(() => {
-    if (!initialData?._id) return;
-
-    const storageKey = `recovered_project_${initialData._id}`;
-
-    const timer = setTimeout(() => {
-      const currentDataStr = JSON.stringify(formData);
-      if (currentDataStr !== lastSavedRef.current) {
-        // Save to local storage first (instant protection)
-        localStorage.setItem(storageKey, currentDataStr);
-
-        // Attempt background sync with DB
-        const validation = projectSchema.safeParse(formData);
-        if (validation.success) {
-          onSave(formData, { isAutoSave: true });
-          lastSavedRef.current = currentDataStr;
-          setLastSavedAt(new Date());
-          // Clear recovery data only after successful DB save is handled via parent if needed,
-          // but for safety we keep it until manual save or next successful auto-save
-        }
-      }
-    }, 30000); // 30 seconds
-
-    return () => clearTimeout(timer);
-  }, [formData, initialData?._id, onSave]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const validation = projectSchema.safeParse(formData);
-    if (!validation.success) {
-      console.error(validation.error);
-      const firstError = validation.error.issues[0];
-      toast.error(`${firstError.path.join(".")}: ${firstError.message}`);
-      return;
+    if (!isEditMode && watchedTitleEn && !watchedSlug) {
+      const newSlug = generateSlugFromTitle(watchedTitleEn);
+      setValue("slug", newSlug);
     }
-    onSave(formData, { isAutoSave: false });
-    lastSavedRef.current = JSON.stringify(formData);
-    setLastSavedAt(new Date());
-    
-    // Clear recovery data on manual save
-    if (initialData?._id) {
-       localStorage.removeItem(`recovered_project_${initialData._id}`);
+  }, [watchedTitleEn, isEditMode, watchedSlug, setValue]);
+
+  // ============================================================================
+  // SUBMIT HANDLER
+  // ============================================================================
+
+  const onSubmit = (data: FormData) => {
+    setUnsavedSubmitting(true);
+    onSave(data);
+    setLastSaved(new Date().toLocaleTimeString());
+    if (!isEditMode && onSaveSuccess) {
+      onSaveSuccess();
     }
   };
 
+  const handleSubmitClick = () => {
+    setSubmitAttempted(true);
+    handleSubmit(onSubmit)();
+    if (Object.keys(errors).length > 0) {
+      scrollToFirstError(errors as unknown as Record<string, unknown>);
+    }
+  };
+
+  // ============================================================================
+  // RENDER
+  // ============================================================================
+
   return (
-    <div className="space-y-12">
-      {/* Recovery Alert */}
-      <AnimatePresence>
-        {hasRecoveredData && (
-          <motion.div 
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="bg-accent/10 border border-accent p-6 flex flex-col md:flex-row items-center justify-between gap-4 overflow-hidden"
+    <div className="space-y-8">
+      {/* Sticky Action Bar */}
+      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b border-primary/20 p-4 -mx-6 px-6 -mt-6 mb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {lastSaved && (
+              <span className="text-xs text-foreground/40 flex items-center gap-1">
+                <Clock size={12} />
+                Saved at {lastSaved}
+              </span>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={handleSubmitClick}
+            disabled={isSaving || isSubmitting}
+            className="flex items-center space-x-3 px-8 py-3 bg-accent text-background font-bold uppercase tracking-widest text-xs pixel-border hover:scale-105 transition-transform disabled:opacity-50"
           >
-            <div className="flex items-center space-x-3 text-accent">
-              <AlertCircle size={24} />
-              <div className="space-y-1">
-                <p className="text-[10px] font-bold uppercase tracking-widest leading-none">Unsaved Session Detected</p>
-                <p className="text-xs text-foreground/60">You have changes from a previous session that weren't finalized.</p>
+            {isSaving || isSubmitting ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
+            <span>{isSaving || isSubmitting ? "Saving..." : "Save Project"}</span>
+          </button>
+        </div>
+      </div>
+
+      {submitAttempted && Object.keys(errors).length > 0 && (
+        <ErrorSummary errors={errors as unknown as Record<string, unknown>} />
+      )}
+
+      <div className="space-y-8">
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
+              Title EN <span className="text-red-500">*</span>
+            </label>
+            <input
+              {...register("title.en")}
+              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
+              placeholder="Project title (English)"
+            />
+            {getFieldError(errors, "title.en") && (
+              <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "title.en")}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
+              Title AR
+            </label>
+            <input
+              {...register("title.ar")}
+              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
+              placeholder="العنوان بالعربية"
+              dir="rtl"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
+              Slug <span className="text-red-500">*</span>
+            </label>
+            <input
+              {...register("slug")}
+              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
+              placeholder="project-slug"
+            />
+            {getFieldError(errors, "slug") && (
+              <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "slug")}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
+              Category <span className="text-red-500">*</span>
+            </label>
+            <select
+              {...register("category")}
+              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors appearance-none"
+            >
+              <option value="">Select category</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+            {getFieldError(errors, "category") && (
+              <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "category")}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-6">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" {...register("featured")} className="w-4 h-4 accent-accent" />
+            <span className="text-xs font-bold uppercase">Featured</span>
+          </label>
+
+          <Controller
+            name="status"
+            control={control}
+            render={({ field }) => (
+              <select {...field} className="bg-primary/5 border border-primary/20 p-2 text-xs font-bold">
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+              </select>
+            )}
+          />
+        </div>
+      </div>
+
+      {/* ============================================================================
+        SECTION: Descriptions
+      ============================================================================ */}
+      <div className="space-y-6 p-6 bg-primary/5 border border-primary/10">
+        <h3 className="text-xs font-bold uppercase tracking-widest text-accent">Descriptions</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
+              Short Description EN
+            </label>
+            <textarea
+              {...register("shortDescription.en")}
+              rows={3}
+              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors resize-none"
+            />
+            {getFieldError(errors, "shortDescription.en") && (
+              <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "shortDescription.en")}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
+              Short Description AR
+            </label>
+            <textarea
+              {...register("shortDescription.ar")}
+              rows={3}
+              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors resize-none"
+              dir="rtl"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
+              Full Description EN
+            </label>
+            <textarea
+              {...register("fullDescription.en")}
+              rows={6}
+              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors resize-none"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
+              Full Description AR
+            </label>
+            <textarea
+              {...register("fullDescription.ar")}
+              rows={6}
+              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors resize-none"
+              dir="rtl"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* ============================================================================
+        SECTION: Tags (simple comma-separated)
+      ============================================================================ */}
+      <div className="space-y-4 p-6 bg-primary/5 border border-primary/10">
+        <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
+          Tags (comma-separated)
+        </label>
+        
+        <Controller
+          name="tags"
+          control={control}
+          render={({ field }) => (
+            <input
+              {...field}
+              value={field.value?.join(", ") || ""}
+              onChange={(e) => {
+                const tags = e.target.value.split(",").map(t => t.trim()).filter(Boolean);
+                field.onChange(tags);
+              }}
+              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
+              placeholder="tag1, tag2, tag3"
+            />
+          )}
+        />
+        <p className="text-[10px] text-foreground/40">Separate multiple tags with commas</p>
+      </div>
+
+      {/* ============================================================================
+        SECTION: Sections (useFieldArray)
+      ============================================================================ */}
+      <div className="space-y-4 p-6 bg-primary/5 border border-primary/10">
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
+            Sections
+          </label>
+          <button
+            type="button"
+            onClick={() => appendSection(createEmptyProjectSection())}
+            className="flex items-center gap-1 px-3 py-1 bg-accent text-background text-xs font-bold uppercase"
+          >
+            <Plus size={14} /> Add Section
+          </button>
+        </div>
+
+        {sectionFields.map((section, sIndex) => (
+          <div key={section.id} className="border border-primary/20 p-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase">Section {sIndex + 1}</span>
+              <button type="button" onClick={() => removeSection(sIndex)} className="text-red-500">
+                <X size={14} />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <input
+                  {...register(`sections.${sIndex}.title.en` as const)}
+                  placeholder="Section title (EN)"
+                  className="w-full bg-background/50 border border-primary/20 p-2 text-sm"
+                />
+                {getFieldError(errors, `sections.${sIndex}.title.en`) && (
+                  <p className="text-[10px] text-red-500">{getFieldError(errors, `sections.${sIndex}.title.en`)}</p>
+                )}
+              </div>
+              <div>
+                <input
+                  {...register(`sections.${sIndex}.title.ar` as const)}
+                  placeholder="العنوان"
+                  className="w-full bg-background/50 border border-primary/20 p-2 text-sm"
+                  dir="rtl"
+                />
               </div>
             </div>
-            <div className="flex items-center space-x-6">
-              <button 
-                onClick={restoreData}
-                className="flex items-center space-x-2 text-[10px] font-bold uppercase tracking-widest bg-accent text-background px-6 py-3 hover:scale-105 transition-transform pixel-border"
-              >
-                <RefreshCw size={14} />
-                <span>Restore Progress</span>
-              </button>
-              <button 
-                onClick={clearRecoveredData}
-                className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 hover:text-foreground transition-colors"
-              >
-                Discard
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
-      {/* Tabs Navigation */}
-      <div className="flex bg-primary/5 p-1 pixel-border w-fit overflow-x-auto max-w-full">
-        {[
-          { id: "general", label: "General", icon: Settings2 },
-          { id: "case-study", label: "Case Study", icon: FileText },
-          { id: "sections", label: "Sections", icon: Layout },
-          { id: "media", label: "Media", icon: Upload },
-          { id: "seo", label: "SEO", icon: Search },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => setActiveTab(tab.id as any)}
-            className={`flex items-center space-x-2 px-6 py-3 text-[10px] font-bold uppercase transition-all whitespace-nowrap ${
-              activeTab === tab.id ? "bg-accent text-background" : "hover:bg-primary/10"
-            }`}
-          >
-            <tab.icon size={14} />
-            <span>{tab.label}</span>
-          </button>
+            <textarea
+              {...register(`sections.${sIndex}.content.en` as const)}
+              placeholder="Section content (EN)"
+              rows={3}
+              className="w-full bg-background/50 border border-primary/20 p-2 text-sm resize-none"
+            />
+
+            <textarea
+              {...register(`sections.${sIndex}.content.ar` as const)}
+              placeholder="المحتوى"
+              rows={3}
+              className="w-full bg-background/50 border border-primary/20 p-2 text-sm resize-none"
+              dir="rtl"
+            />
+          </div>
         ))}
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-12 pb-20">
-        {activeTab === "general" && (
-          <div className="space-y-12 animate-in fade-in duration-500">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              <div className="space-y-8">
-                <BilingualInput
-                  label="Project Title"
-                  value={formData.title}
-                  onChange={(val) => setFormData({ ...formData, title: val })}
-                  required
-                />
-                
-                <div>
-                  <label className="pixel-text text-[10px] text-accent block mb-2 uppercase tracking-widest">Category</label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full bg-primary/5 border border-primary/20 p-4 outline-none focus:border-accent transition-colors appearance-none text-sm"
-                  >
-                    {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-                  </select>
-                </div>
+      {/* ============================================================================
+        SECTION: Gallery (comma-separated URL input)
+      ============================================================================ */}
+      <div className="space-y-4 p-6 bg-primary/5 border border-primary/10">
+        <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
+          Gallery
+        </label>
 
-                <div className="flex items-center space-x-8 p-4 bg-primary/5 border border-primary/10">
-                   <div className="flex items-center space-x-4">
-                      <input
-                        type="checkbox"
-                        id="featured"
-                        checked={formData.featured}
-                        onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                        className="w-6 h-6 accent-accent"
-                      />
-                      <label htmlFor="featured" className="pixel-text text-[10px] uppercase cursor-pointer">Featured</label>
-                   </div>
-                   <div className="flex items-center space-x-4">
-                      <select
-                        value={formData.status}
-                        onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
-                        className="bg-transparent border-none outline-none pixel-text text-[10px] uppercase font-bold text-accent"
-                      >
-                        <option value="draft">Draft</option>
-                        <option value="published">Published</option>
-                      </select>
-                   </div>
-                </div>
-
-                <div className="space-y-4">
-                  <label className="pixel-text text-[10px] text-accent block uppercase tracking-widest">Tags</label>
-                  <TagsInput
-                    tags={formData.tags}
-                    onChange={(tags) => setFormData({ ...formData, tags })}
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <label className="pixel-text text-[10px] text-accent block mb-2 uppercase tracking-widest">Year</label>
-                    <input
-                      type="text"
-                      value={formData.year}
-                      onChange={(e) => setFormData({ ...formData, year: e.target.value })}
-                      className="w-full bg-primary/5 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm"
-                      placeholder="2024"
-                    />
+        <Controller
+          name="gallery"
+          control={control}
+          render={({ field }) => (
+            <>
+              <div className="grid grid-cols-4 gap-4">
+                {(field.value || []).map((url, index) => (
+                  <div key={index} className="relative aspect-video bg-primary/5">
+                    {url && <Image src={url} alt="" fill className="object-cover" />}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newGallery = [...field.value];
+                        newGallery.splice(index, 1);
+                        field.onChange(newGallery);
+                      }}
+                      className="absolute top-1 right-1 p-1 bg-red-500 text-white"
+                    >
+                      <X size={12} />
+                    </button>
                   </div>
-                  <div>
-                    <label className="pixel-text text-[10px] text-accent block mb-2 uppercase tracking-widest">Client Name</label>
-                    <input
-                      type="text"
-                      value={formData.clientName}
-                      onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
-                      className="w-full bg-primary/5 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm"
-                      placeholder="Client Name"
-                    />
-                  </div>
-                </div>
+                ))}
               </div>
-
-              <div className="space-y-8">
-                <BilingualInput
-                  label="Short Description (Summary)"
-                  value={formData.shortDescription}
-                  onChange={(val) => setFormData({ ...formData, shortDescription: val })}
-                  type="textarea"
-                  rows={3}
-                  required
-                />
-                
-                <div className="space-y-4">
-                  <label className="pixel-text text-[10px] text-accent block uppercase tracking-widest">English Full Description</label>
-                  <RichTextEditor
-                    content={formData.fullDescription.en}
-                    onChange={(val) => setFormData({ ...formData, fullDescription: { ...formData.fullDescription, en: val } })}
-                  />
-                </div>
-
-                <div className="space-y-4">
-                  <label className="pixel-text text-[10px] text-accent block uppercase tracking-widest">Arabic Full Description</label>
-                  <RichTextEditor
-                    content={formData.fullDescription.ar}
-                    onChange={(val) => setFormData({ ...formData, fullDescription: { ...formData.fullDescription, ar: val } })}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === "case-study" && (
-          <div className="space-y-12 animate-in fade-in duration-500">
-             <div className="grid grid-cols-1 gap-12">
-                <BilingualInput
-                  label="The Problem"
-                  value={formData.problem || emptyBilingual()}
-                  onChange={(val) => setFormData({ ...formData, problem: val })}
-                  type="textarea"
-                />
-                <BilingualInput
-                  label="The Strategy"
-                  value={formData.strategy || emptyBilingual()}
-                  onChange={(val) => setFormData({ ...formData, strategy: val })}
-                  type="textarea"
-                />
-                <BilingualInput
-                  label="Execution"
-                  value={formData.execution || emptyBilingual()}
-                  onChange={(val) => setFormData({ ...formData, execution: val })}
-                  type="textarea"
-                />
-                <BilingualInput
-                  label="The Results"
-                  value={formData.results || emptyBilingual()}
-                  onChange={(val) => setFormData({ ...formData, results: val })}
-                  type="textarea"
-                />
-             </div>
-          </div>
-        )}
-
-        {activeTab === "sections" && (
-          <div className="animate-in fade-in duration-500">
-            <SectionsEditor
-              sections={formData.sections}
-              onChange={(sections) => setFormData({ ...formData, sections })}
-            />
-          </div>
-        )}
-
-        {activeTab === "media" && (
-          <div className="space-y-12 animate-in fade-in duration-500">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-               {/* Cover Image */}
-               <div className="space-y-4">
-                  <label className="pixel-text text-[10px] text-accent block uppercase tracking-widest">Cover Image</label>
-<CldUploadWidget
-                      uploadPreset={mediaConfig.uploadPreset}
-                    onSuccess={(result) => {
-                      if (result.info && typeof result.info === 'object' && 'secure_url' in result.info) {
-                        setFormData({ ...formData, image: (result.info as any).secure_url });
-                        toast.success("Cover image uploaded!");
-                      }
-                    }}
+              <CldUploadWidget
+                uploadPreset={mediaConfig.uploadPreset}
+                onSuccess={(result: any) => {
+                  field.onChange([...(field.value || []), result.secure_url]);
+                }}
+              >
+                {({ open }) => (
+                  <button
+                    type="button"
+                    onClick={() => open()}
+                    className="px-4 py-2 bg-accent/10 text-accent text-xs font-bold uppercase"
                   >
-                    {({ open }) => (
-                      <div
-                        onClick={() => open()}
-                        className="aspect-video bg-primary/5 border-2 border-dashed border-primary/20 flex flex-col items-center justify-center cursor-pointer hover:border-accent transition-colors overflow-hidden relative pixel-border"
-                      >
-                        {formData.image ? (
-                          <Image src={formData.image} alt="Preview" fill className="object-cover" />
-                        ) : (
-                          <>
-                            <Upload className="text-primary/40 mb-2" />
-                            <span className="text-[10px] text-foreground/40 font-bold uppercase">Upload Cover</span>
-                          </>
-                        )}
-                      </div>
-                    )}
-                  </CldUploadWidget>
-               </div>
+                    <Upload size={14} className="inline mr-2" /> Add Image
+                  </button>
+                )}
+              </CldUploadWidget>
+            </>
+          )}
+        />
+      </div>
 
-               {/* Video Link */}
-               <div className="space-y-4">
-                  <label className="pixel-text text-[10px] text-accent block uppercase tracking-widest">Featured Video URL</label>
-                  <input
-                    type="text"
-                    value={formData.video}
-                    onChange={(e) => setFormData({ ...formData, video: e.target.value })}
-                    className="w-full bg-primary/5 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm"
-                    placeholder="https://vimeo.com/..."
-                  />
-                  <p className="text-[9px] text-foreground/30 uppercase">Direct link to mp4 or Vimeo/YouTube URL</p>
-               </div>
-            </div>
-
-            {/* Gallery */}
-            <div className="space-y-6">
-               <div className="flex justify-between items-center">
-                  <label className="pixel-text text-[10px] text-accent block uppercase tracking-widest">Gallery Assets (Drag to reorder)</label>
-<CldUploadWidget
-                      uploadPreset={mediaConfig.uploadPreset}
-                    onSuccess={(result) => {
-                      if (result.info && typeof result.info === 'object' && 'secure_url' in result.info) {
-                        setFormData(prev => ({ 
-                          ...prev, 
-                          gallery: [...prev.gallery, (result.info as any).secure_url] 
-                        }));
-                        toast.success("Asset added to gallery!");
-                      }
-                    }}
-                  >
-                    {({ open }) => (
-                      <button
-                        type="button"
-                        onClick={() => open()}
-                        className="flex items-center space-x-2 px-4 py-2 bg-primary/10 text-[10px] font-bold uppercase tracking-widest hover:bg-accent hover:text-background transition-all"
-                      >
-                        <Plus size={14} />
-                        <span>Add Asset</span>
-                      </button>
-                    )}
-                  </CldUploadWidget>
-               </div>
-
-               <DraggableGallery
-                 items={formData.gallery}
-                 onChange={(gallery) => setFormData({ ...formData, gallery })}
-                 onRemove={(url) => setFormData(prev => ({
-                   ...prev,
-                   gallery: prev.gallery.filter(item => item !== url)
-                 }))}
-               />
-            </div>
-          </div>
-        )}
-
-        {activeTab === "seo" && (
-          <div className="space-y-12 animate-in fade-in duration-500">
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                <div className="space-y-8">
-                   <div>
-                      <label className="pixel-text text-[10px] text-accent block mb-2 uppercase tracking-widest">Meta Title</label>
-                      <input
-                        type="text"
-                        value={formData.seo.title}
-                        onChange={(e) => setFormData({ ...formData, seo: { ...formData.seo, title: e.target.value } })}
-                        className="w-full bg-primary/5 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm"
-                        placeholder="Page title for search engines"
-                      />
-                   </div>
-                   <div>
-                      <label className="pixel-text text-[10px] text-accent block mb-2 uppercase tracking-widest">Meta Description</label>
-                      <textarea
-                        value={formData.seo.description}
-                        onChange={(e) => setFormData({ ...formData, seo: { ...formData.seo, description: e.target.value } })}
-                        className="w-full bg-primary/5 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm min-h-[120px]"
-                        placeholder="Summary for search results"
-                      />
-                   </div>
-                </div>
-
-                <div className="space-y-8">
-                   <div className="p-8 bg-primary/5 border border-primary/10">
-                      <h3 className="pixel-text text-[10px] text-accent mb-4 uppercase tracking-widest">Google Preview</h3>
-                      <div className="bg-white p-6 rounded-lg space-y-2">
-                         <p className="text-[#1a0dab] text-xl font-medium hover:underline cursor-pointer truncate">
-                           {formData.seo.title || formData.title.en || "Project Title"}
-                         </p>
-                         <p className="text-[#006621] text-sm truncate">
-                           https://amr-yousry.com/projects/{formData.title.en.toLowerCase().replace(/[^a-z0-9]+/g, "-")}
-                         </p>
-                         <p className="text-[#545454] text-sm line-clamp-2">
-                           {formData.seo.description || formData.shortDescription.en || "No description set yet."}
-                         </p>
-                      </div>
-                   </div>
-
-                   <div className="space-y-4">
-                      <label className="pixel-text text-[10px] text-accent block uppercase tracking-widest">SEO Keywords</label>
-                      <TagsInput
-                        tags={formData.seo.keywords || []}
-                        onChange={(keywords) => setFormData({ ...formData, seo: { ...formData.seo, keywords } })}
-                      />
-                   </div>
-                </div>
-             </div>
-          </div>
-        )}
-
-        {/* Global Action Bar */}
-        <div className="fixed bottom-0 left-0 md:left-64 right-0 p-6 bg-background/80 backdrop-blur-md border-t border-primary/10 z-50 flex items-center justify-between">
-           <div className="flex items-center space-x-4">
-              {lastSavedAt && (
-                <div className="flex items-center space-x-2 text-foreground/40">
-                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                  <span className="pixel-text text-[9px] uppercase tracking-widest font-bold">
-                    Last Saved: {lastSavedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                </div>
-              )}
-           </div>
-           
-           <button
-            type="submit"
-            disabled={isSaving}
-            className="flex items-center space-x-3 px-12 py-4 bg-accent text-background font-bold uppercase tracking-[0.3em] text-xs pixel-border hover:scale-105 transition-all disabled:opacity-50"
-          >
-            {isSaving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
-            <span>{initialData ? "Update Project" : "Publish Project"}</span>
-          </button>
+      {/* ============================================================================
+        SECTION: Meta Fields
+      ============================================================================ */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 bg-primary/5 border border-primary/10">
+        <div>
+          <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">Year</label>
+          <input
+            {...register("year")}
+            className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
+            placeholder="2024"
+          />
         </div>
-      </form>
+        <div>
+          <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">Client Name</label>
+          <input
+            {...register("clientName")}
+            className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
+            placeholder="Client Name"
+          />
+        </div>
+      </div>
+
+      {/* ============================================================================
+        SUBMIT BUTTON
+      ============================================================================ */}
+      {/* Moved to sticky header above */}
     </div>
   );
 }

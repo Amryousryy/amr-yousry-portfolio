@@ -8,13 +8,22 @@ export default function LanguageToggle() {
   const pathname = usePathname();
 
   const toggleLocale = () => {
-    const segments = pathname.split('/');
-    if (segments[1] === 'en') {
-      segments[1] = 'ar';
-    } else {
-      segments[1] = 'en';
-    }
-    router.push(segments.join('/'));
+    // Normalize path into segments without empty strings
+    const raw = pathname.startsWith('/') ? pathname.slice(1) : pathname;
+    const parts = raw.length ? raw.split('/') : [];
+
+    // Detect current locale if present as first segment
+    const currentLocale = parts[0] === 'en' || parts[0] === 'ar' ? parts[0] : null;
+    const rest = currentLocale ? parts.slice(1) : parts;
+
+    // Compute the next locale (default to 'en' if not determinable)
+    const nextLocale = currentLocale === 'ar' ? 'en' : 'ar';
+
+    // Build new path: /<locale>/<rest...>
+    const newParts = currentLocale ? [nextLocale, ...rest] : [nextLocale, ...rest];
+    const newPath = '/' + newParts.filter(Boolean).join('/');
+
+    router.push(newPath);
   };
 
   return (

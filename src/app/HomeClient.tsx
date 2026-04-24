@@ -8,7 +8,7 @@ const FilmStripSection = dynamic(() => import("@/components/ui/FilmStripSection"
   ssr: false,
 });
 
-const ServicesSection = dynamic(() => import("@/components/ui/ServicesSection"), {
+const ServicesSection = dynamic(() => import("@/components/sections/ServicesSection"), {
   ssr: false,
 });
 

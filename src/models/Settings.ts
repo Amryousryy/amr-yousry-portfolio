@@ -1,51 +1,144 @@
 import mongoose, { Schema, Document } from "mongoose";
+import type { ContentStatus } from "@/types/constants";
 
-const BilingualSchema = new Schema({
+const BilingualSchema = new mongoose.Schema({
   en: { type: String, required: true },
   ar: { type: String, required: true },
 }, { _id: false });
 
+const OptionalBilingualSchema = new mongoose.Schema({
+  en: { type: String },
+  ar: { type: String },
+}, { _id: false });
+
+export interface IStatsLabel {
+  en: string;
+  ar: string;
+}
+
+export interface IServiceItem {
+  title: { en: string; ar: string };
+  description: { en: string; ar: string };
+  icon: string;
+  displayOrder: number;
+  isActive: boolean;
+}
+
+export interface IServiceCard {
+  title: { en: string; ar: string };
+  description: { en: string; ar: string };
+  icon: string;
+}
+
+export interface IHeroSettings {
+  headline: { en: string; ar: string };
+  subheadline: { en: string; ar: string };
+  primaryCTA: { en: string; ar: string };
+  primaryCTALink: string;
+  secondaryCTA: { en: string; ar: string };
+  secondaryCTALink: string;
+  posterImage?: string;
+  showreelVideo?: string;
+  status: ContentStatus;
+  publishedAt?: Date;
+  lastStatusChangeAt?: Date;
+}
+
+export interface IAboutSection {
+  content: { en: string; ar: string };
+  stats: Array<{
+    label: { en: string; ar: string };
+    value: string;
+  }>;
+}
+
 export interface ISettings extends Document {
-  hero: {
-    headline: { en: string; ar: string };
-    subheadline: { en: string; ar: string };
-    videoUrl?: string;
-    ctaText: { en: string; ar: string };
-    status: "draft" | "published";
+  hero: IHeroSettings;
+  about: IAboutSection;
+  services: IServiceItem[];
+  siteContent?: {
+    about: { en: string; ar: string };
+    servicesTitle: { en: string; ar: string };
+    servicesDescription: { en: string; ar: string };
+    contactEmail: string;
+    whatsappNumber: string;
+    socialLinks: {
+      instagram: string;
+      twitter: string;
+      youtube: string;
+      linkedin: string;
+    };
+    status: ContentStatus;
+    servicesCards: IServiceCard[];
+    publishedAt?: Date;
+    lastStatusChangeAt?: Date;
   };
-  about: {
-    content: { en: string; ar: string };
-    stats: { label: { en: string; ar: string }; value: string }[];
-  };
-  services: {
-    title: { en: string; ar: string };
-    description: { en: string; ar: string };
-    icon: string;
-  }[];
   createdAt: Date;
   updatedAt: Date;
 }
 
-const SettingsSchema: Schema = new Schema({
-  hero: {
-    headline: { type: BilingualSchema, required: true },
-    subheadline: { type: BilingualSchema, required: true },
-    videoUrl: { type: String },
-    ctaText: { type: BilingualSchema, required: true },
-    status: { type: String, enum: ["draft", "published"], default: "draft" },
-  },
-  about: {
-    content: { type: BilingualSchema, required: true },
-    stats: [{
-      label: { type: BilingualSchema, required: true },
-      value: { type: String, required: true }
-    }]
-  },
-  services: [{
-    title: { type: BilingualSchema, required: true },
-    description: { type: BilingualSchema, required: true },
-    icon: { type: String, required: true }
+const HeroSchema = new Schema({
+  headline: { type: BilingualSchema, required: true },
+  subheadline: { type: BilingualSchema, required: true },
+  primaryCTA: { type: BilingualSchema, required: true },
+  primaryCTALink: { type: String, default: "/#contact" },
+  secondaryCTA: { type: BilingualSchema, required: true },
+  secondaryCTALink: { type: String, default: "/projects" },
+  posterImage: { type: String },
+  showreelVideo: { type: String },
+  status: { type: String, enum: ["draft", "published"], default: "draft" },
+  publishedAt: { type: Date },
+  lastStatusChangeAt: { type: Date },
+}, { _id: false });
+
+const AboutSchema = new Schema({
+  content: { type: BilingualSchema, required: true },
+  stats: [{
+    label: { type: BilingualSchema, required: true },
+    value: { type: String, required: true },
   }],
+}, { _id: false });
+
+const ServiceItemSchema = new Schema({
+  title: { type: BilingualSchema, required: true },
+  description: { type: BilingualSchema, required: true },
+  icon: { type: String, required: true },
+}, { _id: false });
+
+const ServiceCardSchema = new Schema({
+  title: { type: BilingualSchema, required: true },
+  description: { type: BilingualSchema, required: true },
+  icon: { type: String, required: true },
+}, { _id: false });
+
+const SocialLinksSchema = new Schema({
+  instagram: { type: String },
+  twitter: { type: String },
+  youtube: { type: String },
+  linkedin: { type: String },
+}, { _id: false });
+
+const SiteContentSchema = new Schema({
+  about: { type: BilingualSchema, required: true },
+  servicesTitle: { type: BilingualSchema, required: true },
+  servicesDescription: { type: BilingualSchema },
+  contactEmail: { type: String, required: true },
+  whatsappNumber: { type: String },
+  socialLinks: { type: SocialLinksSchema },
+  status: { type: String, enum: ["draft", "published"], default: "draft" },
+  servicesCards: { type: [ServiceCardSchema], default: [] },
+  publishedAt: { type: Date },
+  lastStatusChangeAt: { type: Date },
+}, { _id: false });
+
+const SettingsSchema: Schema = new Schema({
+  hero: { type: HeroSchema, required: true },
+  about: { type: AboutSchema, required: true },
+  services: { type: [ServiceItemSchema], default: [] },
+  siteContent: { type: SiteContentSchema },
 }, { timestamps: true });
+
+SettingsSchema.index({ "hero.status": 1 });
+SettingsSchema.index({ "siteContent.status": 1 });
 
 export default mongoose.models.Settings || mongoose.model<ISettings>("Settings", SettingsSchema);

@@ -36,6 +36,8 @@ export interface IProject extends Document {
     description?: string;
     keywords?: string[];
   };
+  publishedAt?: Date;
+  lastStatusChangeAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -76,6 +78,8 @@ const ProjectSchema: Schema = new Schema({
     description: { type: String },
     keywords: { type: [String] },
   },
+  publishedAt: { type: Date },
+  lastStatusChangeAt: { type: Date },
 }, { timestamps: true });
 
 ProjectSchema.index({ slug: 1 }, { unique: true });

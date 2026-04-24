@@ -14,7 +14,8 @@ import {
   EyeOff, 
   Star,
   ArrowLeft,
-  MoreHorizontal
+  MoreHorizontal,
+  Send
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -37,7 +38,7 @@ interface ProjectRow {
   featured: boolean;
   status: "draft" | "published";
   tags: string[];
-  createdAt: string;
+  createdAt: Date;
 }
 
 function StatusBadge({ status }: { status: string }) {
@@ -81,6 +82,28 @@ export default function ProjectsPage() {
     },
     onError: (error: Error) => {
       toast.error(error.message || "Failed to delete project");
+    }
+  });
+
+  const publishMutation = useMutation({
+    mutationFn: (id: string) => ProjectService.publish(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      toast.success("Project published successfully");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to publish project");
+    }
+  });
+
+  const unpublishMutation = useMutation({
+    mutationFn: (id: string) => ProjectService.unpublish(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      toast.success("Project unpublished");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to unpublish project");
     }
   });
 
@@ -162,6 +185,33 @@ export default function ProjectsPage() {
       id: "actions",
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
+          {row.original.status === "draft" ? (
+            <button 
+              onClick={() => {
+                if (window.confirm(`Publish "${row.original.title?.en}"? It will be visible on the live site.`)) {
+                  publishMutation.mutate(row.original._id);
+                }
+              }}
+              disabled={publishMutation.isPending}
+              className="p-2 hover:bg-green-500 hover:text-white transition-colors rounded-sm disabled:opacity-50"
+              title="Publish"
+            >
+              <Send size={14} />
+            </button>
+          ) : (
+            <button 
+              onClick={() => {
+                if (window.confirm(`Unpublish "${row.original.title?.en}"? It will be hidden from the live site.`)) {
+                  unpublishMutation.mutate(row.original._id);
+                }
+              }}
+              disabled={unpublishMutation.isPending}
+              className="p-2 hover:bg-yellow-500 hover:text-white transition-colors rounded-sm disabled:opacity-50"
+              title="Unpublish"
+            >
+              <EyeOff size={14} />
+            </button>
+          )}
           <Link 
             href={`/projects/${row.original.slug}`} 
             target="_blank"

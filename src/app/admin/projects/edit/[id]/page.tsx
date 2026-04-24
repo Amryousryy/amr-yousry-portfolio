@@ -69,7 +69,7 @@ export default function EditProjectPage() {
       <ProjectEditor 
         initialData={project}
         onSave={(data, options) => mutation.mutate({ data: data as Partial<Project>, isAutoSave: options?.isAutoSave })} 
-        isSaving={mutation.isPending} 
+        isSaving={mutation.isPending}
       />
     </div>
   );

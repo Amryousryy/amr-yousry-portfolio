@@ -10,6 +10,7 @@ interface BilingualInputProps {
   type?: "text" | "textarea";
   required?: boolean;
   rows?: number;
+  error?: string;
 }
 
 export default function BilingualInput({
@@ -18,7 +19,8 @@ export default function BilingualInput({
   onChange,
   type = "text",
   required = false,
-  rows = 4
+  rows = 4,
+  error
 }: BilingualInputProps) {
   const handleChange = (lang: "en" | "ar", val: string) => {
     onChange({ ...value, [lang]: val });
@@ -50,6 +52,9 @@ export default function BilingualInput({
             className="w-full bg-primary/5 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm"
             placeholder={`Enter ${label} in English...`}
           />
+          {error && (
+            <p className="text-[10px] text-red-500">{error}</p>
+          )}
         </div>
 
         {/* Arabic Input */}

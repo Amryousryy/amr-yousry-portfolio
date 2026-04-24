@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, X, Send, Zap } from "lucide-react";
-import ContactForm from "./ContactForm";
+import { ContactForm } from "./ContactForm";
 
 export default function FloatingCTA() {
   const [isOpen, setIsOpen] = useState(false);

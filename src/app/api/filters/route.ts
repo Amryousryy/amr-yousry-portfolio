@@ -33,7 +33,7 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const isAdmin = searchParams.get("admin") === "true";
-    const query = isAdmin ? {} : { active: true };
+    const query = isAdmin ? {} : { isActive: true };
     
     const parsed = paginationSchema.safeParse({
       page: searchParams.get("page") || 1,

@@ -39,7 +39,7 @@ export interface Project {
     description?: string;
     keywords?: string[];
   };
-  createdAt: string;
+  createdAt: Date;
 }
 
 export type NewProject = Omit<Project, "_id" | "createdAt" | "slug">;
@@ -63,6 +63,8 @@ export interface HeroSettings {
   posterImage: string;
   showreelVideo: string;
   status: ContentStatus;
+  publishedAt?: Date;
+  lastStatusChangeAt?: Date;
 }
 
 export interface SiteContent {
@@ -78,4 +80,12 @@ export interface SiteContent {
     youtube?: string;
     linkedin?: string;
   };
+  status: ContentStatus;
+  servicesCards: Array<{
+    title: BilingualString;
+    description: BilingualString;
+    icon: string;
+  }>;
+  publishedAt?: Date;
+  lastStatusChangeAt?: Date;
 }
