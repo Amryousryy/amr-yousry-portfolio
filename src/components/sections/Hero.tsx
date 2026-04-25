@@ -101,16 +101,19 @@ export default function Hero() {
         </p>
 
         <div ref={ctaRef} className="flex flex-col md:flex-row items-center justify-center gap-6">
-          <a href={settings?.primaryCTALink || "#contact"} className="group relative px-10 py-4 bg-accent text-background font-bold uppercase tracking-[0.2em] text-xs overflow-hidden pixel-border transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(0,245,212,0.3)] hover:shadow-[0_0_50px_rgba(0,245,212,0.5)]">
+          <a 
+            href={settings?.primaryCTALink || "#contact"} 
+            className="group relative px-10 py-4 min-h-[56px] bg-accent text-background font-bold uppercase tracking-[0.2em] text-xs overflow-hidden pixel-border transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(0,245,212,0.3)] hover:shadow-[0_0_50px_rgba(0,245,212,0.5)] flex items-center justify-center"
+          >
             <span className="relative z-10">{primaryCTA || "Start Your Project"}</span>
             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
           </a>
 
           <button
             onClick={() => setShowModal(true)}
-            className="group flex items-center space-x-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-foreground/70 hover:text-accent transition-colors duration-300"
+            className="group flex items-center space-x-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-foreground/70 hover:text-accent transition-colors duration-300 px-4 py-3 min-h-[56px]"
           >
-            <div className="w-12 h-12 bg-white/5 flex items-center justify-center pixel-border group-hover:bg-accent group-hover:text-background transition-all duration-300">       
+            <div className="w-12 h-12 min-w-[48px] bg-white/5 flex items-center justify-center pixel-border group-hover:bg-accent group-hover:text-background transition-all duration-300">       
               <Play size={18} fill="currentColor" />
             </div>
             <span>{secondaryCTA || "View My Work"}</span>

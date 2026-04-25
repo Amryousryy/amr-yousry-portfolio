@@ -54,7 +54,7 @@ export default function FloatingCTA() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed bottom-8 right-8 z-[200] w-full max-w-md bg-background border border-white/10 p-8 shadow-2xl"
+              className="fixed bottom-0 right-0 md:bottom-8 md:right-8 z-[200] w-full md:w-full md:max-w-md bg-background border-t md:border border-white/10 p-6 md:p-8 shadow-2xl rounded-t-2xl md:rounded-none"
             >
               <div className="flex justify-between items-center mb-8">
                 <div className="flex items-center gap-3">
