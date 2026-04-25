@@ -15,10 +15,6 @@ import AdminEmptyState from "@/components/admin/AdminEmptyState";
 
 type FormData = FilterCreateInput;
 
-// ============================================================================
-// HELPER: Get nested validation error message
-// ============================================================================
-
 function getFieldError(errors: FieldErrors<FormData>, path: string): string | undefined {
   const parts = path.split(".");
   let current: any = errors;
@@ -27,6 +23,12 @@ function getFieldError(errors: FieldErrors<FormData>, path: string): string | un
     current = current[part];
   }
   return current?.message as string | undefined;
+}
+
+function getString(value: string | { en: string; ar: string } | undefined): string {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  return value.en || "";
 }
 
 export default function FiltersManagerPage() {
@@ -80,7 +82,6 @@ export default function FiltersManagerPage() {
     createMutation.mutate(data);
   };
 
-  // Safe data extraction
   const filtersData = Array?.isArray(filters?.data) ? filters.data : [];
 
   if (isLoading) {
@@ -126,28 +127,19 @@ export default function FiltersManagerPage() {
         </button>
       </header>
 
-      {/* Create Form - Canonical Pattern */}
       {isAdding && (
         <form onSubmit={handleSubmit(onSubmit)} className="p-8 bg-primary/10 border-2 border-accent animate-in slide-in-from-top duration-300">
            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
              <div className="space-y-2">
-               <label className="text-[10px] font-bold uppercase text-accent">English Name <span className="text-red-500">*</span></label>
+               <label className="text-[10px] font-bold uppercase text-accent">Name <span className="text-red-500">*</span></label>
                <input 
-                 {...register("name.en")}
+                 {...register("name")}
                  className="w-full bg-background border border-primary/20 p-3 outline-none focus:border-accent text-sm"
-                 placeholder="Filter name (English)"
+                 placeholder="Filter name"
                />
-               {getFieldError(errors, "name.en") && (
-                 <p className="text-[10px] text-red-500">{getFieldError(errors, "name.en")}</p>
+               {getFieldError(errors, "name") && (
+                 <p className="text-[10px] text-red-500">{getFieldError(errors, "name")}</p>
                )}
-             </div>
-             <div className="space-y-2 text-right" dir="rtl">
-               <label className="text-[10px] font-bold uppercase text-accent" dir="ltr">Arabic Name</label>
-               <input 
-                 {...register("name.ar")}
-                 className="w-full bg-background border border-primary/20 p-3 outline-none focus:border-accent text-sm font-sans"
-                 placeholder="الاسم بالعربية"
-               />
              </div>
              <div className="flex gap-4">
                <button 
@@ -169,13 +161,12 @@ export default function FiltersManagerPage() {
         </form>
       )}
 
-      {/* Filters List */}
       <div className="bg-primary/5 border border-primary/10 overflow-hidden">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b border-primary/10 bg-primary/5">
               <th className="p-6 text-[10px] font-bold uppercase tracking-widest text-foreground/40">Order</th>
-              <th className="p-6 text-[10px] font-bold uppercase tracking-widest text-foreground/40">Name (EN / AR)</th>
+              <th className="p-6 text-[10px] font-bold uppercase tracking-widest text-foreground/40">Name</th>
               <th className="p-6 text-[10px] font-bold uppercase tracking-widest text-foreground/40">Slug</th>
               <th className="p-6 text-[10px] font-bold uppercase tracking-widest text-foreground/40 text-center">Status</th>
               <th className="p-6 text-[10px] font-bold uppercase tracking-widest text-foreground/40 text-right">Actions</th>
@@ -191,10 +182,7 @@ export default function FiltersManagerPage() {
                   </div>
                 </td>
                 <td className="p-6">
-                  <div className="flex flex-col">
-                    <span className="text-sm font-bold">{filter.name?.en || "N/A"}</span>
-                    <span className="text-xs text-foreground/40 font-sans">{filter.name?.ar || "N/A"}</span>
-                  </div>
+                  <span className="text-sm font-bold">{getString(filter.name) || "N/A"}</span>
                 </td>
                 <td className="p-6 text-xs text-accent font-mono">{filter.slug || "N/A"}</td>
                 <td className="p-6 text-center">

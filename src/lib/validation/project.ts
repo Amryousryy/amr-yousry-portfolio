@@ -1,35 +1,29 @@
 import { z } from "zod";
 import {
-  bilingualStringSchema,
-  optionalBilingualStringSchema,
   mediaItemSchema,
   mediaArraySchema,
   normalizeSlug,
   seoSchema,
   optionalUrlSchema,
   contentStatusSchema,
-  emptyBilingual,
   createEmptyMediaItem,
   createEmptyProjectSection,
+  stringSchema,
 } from "./shared";
-
-// ============================================================================
-// PROJECT CREATE SCHEMA
-// ============================================================================
 
 export const projectCreateSchema = z.object({
   slug: z.string().min(1, "Slug is required").transform(normalizeSlug),
-  title: bilingualStringSchema,
-  shortDescription: bilingualStringSchema,
-  fullDescription: bilingualStringSchema,
+  title: stringSchema,
+  shortDescription: stringSchema,
+  fullDescription: stringSchema,
   category: z.string().min(1, "Category is required"),
   image: z.string().url("Valid cover image URL is required"),
   video: optionalUrlSchema,
-  problem: optionalBilingualStringSchema,
-  strategy: optionalBilingualStringSchema,
-  solution: optionalBilingualStringSchema,
-  execution: optionalBilingualStringSchema,
-  results: optionalBilingualStringSchema,
+  problem: stringSchema.optional(),
+  strategy: stringSchema.optional(),
+  solution: stringSchema.optional(),
+  execution: stringSchema.optional(),
+  results: stringSchema.optional(),
   featured: z.boolean().default(false),
   status: contentStatusSchema.default("draft"),
   displayOrder: z.number().int().default(0),
@@ -40,34 +34,22 @@ export const projectCreateSchema = z.object({
   tags: z.array(z.string()).default([]),
   sections: z.array(z.object({
     id: z.string(),
-    title: bilingualStringSchema,
-    content: bilingualStringSchema,
+    title: stringSchema,
+    content: stringSchema,
     media: mediaArraySchema,
   })).default([]),
 });
 
-// ============================================================================
-// PROJECT UPDATE SCHEMA (all fields optional)
-// ============================================================================
-
 export const projectUpdateSchema = projectCreateSchema.partial();
-
-// ============================================================================
-// INFERRED TYPES
-// ============================================================================
 
 export type ProjectCreateInput = z.infer<typeof projectCreateSchema>;
 export type ProjectUpdateInput = z.infer<typeof projectUpdateSchema>;
 
-// ============================================================================
-// DEFAULT VALUES FACTORIES
-// ============================================================================
-
 export const projectDefaultValues: ProjectCreateInput = {
   slug: "",
-  title: emptyBilingual(),
-  shortDescription: emptyBilingual(),
-  fullDescription: emptyBilingual(),
+  title: "",
+  shortDescription: "",
+  fullDescription: "",
   category: "",
   image: "",
   video: undefined,
@@ -87,13 +69,12 @@ export const projectDefaultValues: ProjectCreateInput = {
   sections: [],
 };
 
-// Factory for creating initial form values from existing project data
 export function createProjectFormValues(existing?: Partial<ProjectCreateInput>): ProjectCreateInput {
   return {
     slug: existing?.slug || "",
-    title: existing?.title || emptyBilingual(),
-    shortDescription: existing?.shortDescription || emptyBilingual(),
-    fullDescription: existing?.fullDescription || emptyBilingual(),
+    title: existing?.title || "",
+    shortDescription: existing?.shortDescription || "",
+    fullDescription: existing?.fullDescription || "",
     category: existing?.category || "",
     image: existing?.image || "",
     video: existing?.video,
@@ -114,32 +95,16 @@ export function createProjectFormValues(existing?: Partial<ProjectCreateInput>):
   };
 }
 
-// ============================================================================
-// PAYLOAD MAPPER
-// ============================================================================
-
-// Transform form data to API payload - single source of truth for shape conversion
 export function mapProjectFormToPayload(formData: Partial<ProjectCreateInput>): Partial<ProjectCreateInput> {
   return {
     ...formData,
-    // tags is already string[] from Controller transformation
-    // gallery is already string[] from Controller transformation  
-    // sections is already properly formatted from useFieldArray
   };
 }
 
-// ============================================================================
-// SLUG BEHAVIOR
-// ============================================================================
-
-// Auto-generate slug from English title - only in create mode
-export function generateSlugFromTitle(titleEn: string): string {
-  return normalizeSlug(titleEn);
+export function generateSlugFromTitle(title: string): string {
+  return normalizeSlug(title);
 }
 
-// Determine if slug should be auto-generated
 export function shouldAutoGenerateSlug(existingSlug: string | undefined, isEditMode: boolean): boolean {
-  // In edit mode, only auto-generate if slug is explicitly empty
-  // In create mode, always auto-generate when title changes
   return isEditMode ? !existingSlug : true;
 }

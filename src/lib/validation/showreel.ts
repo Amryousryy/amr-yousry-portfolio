@@ -1,13 +1,13 @@
 import { z } from "zod";
-import { bilingualStringSchema, optionalBilingualStringSchema, optionalUrlSchema, emptyBilingual } from "./shared";
+import { stringSchema, optionalUrlSchema } from "./shared";
 
 export const showreelCreateSchema = z.object({
-  title: bilingualStringSchema,
-  subtitle: bilingualStringSchema,
+  title: stringSchema,
+  subtitle: stringSchema,
   videoUrl: z.string().url("Valid video URL is required"),
   thumbnailUrl: z.string().url("Valid thumbnail URL is required"),
   isActive: z.boolean().default(false),
-  ctaText: optionalBilingualStringSchema,
+  ctaText: stringSchema.optional(),
   ctaLink: z.string().default("/contact"),
 });
 
@@ -17,8 +17,8 @@ export type ShowreelCreateInput = z.infer<typeof showreelCreateSchema>;
 export type ShowreelUpdateInput = z.infer<typeof showreelUpdateSchema>;
 
 export const showreelDefaultValues: ShowreelCreateInput = {
-  title: emptyBilingual(),
-  subtitle: emptyBilingual(),
+  title: "",
+  subtitle: "",
   videoUrl: "",
   thumbnailUrl: "",
   isActive: false,
@@ -26,11 +26,10 @@ export const showreelDefaultValues: ShowreelCreateInput = {
   ctaLink: "/contact",
 };
 
-// Factory for creating initial form values from existing showreel data
 export function createShowreelFormValues(existing?: Partial<ShowreelCreateInput>): ShowreelCreateInput {
   return {
-    title: existing?.title || emptyBilingual(),
-    subtitle: existing?.subtitle || emptyBilingual(),
+    title: existing?.title || "",
+    subtitle: existing?.subtitle || "",
     videoUrl: existing?.videoUrl || "",
     thumbnailUrl: existing?.thumbnailUrl || "",
     isActive: existing?.isActive || false,

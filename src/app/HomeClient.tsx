@@ -38,8 +38,9 @@ const SectionNarrator = dynamic(() => import("@/components/ui/SectionNarrator"),
   loading: () => null,
 });
 
-function HeroFallback() {
-  return (
+const Hero = dynamic(() => import("@/components/sections/Hero"), {
+  ssr: false,
+  loading: () => (
     <div className="min-h-screen bg-[#050508] flex items-center justify-center">
       <div className="text-center">
         <div className="text-4xl text-white mb-4">Amr Yousry</div>
@@ -50,19 +51,14 @@ function HeroFallback() {
         </div>
       </div>
     </div>
-  );
-}
-
-const HeroSection = dynamic(() => import("@/components/ui/HeroSection"), {
-  ssr: false,
-  loading: () => <HeroFallback />,
+  ),
 });
 
 export default function Home() {
   return (
     <>
       <SectionNarrator sections={["hero", "projects", "services", "testimonials", "about", "contact"]} />
-      <HeroSection />
+      <Hero />
       <Marquee />
       <FilmStripSection />
       <ServicesSection />

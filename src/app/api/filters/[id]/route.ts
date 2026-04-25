@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Filter from "@/models/Filter";
-import { filterSchema } from "@/lib/validations";
+import { filterUpdateSchema } from "@/lib/validation";
 
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -14,7 +14,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     }
 
     const body = await req.json();
-    const validation = filterSchema.safeParse(body);
+    const validation = filterUpdateSchema.safeParse(body);
     
     if (!validation.success) {
       return NextResponse.json({ error: validation.error.format() }, { status: 400 });

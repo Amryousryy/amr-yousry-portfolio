@@ -13,10 +13,6 @@ const CinematicCursor = dynamic(() => import("@/components/ui/CinematicCursor"),
   ssr: false,
 });
 
-const SceneCanvas = dynamic(() => import("@/components/three/FilmStudioIsland"), {
-  ssr: false,
-});
-
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdminRoute = pathname?.startsWith("/admin");
@@ -27,7 +23,6 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
 
   return (
     <>
-      <SceneCanvas />
       <CinematicCursor />
       <LoadingScreen />
       <SmoothScroll>

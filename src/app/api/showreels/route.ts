@@ -3,18 +3,18 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Showreel from "@/models/Showreel";
-import { showreelSchema } from "@/lib/validations";
+import { showreelCreateSchema } from "@/lib/validation";
 import { logActivity } from "@/lib/activity";
 
 const DEFAULT_SHOWREEL = {
   _id: "default",
-  title: { en: "Showreel 2024", ar: "عرض أعمال 2024" },
-  subtitle: { en: "Recent work highlights", ar: "أبرز الأعمال الأخيرة" },
+  title: "Showreel 2024",
+  subtitle: "Recent work highlights",
   videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
   thumbnailUrl: "https://images.unsplash.com/photo-1536240478700-b869070f9279?w=800",
   isActive: true,
-  ctaText: { en: "Work With Me", ar: "أعمل معي" },
-  ctaLink: "/#contact",
+  ctaText: "Work With Me",
+  ctaLink: "/contact",
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString()
 };
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const validation = showreelSchema.safeParse(body);
+    const validation = showreelCreateSchema.safeParse(body);
     
     if (!validation.success) {
       return NextResponse.json({ success: false, error: validation.error.format() }, { status: 400 });
@@ -68,7 +68,7 @@ export async function POST(req: Request) {
     await logActivity({
       action: "create",
       targetType: "showreel",
-      targetName: validation.data.title.en,
+      targetName: validation.data.title || "Untitled",
       adminEmail: session.user?.email || "unknown",
       metadata: { id: showreel._id }
     });

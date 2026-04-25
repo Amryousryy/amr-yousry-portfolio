@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { bilingualStringSchema, optionalBilingualStringSchema, optionalUrlSchema, contentStatusSchema } from "./shared";
+import { stringSchema, optionalUrlSchema, contentStatusSchema } from "./shared";
 
 const socialLinksSchema = z.object({
   instagram: optionalUrlSchema,
@@ -9,9 +9,9 @@ const socialLinksSchema = z.object({
 });
 
 export const siteContentSchema = z.object({
-  about: bilingualStringSchema,
-  servicesTitle: bilingualStringSchema,
-  servicesDescription: bilingualStringSchema,
+  about: stringSchema,
+  servicesTitle: stringSchema,
+  servicesDescription: stringSchema,
   contactEmail: z.string().email("Valid email is required"),
   whatsappNumber: z.string().optional(),
   socialLinks: socialLinksSchema.optional(),
@@ -19,27 +19,27 @@ export const siteContentSchema = z.object({
 
 export const settingsCreateSchema = z.object({
   hero: z.object({
-    headline: bilingualStringSchema,
-    subheadline: bilingualStringSchema,
-    primaryCTA: bilingualStringSchema,
+    headline: stringSchema,
+    subheadline: stringSchema,
+    primaryCTA: stringSchema,
     primaryCTALink: z.string().default("/contact"),
-    secondaryCTA: bilingualStringSchema,
+    secondaryCTA: stringSchema,
     secondaryCTALink: z.string().default("/projects"),
     posterImage: optionalUrlSchema,
     showreelVideo: optionalUrlSchema,
     status: contentStatusSchema.default("draft"),
   }),
   about: z.object({
-    content: bilingualStringSchema,
+    content: stringSchema,
     stats: z.array(z.object({
-      label: bilingualStringSchema,
+      label: stringSchema,
       value: z.string(),
     })).default([]),
   }),
   siteContent: siteContentSchema,
   services: z.array(z.object({
-    title: bilingualStringSchema,
-    description: bilingualStringSchema,
+    title: stringSchema,
+    description: stringSchema,
     icon: z.string(),
   })).default([]),
 });
@@ -61,17 +61,18 @@ const socialLinksFormSchema = z.object({
 });
 
 const serviceCardSchema = z.object({
-  title: bilingualStringSchema,
-  description: bilingualStringSchema,
+  title: stringSchema,
+  description: stringSchema,
   icon: z.string().default(""),
 });
 
 export type IServiceCard = z.infer<typeof serviceCardSchema>;
 
 export const contentCreateSchema = z.object({
-  about: bilingualStringSchema,
-  servicesTitle: bilingualStringSchema,
-  servicesDescription: bilingualStringSchema,
+  about: stringSchema,
+  servicesTitle: stringSchema,
+  servicesSubtitle: stringSchema,
+  servicesDescription: stringSchema,
   contactEmail: z.string().email("Valid email is required"),
   whatsappNumber: z.string().optional().default(""),
   socialLinks: socialLinksFormSchema.optional().default({
@@ -90,9 +91,10 @@ export type ContentCreateInput = z.infer<typeof contentCreateSchema>;
 export type ContentUpdateInput = z.infer<typeof contentUpdateSchema>;
 
 export const contentDefaultValues: ContentCreateInput = {
-  about: { en: "", ar: "" },
-  servicesTitle: { en: "", ar: "" },
-  servicesDescription: { en: "", ar: "" },
+  about: "",
+  servicesTitle: "What I Deliver",
+  servicesSubtitle: "Premium video content that drives real business results.",
+  servicesDescription: "",
   contactEmail: "",
   whatsappNumber: "",
   socialLinks: {
@@ -103,18 +105,19 @@ export const contentDefaultValues: ContentCreateInput = {
   },
   status: "draft",
   servicesCards: [
-    { title: { en: "Video Editing", ar: "تحرير الفيديو" }, description: { en: "Cinematic storytelling with rhythm and pace.", ar: "سرد سينمائي بإيقاع وتيرة." }, icon: "🎥" },
-    { title: { en: "Motion Design", ar: "تصميم الحركة" }, description: { en: "Dynamic visuals that bring brands to life.", ar: "مرئيات ديناميكية تجذب العلامات التجارية للحياة." }, icon: "🎨" },
-    { title: { en: "UGC Strategy", ar: "استراتيجية UGC" }, description: { en: "High-converting authentic video content.", ar: "محتوى فيديو أصلي عالي التحويل." }, icon: "📱" },
-    { title: { en: "Sound Design", ar: "تصميم الصوت" }, description: { en: "Immersive audio experiences for every frame.", ar: "تجارب صوتية غامرة لكل إطار." }, icon: "🔊" },
+    { title: "Video Editing", description: "Turn raw footage into scroll-stopping content that converts viewers into buyers.", icon: "play-circle" },
+    { title: "Motion Design", description: "Animated graphics that grab attention and hold it across every platform.", icon: "sparkles" },
+    { title: "Content Strategy", description: "Strategic video content that aligns with your brand and drives growth.", icon: "target" },
+    { title: "UGC Production", description: "Authentic creator-style content that builds trust and drives conversions.", icon: "users" },
   ],
 };
 
 export function createContentFormValues(existing?: Partial<ContentCreateInput>): ContentCreateInput {
   return {
-    about: existing?.about || { en: "", ar: "" },
-    servicesTitle: existing?.servicesTitle || { en: "", ar: "" },
-    servicesDescription: existing?.servicesDescription || { en: "", ar: "" },
+    about: existing?.about || "",
+    servicesTitle: existing?.servicesTitle || "What I Deliver",
+    servicesSubtitle: existing?.servicesSubtitle || "Premium video content that drives real business results.",
+    servicesDescription: existing?.servicesDescription || "",
     contactEmail: existing?.contactEmail || "",
     whatsappNumber: existing?.whatsappNumber || "",
     socialLinks: existing?.socialLinks || {
@@ -125,10 +128,10 @@ export function createContentFormValues(existing?: Partial<ContentCreateInput>):
     },
     status: existing?.status || "draft",
     servicesCards: existing?.servicesCards || [
-      { title: { en: "Video Editing", ar: "تحرير الفيديو" }, description: { en: "Cinematic storytelling with rhythm and pace.", ar: "سرد سينمائي بإيقاع وتيرة." }, icon: "🎥" },
-      { title: { en: "Motion Design", ar: "تصميم الحركة" }, description: { en: "Dynamic visuals that bring brands to life.", ar: "مرئيات ديناميكية تجذب العلامات التجارية للحياة." }, icon: "🎨" },
-      { title: { en: "UGC Strategy", ar: "استراتيجية UGC" }, description: { en: "High-converting authentic video content.", ar: "محتوى فيديو أصلي عالي التحويل." }, icon: "📱" },
-      { title: { en: "Sound Design", ar: "تصميم الصوت" }, description: { en: "Immersive audio experiences for every frame.", ar: "تجارب صوتية غامرة لكل إطار." }, icon: "🔊" },
+      { title: "Video Editing", description: "Turn raw footage into scroll-stopping content that converts viewers into buyers.", icon: "play-circle" },
+      { title: "Motion Design", description: "Animated graphics that grab attention and hold it across every platform.", icon: "sparkles" },
+      { title: "Content Strategy", description: "Strategic video content that aligns with your brand and drives growth.", icon: "target" },
+      { title: "UGC Production", description: "Authentic creator-style content that builds trust and drives conversions.", icon: "users" },
     ],
   };
 }

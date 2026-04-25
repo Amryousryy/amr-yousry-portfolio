@@ -72,18 +72,18 @@ export async function GET() {
       },
       recentProjects: recentProjects.map((p: any) => ({
         _id: p._id,
-        title: p.title?.en || "Untitled",
+        title: p.title || "Untitled",
         status: p.status,
         featured: p.featured,
         updatedAt: p.updatedAt,
       })),
       lastPublishedProject: lastUpdatedProject ? {
-        title: lastUpdatedProject.title?.en || "Untitled",
+        title: lastUpdatedProject.title || "Untitled",
         publishedAt: lastUpdatedProject.publishedAt,
       } : null,
       recentUpdates: recentUpdates.map((p: any) => ({
         _id: p._id,
-        title: p.title?.en || "Untitled",
+        title: p.title || "Untitled",
         status: p.status,
         updatedAt: p.updatedAt,
       })),

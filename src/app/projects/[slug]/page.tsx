@@ -12,11 +12,11 @@ export async function generateMetadata(
   if (!project) return { title: "Archive Not Found" };
 
   return {
-    title: `${project.title.en} | Amr Yousry Archive`,
-    description: project.shortDescription.en,
+    title: `${project.title} | Amr Yousry Archive`,
+    description: project.shortDescription,
     openGraph: {
-      title: project.title.en,
-      description: project.shortDescription.en,
+      title: project.title,
+      description: project.shortDescription,
       images: [{ url: project.image }],
     },
   };

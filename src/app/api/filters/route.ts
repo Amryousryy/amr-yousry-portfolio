@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Filter from "@/models/Filter";
-import { filterSchema } from "@/lib/validations";
+import { filterCreateSchema } from "@/lib/validation";
 import { paginationSchema, getPagination } from "@/lib/pagination";
 
 function successResponse<T>(data: T, pagination?: ReturnType<typeof getPagination>) {
@@ -74,7 +74,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
-  const validation = filterSchema.safeParse(body);
+  const validation = filterCreateSchema.safeParse(body);
   if (!validation.success) {
     return NextResponse.json({ error: validation.error.format() }, { status: 400 });
   }

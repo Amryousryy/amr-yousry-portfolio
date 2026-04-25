@@ -21,7 +21,8 @@ import {
   Layers,
   Pencil,
   Target,
-  Rocket
+  Rocket,
+  MessageSquare
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
@@ -33,6 +34,7 @@ const menuGroups = [
       { name: "Overview", icon: LayoutDashboard, href: "/admin" },
       { name: "Projects", icon: FolderKanban, href: "/admin/projects" },
       { name: "Showreel", icon: Clapperboard, href: "/admin/showreels" },
+      { name: "Testimonials", icon: MessageSquare, href: "/admin/testimonials" },
       { name: "Hero", icon: MonitorPlay, href: "/admin/hero" },
     ]
   },

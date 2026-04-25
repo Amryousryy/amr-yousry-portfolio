@@ -135,11 +135,11 @@ export default function ShowreelHero() {
         </motion.div>
 
         <h1 className="text-5xl md:text-9xl font-display font-bold leading-none mb-6 tracking-tighter uppercase">
-          {activeShowreel.title.en}
+          {activeShowreel.title}
         </h1>
 
         <p className="text-lg md:text-2xl text-foreground/60 max-w-3xl mx-auto mb-12 font-sans uppercase tracking-[0.3em] font-medium leading-relaxed">
-          {activeShowreel.subtitle.en}
+          {activeShowreel.subtitle}
         </p>
 
         <div className="flex flex-col md:flex-row items-center justify-center gap-10">
@@ -149,7 +149,7 @@ export default function ShowreelHero() {
             whileTap={{ scale: 0.95 }}
             className="group flex items-center space-x-6 px-12 py-6 bg-accent text-background font-bold uppercase tracking-[0.4em] text-xs pixel-border"
           >
-            <span>{activeShowreel.ctaText.en}</span>
+            <span>{activeShowreel.ctaText}</span>
             <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
           </motion.a>
 

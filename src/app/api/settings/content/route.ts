@@ -5,9 +5,10 @@ import dbConnect from "@/lib/db";
 import Settings from "@/models/Settings";
 
 const DEFAULT_CONTENT = {
-  about: { en: "", ar: "" },
-  servicesTitle: { en: "Our Services", ar: "خدماتنا" },
-  servicesDescription: { en: "", ar: "" },
+  about: "",
+  servicesTitle: "What I Deliver",
+  servicesSubtitle: "Premium video content that drives real business results.",
+  servicesDescription: "",
   contactEmail: "",
   whatsappNumber: "",
   socialLinks: {
@@ -19,6 +20,12 @@ const DEFAULT_CONTENT = {
   servicesCards: [],
   status: "draft"
 };
+
+function getString(value: string | { en: string; ar: string } | undefined): string {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  return value.en || "";
+}
 
 export async function GET(req: Request) {
   const responseConfig: ResponseInit = {
@@ -47,10 +54,25 @@ export async function GET(req: Request) {
       }, responseConfig);
     }
 
-    const content = settings.siteContent as typeof DEFAULT_CONTENT;
+    const content = settings.siteContent;
 
-    // Non-admin, non-preview requests only return published content
-    if (!isAdmin && !isPreview && content.status !== "published") {
+    const sanitized = {
+      about: getString(content?.about),
+      servicesTitle: getString(content?.servicesTitle) || "What I Deliver",
+      servicesSubtitle: getString(content?.servicesSubtitle) || "Premium video content that drives real business results.",
+      servicesDescription: getString(content?.servicesDescription),
+      contactEmail: content?.contactEmail || "",
+      whatsappNumber: content?.whatsappNumber || "",
+      socialLinks: content?.socialLinks || {},
+      servicesCards: content?.servicesCards?.map((card: { title: string | { en: string; ar: string }, description: string | { en: string; ar: string }, icon: string }) => ({
+        title: getString(card.title),
+        description: getString(card.description),
+        icon: card.icon
+      })) || [],
+      status: content?.status || "draft"
+    };
+
+    if (!isAdmin && !isPreview && sanitized.status !== "published") {
       return NextResponse.json({ 
         success: true, 
         data: { 
@@ -64,8 +86,8 @@ export async function GET(req: Request) {
     return NextResponse.json({ 
       success: true, 
       data: { 
-        ...content, 
-        _preview: isPreview && content.status !== "published" 
+        ...sanitized, 
+        _preview: isPreview && sanitized.status !== "published" 
       } 
     }, responseConfig);
   } catch (error) {
@@ -90,8 +112,7 @@ export async function PUT(req: Request) {
 
     const body = await req.json();
     
-    // Validate required fields
-    if (!body.about?.en || !body.about?.ar) {
+    if (!body.about) {
       return NextResponse.json({ success: false, error: "About content is required" }, { status: 400 });
     }
 
@@ -119,7 +140,7 @@ export async function PUT(req: Request) {
         $set: { 
           siteContent: {
             about: body.about,
-            servicesTitle: body.servicesTitle || { en: "Our Services", ar: "خدماتنا" },
+            servicesTitle: body.servicesTitle || "Services",
             servicesDescription: body.servicesDescription,
             contactEmail: body.contactEmail,
             whatsappNumber: body.whatsappNumber || "",
