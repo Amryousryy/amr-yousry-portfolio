@@ -13,11 +13,16 @@ export default function CinematicCursor() {
   
   const positions = useRef<{ x: number; y: number }[]>(Array(8).fill({ x: 0, y: 0 }));
   const currentPos = useRef({ x: 0, y: 0 });
+  const lastMoveTime = useRef(0);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const handleMouseMove = (e: MouseEvent) => {
+      const now = Date.now();
+      if (now - lastMoveTime.current < 16) return; // ~60fps
+      lastMoveTime.current = now;
+      
       setIsVisible(true);
       currentPos.current = { x: e.clientX, y: e.clientY };
       

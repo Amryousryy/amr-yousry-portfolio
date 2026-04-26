@@ -88,14 +88,14 @@ function ContactForm({ isAuditOffer = false }: { isAuditOffer?: boolean }) {
         <MessageSquare size={120} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <label className="pixel-text text-[10px] text-accent uppercase tracking-widest font-bold">
             Your Name <span className="text-red-500">*</span>
           </label>
           <input
             {...register("name")}
-            className="w-full bg-background/50 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm uppercase tracking-tight"
+            className="w-full bg-background/50 border border-primary/20 p-4 min-h-[56px] outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all text-sm uppercase tracking-tight"
             placeholder="ALEX JOHNSON"
           />
           {errors.name && (
@@ -109,7 +109,7 @@ function ContactForm({ isAuditOffer = false }: { isAuditOffer?: boolean }) {
           <input
             type="email"
             {...register("email")}
-            className="w-full bg-background/50 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm uppercase tracking-tight"
+            className="w-full bg-background/50 border border-primary/20 p-4 min-h-[56px] outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all text-sm uppercase tracking-tight"
             placeholder="ALEX@COMPANY.COM"
           />
           {errors.email && (
@@ -124,7 +124,7 @@ function ContactForm({ isAuditOffer = false }: { isAuditOffer?: boolean }) {
         </label>
         <select
           {...register("projectType")}
-          className="w-full bg-background/50 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm uppercase tracking-tight appearance-none"
+          className="w-full bg-background/50 border border-primary/20 p-4 min-h-[56px] outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all text-sm uppercase tracking-tight appearance-none"
         >
           {projectTypes.map((type) => (
             <option key={type.value} value={type.value}>
@@ -144,7 +144,7 @@ function ContactForm({ isAuditOffer = false }: { isAuditOffer?: boolean }) {
         <textarea
           {...register("message")}
           rows={4}
-          className="w-full bg-background/50 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm uppercase tracking-tight resize-none"
+          className="w-full bg-background/50 border border-primary/20 p-4 min-h-[140px] outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all text-sm uppercase tracking-tight resize-none"
           placeholder="TELL ME ABOUT YOUR GOALS..."
         />
         {errors.message && (

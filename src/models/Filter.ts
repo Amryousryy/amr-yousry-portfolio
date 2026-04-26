@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IFilter extends Document {
-  name: { en: string; ar: string };
+  name: string;
   slug: string;
   isActive: boolean;
   displayOrder: number;
@@ -9,13 +9,8 @@ export interface IFilter extends Document {
   updatedAt: Date;
 }
 
-const BilingualSchema = new Schema({
-  en: { type: String, required: true },
-  ar: { type: String, required: true },
-}, { _id: false });
-
 const FilterSchema: Schema = new Schema({
-  name: { type: BilingualSchema, required: true },
+  name: { type: String, required: true },
   slug: { type: String, required: true, unique: true },
   isActive: { type: Boolean, default: true },
   displayOrder: { type: Number, default: 0 },

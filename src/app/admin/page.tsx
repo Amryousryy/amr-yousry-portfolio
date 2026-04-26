@@ -27,6 +27,12 @@ import { useQuery } from "@tanstack/react-query";
 import { ProjectService, FilterService, SettingsService } from "@/lib/api-client";
 import StatsChart from "@/components/admin/StatsChart";
 
+function getString(value: string | { en: string; ar: string } | undefined): string {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  return value.en || "";
+}
+
 function formatNumber(num: number): string {
   if (num >= 1000) return (num / 1000).toFixed(1) + "k";
   return num.toString();
@@ -313,7 +319,7 @@ export default function AdminOverview() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[11px] font-medium truncate">{item.project?.title?.en || 'Untitled'}</p>
+                    <p className="text-[11px] font-medium truncate">{getString(item.project?.title) || 'Untitled'}</p>
                     <p className="text-[9px] text-foreground/30">{item.count || 0} views</p>
                   </div>
                 </div>
@@ -351,7 +357,7 @@ export default function AdminOverview() {
               </div>
               <div className="p-3 bg-background/30 border border-primary/5">
                 <p className="text-[9px] text-foreground/30 uppercase tracking-wide mb-1">Headline</p>
-                <p className="text-xs font-medium line-clamp-2">{hero?.data?.headline?.en || "Not configured"}</p>
+                <p className="text-xs font-medium line-clamp-2">{getString(hero?.data?.headline) || "Not configured"}</p>
               </div>
             </div>
           </div>

@@ -4,25 +4,31 @@ import React, { useState, useEffect } from "react";
 import { Save, Loader2, Play, Image as ImageIcon, Upload, Link as LinkIcon, Eye } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SettingsService } from "@/lib/api-client";
-import { heroSchema } from "@/lib/validations";
+import { heroCreateSchema } from "@/lib/validation";
 import { toast } from "sonner";
 import { HeroSettings } from "@/types";
-import BilingualInput from "@/components/admin/BilingualInput";
+import StringInput from "@/components/admin/BilingualInput";
 import { CldUploadWidget } from "next-cloudinary";
 import Image from "next/image";
 import AdminLoadingSkeleton from "@/components/admin/AdminLoadingSkeleton";
 import AdminErrorState from "@/components/admin/AdminErrorState";
 import { mediaConfig } from "@/lib/media/config";
 
+function getString(value: string | { en: string; ar: string } | undefined): string {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  return value.en || "";
+}
+
 export default function HeroManagerPage() {
   const queryClient = useQueryClient();
   const [videoMode, setVideoMode] = useState<"upload" | "url">("url");
   const [formData, setFormData] = useState<Partial<HeroSettings>>({
-    headline: { en: "", ar: "" },
-    subheadline: { en: "", ar: "" },
-    primaryCTA: { en: "Work With Me", ar: "أعمل معي" },
+    headline: "",
+    subheadline: "",
+    primaryCTA: "Work With Me",
     primaryCTALink: "/#contact",
-    secondaryCTA: { en: "Watch Showreel", ar: "شاهد أعمالي" },
+    secondaryCTA: "View Projects",
     secondaryCTALink: "/projects",
     posterImage: "",
     showreelVideo: "",
@@ -36,7 +42,20 @@ export default function HeroManagerPage() {
 
   useEffect(() => {
     if (hero?.data && typeof hero.data === 'object' && Object.keys(hero.data).length > 0) {
-      setFormData(hero.data as HeroSettings);
+      const data = hero.data as HeroSettings;
+      setFormData({
+        headline: getString(data.headline),
+        subheadline: getString(data.subheadline),
+        primaryCTA: getString(data.primaryCTA),
+        primaryCTALink: data.primaryCTALink || "/#contact",
+        secondaryCTA: getString(data.secondaryCTA),
+        secondaryCTALink: data.secondaryCTALink || "/projects",
+        posterImage: data.posterImage || "",
+        showreelVideo: data.showreelVideo || "",
+        status: data.status || "draft",
+        publishedAt: data.publishedAt,
+        lastStatusChangeAt: data.lastStatusChangeAt,
+      });
     }
   }, [hero]);
 
@@ -53,7 +72,7 @@ export default function HeroManagerPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const validation = heroSchema.safeParse(formData);
+    const validation = heroCreateSchema.safeParse(formData);
     if (!validation.success) {
       toast.error("Please fill all required fields correctly.");
       console.error(validation.error);
@@ -137,16 +156,16 @@ export default function HeroManagerPage() {
         <div className="xl:col-span-2 space-y-12">
           <div className="p-8 bg-primary/5 border border-primary/10 space-y-8">
              <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-accent border-b border-primary/10 pb-4 mb-4">Text Content</h3>
-             <BilingualInput 
+             <StringInput 
                label="Headline" 
-               value={formData.headline as any} 
+               value={formData.headline || ""} 
                onChange={(val) => setFormData({ ...formData, headline: val })}
                type="textarea"
                rows={2}
              />
-             <BilingualInput 
+             <StringInput 
                label="Subheadline" 
-               value={formData.subheadline as any} 
+               value={formData.subheadline || ""} 
                onChange={(val) => setFormData({ ...formData, subheadline: val })}
                type="textarea"
              />
@@ -156,9 +175,9 @@ export default function HeroManagerPage() {
              <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-accent border-b border-primary/10 pb-4 mb-4">Call to Action Buttons</h3>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                <div className="space-y-6">
-                 <BilingualInput 
+                 <StringInput 
                    label="Primary CTA Label" 
-                   value={formData.primaryCTA as any} 
+                   value={formData.primaryCTA || ""} 
                    onChange={(val) => setFormData({ ...formData, primaryCTA: val })}
                  />
                  <div>
@@ -172,9 +191,9 @@ export default function HeroManagerPage() {
                  </div>
                </div>
                <div className="space-y-6">
-                 <BilingualInput 
+                 <StringInput 
                    label="Secondary CTA Label" 
-                   value={formData.secondaryCTA as any} 
+                   value={formData.secondaryCTA || ""} 
                    onChange={(val) => setFormData({ ...formData, secondaryCTA: val })}
                  />
                  <div>
@@ -228,12 +247,12 @@ export default function HeroManagerPage() {
                     )}
                     <div className="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
                        <input 
-                        type="text" 
-                        placeholder="Paste Direct Video URL (mp4)..."
-                        value={formData.showreelVideo}
-                        onChange={(e) => setFormData({ ...formData, showreelVideo: e.target.value })}
-                        className="w-full bg-background border border-accent p-3 text-xs outline-none"
-                       />
+                       type="text" 
+                       placeholder="Paste Direct Video URL (mp4)..."
+                       value={formData.showreelVideo}
+                       onChange={(e) => setFormData({ ...formData, showreelVideo: e.target.value })}
+                       className="w-full bg-background border border-accent p-3 text-xs outline-none"
+                      />
                     </div>
                   </div>
                   <p className="text-[9px] text-foreground/30 uppercase tracking-tighter">Use direct .mp4 links for best performance</p>

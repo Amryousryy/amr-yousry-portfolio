@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Showreel from "@/models/Showreel";
-import { showreelSchema } from "@/lib/validations";
+import { showreelUpdateSchema } from "@/lib/validation";
 import { deleteCloudinaryResources } from "@/lib/cloudinary";
 import { logActivity } from "@/lib/activity";
 
@@ -16,7 +16,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     }
 
     const body = await req.json();
-    const validation = showreelSchema.safeParse(body);
+    const validation = showreelUpdateSchema.safeParse(body);
     
     if (!validation.success) {
       return NextResponse.json({ error: validation.error.format() }, { status: 400 });
@@ -32,7 +32,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     await logActivity({
       action: "update",
       targetType: "showreel",
-      targetName: validation.data.title.en,
+      targetName: validation.data.title || "Untitled",
       adminEmail: session.user?.email || "unknown",
       metadata: { id }
     });
@@ -57,7 +57,6 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
       return NextResponse.json({ error: "Showreel not found" }, { status: 404 });
     }
 
-    // Delete assets from Cloudinary
     await deleteCloudinaryResources([showreel.videoUrl, showreel.thumbnailUrl]);
 
     await Showreel.findByIdAndDelete(id);
@@ -65,7 +64,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     await logActivity({
       action: "delete",
       targetType: "showreel",
-      targetName: showreel.title.en,
+      targetName: showreel.title || "Untitled",
       adminEmail: session.user?.email || "unknown",
       metadata: { id }
     });

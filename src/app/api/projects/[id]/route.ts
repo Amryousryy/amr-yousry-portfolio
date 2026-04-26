@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Project from "@/models/Project";
-import { projectSchema } from "@/lib/validations";
+import { projectUpdateSchema } from "@/lib/validation";
 import { deleteCloudinaryResources } from "@/lib/cloudinary";
 import { logActivity } from "@/lib/activity";
 
@@ -14,11 +14,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     const isAdmin = searchParams.get("admin") === "true";
     await dbConnect();
     
-    // Try finding by ID, if not valid ObjectId or not found, try by slug
     let project;
     const query: Record<string, unknown> = {};
     
-    // Only apply status filter for non-admin requests
     if (!isAdmin) {
       query.status = "published";
     }
@@ -50,7 +48,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     }
 
     const body = await req.json();
-    const validation = projectSchema.safeParse(body);
+    const validation = projectUpdateSchema.safeParse(body);
     
     if (!validation.success) {
       return NextResponse.json({ error: validation.error.format() }, { status: 400 });
@@ -62,7 +60,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     const currentStatus = currentProject?.status || "draft";
     const newStatus = validation.data.status || "draft";
     
-    const slug = validation.data.title.en
+    const slug = (validation.data.title || "")
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
@@ -88,7 +86,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     await logActivity({
       action: "update",
       targetType: "project",
-      targetName: validation.data.title.en,
+      targetName: validation.data.title || "Untitled",
       adminEmail: session.user?.email || "unknown",
       metadata: { id, status: project.status }
     });
@@ -110,13 +108,11 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
     await dbConnect();
     
-    // Find project first to get media URLs
     const project = await Project.findById(id);
     if (!project) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
-    // Collect all Cloudinary URLs
     const urlsToDelete: string[] = [
       project.image,
       project.video,
@@ -124,18 +120,16 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
       ...(project.sections || []).flatMap((s: any) => (s.media || []).map((m: any) => m.url))
     ].filter((url): url is string => !!url);
 
-    // Delete from Cloudinary
     await deleteCloudinaryResources(urlsToDelete);
 
-    const titleEn = project.title.en;
+    const projectTitle = project.title;
 
-    // Delete from MongoDB
     await Project.findByIdAndDelete(id);
 
     await logActivity({
       action: "delete",
       targetType: "project",
-      targetName: titleEn,
+      targetName: projectTitle,
       adminEmail: session.user?.email || "unknown",
       metadata: { id }
     });

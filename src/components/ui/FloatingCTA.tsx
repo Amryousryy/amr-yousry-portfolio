@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, X, Send, Zap } from "lucide-react";
+import { MessageSquare, X, Calendar, ArrowRight } from "lucide-react";
 import { ContactForm } from "./ContactForm";
 
 export default function FloatingCTA() {
@@ -11,7 +11,7 @@ export default function FloatingCTA() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 500) {
+      if (window.scrollY > 800) {
         setIsVisible(true);
       } else {
         setIsVisible(false);
@@ -31,13 +31,11 @@ export default function FloatingCTA() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 50 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-10 right-10 z-[150] p-5 bg-accent text-background shadow-[0_0_30px_rgba(0,245,212,0.4)] pixel-border hover:scale-110 active:scale-95 transition-all group"
+            className="fixed bottom-8 right-8 z-[150] px-6 py-4 bg-accent text-background font-bold text-sm shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-3"
           >
-            <div className="flex items-center space-x-3">
-              <Zap size={20} fill="currentColor" className="animate-pulse" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] hidden md:block">Get Free Audit</span>
-              <MessageSquare size={20} className="md:hidden" />
-            </div>
+            <Calendar size={18} />
+            <span className="hidden md:block">Book a Free Call</span>
+            <span className="md:hidden">Contact</span>
           </motion.button>
         )}
       </AnimatePresence>
@@ -53,25 +51,25 @@ export default function FloatingCTA() {
               className="fixed inset-0 bg-background/80 backdrop-blur-md z-[190]"
             />
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 100 }}
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 100 }}
-              className="fixed bottom-10 right-10 z-[200] w-full max-w-lg bg-background border-2 border-accent p-8 pixel-border shadow-[0_0_100px_rgba(0,0,0,0.5)]"
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="fixed bottom-0 right-0 md:bottom-8 md:right-8 z-[200] w-full md:w-full md:max-w-md bg-background border-t md:border border-white/10 p-6 md:p-8 shadow-2xl rounded-t-2xl md:rounded-none"
             >
-              <div className="flex justify-between items-center mb-8 border-b border-primary/10 pb-4">
-                <div className="flex items-center space-x-3">
-                   <Zap size={18} className="text-accent" />
-                   <h3 className="font-display font-bold uppercase tracking-tighter text-xl">Free Content Audit</h3>
+              <div className="flex justify-between items-center mb-8">
+                <div className="flex items-center gap-3">
+                  <Calendar size={20} className="text-accent" />
+                  <h3 className="font-bold text-xl text-white">Let&apos;s Talk</h3>
                 </div>
-                <button onClick={() => setIsOpen(false)} className="text-foreground/40 hover:text-accent transition-colors">
-                  <X size={24} />
+                <button onClick={() => setIsOpen(false)} className="text-foreground/40 hover:text-white transition-colors">
+                  <X size={20} />
                 </button>
               </div>
 
-              <div className="mb-6 p-4 bg-accent/10 border border-accent/20">
-                 <p className="text-[10px] text-accent font-bold uppercase tracking-widest leading-relaxed">
-                   Limited Time: I'll personally analyze your content strategy and send you a custom roadmap.
-                 </p>
+              <div className="mb-6">
+                <p className="text-foreground/70 text-sm leading-relaxed mb-4">
+                  Have a project in mind? Send me the details and I&apos;ll get back to you within 24 hours to discuss how we can work together.
+                </p>
               </div>
 
               <ContactForm isAuditOffer={true} />

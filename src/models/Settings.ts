@@ -1,41 +1,26 @@
 import mongoose, { Schema, Document } from "mongoose";
 import type { ContentStatus } from "@/types/constants";
 
-const BilingualSchema = new mongoose.Schema({
-  en: { type: String, required: true },
-  ar: { type: String, required: true },
-}, { _id: false });
-
-const OptionalBilingualSchema = new mongoose.Schema({
-  en: { type: String },
-  ar: { type: String },
-}, { _id: false });
-
-export interface IStatsLabel {
-  en: string;
-  ar: string;
-}
-
 export interface IServiceItem {
-  title: { en: string; ar: string };
-  description: { en: string; ar: string };
+  title: string;
+  description: string;
   icon: string;
   displayOrder: number;
   isActive: boolean;
 }
 
 export interface IServiceCard {
-  title: { en: string; ar: string };
-  description: { en: string; ar: string };
+  title: string;
+  description: string;
   icon: string;
 }
 
 export interface IHeroSettings {
-  headline: { en: string; ar: string };
-  subheadline: { en: string; ar: string };
-  primaryCTA: { en: string; ar: string };
+  headline: string;
+  subheadline: string;
+  primaryCTA: string;
   primaryCTALink: string;
-  secondaryCTA: { en: string; ar: string };
+  secondaryCTA: string;
   secondaryCTALink: string;
   posterImage?: string;
   showreelVideo?: string;
@@ -45,9 +30,9 @@ export interface IHeroSettings {
 }
 
 export interface IAboutSection {
-  content: { en: string; ar: string };
+  content: string;
   stats: Array<{
-    label: { en: string; ar: string };
+    label: string;
     value: string;
   }>;
 }
@@ -57,9 +42,9 @@ export interface ISettings extends Document {
   about: IAboutSection;
   services: IServiceItem[];
   siteContent?: {
-    about: { en: string; ar: string };
-    servicesTitle: { en: string; ar: string };
-    servicesDescription: { en: string; ar: string };
+    about: string;
+    servicesTitle: string;
+    servicesDescription: string;
     contactEmail: string;
     whatsappNumber: string;
     socialLinks: {
@@ -78,11 +63,11 @@ export interface ISettings extends Document {
 }
 
 const HeroSchema = new Schema({
-  headline: { type: BilingualSchema, required: true },
-  subheadline: { type: BilingualSchema, required: true },
-  primaryCTA: { type: BilingualSchema, required: true },
+  headline: { type: String, required: true },
+  subheadline: { type: String, required: true },
+  primaryCTA: { type: String, required: true },
   primaryCTALink: { type: String, default: "/#contact" },
-  secondaryCTA: { type: BilingualSchema, required: true },
+  secondaryCTA: { type: String, required: true },
   secondaryCTALink: { type: String, default: "/projects" },
   posterImage: { type: String },
   showreelVideo: { type: String },
@@ -92,22 +77,22 @@ const HeroSchema = new Schema({
 }, { _id: false });
 
 const AboutSchema = new Schema({
-  content: { type: BilingualSchema, required: true },
+  content: { type: String, required: true },
   stats: [{
-    label: { type: BilingualSchema, required: true },
+    label: { type: String, required: true },
     value: { type: String, required: true },
   }],
 }, { _id: false });
 
 const ServiceItemSchema = new Schema({
-  title: { type: BilingualSchema, required: true },
-  description: { type: BilingualSchema, required: true },
+  title: { type: String, required: true },
+  description: { type: String, required: true },
   icon: { type: String, required: true },
 }, { _id: false });
 
 const ServiceCardSchema = new Schema({
-  title: { type: BilingualSchema, required: true },
-  description: { type: BilingualSchema, required: true },
+  title: { type: String, required: true },
+  description: { type: String, required: true },
   icon: { type: String, required: true },
 }, { _id: false });
 
@@ -119,9 +104,10 @@ const SocialLinksSchema = new Schema({
 }, { _id: false });
 
 const SiteContentSchema = new Schema({
-  about: { type: BilingualSchema, required: true },
-  servicesTitle: { type: BilingualSchema, required: true },
-  servicesDescription: { type: BilingualSchema },
+  about: { type: String, required: true },
+  servicesTitle: { type: String, required: true },
+  servicesSubtitle: { type: String },
+  servicesDescription: { type: String },
   contactEmail: { type: String, required: true },
   whatsappNumber: { type: String },
   socialLinks: { type: SocialLinksSchema },

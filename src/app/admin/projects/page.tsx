@@ -30,10 +30,10 @@ import {
 
 interface ProjectRow {
   _id: string;
-  title: { en: string; ar: string };
+  title: string;
   slug: string;
   category: string;
-  shortDescription: { en: string; ar: string };
+  shortDescription: string;
   image: string;
   featured: boolean;
   status: "draft" | "published";
@@ -144,11 +144,11 @@ export default function ProjectsPage() {
       ),
     },
     {
-      accessorKey: "title.en",
+      accessorKey: "title",
       header: ({ column }) => <SortableHeader column={column}>Title</SortableHeader>,
       cell: ({ row }) => (
         <div>
-          <p className="font-medium">{row.original.title?.en || "Untitled"}</p>
+          <p className="font-medium">{row.original.title || "Untitled"}</p>
           <p className="text-xs text-foreground/40">{row.original.slug}</p>
         </div>
       ),
@@ -187,8 +187,8 @@ export default function ProjectsPage() {
         <div className="flex items-center gap-2">
           {row.original.status === "draft" ? (
             <button 
-              onClick={() => {
-                if (window.confirm(`Publish "${row.original.title?.en}"? It will be visible on the live site.`)) {
+onClick={() => {
+                  if (window.confirm(`Publish "${row.original.title}"? It will be visible on the live site.`)) {
                   publishMutation.mutate(row.original._id);
                 }
               }}
@@ -201,7 +201,7 @@ export default function ProjectsPage() {
           ) : (
             <button 
               onClick={() => {
-                if (window.confirm(`Unpublish "${row.original.title?.en}"? It will be hidden from the live site.`)) {
+                if (window.confirm(`Unpublish "${row.original.title}"? It will be hidden from the live site.`)) {
                   unpublishMutation.mutate(row.original._id);
                 }
               }}
@@ -228,7 +228,7 @@ export default function ProjectsPage() {
             <Edit2 size={14} />
           </Link>
           <button 
-            onClick={() => handleDelete(row.original._id, row.original.title?.en || "this project")}
+            onClick={() => handleDelete(row.original._id, row.original.title)}
             className="p-2 hover:bg-red-500 hover:text-white transition-colors rounded-sm"
             title="Delete"
           >

@@ -63,7 +63,7 @@ export default function PortfolioPreview() {
                   <div className="relative aspect-[4/5] overflow-hidden pixel-border mb-6">
                     <Image
                       src={project.image || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop"}
-                      alt={project.title.en}
+                      alt={project.title}
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-110 group-hover:blur-[2px] opacity-70 group-hover:opacity-100"
                     />
@@ -79,7 +79,7 @@ export default function PortfolioPreview() {
                     {project.category}
                   </span>
                   <h4 className="text-2xl font-display font-bold group-hover:text-accent transition-colors">
-                    {project.title.en}
+                    {project.title}
                   </h4>
                 </Link>
               </motion.div>

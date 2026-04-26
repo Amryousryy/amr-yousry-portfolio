@@ -8,15 +8,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SettingsService } from "@/lib/api-client";
 import { contentCreateSchema, ContentCreateInput, contentDefaultValues, createContentFormValues } from "@/lib/validation";
 import { toast } from "sonner";
-import BilingualInput from "@/components/admin/BilingualInput";
+import StringInput from "@/components/admin/BilingualInput";
 import { ErrorSummary, scrollToFirstError } from "@/components/admin/ErrorSummary";
 import { useUnsavedChanges } from "@/lib/hooks";
 
 type FormData = ContentCreateInput;
-
-// ============================================================================
-// HELPER: Get nested validation error message
-// ============================================================================
 
 function getFieldError(errors: FieldErrors<FormData>, path: string): string | undefined {
   const parts = path.split(".");
@@ -28,9 +24,30 @@ function getFieldError(errors: FieldErrors<FormData>, path: string): string | un
   return current?.message as string | undefined;
 }
 
-// ============================================================================
-// COMPONENT: SiteContentManagerPage
-// ============================================================================
+function getString(value: string | { en: string; ar: string } | undefined): string {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  return value.en || "";
+}
+
+function convertToStringForm(content: any): FormData {
+  if (!content) return contentDefaultValues;
+  return {
+    about: getString(content.about),
+    servicesTitle: getString(content.servicesTitle),
+    servicesSubtitle: getString(content.servicesSubtitle),
+    servicesDescription: getString(content.servicesDescription),
+    contactEmail: content.contactEmail || "",
+    whatsappNumber: content.whatsappNumber || "",
+    socialLinks: content.socialLinks || { instagram: "", twitter: "", youtube: "", linkedin: "" },
+    status: content.status || "draft",
+    servicesCards: content.servicesCards?.map((card: any) => ({
+      title: getString(card.title),
+      description: getString(card.description),
+      icon: card.icon
+    })) || []
+  };
+}
 
 export default function SiteContentManagerPage() {
   const queryClient = useQueryClient();
@@ -62,10 +79,9 @@ export default function SiteContentManagerPage() {
 
   const content = contentResponse?.data;
 
-  // Initialize form with existing data
   React.useEffect(() => {
     if (content && Object.keys(content).length > 0) {
-      const formValues = createContentFormValues(content as Partial<FormData>);
+      const formValues = convertToStringForm(content);
       reset(formValues);
     }
   }, [content, reset]);
@@ -221,19 +237,15 @@ export default function SiteContentManagerPage() {
                 name="about"
                 control={control}
                 render={({ field }) => (
-                  <BilingualInput 
+                  <StringInput 
                     label="About Description" 
                     value={field.value} 
                     onChange={field.onChange}
                     type="textarea"
                     rows={10}
-                    error={getFieldError(errors, "about.en") || getFieldError(errors, "about.ar")}
                   />
                 )}
               />
-              {getFieldError(errors, "about") && (
-                <p className="text-[10px] text-red-500">{getFieldError(errors, "about")}</p>
-              )}
             </div>
           )}
 
@@ -245,11 +257,23 @@ export default function SiteContentManagerPage() {
                 name="servicesTitle"
                 control={control}
                 render={({ field }) => (
-                  <BilingualInput 
+                  <StringInput 
                     label="Services Section Title" 
                     value={field.value} 
                     onChange={field.onChange}
-                    error={getFieldError(errors, "servicesTitle.en") || getFieldError(errors, "servicesTitle.ar")}
+                  />
+                )}
+              />
+              
+              <Controller
+                name="servicesSubtitle"
+                control={control}
+                render={({ field }) => (
+                  <StringInput 
+                    label="Services Section Subtitle" 
+                    value={field.value} 
+                    onChange={field.onChange}
+                    type="textarea"
                   />
                 )}
               />
@@ -258,12 +282,11 @@ export default function SiteContentManagerPage() {
                 name="servicesDescription"
                 control={control}
                 render={({ field }) => (
-                  <BilingualInput 
+                  <StringInput 
                     label="Services Section Description" 
                     value={field.value} 
                     onChange={field.onChange}
                     type="textarea"
-                    error={getFieldError(errors, "servicesDescription.en") || getFieldError(errors, "servicesDescription.ar")}
                   />
                 )}
               />
@@ -273,7 +296,7 @@ export default function SiteContentManagerPage() {
                   <h4 className="text-xs font-bold uppercase tracking-widest text-foreground/70">Service Cards</h4>
                   <button
                     type="button"
-                    onClick={() => appendServiceCard({ title: { en: "", ar: "" }, description: { en: "", ar: "" }, icon: "🎥" })}
+                    onClick={() => appendServiceCard({ title: "", description: "", icon: "play-circle" })}
                     className="flex items-center gap-2 px-4 py-2 bg-accent/20 text-accent text-xs font-bold uppercase hover:bg-accent/30 transition-colors"
                   >
                     <Plus size={14} />
@@ -303,7 +326,7 @@ export default function SiteContentManagerPage() {
                                 name={`servicesCards.${index}.title`}
                                 control={control}
                                 render={({ field }) => (
-                                  <BilingualInput
+                                  <StringInput
                                     label="Service Title"
                                     value={field.value}
                                     onChange={field.onChange}
@@ -316,7 +339,7 @@ export default function SiteContentManagerPage() {
                             name={`servicesCards.${index}.description`}
                             control={control}
                             render={({ field }) => (
-                              <BilingualInput
+                              <StringInput
                                 label="Service Description"
                                 value={field.value}
                                 onChange={field.onChange}

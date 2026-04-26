@@ -9,16 +9,12 @@ import { CldUploadWidget } from "next-cloudinary";
 import { toast } from "sonner";
 import Image from "next/image";
 import Link from "next/link";
-import { showreelCreateSchema, ShowreelCreateInput, showreelDefaultValues, createShowreelFormValues } from "@/lib/validation";
+import { showreelCreateSchema, ShowreelCreateInput, showreelDefaultValues } from "@/lib/validation";
 import { mediaConfig } from "@/lib/media/config";
 import { ErrorSummary, scrollToFirstError } from "@/components/admin/ErrorSummary";
 import { useUnsavedChanges } from "@/lib/hooks";
 
 type FormData = ShowreelCreateInput;
-
-// ============================================================================
-// HELPER: Get nested validation error message
-// ============================================================================
 
 function getFieldError(errors: FieldErrors<FormData>, path: string): string | undefined {
   const parts = path.split(".");
@@ -28,6 +24,12 @@ function getFieldError(errors: FieldErrors<FormData>, path: string): string | un
     current = current[part];
   }
   return current?.message as string | undefined;
+}
+
+function getString(value: string | { en: string; ar: string } | undefined): string {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  return value.en || "";
 }
 
 export default function ShowreelManagerPage() {
@@ -79,7 +81,7 @@ export default function ShowreelManagerPage() {
     },
   });
 
-const { setSubmitting: setUnsavedSubmitting, markAsSaved } = useUnsavedChanges<FormData>({
+  const { setSubmitting: setUnsavedSubmitting, markAsSaved } = useUnsavedChanges<FormData>({
     watch,
     reset,
     defaultValues: showreelDefaultValues,
@@ -156,7 +158,6 @@ const { setSubmitting: setUnsavedSubmitting, markAsSaved } = useUnsavedChanges<F
         )}
       </header>
 
-      {/* Create Form - Canonical Pattern */}
       {isAdding && (
         <form className="p-10 bg-primary/5 border border-primary/10 space-y-10 animate-in fade-in slide-in-from-top duration-500">
           {submitAttempted && Object.keys(errors).length > 0 && (
@@ -164,135 +165,100 @@ const { setSubmitting: setUnsavedSubmitting, markAsSaved } = useUnsavedChanges<F
           )}
           
          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              <div className="space-y-8">
-                 {/* Title */}
-                 <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-                      Title EN <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      {...register("title.en")}
-                      className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-                      placeholder="Showreel title (English)"
-                    />
-                    {getFieldError(errors, "title.en") && (
-                      <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "title.en")}</p>
-                    )}
-                 </div>
-                 <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">Title AR</label>
-                    <input
-                      {...register("title.ar")}
-                      className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-                      placeholder="العنوان"
-                      dir="rtl"
-                    />
-                 </div>
-
-                 {/* Subtitle */}
-                 <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-                      Subtitle EN <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      {...register("subtitle.en")}
-                      className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-                      placeholder="Subtitle (English)"
-                    />
-                    {getFieldError(errors, "subtitle.en") && (
-                      <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "subtitle.en")}</p>
-                    )}
-                 </div>
-                 <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">Subtitle AR</label>
-                    <input
-                      {...register("subtitle.ar")}
-                      className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-                      placeholder="العنوان الفرعي"
-                      dir="rtl"
-                    />
-                 </div>
-
-                 {/* CTA */}
-                 <div className="grid grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">CTA Text EN</label>
-                      <input
-                        {...register("ctaText.en")}
-                        className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-                        placeholder="Work With Me"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">CTA Text AR</label>
-                      <input
-                        {...register("ctaText.ar")}
-                        className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-                        placeholder="أعمل معي"
-                        dir="rtl"
-                      />
-                    </div>
-                 </div>
-                 <div>
-                   <label className="block text-xs font-bold uppercase tracking-widest text-foreground/40 mb-2">CTA Link</label>
-                   <input 
-                     {...register("ctaLink")}
-                     className="w-full bg-background border border-primary/20 p-4 outline-none focus:border-accent text-sm"
-                     placeholder="/contact"
+             <div className="space-y-8">
+                <div>
+                   <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
+                     Title <span className="text-red-500">*</span>
+                   </label>
+                   <input
+                     {...register("title")}
+                     className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
+                     placeholder="Showreel title"
                    />
-                 </div>
-              </div>
+                   {getFieldError(errors, "title") && (
+                     <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "title")}</p>
+                   )}
+                </div>
 
-              <div className="space-y-8">
-                 {/* Video */}
-                 <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-                      Video URL <span className="text-red-500">*</span>
-                    </label>
-                    <CldUploadWidget 
-                      uploadPreset={mediaConfig.uploadPreset}
-                      options={{ resourceType: "video" }}
-                      onSuccess={(result: any) => {
-                        setValue("videoUrl", result.info.secure_url);
-                      }}
-                    >
-                      {({ open }) => (
-                        <div onClick={() => open()} className="aspect-video bg-black/40 border-2 border-dashed border-primary/20 flex flex-col items-center justify-center cursor-pointer hover:border-accent transition-all relative overflow-hidden">
-                           {watchedVideoUrl ? <video src={watchedVideoUrl} className="w-full h-full object-cover" muted /> : <Play size={24} className="text-primary/40" />}
-                           <span className="text-[8px] font-bold uppercase mt-2 text-foreground/40">Upload Video</span>
-                        </div>
-                      )}
-                    </CldUploadWidget>
-                    {getFieldError(errors, "videoUrl") && (
-                      <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "videoUrl")}</p>
-                    )}
-                 </div>
+                <div>
+                   <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
+                     Subtitle <span className="text-red-500">*</span>
+                   </label>
+                   <input
+                     {...register("subtitle")}
+                     className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
+                     placeholder="Subtitle"
+                   />
+                   {getFieldError(errors, "subtitle") && (
+                     <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "subtitle")}</p>
+                   )}
+                </div>
 
-                 {/* Thumbnail */}
-                 <div>
-                    <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-                      Thumbnail <span className="text-red-500">*</span>
-                    </label>
-                    <CldUploadWidget 
-                      uploadPreset={mediaConfig.uploadPreset}
-                      onSuccess={(result: any) => {
-                        setValue("thumbnailUrl", result.secure_url);
-                      }}
-                    >
-                      {({ open }) => (
-                        <div onClick={() => open()} className="aspect-video bg-black/40 border-2 border-dashed border-primary/20 flex flex-col items-center justify-center cursor-pointer hover:border-accent transition-all relative overflow-hidden">
-                           {watchedThumbnailUrl ? <Image src={watchedThumbnailUrl} alt="Preview" fill className="object-cover" /> : <ImageIcon size={24} className="text-primary/40" />}
-                           <span className="text-[8px] font-bold uppercase mt-2 text-foreground/40">Upload Image</span>
-                        </div>
-                      )}
-                    </CldUploadWidget>
-                    {getFieldError(errors, "thumbnailUrl") && (
-                      <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "thumbnailUrl")}</p>
-                    )}
-                 </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-foreground/40 mb-2">CTA Text</label>
+                  <input 
+                    {...register("ctaText")}
+                    className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
+                    placeholder="Work With Me"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-foreground/40 mb-2">CTA Link</label>
+                  <input 
+                    {...register("ctaLink")}
+                    className="w-full bg-background border border-primary/20 p-4 outline-none focus:border-accent text-sm"
+                    placeholder="/contact"
+                  />
+                </div>
+             </div>
 
-                 {/* Active Toggle */}
-                 <div className="flex items-center space-x-4 p-6 bg-accent/10 border border-accent/20">
+             <div className="space-y-8">
+                <div>
+                   <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
+                     Video URL <span className="text-red-500">*</span>
+                   </label>
+                   <CldUploadWidget 
+                     uploadPreset={mediaConfig.uploadPreset}
+                     options={{ resourceType: "video" }}
+                     onSuccess={(result: any) => {
+                       setValue("videoUrl", result.info.secure_url);
+                     }}
+                   >
+                     {({ open }) => (
+                       <div onClick={() => open()} className="aspect-video bg-black/40 border-2 border-dashed border-primary/20 flex flex-col items-center justify-center cursor-pointer hover:border-accent transition-all relative overflow-hidden">
+                          {watchedVideoUrl ? <video src={watchedVideoUrl} className="w-full h-full object-cover" muted /> : <Play size={24} className="text-primary/40" />}
+                          <span className="text-[8px] font-bold uppercase mt-2 text-foreground/40">Upload Video</span>
+                       </div>
+                     )}
+                   </CldUploadWidget>
+                   {getFieldError(errors, "videoUrl") && (
+                     <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "videoUrl")}</p>
+                   )}
+                </div>
+
+                <div>
+                   <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
+                     Thumbnail <span className="text-red-500">*</span>
+                   </label>
+                   <CldUploadWidget 
+                     uploadPreset={mediaConfig.uploadPreset}
+                     onSuccess={(result: any) => {
+                       setValue("thumbnailUrl", result.secure_url);
+                     }}
+                   >
+                     {({ open }) => (
+                       <div onClick={() => open()} className="aspect-video bg-black/40 border-2 border-dashed border-primary/20 flex flex-col items-center justify-center cursor-pointer hover:border-accent transition-all relative overflow-hidden">
+                          {watchedThumbnailUrl ? <Image src={watchedThumbnailUrl} alt="Preview" fill className="object-cover" /> : <ImageIcon size={24} className="text-primary/40" />}
+                          <span className="text-[8px] font-bold uppercase mt-2 text-foreground/40">Upload Image</span>
+                       </div>
+                     )}
+                   </CldUploadWidget>
+                   {getFieldError(errors, "thumbnailUrl") && (
+                     <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "thumbnailUrl")}</p>
+                   )}
+                </div>
+
+                <div className="flex items-center space-x-4 p-6 bg-accent/10 border border-accent/20">
                     <input 
                       type="checkbox" 
                       id="isActive" 
@@ -300,37 +266,36 @@ const { setSubmitting: setUnsavedSubmitting, markAsSaved } = useUnsavedChanges<F
                       className="w-5 h-5 accent-accent"
                     />
                     <label htmlFor="isActive" className="text-xs font-bold uppercase tracking-widest text-accent">Make this the live showreel</label>
-                 </div>
-              </div>
-           </div>
+                </div>
+             </div>
+          </div>
 
-           <div className="flex justify-end space-x-6 pt-6 border-t border-primary/10">
-               <button 
-                 type="button" 
-                 onClick={() => { setIsAdding(false); resetForm(); }} 
-                 className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 hover:text-foreground"
-               >
-                 Cancel
-               </button>
+          <div className="flex justify-end space-x-6 pt-6 border-t border-primary/10">
+              <button 
+                type="button" 
+                onClick={() => { setIsAdding(false); resetForm(); }} 
+                className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 hover:text-foreground"
+              >
+                Cancel
+              </button>
 <button 
-                  type="button"
-                  onClick={handleFormSubmit}
-                  disabled={createMutation.isPending || isSubmitting}
-                  className="flex items-center space-x-3 px-10 py-4 bg-accent text-background font-bold uppercase tracking-widest text-[10px] pixel-border hover:scale-105 transition-transform disabled:opacity-50"
-                >
-                  {createMutation.isPending || isSubmitting ? <Loader2 className="animate-spin" size={14} /> : <Save size={14} />}
-                  <span>{createMutation.isPending || isSubmitting ? "Saving..." : "Save Showreel"}</span>
-                </button>
-           </div>
+                type="button"
+                onClick={handleFormSubmit}
+                disabled={createMutation.isPending || isSubmitting}
+                className="flex items-center space-x-3 px-10 py-4 bg-accent text-background font-bold uppercase tracking-widest text-[10px] pixel-border hover:scale-105 transition-transform disabled:opacity-50"
+              >
+                {createMutation.isPending || isSubmitting ? <Loader2 className="animate-spin" size={14} /> : <Save size={14} />}
+                <span>{createMutation.isPending || isSubmitting ? "Saving..." : "Save Showreel"}</span>
+              </button>
+          </div>
         </form>
       )}
 
-      {/* List View - Preserved */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         {(showreels ?? []).map((reel: any) => (
           <div key={reel._id} className={`group bg-primary/5 border transition-all ${reel.isActive ? 'border-accent shadow-[0_0_30px_rgba(0,245,212,0.05)]' : 'border-primary/10 opacity-60 hover:opacity-100'}`}>
              <div className="relative aspect-video overflow-hidden">
-                <Image src={reel.thumbnailUrl} alt={reel.title.en} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                <Image src={reel.thumbnailUrl} alt={getString(reel.title)} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                 <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                    <button className="w-12 h-12 rounded-full bg-accent text-background flex items-center justify-center">
                       <Play size={20} fill="currentColor" />
@@ -347,8 +312,8 @@ const { setSubmitting: setUnsavedSubmitting, markAsSaved } = useUnsavedChanges<F
              <div className="p-6 space-y-4">
                 <div className="flex justify-between items-start">
                    <div>
-                      <h3 className="font-display font-bold uppercase tracking-tight text-lg line-clamp-1">{reel.title.en}</h3>
-                      <p className="text-[10px] text-foreground/40 uppercase tracking-widest">{reel.subtitle.en}</p>
+                      <h3 className="font-display font-bold uppercase tracking-tight text-lg line-clamp-1">{getString(reel.title)}</h3>
+                      <p className="text-[10px] text-foreground/40 uppercase tracking-widest">{getString(reel.subtitle)}</p>
                    </div>
                    <button 
                      onClick={() => {
@@ -364,7 +329,7 @@ const { setSubmitting: setUnsavedSubmitting, markAsSaved } = useUnsavedChanges<F
                    <p className="text-[8px] text-foreground/20 uppercase tracking-widest">Added {new Date(reel.createdAt).toLocaleDateString()}</p>
                    {!reel.isActive && (
                       <button 
-                        onClick={() => toggleActiveMutation.mutate({ id: reel._id, data: { ...reel, isActive: true } })}
+                        onClick={() => toggleActiveMutation.mutate({ id: reel._id, data: { ...reel, isActive: true }})}
                         className="text-[9px] font-bold uppercase tracking-widest text-accent hover:underline flex items-center space-x-2"
                       >
                          <CheckCircle size={12} />

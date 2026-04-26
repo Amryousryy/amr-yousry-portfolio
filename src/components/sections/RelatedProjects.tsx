@@ -80,7 +80,7 @@ export default function RelatedProjects({ currentSlug, category }: RelatedProjec
                   <div className="relative aspect-[4/5] overflow-hidden pixel-border mb-8 bg-primary/5">
                     <Image
                       src={project.image}
-                      alt={project.title.en}
+                      alt={project.title}
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
                     />
@@ -90,7 +90,7 @@ export default function RelatedProjects({ currentSlug, category }: RelatedProjec
                     {project.category}
                   </span>
                   <h4 className="text-3xl font-display font-bold uppercase tracking-tight group-hover:text-accent transition-colors">
-                    {project.title.en}
+                    {project.title}
                   </h4>
                 </Link>
               </motion.div>

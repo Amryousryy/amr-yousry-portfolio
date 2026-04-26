@@ -52,23 +52,22 @@ export {
 } from "./lead";
 export type { LeadCreateInput, LeadPublicInput, LeadUpdateInput } from "./lead";
 
-// Re-export shared utilities
 export { 
   contentStatusSchema,
-  bilingualStringSchema,
-  optionalBilingualStringSchema,
+  stringSchema,
   mediaItemSchema,
   mediaArraySchema,
   seoSchema,
   optionalUrlSchema,
   normalizeSlug,
   slugSchema,
-  emptyBilingual,
   createEmptyMediaItem,
   createEmptyProjectSection,
   stringToStringArray,
   stringArrayToString,
   commaStringToArray,
   arrayToCommaString,
+  toEnglishOnly,
+  toEnglishOnlyArray,
 } from "./shared";
-export type { BilingualString, MediaItem, MediaArray, SEO, ContentStatus } from "./shared";
+export type { MediaItem, MediaArray, SEO, ContentStatus } from "./shared";

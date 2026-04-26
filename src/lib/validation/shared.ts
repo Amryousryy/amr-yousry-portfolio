@@ -6,12 +6,33 @@ import { z } from "zod";
 
 export const contentStatusSchema = z.enum(["draft", "published"]);
 
-export const bilingualStringSchema = z.object({
-  en: z.string().trim().min(1, "English content is required"),
-  ar: z.string().trim().min(1, "Arabic content is required"),
-});
+export const stringSchema = z.string().trim().min(1, "Content is required");
 
-export const optionalBilingualStringSchema = bilingualStringSchema.optional();
+// ============================================================================
+// COMPATIBILITY LAYER - Handle old bilingual documents gracefully
+// ============================================================================
+
+export function toEnglishOnly<T extends Record<string, unknown>>(
+  data: T,
+  fields: (keyof T)[]
+): T {
+  const result = { ...data };
+  for (const field of fields) {
+    const value = result[field];
+    if (value && typeof value === "object" && "en" in (value as object)) {
+      const bilingualValue = value as { en?: string };
+      (result as Record<string, unknown>)[field as string] = bilingualValue.en || "";
+    }
+  }
+  return result;
+}
+
+export function toEnglishOnlyArray<T extends Record<string, unknown>>(
+  data: T,
+  fields: (keyof T)[]
+): T {
+  return toEnglishOnly(data, fields);
+}
 
 // ============================================================================
 // MEDIA SCHEMAS
@@ -62,11 +83,6 @@ export const slugSchema = z
 // DEFAULT VALUE FACTORIES
 // ============================================================================
 
-export const emptyBilingual = (): { en: string; ar: string } => ({
-  en: "",
-  ar: "",
-});
-
 export const createEmptyMediaItem = (): { type: "image" | "video"; url: string } => ({
   type: "image",
   url: "",
@@ -74,13 +90,13 @@ export const createEmptyMediaItem = (): { type: "image" | "video"; url: string }
 
 export const createEmptyProjectSection = (): {
   id: string;
-  title: { en: string; ar: string };
-  content: { en: string; ar: string };
+  title: string;
+  content: string;
   media: { type: "image" | "video"; url: string }[];
 } => ({
   id: crypto.randomUUID(),
-  title: emptyBilingual(),
-  content: emptyBilingual(),
+  title: "",
+  content: "",
   media: [],
 });
 
@@ -111,7 +127,6 @@ export function arrayToCommaString(values: string[]): string {
 // DERIVED TYPES
 // ============================================================================
 
-export type BilingualString = z.infer<typeof bilingualStringSchema>;
 export type MediaItem = z.infer<typeof mediaItemSchema>;
 export type MediaArray = z.infer<typeof mediaArraySchema>;
 export type SEO = z.infer<typeof seoSchema>;

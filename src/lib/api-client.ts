@@ -1,4 +1,4 @@
-import { Project, NewProject, Filter, HeroSettings, SiteContent } from "@/types";
+import { Project, NewProject, Filter, HeroSettings, SiteContent, Testimonial } from "@/types";
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -177,4 +177,37 @@ export const SettingsService = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     }),
+};
+
+export const TestimonialService = {
+  getAll: async (isAdmin = false, filter?: { featured?: boolean }) => {
+    try {
+      const query = new URLSearchParams();
+      if (isAdmin) query.set("admin", "true");
+      if (filter?.featured) query.set("featured", "true");
+      
+      const res = await fetch(`/api/testimonials?${query.toString()}`);
+      const json: ApiResponse<Testimonial[]> = await res.json();
+      
+      if (!res.ok) return { data: [], error: json.data as unknown as string };
+      return { data: Array.isArray(json.data) ? json.data : [] };
+    } catch (err) {
+      return { data: [], error: String(err) };
+    }
+  },
+  getById: async (id: string) => apiRequest<Testimonial>(`/api/testimonials/${id}`),
+  create: (data: Omit<Testimonial, "_id" | "createdAt">) =>
+    apiRequest<Testimonial>("/api/testimonials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    }),
+  update: (id: string, data: Partial<Testimonial>) =>
+    apiRequest<Testimonial>(`/api/testimonials/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    }),
+  delete: (id: string) =>
+    apiRequest<{ success: boolean }>(`/api/testimonials/${id}`, { method: "DELETE" }),
 };

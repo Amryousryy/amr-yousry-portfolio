@@ -1,11 +1,20 @@
 import React from "react";
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getServerSession(authOptions);
+  
+  if (!session) {
+    redirect("/admin/login");
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground flex" style={{ position: 'relative', zIndex: 1 }}>
       <AdminSidebar />
