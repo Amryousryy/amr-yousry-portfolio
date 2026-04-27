@@ -24,11 +24,6 @@ if (!cached) {
 }
 
 async function dbConnect() {
-  if (process.env.NODE_ENV === "development") {
-    dns.setServers(["8.8.8.8", "8.8.4.4"]);
-    console.log("DNS Servers set to:", dns.getServers());
-  }
-  
   if (!MONGODB_URI) {
     throw new Error("Please define the MONGODB_URI environment variable inside .env.local");
   }

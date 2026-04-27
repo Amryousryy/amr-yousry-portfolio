@@ -8,6 +8,7 @@ export interface ILead extends Document {
   message: string;
   offerType: "general" | "free_audit";
   status: "new" | "contacted" | "qualified" | "closed";
+  metadata?: any;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,6 +21,7 @@ const LeadSchema: Schema = new Schema({
   message: { type: String, required: true },
   offerType: { type: String, enum: ["general", "free_audit"], default: "general" },
   status: { type: String, enum: ["new", "contacted", "qualified", "closed"], default: "new" },
+  metadata: { type: Schema.Types.Mixed },
 }, { timestamps: true });
 
 // Removed unique constraint on email to avoid blocking legitimate repeated submissions

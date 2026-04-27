@@ -25,7 +25,7 @@ function successResponse<T>(data: T, pagination?: ReturnType<typeof getPaginatio
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, email, phone, projectType, message, offerType } = body;
+    const { name, email, phone, projectType, message, offerType, metadata } = body;
 
     if (!name || !email || !projectType || !message) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -43,7 +43,8 @@ export async function POST(req: Request) {
       phone,
       projectType,
       message,
-      offerType: offerType || "general"
+      offerType: offerType || "general",
+      metadata
     });
 
     try {

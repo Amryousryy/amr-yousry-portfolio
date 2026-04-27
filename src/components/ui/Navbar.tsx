@@ -22,17 +22,17 @@ export default function Navbar() {
 
   useEffect(() => {
     let ticking = false;
-    
+
     const handleScroll = () => {
       if (!ticking) {
-        requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
           setScrolled(window.scrollY > 50);
           ticking = false;
         });
         ticking = true;
       }
     };
-    
+
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -45,24 +45,26 @@ export default function Navbar() {
     { name: navLabels.contact, href: "/contact" },
   ];
 
-  const navClasses = [
-    "fixed top-0 left-0 w-full z-50 transition-all duration-300",
-    scrolled ? "py-4 bg-background/80 backdrop-blur-md border-b border-primary/20" : "py-8 bg-transparent"
-  ].join(" ");
-
   return (
-    <nav className={navClasses}>
+    <nav 
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 will-change-[transform,opacity] ${
+        scrolled 
+          ? "py-4 bg-background/80 backdrop-blur-md border-b border-white/5" 
+          : "py-8 bg-transparent"
+      }`}
+    >
       <div className="container mx-auto px-6 flex justify-between items-center">
         <Link href="/" className="group flex items-center space-x-3">
-          <div className="relative w-12 h-12 transition-transform group-hover:scale-105">
+          <div className="relative w-12 h-12 transition-transform duration-500 group-hover:scale-105">
             <Image
               src="/Asset 4.png"
               alt="Amr Yousry Logo"
               fill
               className="object-contain"
+              priority
             />
           </div>
-          <span className="text-xl font-display font-bold tracking-tighter uppercase group-hover:text-accent transition-colors">
+          <span className="text-xl font-display font-bold tracking-tighter uppercase group-hover:text-accent transition-colors duration-300">
             Amr Yousry
           </span>
         </Link>
@@ -72,15 +74,15 @@ export default function Navbar() {
             <Link
               key={link.name}
               href={link.href}
-              className="relative text-sm font-medium uppercase tracking-widest hover:text-accent transition-colors group"
+              className="relative text-[11px] font-bold uppercase tracking-[0.2em] hover:text-accent transition-colors duration-300 group"
             >
               {link.name}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all group-hover:w-full" />
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full" />
             </Link>
           ))}
           <Link
             href="/contact"
-            className="px-6 py-2 bg-primary text-white text-xs font-bold uppercase tracking-widest pixel-border hover:bg-secondary transition-all"
+            className="px-6 py-2.5 bg-accent text-background text-[10px] font-bold uppercase tracking-[0.2em] pixel-border hover:bg-white transition-all duration-300"
           >
             {navLabels.hireMe}
           </Link>
@@ -88,26 +90,33 @@ export default function Navbar() {
         </div>
 
         <button
-          className="md:hidden text-white"
+          className="md:hidden text-white p-2"
           onClick={() => setIsOpen(!isOpen)}
+          aria-label="Toggle Menu"
         >
-          {isOpen ? <X size={32} /> : <Menu size={32} />}
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 top-[88px] bg-background z-40 md:hidden flex flex-col items-center justify-center space-y-8"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "100vh" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="fixed inset-0 top-0 bg-background z-40 md:hidden flex flex-col items-center justify-center space-y-8"
           >
+             <button
+              className="absolute top-8 right-6 text-white p-2"
+              onClick={() => setIsOpen(false)}
+            >
+              <X size={32} />
+            </button>
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-2xl font-display font-bold uppercase tracking-tighter hover:text-accent"
+                className="text-4xl font-display font-bold uppercase tracking-tighter hover:text-accent transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 {link.name}
@@ -115,7 +124,7 @@ export default function Navbar() {
             ))}
             <Link
               href="/contact"
-              className="px-8 py-3 bg-accent text-background font-bold uppercase tracking-widest pixel-border"
+              className="px-10 py-4 bg-accent text-background font-bold uppercase tracking-widest pixel-border text-sm"
               onClick={() => setIsOpen(false)}
             >
               {navLabels.hireMe}

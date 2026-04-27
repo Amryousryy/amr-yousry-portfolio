@@ -22,7 +22,13 @@ function getString(value: string | { en: string; ar: string } | undefined): stri
 
 export default function HeroManagerPage() {
   const queryClient = useQueryClient();
+  const [mounted, setMounted] = useState(false);
   const [videoMode, setVideoMode] = useState<"upload" | "url">("url");
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const [formData, setFormData] = useState<Partial<HeroSettings>>({
     headline: "",
     subheadline: "",
@@ -102,12 +108,12 @@ export default function HeroManagerPage() {
               <span className={`px-2 py-1 font-bold uppercase ${formData.status === 'published' ? 'bg-green-500/20 text-green-500' : 'bg-yellow-500/20 text-yellow-500'}`}>
                 {formData.status}
               </span>
-              {formData.publishedAt && (
+              {formData.publishedAt && mounted && (
                 <span className="text-foreground/30">
                   Published: {new Date(formData.publishedAt).toLocaleDateString()}
                 </span>
               )}
-              {formData.lastStatusChangeAt && (
+              {formData.lastStatusChangeAt && mounted && (
                 <span className="text-foreground/30">
                   Updated: {new Date(formData.lastStatusChangeAt).toLocaleDateString()}
                 </span>

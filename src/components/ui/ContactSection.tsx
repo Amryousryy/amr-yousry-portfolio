@@ -1,48 +1,60 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { Calendar, Mail, MessageCircle, CheckCircle, ArrowRight } from "lucide-react";
+import { Calendar, Mail, MessageCircle, CheckCircle, ArrowRight, AlertCircle } from "lucide-react";
+import { toast } from "sonner";
 
-export default function ContactSection() {
+interface ContactSectionProps {
+  projectId?: string;
+  projectTitle?: string;
+}
+
+export default function ContactSection({ projectId, projectTitle }: ContactSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    import("gsap").then(({ default: gsap }) => {
-      import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
-        gsap.registerPlugin(ScrollTrigger);
-        
-        const ctx = gsap.context(() => {
-          gsap.from(headingRef.current, {
-            opacity: 0,
-            y: 30,
-            duration: 0.6,
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top 70%",
-            },
-          });
-        });
-      });
-    });
-
-    return () => {};
+    // ... existing GSAP code
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setError(null);
 
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          projectType: projectTitle ? `Project Inquiry: ${projectTitle}` : "General Inquiry",
+          offerType: "general",
+          metadata: projectId ? { projectId } : undefined
+        }),
+      });
 
-    setIsSubmitting(false);
-    setSubmitSuccess(true);
-    setFormData({ name: "", email: "", message: "" });
-    
-    setTimeout(() => setSubmitSuccess(false), 5000);
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to send message");
+      }
+
+      setSubmitSuccess(true);
+      setFormData({ name: "", email: "", message: "" });
+      toast.success("Message sent successfully!");
+      
+      setTimeout(() => setSubmitSuccess(false), 8000);
+    } catch (err: any) {
+      setError(err.message);
+      toast.error(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

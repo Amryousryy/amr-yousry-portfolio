@@ -31,19 +31,28 @@ export default function Hero() {
   const ctaRef = useRef<HTMLDivElement>(null);
   const [showModal, setShowModal] = useState(false);
 
-  const { data: hero } = useQuery({
+  const { data: hero, isLoading } = useQuery({
     queryKey: ["hero-settings"],
     queryFn: () => SettingsService.getHero(),
   });
 
-  const settings = hero?.data;
-  const headline = getString(settings?.headline);
-  const subheadline = getString(settings?.subheadline);
-  const primaryCTA = getString(settings?.primaryCTA);
-  const secondaryCTA = getString(settings?.secondaryCTA);
+  const settings = hero?.data || {
+    headline: "I Turn Content Into Clients",
+    subheadline: "Strategic video content that generates leads and scales brands for ambitious companies.",
+    primaryCTA: "Start Your Project",
+    primaryCTALink: "/#contact",
+    secondaryCTA: "View My Work",
+    status: "published" as const,
+    showreelVideo: ""
+  };
+
+  const headline = getString(settings.headline);
+  const subheadline = getString(settings.subheadline);
+  const primaryCTA = getString(settings.primaryCTA);
+  const secondaryCTA = getString(settings.secondaryCTA);
 
   useGSAP(() => {
-    if (!settings) return;
+    if (!settings || isLoading) return;
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
     tl.fromTo(
@@ -63,9 +72,9 @@ export default function Hero() {
         { scale: 1, opacity: 1, duration: 0.8 },
         "-=0.5"
       );
-  }, { scope: container, dependencies: [settings] });
+  }, { scope: container, dependencies: [settings, isLoading] });
 
-  if (!settings) return null;
+  // Use settings directly (fallback is already provided above)
 
   return (
     <section
@@ -88,19 +97,19 @@ export default function Hero() {
 
         <h1
           ref={titleRef}
-          className="text-4xl md:text-7xl lg:text-8xl font-display font-bold leading-tight mb-8 tracking-tight"
+          className="text-4xl md:text-7xl lg:text-8xl font-display font-bold leading-tight mb-8 tracking-tight will-change-[transform,opacity]"
         >
           {headline || "I Turn Content Into Clients"}
         </h1>
 
         <p
           ref={subTitleRef}
-          className="text-base md:text-xl text-foreground/60 max-w-xl mx-auto mb-12 font-sans"
+          className="text-base md:text-xl text-foreground/60 max-w-xl mx-auto mb-12 font-sans will-change-[transform,opacity]"
         >
           {subheadline || "Strategic video content that generates leads and scales brands for ambitious companies."}
         </p>
 
-        <div ref={ctaRef} className="flex flex-col md:flex-row items-center justify-center gap-6">
+        <div ref={ctaRef} className="flex flex-col md:flex-row items-center justify-center gap-6 will-change-[transform,opacity]">
           <a 
             href={settings?.primaryCTALink || "#contact"} 
             className="group relative px-10 py-4 min-h-[56px] bg-accent text-background font-bold uppercase tracking-[0.2em] text-xs overflow-hidden pixel-border transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(0,245,212,0.3)] hover:shadow-[0_0_50px_rgba(0,245,212,0.5)] flex items-center justify-center"

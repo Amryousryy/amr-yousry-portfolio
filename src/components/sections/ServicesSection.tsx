@@ -106,7 +106,7 @@ function ServiceCard({ service, index, isPrimary }: ServiceCardProps) {
       className={`
         relative p-8 border border-white/5 
         ${isPrimary ? "bg-accent/5 lg:col-span-2 lg:row-span-1" : "bg-zinc-900/30"}
-        hover:border-accent/30 transition-all duration-500 group
+        hover:border-accent/30 transition-all duration-500 group will-change-transform
       `}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-accent/0 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

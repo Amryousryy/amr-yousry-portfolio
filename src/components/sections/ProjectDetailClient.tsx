@@ -22,6 +22,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Project } from "@/types";
 import AuditCTA from "@/components/ui/AuditCTA";
 import RelatedProjects from "./RelatedProjects";
+import ContactSection from "@/components/ui/ContactSection";
 
 interface ProjectDetailClientProps {
   slug: string;
@@ -389,6 +390,12 @@ export default function ProjectDetailClient({ slug, initialData }: ProjectDetail
       {/* Related Projects */}
       <RelatedProjects currentSlug={slug} category={project.category} />
       
+      {/* Direct Contact Form for Project Inquiry */}
+      <ContactSection 
+        projectId={project._id} 
+        projectTitle={typeof project.title === 'string' ? project.title : (project.title as any)?.en} 
+      />
+
       {/* Global Final CTA */}
       <section className="py-40 bg-background text-center relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent/5 blur-[120px] rounded-full -z-10" />

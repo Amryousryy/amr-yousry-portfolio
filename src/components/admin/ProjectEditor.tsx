@@ -178,7 +178,7 @@ export default function ProjectEditor({ initialData, onSave, onSaveSuccess, isSa
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
               Slug <span className="text-red-500">*</span>
@@ -209,6 +209,18 @@ export default function ProjectEditor({ initialData, onSave, onSaveSuccess, isSa
             {getFieldError(errors, "category") && (
               <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "category")}</p>
             )}
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
+              Display Order
+            </label>
+            <input
+              type="number"
+              {...register("displayOrder", { valueAsNumber: true })}
+              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
+              placeholder="0"
+            />
           </div>
         </div>
 

@@ -273,7 +273,7 @@ export default function AdminOverview() {
                         <span className="text-foreground/30"> {log.action}ed </span>
                         <span className="text-foreground/70">{log.targetName}</span>
                       </p>
-                      <p className="text-[9px] text-foreground/25">{getTimeAgo(log.timestamp)}</p>
+                      <p className="text-[9px] text-foreground/25">{getTimeAgo(log.createdAt)}</p>
                     </div>
                   </div>
                   <span className="text-[9px] px-2 py-0.5 bg-primary/20 text-foreground/40 uppercase">

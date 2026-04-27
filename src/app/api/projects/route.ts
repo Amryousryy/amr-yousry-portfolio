@@ -101,16 +101,11 @@ export async function POST(req: Request) {
   }
 
   try {
-    const slug = validation.data.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
-
     const statusMetadata = validation.data.status === "published" 
       ? { publishedAt: new Date(), lastStatusChangeAt: new Date() }
       : { lastStatusChangeAt: new Date() };
 
-    const project = await Project.create({ ...validation.data, slug, ...statusMetadata });
+    const project = await Project.create({ ...validation.data, ...statusMetadata });
 
     try {
       await logActivity({

@@ -31,13 +31,13 @@ export async function GET(req: Request) {
       {
         $match: {
           type: "page_view",
-          timestamp: { $gte: sevenDaysAgo }
+          createdAt: { $gte: sevenDaysAgo }
         }
       },
       {
         $group: {
           _id: {
-            $dateToString: { format: "%Y-%m-%d", date: "$timestamp" }
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
           },
           count: { $sum: 1 }
         }

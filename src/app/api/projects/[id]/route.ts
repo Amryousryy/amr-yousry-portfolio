@@ -60,11 +60,6 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     const currentStatus = currentProject?.status || "draft";
     const newStatus = validation.data.status || "draft";
     
-    const slug = (validation.data.title || "")
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
-    
     const statusMetadata: Record<string, Date> = {
       lastStatusChangeAt: new Date(),
     };
@@ -75,7 +70,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     
     const project = await Project.findByIdAndUpdate(
       id, 
-      { ...validation.data, slug, ...statusMetadata }, 
+      { ...validation.data, ...statusMetadata }, 
       { new: true }
     );
     

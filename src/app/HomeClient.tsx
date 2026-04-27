@@ -2,6 +2,8 @@
 
 import React from "react";
 import dynamic from "next/dynamic";
+import Hero from "@/components/sections/Hero";
+import Marquee from "@/components/ui/Marquee";
 
 const FilmStripSection = dynamic(() => import("@/components/ui/FilmStripSection"), {
   ssr: false,
@@ -28,30 +30,9 @@ const ContactSection = dynamic(() => import("@/components/ui/ContactSection"), {
   loading: () => <div className="py-24 bg-[#050508]" />,
 });
 
-const Marquee = dynamic(() => import("@/components/ui/Marquee"), {
-  ssr: false,
-  loading: () => <div className="h-16 bg-[#050508]" />,
-});
-
 const SectionNarrator = dynamic(() => import("@/components/ui/SectionNarrator"), {
   ssr: false,
   loading: () => null,
-});
-
-const Hero = dynamic(() => import("@/components/sections/Hero"), {
-  ssr: false,
-  loading: () => (
-    <div className="min-h-screen bg-[#050508] flex items-center justify-center">
-      <div className="text-center">
-        <div className="text-4xl text-white mb-4">Amr Yousry</div>
-        <div className="text-[#00ffcc] text-xl">Creative Strategist & Video Editor</div>
-        <div className="mt-8 flex gap-4">
-          <a href="#projects" className="px-6 py-3 bg-[#00ffcc] text-black font-bold">View Projects</a>
-          <a href="#contact" className="px-6 py-3 border border-[#00ffcc] text-[#00ffcc] font-bold">Contact</a>
-        </div>
-      </div>
-    </div>
-  ),
 });
 
 export default function Home() {
