@@ -29,26 +29,34 @@ export default function SectionNarrator({ sections }: SectionNarratorProps) {
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
 
   useEffect(() => {
+    let ticking = false;
+    
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const windowHeight = window.innerHeight;
-
-      sectionRefs.current.forEach((section, index) => {
-        if (!section) return;
-
-        const rect = section.getBoundingClientRect();
-        const sectionTop = rect.top + scrollY;
-        const sectionHeight = rect.height;
-
-        if (scrollY >= sectionTop - windowHeight * 0.5 && scrollY < sectionTop + sectionHeight - windowHeight * 0.3) {
-          setCurrentChapter(index);
-
-          const progressInSection = Math.max(0, Math.min(1,
-            (scrollY - sectionTop + windowHeight * 0.5) / (sectionHeight - windowHeight * 0.5)
-          ));
-          setSectionProgress(progressInSection);
-        }
-      });
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          const windowHeight = window.innerHeight;
+  
+          sectionRefs.current.forEach((section, index) => {
+            if (!section) return;
+  
+            const rect = section.getBoundingClientRect();
+            const sectionTop = rect.top + scrollY;
+            const sectionHeight = rect.height;
+  
+            if (scrollY >= sectionTop - windowHeight * 0.5 && scrollY < sectionTop + sectionHeight - windowHeight * 0.3) {
+              setCurrentChapter(index);
+  
+              const progressInSection = Math.max(0, Math.min(1,
+                (scrollY - sectionTop + windowHeight * 0.5) / (sectionHeight - windowHeight * 0.5)
+              ));
+              setSectionProgress(progressInSection);
+            }
+          });
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
