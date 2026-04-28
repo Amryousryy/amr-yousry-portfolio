@@ -1,31 +1,27 @@
-export interface BilingualString {
-  en: string;
-  ar: string;
-}
-
 export type ContentStatus = "draft" | "published";
 
 export interface ProjectSection {
   id: string;
-  title: BilingualString;
-  content: BilingualString;
+  title: string;
+  content: string;
   media: { type: "image" | "video"; url: string }[];
 }
 
 export interface Project {
   _id: string;
-  title: BilingualString;
+  title: string;
   slug: string;
-  shortDescription: BilingualString;
-  fullDescription: BilingualString;
+  shortDescription: string;
+  fullDescription: string;
   category: string;
   image: string;
   video?: string;
-  problem?: BilingualString;
-  strategy?: BilingualString;
-  solution?: BilingualString; // Keep for backward compatibility
-  execution?: BilingualString;
-  results?: BilingualString;
+  problem?: string;
+  strategy?: string;
+  solution?: string;
+  execution?: string;
+  results?: string;
+  outcome?: string;
   gallery: string[];
   tags: string[];
   sections: ProjectSection[];
@@ -34,19 +30,21 @@ export interface Project {
   displayOrder: number;
   year?: string;
   clientName?: string;
+  role?: string;
+  tools?: string[];
   seo: {
     title?: string;
     description?: string;
     keywords?: string[];
   };
-  createdAt: string;
+  createdAt: Date;
 }
 
 export type NewProject = Omit<Project, "_id" | "createdAt" | "slug">;
 
 export interface Filter {
   _id: string;
-  name: BilingualString;
+  name: string;
   slug: string;
   displayOrder: number;
   isActive: boolean;
@@ -54,22 +52,25 @@ export interface Filter {
 
 export interface HeroSettings {
   _id: string;
-  headline: BilingualString;
-  subheadline: BilingualString;
-  primaryCTA: BilingualString;
+  headline: string;
+  subheadline: string;
+  primaryCTA: string;
   primaryCTALink: string;
-  secondaryCTA: BilingualString;
+  secondaryCTA: string;
   secondaryCTALink: string;
   posterImage: string;
   showreelVideo: string;
   status: ContentStatus;
+  publishedAt?: Date;
+  lastStatusChangeAt?: Date;
 }
 
 export interface SiteContent {
   _id: string;
-  about: BilingualString;
-  servicesTitle: BilingualString;
-  servicesDescription: BilingualString;
+  about: string;
+  servicesTitle: string;
+  servicesSubtitle?: string;
+  servicesDescription: string;
   contactEmail: string;
   whatsappNumber: string;
   socialLinks: {
@@ -78,4 +79,27 @@ export interface SiteContent {
     youtube?: string;
     linkedin?: string;
   };
+  status: ContentStatus;
+  servicesCards: Array<{
+    title: string;
+    description: string;
+    icon: string;
+  }>;
+  publishedAt?: Date;
+  lastStatusChangeAt?: Date;
+}
+
+export interface Testimonial {
+  _id: string;
+  name: string;
+  role: string;
+  company: string;
+  quote: string;
+  projectSlug?: string;
+  avatar?: string;
+  rating: number;
+  isFeatured: boolean;
+  status: ContentStatus;
+  displayOrder: number;
+  createdAt: Date;
 }

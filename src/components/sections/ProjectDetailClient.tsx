@@ -6,18 +6,23 @@ import { ProjectService } from "@/lib/api-client";
 import Image from "next/image";
 import { 
   ArrowLeft, 
-  Play, 
+  Play,
   Loader2, 
   TrendingUp, 
   Zap, 
   ChevronRight,
-  MessageSquare
+  MessageSquare,
+  Wrench,
+  Target,
+  Award,
+  ArrowRight
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Project } from "@/types";
 import AuditCTA from "@/components/ui/AuditCTA";
 import RelatedProjects from "./RelatedProjects";
+import ContactSection from "@/components/ui/ContactSection";
 
 interface ProjectDetailClientProps {
   slug: string;
@@ -54,7 +59,7 @@ export default function ProjectDetailClient({ slug, initialData }: ProjectDetail
     );
   }
 
-  const primaryResult = project.results?.en.split('\n')[0];
+  const primaryResult = project.results?.split('\n')[0];
 
   return (
     <div className="bg-background min-h-screen">
@@ -81,7 +86,7 @@ export default function ProjectDetailClient({ slug, initialData }: ProjectDetail
         >
           <Image
             src={project.image}
-            alt={project.title.en}
+            alt={project.title}
             fill
             className="object-cover"
             priority
@@ -121,11 +126,11 @@ export default function ProjectDetailClient({ slug, initialData }: ProjectDetail
             </div>
             
             <h1 className="text-6xl md:text-9xl font-display font-bold tracking-tighter uppercase mb-6 leading-[0.85] max-w-5xl">
-              {project.title.en}
+              {project.title}
             </h1>
             
             <p className="text-xl md:text-2xl text-foreground/80 max-w-2xl italic leading-relaxed mb-12">
-              {project.shortDescription.en}
+              {project.shortDescription}
             </p>
 
             <div className="flex flex-wrap gap-6">
@@ -149,7 +154,7 @@ export default function ProjectDetailClient({ slug, initialData }: ProjectDetail
                   <h3 className="pixel-text text-[10px] font-bold uppercase tracking-[0.4em] opacity-60">Success Metrics</h3>
                   <p className="text-3xl font-display font-bold uppercase tracking-tighter">Impact Generated</p>
                </div>
-               {project.results?.en.split('\n').map((res, i) => (
+               {project.results?.split('\n').map((res, i) => (
                   <div key={i} className="space-y-1">
                      <p className="text-5xl md:text-6xl font-display font-bold tracking-tighter leading-none">{res}</p>
                      <p className="text-[10px] uppercase font-bold tracking-widest opacity-60">Proven Result</p>
@@ -177,7 +182,7 @@ export default function ProjectDetailClient({ slug, initialData }: ProjectDetail
                  <h2 className="pixel-text text-accent text-[12px] font-bold uppercase tracking-[0.4em]">The Challenge</h2>
               </div>
               <div className="text-3xl md:text-4xl font-sans font-light leading-relaxed text-foreground/90 max-w-3xl">
-                {project.problem?.en}
+                {project.problem}
               </div>
             </motion.div>
 
@@ -190,12 +195,73 @@ export default function ProjectDetailClient({ slug, initialData }: ProjectDetail
             >
               <div className="flex items-center space-x-6">
                  <div className="h-px w-16 bg-secondary" />
-                 <h2 className="pixel-text text-secondary text-[12px] font-bold uppercase tracking-[0.4em]">The Strategy</h2>
+                 <h2 className="text-accent text-sm font-bold uppercase tracking-widest">The Strategy</h2>
               </div>
               <div className="text-3xl md:text-4xl font-sans font-light leading-relaxed text-foreground/90 max-w-3xl">
-                {project.strategy?.en || project.solution?.en}
+                {project.strategy || project.solution}
               </div>
             </motion.div>
+
+            {/* The Process */}
+            {(project.execution || project.outcome) && (
+              <motion.div 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="space-y-10"
+              >
+                <div className="flex items-center space-x-6">
+                   <div className="h-px w-16 bg-accent" />
+                   <h2 className="text-accent text-sm font-bold uppercase tracking-widest">The Process</h2>
+                </div>
+                <div className="text-3xl md:text-4xl font-sans font-light leading-relaxed text-foreground/90 max-w-3xl">
+                  {project.execution || project.outcome}
+                </div>
+              </motion.div>
+            )}
+
+            {/* Tools & Stack */}
+            {project.tools && project.tools.length > 0 && (
+              <motion.div 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="space-y-8"
+              >
+                <div className="flex items-center space-x-6">
+                   <div className="h-px w-16 bg-accent" />
+                   <h2 className="text-accent text-sm font-bold uppercase tracking-widest">Tools & Stack</h2>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  {project.tools.map((tool, i) => (
+                    <span 
+                      key={i} 
+                      className="px-5 py-2 bg-primary/10 border border-primary/20 text-foreground/70 text-sm font-medium"
+                    >
+                      {tool}
+                    </span>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {/* Role & Scope */}
+            {project.role && (
+              <motion.div 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="space-y-8"
+              >
+                <div className="flex items-center space-x-6">
+                   <div className="h-px w-16 bg-accent" />
+                   <h2 className="text-accent text-sm font-bold uppercase tracking-widest">Role & Scope</h2>
+                </div>
+                <div className="p-8 bg-primary/5 border border-primary/10">
+                  <p className="text-xl text-foreground/80 leading-relaxed">{project.role}</p>
+                </div>
+              </motion.div>
+            )}
 
             {/* Content Audit CTA - Mid Page */}
             <AuditCTA />
@@ -210,10 +276,10 @@ export default function ProjectDetailClient({ slug, initialData }: ProjectDetail
                 className="space-y-16"
               >
                 <div className="space-y-8 max-w-3xl">
-                  <h3 className="text-5xl md:text-6xl font-display font-bold uppercase tracking-tight">{section.title.en}</h3>
+                  <h3 className="text-5xl md:text-6xl font-display font-bold uppercase tracking-tight">{section.title}</h3>
                   <div 
                     className="prose prose-invert prose-xl max-w-none text-foreground/70 leading-relaxed font-light"
-                    dangerouslySetInnerHTML={{ __html: section.content.en }}
+                    dangerouslySetInnerHTML={{ __html: section.content }}
                   />
                 </div>
 
@@ -228,7 +294,7 @@ export default function ProjectDetailClient({ slug, initialData }: ProjectDetail
                         {m.type === "image" ? (
                           <Image
                             src={m.url}
-                            alt={`${section.title.en} media`}
+                            alt={`${section.title} media`}
                             fill
                             className="object-cover transition-transform duration-700 group-hover:scale-105"
                           />
@@ -249,31 +315,38 @@ export default function ProjectDetailClient({ slug, initialData }: ProjectDetail
 
           {/* Right Side Sidebar */}
           <div className="lg:col-span-4 lg:sticky lg:top-32 h-fit space-y-12">
-            <div className="p-10 border border-primary/10 bg-primary/5 space-y-12 pixel-border">
+            <div className="p-8 border border-primary/10 bg-primary/5 space-y-10">
                <div className="space-y-4">
-                  <h4 className="pixel-text text-accent text-[10px] uppercase tracking-widest font-bold">Client Archive</h4>
-                  <p className="text-2xl font-display font-bold uppercase tracking-tighter">{project.clientName || "Confidential Partner"}</p>
+                  <h4 className="text-accent text-xs font-bold uppercase tracking-widest">Client</h4>
+                  <p className="text-2xl font-display font-bold uppercase tracking-tighter">{project.clientName || "Confidential"}</p>
                </div>
 
                <div className="space-y-6">
-                  <h4 className="pixel-text text-accent text-[10px] uppercase tracking-widest font-bold">Transformation Tags</h4>
+                  <h4 className="text-accent text-xs font-bold uppercase tracking-widest">Services</h4>
                   <div className="flex flex-wrap gap-2">
                     {project.tags?.map(tag => (
-                      <span key={tag} className="px-3 py-1 bg-background border border-primary/10 text-[9px] font-bold uppercase tracking-widest text-foreground/60">
+                      <span key={tag} className="px-3 py-1 bg-background border border-primary/10 text-xs font-medium text-foreground/70">
                         {tag}
                       </span>
                     ))}
                   </div>
                </div>
 
+               {project.year && (
+                 <div className="space-y-4">
+                    <h4 className="text-accent text-xs font-bold uppercase tracking-widest">Year</h4>
+                    <p className="text-lg font-display font-bold">{project.year}</p>
+                 </div>
+               )}
+
                <div className="pt-8 border-t border-primary/10 space-y-6">
-                  <p className="text-sm italic text-foreground/40">"Ready to duplicate these results for your own brand?"</p>
+                  <p className="text-sm text-foreground/50">Want results like these for your brand?</p>
                   <Link
                     href="https://wa.me/your-number"
-                    className="flex items-center justify-between w-full py-5 px-8 bg-accent text-background font-bold uppercase tracking-widest text-[10px] pixel-border hover:scale-105 transition-all"
+                    className="flex items-center justify-center w-full py-4 bg-accent text-background font-bold text-xs uppercase tracking-wider hover:bg-accent/90 transition-colors"
                   >
-                    <span>Start Your Transformation</span>
-                    <ChevronRight size={14} />
+                    <span>Let's Talk</span>
+                    <ArrowRight className="w-4 h-4 ml-2" />
                   </Link>
                </div>
             </div>
@@ -317,6 +390,12 @@ export default function ProjectDetailClient({ slug, initialData }: ProjectDetail
       {/* Related Projects */}
       <RelatedProjects currentSlug={slug} category={project.category} />
       
+      {/* Direct Contact Form for Project Inquiry */}
+      <ContactSection 
+        projectId={project._id} 
+        projectTitle={typeof project.title === 'string' ? project.title : (project.title as any)?.en} 
+      />
+
       {/* Global Final CTA */}
       <section className="py-40 bg-background text-center relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent/5 blur-[120px] rounded-full -z-10" />

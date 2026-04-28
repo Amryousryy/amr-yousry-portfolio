@@ -81,13 +81,11 @@ export default function ProjectArchiveClient({ initialProjects = [] }: ProjectAr
   return (
     <div className="space-y-20">
       <header>
-        <motion.h1 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-7xl md:text-9xl font-display font-bold tracking-tighter mb-12"
+        <h1 
+          className="text-6xl md:text-8xl lg:text-9xl font-display font-bold tracking-tighter mb-12"
         >
-          THE <span className="text-accent italic">ARCHIVE</span>
-        </motion.h1>
+          Selected <span className="text-accent italic">Work</span>
+        </h1>
 
         {/* Featured Spotlight */}
         {featuredProject && activeCategory === "All" && activeTags.length === 0 && (
@@ -99,7 +97,7 @@ export default function ProjectArchiveClient({ initialProjects = [] }: ProjectAr
             <Link href={`/projects/${featuredProject.slug}`}>
               <Image
                 src={featuredProject.image}
-                alt={featuredProject.title.en}
+                alt={featuredProject.title}
                 fill
                 className="object-cover transition-transform duration-1000 group-hover:scale-105"
                 priority
@@ -110,8 +108,8 @@ export default function ProjectArchiveClient({ initialProjects = [] }: ProjectAr
                     <Star className="text-accent fill-accent" size={16} />
                     <span className="pixel-text text-accent text-[10px] uppercase tracking-[0.3em]">Featured Work</span>
                  </div>
-                 <h2 className="text-4xl md:text-6xl font-display font-bold uppercase mb-4 group-hover:text-accent transition-colors">{featuredProject.title.en}</h2>
-                 <p className="text-foreground/60 max-w-xl text-sm md:text-base italic">{featuredProject.shortDescription.en}</p>
+<h2 className="text-4xl md:text-6xl font-display font-bold uppercase mb-4 group-hover:text-accent transition-colors">{featuredProject.title}</h2>
+                  <p className="text-foreground/60 max-w-xl text-sm md:text-base italic">{featuredProject.shortDescription}</p>
               </div>
             </Link>
           </motion.div>
@@ -123,14 +121,16 @@ export default function ProjectArchiveClient({ initialProjects = [] }: ProjectAr
             <span className="pixel-text text-[10px] text-accent uppercase tracking-widest">Collections</span>
             <div className="flex flex-wrap gap-3">
               {categories.map((cat) => (
-                <button
+<button
                   key={cat}
                   onClick={() => {
                     setActiveCategory(cat);
-                    setActiveTags([]); // Reset tags when category changes
+                    setActiveTags([]);
                   }}
-                  className={`px-8 py-3 text-[10px] font-bold uppercase tracking-widest transition-all pixel-border ${
-                    activeCategory === cat ? "bg-accent text-background" : "bg-primary/5 text-foreground/50 hover:bg-primary/10 hover:text-foreground"
+                  className={`px-6 py-2.5 text-xs font-semibold tracking-wider transition-all ${
+                    activeCategory === cat 
+                      ? "bg-accent text-background" 
+                      : "bg-transparent border border-primary/20 text-foreground/60 hover:border-accent hover:text-foreground"
                   }`}
                 >
                   {cat}
@@ -199,7 +199,7 @@ export default function ProjectArchiveClient({ initialProjects = [] }: ProjectAr
                 <div className="relative aspect-[4/5] overflow-hidden pixel-border mb-8 bg-primary/5">
                   <Image
                     src={project.image}
-                    alt={project.title.en}
+                    alt={project.title}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -220,15 +220,15 @@ export default function ProjectArchiveClient({ initialProjects = [] }: ProjectAr
 
                 <div className="space-y-3">
                   <div className="flex flex-wrap gap-2">
-                    {(project.tags || []).slice(0, 3).map((tag: string) => (
-                      <span key={tag} className="text-[8px] text-accent uppercase font-bold tracking-widest">#{tag}</span>
+                    {(project.tags || []).slice(0, 2).map((tag: string) => (
+                      <span key={tag} className="text-[9px] text-accent font-medium">#{tag}</span>
                     ))}
                   </div>
-                  <h3 className="text-3xl font-display font-bold uppercase tracking-tight group-hover:text-accent transition-colors">
-                    {project.title.en}
+                  <h3 className="text-2xl md:text-3xl font-display font-bold tracking-tight group-hover:text-accent transition-colors">
+                    {project.title}
                   </h3>
-                  <p className="text-sm text-foreground/40 line-clamp-2 leading-relaxed italic">
-                    {project.shortDescription.en}
+                  <p className="text-sm text-foreground/50 leading-relaxed">
+                    {project.shortDescription}
                   </p>
                 </div>
               </Link>

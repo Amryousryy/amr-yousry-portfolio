@@ -14,7 +14,8 @@ import {
   EyeOff, 
   Star,
   ArrowLeft,
-  MoreHorizontal
+  MoreHorizontal,
+  Send
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -29,15 +30,15 @@ import {
 
 interface ProjectRow {
   _id: string;
-  title: { en: string; ar: string };
+  title: string;
   slug: string;
   category: string;
-  shortDescription: { en: string; ar: string };
+  shortDescription: string;
   image: string;
   featured: boolean;
   status: "draft" | "published";
   tags: string[];
-  createdAt: string;
+  createdAt: Date;
 }
 
 function StatusBadge({ status }: { status: string }) {
@@ -84,6 +85,28 @@ export default function ProjectsPage() {
     }
   });
 
+  const publishMutation = useMutation({
+    mutationFn: (id: string) => ProjectService.publish(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      toast.success("Project published successfully");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to publish project");
+    }
+  });
+
+  const unpublishMutation = useMutation({
+    mutationFn: (id: string) => ProjectService.unpublish(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      toast.success("Project unpublished");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to unpublish project");
+    }
+  });
+
   const handleSearch = useCallback((value: string) => {
     setSearch(value);
     const timeout = setTimeout(() => {
@@ -121,11 +144,11 @@ export default function ProjectsPage() {
       ),
     },
     {
-      accessorKey: "title.en",
+      accessorKey: "title",
       header: ({ column }) => <SortableHeader column={column}>Title</SortableHeader>,
       cell: ({ row }) => (
         <div>
-          <p className="font-medium">{row.original.title?.en || "Untitled"}</p>
+          <p className="font-medium">{row.original.title || "Untitled"}</p>
           <p className="text-xs text-foreground/40">{row.original.slug}</p>
         </div>
       ),
@@ -162,6 +185,33 @@ export default function ProjectsPage() {
       id: "actions",
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
+          {row.original.status === "draft" ? (
+            <button 
+onClick={() => {
+                  if (window.confirm(`Publish "${row.original.title}"? It will be visible on the live site.`)) {
+                  publishMutation.mutate(row.original._id);
+                }
+              }}
+              disabled={publishMutation.isPending}
+              className="p-2 hover:bg-green-500 hover:text-white transition-colors rounded-sm disabled:opacity-50"
+              title="Publish"
+            >
+              <Send size={14} />
+            </button>
+          ) : (
+            <button 
+              onClick={() => {
+                if (window.confirm(`Unpublish "${row.original.title}"? It will be hidden from the live site.`)) {
+                  unpublishMutation.mutate(row.original._id);
+                }
+              }}
+              disabled={unpublishMutation.isPending}
+              className="p-2 hover:bg-yellow-500 hover:text-white transition-colors rounded-sm disabled:opacity-50"
+              title="Unpublish"
+            >
+              <EyeOff size={14} />
+            </button>
+          )}
           <Link 
             href={`/projects/${row.original.slug}`} 
             target="_blank"
@@ -178,7 +228,7 @@ export default function ProjectsPage() {
             <Edit2 size={14} />
           </Link>
           <button 
-            onClick={() => handleDelete(row.original._id, row.original.title?.en || "this project")}
+            onClick={() => handleDelete(row.original._id, row.original.title)}
             className="p-2 hover:bg-red-500 hover:text-white transition-colors rounded-sm"
             title="Delete"
           >

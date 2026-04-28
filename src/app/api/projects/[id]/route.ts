@@ -3,29 +3,36 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Project from "@/models/Project";
-import { projectSchema } from "@/lib/validations";
+import { projectUpdateSchema } from "@/lib/validation";
 import { deleteCloudinaryResources } from "@/lib/cloudinary";
 import { logActivity } from "@/lib/activity";
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
+    const { searchParams } = new URL(req.url);
+    const isAdmin = searchParams.get("admin") === "true";
     await dbConnect();
     
-    // Try finding by ID, if not valid ObjectId or not found, try by slug
     let project;
+    const query: Record<string, unknown> = {};
+    
+    if (!isAdmin) {
+      query.status = "published";
+    }
+    
     if (id.match(/^[0-9a-fA-F]{24}$/)) {
-      project = await Project.findById(id).lean();
+      project = await Project.findOne({ _id: id, ...query }).lean();
     }
     
     if (!project) {
-      project = await Project.findOne({ slug: id }).lean();
+      project = await Project.findOne({ slug: id, ...query }).lean();
     }
 
     if (!project) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
-    return NextResponse.json(project);
+    return NextResponse.json({ success: true, data: project });
   } catch (error) {
     console.error("GET_PROJECT_ERROR:", error);
     return NextResponse.json({ error: "Failed to fetch project" }, { status: 500 });
@@ -41,7 +48,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     }
 
     const body = await req.json();
-    const validation = projectSchema.safeParse(body);
+    const validation = projectUpdateSchema.safeParse(body);
     
     if (!validation.success) {
       return NextResponse.json({ error: validation.error.format() }, { status: 400 });
@@ -49,15 +56,21 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
     await dbConnect();
     
-    // Regenerate slug if English title changed
-    const slug = validation.data.title.en
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
-
+    const currentProject = await Project.findById(id).lean() as any;
+    const currentStatus = currentProject?.status || "draft";
+    const newStatus = validation.data.status || "draft";
+    
+    const statusMetadata: Record<string, Date> = {
+      lastStatusChangeAt: new Date(),
+    };
+    
+    if (newStatus === "published" && currentStatus !== "published") {
+      statusMetadata.publishedAt = new Date();
+    }
+    
     const project = await Project.findByIdAndUpdate(
       id, 
-      { ...validation.data, slug }, 
+      { ...validation.data, ...statusMetadata }, 
       { new: true }
     );
     
@@ -68,7 +81,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     await logActivity({
       action: "update",
       targetType: "project",
-      targetName: validation.data.title.en,
+      targetName: validation.data.title || "Untitled",
       adminEmail: session.user?.email || "unknown",
       metadata: { id, status: project.status }
     });
@@ -90,13 +103,11 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
     await dbConnect();
     
-    // Find project first to get media URLs
     const project = await Project.findById(id);
     if (!project) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
-    // Collect all Cloudinary URLs
     const urlsToDelete: string[] = [
       project.image,
       project.video,
@@ -104,18 +115,16 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
       ...(project.sections || []).flatMap((s: any) => (s.media || []).map((m: any) => m.url))
     ].filter((url): url is string => !!url);
 
-    // Delete from Cloudinary
     await deleteCloudinaryResources(urlsToDelete);
 
-    const titleEn = project.title.en;
+    const projectTitle = project.title;
 
-    // Delete from MongoDB
     await Project.findByIdAndDelete(id);
 
     await logActivity({
       action: "delete",
       targetType: "project",
-      targetName: titleEn,
+      targetName: projectTitle,
       adminEmail: session.user?.email || "unknown",
       metadata: { id }
     });

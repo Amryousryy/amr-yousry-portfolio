@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Project from "@/models/Project";
-import { projectSchema } from "@/lib/validations";
+import { projectCreateSchema } from "@/lib/validation";
 import { logActivity } from "@/lib/activity";
 import { paginationSchema, getPagination } from "@/lib/pagination";
 
@@ -44,8 +44,7 @@ export async function GET(req: Request) {
     if (category) query.category = category;
     if (search) {
       query.$or = [
-        { "title.en": { $regex: search, $options: "i" } },
-        { "title.ar": { $regex: search, $options: "i" } },
+        { title: { $regex: search, $options: "i" } },
         { tags: { $regex: search, $options: "i" } }
       ];
     }
@@ -89,7 +88,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
-  const validation = projectSchema.safeParse(body);
+  const validation = projectCreateSchema.safeParse(body);
   if (!validation.success) {
     return NextResponse.json({ error: validation.error.format() }, { status: 400 });
   }
@@ -102,18 +101,17 @@ export async function POST(req: Request) {
   }
 
   try {
-    const slug = validation.data.title.en
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
+    const statusMetadata = validation.data.status === "published" 
+      ? { publishedAt: new Date(), lastStatusChangeAt: new Date() }
+      : { lastStatusChangeAt: new Date() };
 
-    const project = await Project.create({ ...validation.data, slug });
+    const project = await Project.create({ ...validation.data, ...statusMetadata });
 
     try {
       await logActivity({
         action: "create",
         targetType: "project",
-        targetName: validation.data.title.en,
+        targetName: validation.data.title,
         adminEmail: session.user?.email || "unknown",
         metadata: { id: project._id, status: project.status }
       });

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import ContactForm from "@/components/ui/ContactForm";
+import { ContactForm } from "@/components/ui/ContactForm";
 import { Zap, Target, TrendingUp } from "lucide-react";
 
 export default function CTA() {

@@ -1,68 +1,44 @@
 "use client";
 
 import { useRef, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Quote, ArrowRight } from "lucide-react";
 import { animate, stagger, onScroll } from "animejs";
+import { TestimonialService } from "@/lib/api-client";
 
-interface Testimonial {
-  id: string;
+interface TestimonialData {
+  _id: string;
   name: string;
   role: string;
   company: string;
   quote: string;
+  projectSlug?: string;
   rating: number;
-  project: string;
-  avatar: string;
-  projectLink: string;
+  isFeatured: boolean;
 }
 
-const TESTIMONIALS: Testimonial[] = [
-  {
-    id: "1",
-    name: "Karim El-Sayed",
-    role: "Marketing Director",
-    company: "Nile Towers Real Estate",
-    quote: "Amr delivered a 3-minute brand film for our new development that reached 2.4 million views in 72 hours. The quality was cinematic — felt like a movie trailer, not a real estate ad.",
-    rating: 5,
-    project: "Nile Towers Launch Campaign",
-    avatar: "https://i.pravatar.cc/80?img=11",
-    projectLink: "#project-1",
-  },
-  {
-    id: "2",
-    name: "Lina Mansour",
-    role: "Brand Manager",
-    company: "AlRawabi Food Group",
-    quote: "Working with Amr on our Ramadan campaign was a game-changer. Every reel hit 6 figures. He understands both the creative AND the algorithm — rare combination.",
-    rating: 5,
-    project: "AlRawabi Ramadan Series",
-    avatar: "https://i.pravatar.cc/80?img=47",
-    projectLink: "#project-2",
-  },
-  {
-    id: "3",
-    name: "Omar Khalil",
-    role: "CEO & Co-Founder",
-    company: "Mawjood Tech",
-    quote: "The explainer video Amr made for our pitch deck was a crucial part of why investors said yes. Clean, clear, and beautifully animated. We raised $500K.",
-    rating: 5,
-    project: "Mawjood App Explainer",
-    avatar: "https://i.pravatar.cc/80?img=33",
-    projectLink: "#project-6",
-  },
-];
+const EMPTY_TESTIMONIALS: TestimonialData[] = [];
 
 export default function TestimonialsSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  const { data: testimonialsData, isLoading } = useQuery({
+    queryKey: ["testimonials"],
+    queryFn: () => TestimonialService.getAll(false),
+  });
+
+  const testimonials = testimonialsData?.data || EMPTY_TESTIMONIALS;
+
   const hasAnimatedRef = useRef(false);
   const observerRef = useRef<ReturnType<typeof onScroll> | null>(null);
 
   useEffect(() => {
-    if (!sectionRef.current) return;
+    if (!sectionRef.current || testimonials.length === 0) return;
 
     observerRef.current = onScroll({
       target: sectionRef.current,
-      enter: "top 70%",
+      enter: "top 80%",
       onEnter: () => {
         if (hasAnimatedRef.current) return;
         hasAnimatedRef.current = true;
@@ -71,7 +47,7 @@ export default function TestimonialsSection() {
         if (header) {
           animate(header, {
             opacity: [0, 1],
-            translateY: [50, 0],
+            translateY: [30, 0],
             duration: 800,
             ease: "outQuint",
           });
@@ -80,8 +56,7 @@ export default function TestimonialsSection() {
         const validCards = cardsRef.current.filter(Boolean) as HTMLElement[];
         animate(validCards, {
           opacity: [0, 1],
-          translateY: [60, 0],
-          rotate: (el, i) => [i % 2 === 0 ? -5 : 5, i % 2 === 0 ? -1 : 1],
+          translateY: [40, 0],
           delay: stagger(150),
           duration: 800,
           ease: "outQuint",
@@ -94,91 +69,103 @@ export default function TestimonialsSection() {
         observerRef.current.revert();
       }
     };
-  }, []);
+  }, [testimonials.length]);
+
+  if (isLoading) {
+    return (
+      <section className="py-24 md:py-32 bg-[#050508]">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="p-8 bg-zinc-900/30 border border-white/5 animate-pulse">
+                <div className="h-8 w-8 bg-white/5 rounded mb-6" />
+                <div className="h-4 bg-white/5 rounded mb-2" />
+                <div className="h-4 bg-white/5 rounded mb-2" />
+                <div className="h-4 bg-white/5 rounded w-3/4 mb-8" />
+                <div className="pt-6 border-t border-white/5">
+                  <div className="h-4 bg-white/5 rounded w-1/2 mb-2" />
+                  <div className="h-3 bg-white/5 rounded w-1/3" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <section ref={sectionRef} className="min-h-screen bg-[#050508] py-20 px-4 md:px-8 relative overflow-hidden">
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#00ffcc] rounded-full blur-[150px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#ffd700] rounded-full blur-[150px]" />
+    <section ref={sectionRef} className="py-24 md:py-32 bg-[#050508] relative overflow-hidden">
+      {/* Optimized Background: Radial gradient instead of heavy blur filter */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div 
+          className="absolute top-1/3 left-1/4 w-[500px] h-[500px] opacity-10"
+          style={{
+            background: "radial-gradient(circle, #00ffcc 0%, transparent 70%)",
+          }}
+        />
       </div>
 
-      <div className="max-w-6xl mx-auto relative z-10">
-        <div className="section-header text-center mb-16">
-          <div className="pixel-badge mb-4 mx-auto inline-flex">
-            <span>CLIENT LOVE</span>
-          </div>
-          <h2 className="font-sora text-4xl md:text-5xl text-white mb-4">
-            What They Say
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="section-header mb-16">
+          <span className="text-accent text-xs font-semibold uppercase tracking-widest mb-4 block">Testimonials</span>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+            What Clients Say
           </h2>
-          <p className="text-white/60 text-lg max-w-xl mx-auto">
-            Don&apos;t take my word for it. Here&apos;s what clients have to say about working together.
+          <p className="text-foreground/60 text-lg max-w-xl">
+            Real feedback from projects delivered. Each testimonial relates to specific work completed.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {TESTIMONIALS.map((testimonial, i) => (
-            <div
-              key={testimonial.id}
-              ref={(el) => { cardsRef.current[i] = el; }}
-              className="pixel-box bg-[#0a0a0f] p-6 opacity-0 translate-y-10"
-              style={{
-                transform: `translateY(40px) rotate(${i % 2 === 0 ? -5 : 5}deg)`,
-              }}
-            >
-              <div className="flex items-center gap-1 mb-4">
-                {[...Array(testimonial.rating)].map((_, j) => (
-                  <span key={j} className="text-[#ffd700] text-lg" aria-label="5 stars">★</span>
-                ))}
-              </div>
-
-              <blockquote className="text-white text-sm mb-4 leading-relaxed">
-                &quot;{testimonial.quote}&quot;
-              </blockquote>
-
-              <a
-                href={testimonial.projectLink}
-                className="pixel-text text-[#00ffcc] text-xs mb-4 block hover:text-white transition-colors"
+        {testimonials.length === 0 ? (
+          <p className="text-white/30 italic">No testimonials available yet.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {testimonials.slice(0, 3).map((testimonial, i) => (
+              <div
+                key={testimonial._id}
+                ref={(el) => { cardsRef.current[i] = el; }}
+                className="p-8 bg-zinc-900/30 border border-white/5 will-change-transform opacity-0 translate-y-10"
               >
-                PROJECT: {testimonial.project}
-              </a>
-
-              <div className="flex items-center gap-4">
-                <img
-                  src={testimonial.avatar}
-                  alt={`${testimonial.name} avatar`}
-                  className="w-12 h-12 rounded-full object-cover"
-                  loading="lazy"
-                />
-                <div>
-                  <div className="text-white font-sora">{testimonial.name}</div>
-                  <div className="text-white/50 text-sm">{testimonial.role}</div>
-                  <div className="text-white/50 text-xs">{testimonial.company}</div>
+                <Quote className="w-8 h-8 text-accent/40 mb-6" />
+                
+                <blockquote className="text-foreground/80 text-base leading-relaxed mb-8">
+                  "{testimonial.quote}"
+                </blockquote>
+                
+                <div className="flex items-center justify-between pt-6 border-t border-white/5">
+                  <div>
+                    <div className="text-white font-medium">{testimonial.name}</div>
+                    <div className="text-foreground/50 text-sm">{testimonial.role}, {testimonial.company}</div>
+                  </div>
+                  {testimonial.projectSlug && (
+                    <a 
+                      href={`/projects/${testimonial.projectSlug}`}
+                      className="flex items-center text-accent text-xs font-semibold hover:text-accent/80 transition-colors"
+                    >
+                      View Project
+                      <ArrowRight className="w-3 h-3 ml-1" />
+                    </a>
+                  )}
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
-        <div className="text-center mt-12">
-          <div className="pixel-box bg-[#0a0a0f] inline-block px-8 py-4">
-            <div className="pixel-text text-[#00ffcc] text-xs mb-2">SOCIAL PROOF</div>
-            <div className="flex items-center gap-8">
-              <div>
-                <div className="font-sora text-3xl text-white font-bold">100%</div>
-                <div className="pixel-text text-white/50 text-xs">Client Satisfaction</div>
+        <div className="mt-20 pt-16 border-t border-white/5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {[
+              { label: "Years Experience", value: "3+" },
+              { label: "Projects Completed", value: "50+" },
+              { label: "Happy Clients", value: "30+" },
+              { label: "Countries Reached", value: "2" }
+            ].map((stat, i) => (
+              <div key={i}>
+                <div className="text-4xl md:text-5xl font-bold text-white mb-2">{stat.value}</div>
+                <div className="text-foreground/50 text-sm">{stat.label}</div>
               </div>
-              <div className="w-px h-12 bg-[#1a1a2e]" />
-              <div>
-                <div className="font-sora text-3xl text-white font-bold">4.9/5</div>
-                <div className="pixel-text text-white/50 text-xs">Average Rating</div>
-              </div>
-              <div className="w-px h-12 bg-[#1a1a2e]" />
-              <div>
-                <div className="font-sora text-3xl text-white font-bold">85%</div>
-                <div className="pixel-text text-white/50 text-xs">Return Clients</div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>

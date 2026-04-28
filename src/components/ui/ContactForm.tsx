@@ -1,46 +1,60 @@
 "use client";
 
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, CheckCircle, Loader2, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
+import { leadPublicSchema, LeadPublicInput, leadDefaultValues } from "@/lib/validation";
 
-const projectTypes = ["Commercial / Ad", "UGC Campaign", "Corporate Video", "Brand Story", "Social Media Package"];
+const projectTypes = [
+  { value: "Commercial / Ad", label: "Commercial / Ad" },
+  { value: "UGC Campaign", label: "UGC Campaign" },
+  { value: "Corporate Video", label: "Corporate Video" },
+  { value: "Brand Story", label: "Brand Story" },
+  { value: "Social Media Package", label: "Social Media Package" },
+];
 
-export default function ContactForm({ isAuditOffer = false }: { isAuditOffer?: boolean }) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const defaultProjectType = projectTypes[0].value;
+
+function ContactForm({ isAuditOffer = false }: { isAuditOffer?: boolean }) {
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    projectType: projectTypes[0],
-    message: isAuditOffer ? "I would like to request a free content audit for my brand." : "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<LeadPublicInput>({
+    resolver: zodResolver(leadPublicSchema),
+    defaultValues: {
+      ...leadDefaultValues,
+      projectType: defaultProjectType,
+      message: isAuditOffer ? "I would like to request a free content audit for my brand." : "",
+    },
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
+  const onSubmit = async (data: LeadPublicInput) => {
     try {
       const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...formData,
-          offerType: isAuditOffer ? "free_audit" : "general"
+          ...data,
+          offerType: isAuditOffer ? "free_audit" : "general",
         }),
       });
 
       if (res.ok) {
         setIsSubmitted(true);
         toast.success("Message received! I'll get back to you within 24 hours.");
+        reset();
       } else {
-        toast.error("Something went wrong. Please try again.");
+        const errorData = await res.json();
+        toast.error(errorData.message || "Something went wrong. Please try again.");
       }
     } catch (error) {
       toast.error("Failed to connect. Please check your internet.");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -69,57 +83,73 @@ export default function ContactForm({ isAuditOffer = false }: { isAuditOffer?: b
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 p-10 bg-primary/5 border border-primary/10 pixel-border relative overflow-hidden group">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 p-10 bg-primary/5 border border-primary/10 pixel-border relative overflow-hidden group">
       <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
         <MessageSquare size={120} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <label className="pixel-text text-[10px] text-accent uppercase tracking-widest font-bold">Your Name</label>
+          <label className="pixel-text text-[10px] text-accent uppercase tracking-widest font-bold">
+            Your Name <span className="text-red-500">*</span>
+          </label>
           <input
-            type="text"
-            required
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full bg-background/50 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm uppercase tracking-tight"
+            {...register("name")}
+            className="w-full bg-background/50 border border-primary/20 p-4 min-h-[56px] outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all text-sm uppercase tracking-tight"
             placeholder="ALEX JOHNSON"
           />
+          {errors.name && (
+            <p className="text-[10px] text-red-500">{errors.name.message}</p>
+          )}
         </div>
         <div className="space-y-2">
-          <label className="pixel-text text-[10px] text-accent uppercase tracking-widest font-bold">Email Address</label>
+          <label className="pixel-text text-[10px] text-accent uppercase tracking-widest font-bold">
+            Email Address <span className="text-red-500">*</span>
+          </label>
           <input
             type="email"
-            required
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="w-full bg-background/50 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm uppercase tracking-tight"
+            {...register("email")}
+            className="w-full bg-background/50 border border-primary/20 p-4 min-h-[56px] outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all text-sm uppercase tracking-tight"
             placeholder="ALEX@COMPANY.COM"
           />
+          {errors.email && (
+            <p className="text-[10px] text-red-500">{errors.email.message}</p>
+          )}
         </div>
       </div>
 
       <div className="space-y-2">
-        <label className="pixel-text text-[10px] text-accent uppercase tracking-widest font-bold">Project Category</label>
+        <label className="pixel-text text-[10px] text-accent uppercase tracking-widest font-bold">
+          Project Category <span className="text-red-500">*</span>
+        </label>
         <select
-          value={formData.projectType}
-          onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
-          className="w-full bg-background/50 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm uppercase tracking-tight appearance-none"
+          {...register("projectType")}
+          className="w-full bg-background/50 border border-primary/20 p-4 min-h-[56px] outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all text-sm uppercase tracking-tight appearance-none"
         >
-          {projectTypes.map(type => <option key={type} value={type}>{type.toUpperCase()}</option>)}
+          {projectTypes.map((type) => (
+            <option key={type.value} value={type.value}>
+              {type.label.toUpperCase()}
+            </option>
+          ))}
         </select>
+        {errors.projectType && (
+          <p className="text-[10px] text-red-500">{errors.projectType.message}</p>
+        )}
       </div>
 
       <div className="space-y-2">
-        <label className="pixel-text text-[10px] text-accent uppercase tracking-widest font-bold">Your Vision / Project Details</label>
+        <label className="pixel-text text-[10px] text-accent uppercase tracking-widest font-bold">
+          Your Vision / Project Details <span className="text-red-500">*</span>
+        </label>
         <textarea
-          required
+          {...register("message")}
           rows={4}
-          value={formData.message}
-          onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-          className="w-full bg-background/50 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm uppercase tracking-tight resize-none"
+          className="w-full bg-background/50 border border-primary/20 p-4 min-h-[140px] outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all text-sm uppercase tracking-tight resize-none"
           placeholder="TELL ME ABOUT YOUR GOALS..."
         />
+        {errors.message && (
+          <p className="text-[10px] text-red-500">{errors.message.message}</p>
+        )}
       </div>
 
       <button
@@ -143,3 +173,6 @@ export default function ContactForm({ isAuditOffer = false }: { isAuditOffer?: b
     </form>
   );
 }
+
+export { ContactForm };
+export default ContactForm;

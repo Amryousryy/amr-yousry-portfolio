@@ -27,9 +27,8 @@ const securityHeaders = [
   },
   {
     key: 'Content-Security-Policy',
-    value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; connect-src 'self' https: wss:; frame-src 'self' https://www.youtube.com https://player.vimeo.com;",
-  },
-];
+    value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://upload-widget.cloudinary.com https://widget.cloudinary.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; connect-src 'self' https: wss:; frame-src 'self' https://www.youtube.com https://player.vimeo.com https://res.cloudinary.com https://*.mux.com https://upload-widget.cloudinary.com;",
+  },];
 
 const nextConfig: NextConfig = {
   env: {

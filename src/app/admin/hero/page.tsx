@@ -1,28 +1,40 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Save, Loader2, Play, Image as ImageIcon, Upload, Link as LinkIcon } from "lucide-react";
+import { Save, Loader2, Play, Image as ImageIcon, Upload, Link as LinkIcon, Eye } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SettingsService } from "@/lib/api-client";
-import { heroSchema } from "@/lib/validations";
+import { heroCreateSchema } from "@/lib/validation";
 import { toast } from "sonner";
 import { HeroSettings } from "@/types";
-import BilingualInput from "@/components/admin/BilingualInput";
+import StringInput from "@/components/admin/BilingualInput";
 import { CldUploadWidget } from "next-cloudinary";
 import Image from "next/image";
 import AdminLoadingSkeleton from "@/components/admin/AdminLoadingSkeleton";
 import AdminErrorState from "@/components/admin/AdminErrorState";
 import { mediaConfig } from "@/lib/media/config";
 
+function getString(value: string | { en: string; ar: string } | undefined): string {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  return value.en || "";
+}
+
 export default function HeroManagerPage() {
   const queryClient = useQueryClient();
+  const [mounted, setMounted] = useState(false);
   const [videoMode, setVideoMode] = useState<"upload" | "url">("url");
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const [formData, setFormData] = useState<Partial<HeroSettings>>({
-    headline: { en: "", ar: "" },
-    subheadline: { en: "", ar: "" },
-    primaryCTA: { en: "Work With Me", ar: "أعمل معي" },
+    headline: "",
+    subheadline: "",
+    primaryCTA: "Work With Me",
     primaryCTALink: "/#contact",
-    secondaryCTA: { en: "Watch Showreel", ar: "شاهد أعمالي" },
+    secondaryCTA: "View Projects",
     secondaryCTALink: "/projects",
     posterImage: "",
     showreelVideo: "",
@@ -36,7 +48,20 @@ export default function HeroManagerPage() {
 
   useEffect(() => {
     if (hero?.data && typeof hero.data === 'object' && Object.keys(hero.data).length > 0) {
-      setFormData(hero.data as HeroSettings);
+      const data = hero.data as HeroSettings;
+      setFormData({
+        headline: getString(data.headline),
+        subheadline: getString(data.subheadline),
+        primaryCTA: getString(data.primaryCTA),
+        primaryCTALink: data.primaryCTALink || "/#contact",
+        secondaryCTA: getString(data.secondaryCTA),
+        secondaryCTALink: data.secondaryCTALink || "/projects",
+        posterImage: data.posterImage || "",
+        showreelVideo: data.showreelVideo || "",
+        status: data.status || "draft",
+        publishedAt: data.publishedAt,
+        lastStatusChangeAt: data.lastStatusChangeAt,
+      });
     }
   }, [hero]);
 
@@ -53,7 +78,7 @@ export default function HeroManagerPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const validation = heroSchema.safeParse(formData);
+    const validation = heroCreateSchema.safeParse(formData);
     if (!validation.success) {
       toast.error("Please fill all required fields correctly.");
       console.error(validation.error);
@@ -78,6 +103,23 @@ export default function HeroManagerPage() {
           <p className="text-foreground/50 pixel-text text-xs uppercase tracking-widest">
             Control your landing page entrance
           </p>
+          {formData.status && (
+            <div className="flex items-center gap-3 mt-2 text-[10px]">
+              <span className={`px-2 py-1 font-bold uppercase ${formData.status === 'published' ? 'bg-green-500/20 text-green-500' : 'bg-yellow-500/20 text-yellow-500'}`}>
+                {formData.status}
+              </span>
+              {formData.publishedAt && mounted && (
+                <span className="text-foreground/30">
+                  Published: {new Date(formData.publishedAt).toLocaleDateString()}
+                </span>
+              )}
+              {formData.lastStatusChangeAt && mounted && (
+                <span className="text-foreground/30">
+                  Updated: {new Date(formData.lastStatusChangeAt).toLocaleDateString()}
+                </span>
+              )}
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-4">
           <div className="flex bg-primary/10 p-1 pixel-border">
@@ -96,6 +138,15 @@ export default function HeroManagerPage() {
               Published
             </button>
           </div>
+          <a
+            href="/preview?preview=true"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center space-x-2 px-4 py-3 bg-yellow-500/20 text-yellow-500 font-bold uppercase tracking-widest text-xs pixel-border hover:bg-yellow-500/30 transition-colors"
+          >
+            <Eye size={14} />
+            <span>Preview</span>
+          </a>
           <button
             onClick={handleSubmit}
             disabled={mutation.isPending}
@@ -111,16 +162,16 @@ export default function HeroManagerPage() {
         <div className="xl:col-span-2 space-y-12">
           <div className="p-8 bg-primary/5 border border-primary/10 space-y-8">
              <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-accent border-b border-primary/10 pb-4 mb-4">Text Content</h3>
-             <BilingualInput 
+             <StringInput 
                label="Headline" 
-               value={formData.headline as any} 
+               value={formData.headline || ""} 
                onChange={(val) => setFormData({ ...formData, headline: val })}
                type="textarea"
                rows={2}
              />
-             <BilingualInput 
+             <StringInput 
                label="Subheadline" 
-               value={formData.subheadline as any} 
+               value={formData.subheadline || ""} 
                onChange={(val) => setFormData({ ...formData, subheadline: val })}
                type="textarea"
              />
@@ -130,9 +181,9 @@ export default function HeroManagerPage() {
              <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-accent border-b border-primary/10 pb-4 mb-4">Call to Action Buttons</h3>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                <div className="space-y-6">
-                 <BilingualInput 
+                 <StringInput 
                    label="Primary CTA Label" 
-                   value={formData.primaryCTA as any} 
+                   value={formData.primaryCTA || ""} 
                    onChange={(val) => setFormData({ ...formData, primaryCTA: val })}
                  />
                  <div>
@@ -146,9 +197,9 @@ export default function HeroManagerPage() {
                  </div>
                </div>
                <div className="space-y-6">
-                 <BilingualInput 
+                 <StringInput 
                    label="Secondary CTA Label" 
-                   value={formData.secondaryCTA as any} 
+                   value={formData.secondaryCTA || ""} 
                    onChange={(val) => setFormData({ ...formData, secondaryCTA: val })}
                  />
                  <div>
@@ -202,12 +253,12 @@ export default function HeroManagerPage() {
                     )}
                     <div className="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
                        <input 
-                        type="text" 
-                        placeholder="Paste Direct Video URL (mp4)..."
-                        value={formData.showreelVideo}
-                        onChange={(e) => setFormData({ ...formData, showreelVideo: e.target.value })}
-                        className="w-full bg-background border border-accent p-3 text-xs outline-none"
-                       />
+                       type="text" 
+                       placeholder="Paste Direct Video URL (mp4)..."
+                       value={formData.showreelVideo}
+                       onChange={(e) => setFormData({ ...formData, showreelVideo: e.target.value })}
+                       className="w-full bg-background border border-accent p-3 text-xs outline-none"
+                      />
                     </div>
                   </div>
                   <p className="text-[9px] text-foreground/30 uppercase tracking-tighter">Use direct .mp4 links for best performance</p>

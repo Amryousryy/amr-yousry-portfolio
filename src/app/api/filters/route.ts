@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Filter from "@/models/Filter";
-import { filterSchema } from "@/lib/validations";
+import { filterCreateSchema } from "@/lib/validation";
 import { paginationSchema, getPagination } from "@/lib/pagination";
 
 function successResponse<T>(data: T, pagination?: ReturnType<typeof getPagination>) {
@@ -33,7 +33,7 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const isAdmin = searchParams.get("admin") === "true";
-    const query = isAdmin ? {} : { active: true };
+    const query = isAdmin ? {} : { isActive: true };
     
     const parsed = paginationSchema.safeParse({
       page: searchParams.get("page") || 1,
@@ -43,7 +43,7 @@ export async function GET(req: Request) {
     const skip = (page - 1) * limit;
 
     const [filters, total] = await Promise.all([
-      Filter.find(query).sort({ order: 1 }).skip(skip).limit(limit).lean(),
+      Filter.find(query).sort({ displayOrder: 1 }).skip(skip).limit(limit).lean(),
       Filter.countDocuments(query)
     ]);
 
@@ -74,7 +74,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
-  const validation = filterSchema.safeParse(body);
+  const validation = filterCreateSchema.safeParse(body);
   if (!validation.success) {
     return NextResponse.json({ error: validation.error.format() }, { status: 400 });
   }

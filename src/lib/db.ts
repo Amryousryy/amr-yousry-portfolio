@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import dns from "dns";
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
