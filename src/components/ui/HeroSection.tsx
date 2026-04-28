@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
+import { animate } from "animejs";
 import "@/styles/pixel-system.css";
 
 const FilmStudioIsland = dynamic(() => import("@/components/three/FilmStudioIsland"), {
@@ -24,44 +25,69 @@ export default function HeroSection() {
   const [showUrgency, setShowUrgency] = useState(false);
   const [showSocialProof, setShowSocialProof] = useState(false);
 
-  useEffect(() => {
-    setTimeout(() => setShowSocialProof(true), 1500);
-    setTimeout(() => setShowUrgency(true), 2500);
+  const typewriterAnimRef = useRef<ReturnType<typeof animate> | null>(null);
+  const statAnimRefs = useRef<(ReturnType<typeof animate> | null)[]>([]);
 
-    STATS.forEach((stat, index) => {
-      let current = 0;
-      const increment = stat.value / 30;
-      const interval = setInterval(() => {
-        current += increment;
-        if (current >= stat.value) {
-          setDisplayedStats((prev) => ({ ...prev, [index]: stat.value }));
-          clearInterval(interval);
-        } else {
-          setDisplayedStats((prev) => ({ ...prev, [index]: Math.floor(current) }));
-        }
-      }, 40);
-    });
+  useEffect(() => {
+    const t1 = setTimeout(() => setShowSocialProof(true), 1500);
+    const t2 = setTimeout(() => setShowUrgency(true), 2500);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, []);
 
   useEffect(() => {
     const fullText = ROLES[currentRole];
-    let charIndex = 0;
-    setDisplayedText("");
+    const progress = { charIndex: 0 };
 
-    const typeInterval = setInterval(() => {
-      if (charIndex <= fullText.length) {
-        setDisplayedText(fullText.slice(0, charIndex));
-        charIndex++;
-      } else {
-        clearInterval(typeInterval);
+    typewriterAnimRef.current = animate(progress, {
+      charIndex: fullText.length,
+      duration: fullText.length * 60,
+      ease: "linear",
+      autoplay: true,
+      onUpdate: () => {
+        setDisplayedText(fullText.slice(0, Math.floor(progress.charIndex)));
+      },
+      onComplete: () => {
         setTimeout(() => {
           setCurrentRole((prev) => (prev + 1) % ROLES.length);
         }, 2000);
-      }
-    }, 60);
+      },
+    });
 
-    return () => clearInterval(typeInterval);
+    return () => {
+      if (typewriterAnimRef.current) {
+        typewriterAnimRef.current.cancel();
+      }
+    };
   }, [currentRole]);
+
+  useEffect(() => {
+    STATS.forEach((stat, index) => {
+      const progress = { value: 0 };
+
+      statAnimRefs.current[index] = animate(progress, {
+        value: stat.value,
+        duration: 1800,
+        ease: "outExpo",
+        autoplay: true,
+        onUpdate: () => {
+          setDisplayedStats((prev) => ({ ...prev, [index]: Math.floor(progress.value) }));
+        },
+        onComplete: () => {
+          setDisplayedStats((prev) => ({ ...prev, [index]: stat.value }));
+        },
+      });
+    });
+
+    return () => {
+      statAnimRefs.current.forEach((anim) => {
+        if (anim) anim.cancel();
+      });
+      statAnimRefs.current = [];
+    };
+  }, []);
 
   return (
     <div className="relative min-h-screen flex items-center justify-center px-4 md:px-8">
@@ -86,10 +112,10 @@ export default function HeroSection() {
           </div>
 
           <div className="flex items-center gap-2 mb-8" aria-live="polite" aria-label="Current role">
-            <span className="text-white/40 text-lg" aria-hidden="true">"</span>
+            <span className="text-white/40 text-lg" aria-hidden="true">&quot;</span>
             <span className="text-white text-lg md:text-xl font-sora">{displayedText}</span>
             <span className="typewriter text-[#00ffcc]" aria-hidden="true">|</span>
-            <span className="text-white/40 text-lg" aria-hidden="true">"</span>
+            <span className="text-white/40 text-lg" aria-hidden="true">&quot;</span>
           </div>
         </div>
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
+import { animate } from "animejs";
 
 interface LoadingScreenProps {
   minDuration?: number;
@@ -13,6 +14,7 @@ export default function LoadingScreen({ minDuration = 2500 }: LoadingScreenProps
   const [isExiting, setIsExiting] = useState(false);
   const pathname = usePathname();
   const hasShownRef = useRef(false);
+  const animationRef = useRef<ReturnType<typeof animate> | null>(null);
 
   useEffect(() => {
     if (pathname.startsWith("/admin")) {
@@ -23,25 +25,32 @@ export default function LoadingScreen({ minDuration = 2500 }: LoadingScreenProps
       setIsComplete(true);
       return;
     }
-    
+
     hasShownRef.current = true;
-    const startTime = Date.now();
-    
-    const interval = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const newProgress = Math.min((elapsed / minDuration) * 100, 100);
-      setProgress(newProgress);
-      
-      if (newProgress >= 100) {
-        clearInterval(interval);
+
+    const progressObj = { value: 0 };
+
+    animationRef.current = animate(progressObj, {
+      value: 100,
+      duration: minDuration,
+      ease: "linear",
+      autoplay: true,
+      onUpdate: () => {
+        setProgress(progressObj.value);
+      },
+      onComplete: () => {
         setTimeout(() => {
           setIsExiting(true);
           setTimeout(() => setIsComplete(true), 800);
         }, 500);
+      },
+    });
+
+    return () => {
+      if (animationRef.current) {
+        animationRef.current.cancel();
       }
-    }, 30);
-    
-    return () => clearInterval(interval);
+    };
   }, [minDuration, pathname]);
 
   if (pathname.startsWith("/admin") || isComplete) return null;
@@ -79,7 +88,7 @@ export default function LoadingScreen({ minDuration = 2500 }: LoadingScreenProps
           </div>
         </div>
       </div>
-      
+
       <div className="w-64 mb-4">
         <div className="flex justify-between mb-2">
           {[...Array(10)].map((_, i) => (
@@ -100,32 +109,32 @@ export default function LoadingScreen({ minDuration = 2500 }: LoadingScreenProps
           />
         </div>
       </div>
-      
+
       <div className="pixel-text text-[#00ffcc] text-xs tracking-widest mb-4">
         LOADING REEL...
       </div>
-      
+
       <div className="pixel-text text-white text-xl mb-8">
         {Math.round(progress)}%
       </div>
-      
+
       <div className="absolute bottom-12">
         <div className="pixel-text text-white/30 text-[10px]">
           CINEMA EDITION v1.0
         </div>
       </div>
-      
+
       {isExiting && (
         <div className="absolute inset-0 bg-white animate-burn" />
       )}
-      
+
       <style jsx global>{`
         @keyframes burn {
           0% { opacity: 0; }
           50% { opacity: 1; }
           100% { opacity: 0; }
         }
-        
+
         .animate-burn {
           animation: burn 0.8s ease-out;
         }

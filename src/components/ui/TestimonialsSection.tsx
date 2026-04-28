@@ -1,10 +1,7 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
+import { useRef, useEffect } from "react";
+import { animate, stagger, onScroll } from "animejs";
 
 interface Testimonial {
   id: string;
@@ -57,45 +54,46 @@ const TESTIMONIALS: Testimonial[] = [
 export default function TestimonialsSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const [visibleCards, setVisibleCards] = useState<boolean[]>(new Array(3).fill(false));
+  const hasAnimatedRef = useRef(false);
+  const observerRef = useRef<ReturnType<typeof onScroll> | null>(null);
 
   useEffect(() => {
     if (!sectionRef.current) return;
 
-    const ctx = gsap.context(() => {
-      gsap.from(sectionRef.current?.querySelector(".section-header") as HTMLElement, {
-        opacity: 0,
-        y: 50,
-        duration: 0.8,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 70%",
-        },
-      });
+    observerRef.current = onScroll({
+      target: sectionRef.current,
+      enter: "top 70%",
+      onEnter: () => {
+        if (hasAnimatedRef.current) return;
+        hasAnimatedRef.current = true;
 
-      cardsRef.current.forEach((card, i) => {
-        if (!card) return;
+        const header = sectionRef.current?.querySelector(".section-header") as HTMLElement;
+        if (header) {
+          animate(header, {
+            opacity: [0, 1],
+            translateY: [50, 0],
+            duration: 800,
+            ease: "outQuint",
+          });
+        }
 
-        gsap.from(card, {
-          opacity: 0,
-          y: 60,
-          rotation: i % 2 === 0 ? -3 : 3,
-          duration: 0.8,
-          delay: i * 0.15,
-          scrollTrigger: {
-            trigger: card,
-            start: "top 85%",
-            onEnter: () => setVisibleCards((prev) => {
-              const newState = [...prev];
-              newState[i] = true;
-              return newState;
-            }),
-          },
+        const validCards = cardsRef.current.filter(Boolean) as HTMLElement[];
+        animate(validCards, {
+          opacity: [0, 1],
+          translateY: [60, 0],
+          rotate: (el, i) => [i % 2 === 0 ? -5 : 5, i % 2 === 0 ? -1 : 1],
+          delay: stagger(150),
+          duration: 800,
+          ease: "outQuint",
         });
-      });
+      },
     });
 
-    return () => ctx.revert();
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.revert();
+      }
+    };
   }, []);
 
   return (
@@ -123,15 +121,9 @@ export default function TestimonialsSection() {
             <div
               key={testimonial.id}
               ref={(el) => { cardsRef.current[i] = el; }}
-              className={`pixel-box bg-[#0a0a0f] p-6 transition-all duration-500 ${
-                visibleCards[i]
-                  ? "opacity-100 translate-y-0 rotate-0"
-                  : "opacity-0 translate-y-10"
-              }`}
+              className="pixel-box bg-[#0a0a0f] p-6 opacity-0 translate-y-10"
               style={{
-                transform: visibleCards[i]
-                  ? `translateY(0) rotate(${i % 2 === 0 ? -1 : 1}deg)`
-                  : `translateY(40px) rotate(${i % 2 === 0 ? -5 : 5}deg)`,
+                transform: `translateY(40px) rotate(${i % 2 === 0 ? -5 : 5}deg)`,
               }}
             >
               <div className="flex items-center gap-1 mb-4">

@@ -1,10 +1,7 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
+import { useRef, useEffect } from "react";
+import { animate, stagger, onScroll } from "animejs";
 
 const SERVICES = [
   {
@@ -99,34 +96,35 @@ const SERVICES = [
 export default function ServicesSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const [visibleCards, setVisibleCards] = useState<boolean[]>(new Array(4).fill(false));
+  const observerRef = useRef<ReturnType<typeof onScroll> | null>(null);
+  const hasAnimatedRef = useRef(false);
 
   useEffect(() => {
     if (!sectionRef.current) return;
 
-    const ctx = gsap.context(() => {
-      cardsRef.current.forEach((card, i) => {
-        if (!card) return;
+    observerRef.current = onScroll({
+      target: sectionRef.current,
+      enter: "top 80%",
+      onEnter: () => {
+        if (hasAnimatedRef.current) return;
+        hasAnimatedRef.current = true;
 
-        gsap.from(card, {
-          opacity: 0,
-          y: 50,
-          duration: 0.6,
-          delay: i * 0.1,
-          scrollTrigger: {
-            trigger: card,
-            start: "top 80%",
-            onEnter: () => setVisibleCards((prev) => {
-              const newState = [...prev];
-              newState[i] = true;
-              return newState;
-            }),
-          },
+        const validCards = cardsRef.current.filter(Boolean) as HTMLElement[];
+        animate(validCards, {
+          opacity: [0, 1],
+          translateY: [50, 0],
+          duration: 600,
+          delay: stagger(100),
+          ease: "outQuint",
         });
-      });
+      },
     });
 
-    return () => ctx.revert();
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.revert();
+      }
+    };
   }, []);
 
   return (
@@ -147,9 +145,7 @@ export default function ServicesSection() {
             <div
               key={i}
               ref={(el) => { cardsRef.current[i] = el; }}
-              className={`pixel-box bg-[#0a0a0f] p-6 transition-all duration-500 ${
-                visibleCards[i] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-              }`}
+              className="pixel-box bg-[#0a0a0f] p-6 opacity-0 translate-y-8"
             >
               <div className="flex items-start gap-4 mb-4">
                 <div className="flex-shrink-0">{service.icon}</div>

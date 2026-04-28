@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useSpring, animated } from "@react-spring/web";
-import gsap from "gsap";
+import { animate, createTimeline } from "animejs";
+import { usePathname } from "next/navigation";
 
 const ROLES = ["Video Editor", "Motion Designer", "Content Strategist", "Visual Storyteller"];
 
@@ -17,108 +17,112 @@ export default function HeroText() {
   const [displayedText, setDisplayedText] = useState("");
   const [displayedStats, setDisplayedStats] = useState({ 0: 0, 1: 0, 2: 0 });
   const [mounted, setMounted] = useState(false);
+
   const nameRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
 
-  const nameSpring = useSpring({
-    opacity: mounted ? 1 : 0,
-    y: mounted ? 0 : 30,
-    config: { tension: 80, friction: 20 },
-    delay: 300,
-  });
+  const timelineRef = useRef<ReturnType<typeof createTimeline> | null>(null);
+  const typewriterAnimRef = useRef<ReturnType<typeof animate> | null>(null);
+  const statAnimRefs = useRef<(ReturnType<typeof animate> | null)[]>([]);
 
-  const subtitleSpring = useSpring({
-    opacity: mounted ? 1 : 0,
-    y: mounted ? 0 : 20,
-    config: { tension: 80, friction: 20 },
-    delay: 600,
-  });
-
-  const statsSpring = useSpring({
-    opacity: mounted ? 1 : 0,
-    config: { tension: 80, friction: 20 },
-    delay: 900,
-  });
-
-  const buttonsSpring = useSpring({
-    opacity: mounted ? 1 : 0,
-    y: mounted ? 0 : 20,
-    config: { tension: 80, friction: 20 },
-    delay: 1200,
-  });
-
+  // Mount animation — single timeline replaces both react-spring AND GSAP
   useEffect(() => {
     setMounted(true);
+
+    timelineRef.current = createTimeline({
+      autoplay: true,
+      defaults: { ease: "outQuint" },
+    });
+
+    if (nameRef.current) {
+      timelineRef.current.add(nameRef.current, {
+        opacity: [0, 1],
+        translateY: [30, 0],
+      }, 300);
+    }
+
+    if (subtitleRef.current) {
+      timelineRef.current.add(subtitleRef.current, {
+        opacity: [0, 1],
+        translateY: [20, 0],
+      }, 600);
+    }
+
+    if (statsRef.current) {
+      timelineRef.current.add(statsRef.current, {
+        opacity: [0, 1],
+      }, 900);
+    }
+
+    if (buttonsRef.current) {
+      timelineRef.current.add(buttonsRef.current, {
+        opacity: [0, 1],
+        translateY: [20, 0],
+      }, 1200);
+    }
+
+    return () => {
+      if (timelineRef.current) {
+        timelineRef.current.cancel();
+      }
+    };
   }, []);
 
+  // Typewriter animation — replaces setInterval
   useEffect(() => {
-    if (!mounted) return;
-    
-    gsap.from(nameRef.current, {
-      opacity: 0,
-      y: 30,
-      duration: 0.8,
-      delay: 0.3,
-      ease: "power3.out",
-    });
-    
-    gsap.from(subtitleRef.current, {
-      opacity: 0,
-      y: 20,
-      duration: 0.6,
-      delay: 0.6,
-      ease: "power3.out",
-    });
-    
-    gsap.from(buttonsRef.current, {
-      opacity: 0,
-      y: 20,
-      duration: 0.6,
-      delay: 1.2,
-      ease: "power3.out",
-    });
-  }, [mounted]);
-
-  useEffect(() => {
-    if (!mounted) return;
-    
     const fullText = ROLES[currentRole];
-    let charIndex = 0;
-    setDisplayedText("");
-    
-    const typeInterval = setInterval(() => {
-      if (charIndex <= fullText.length) {
-        setDisplayedText(fullText.slice(0, charIndex));
-        charIndex++;
-      } else {
-        clearInterval(typeInterval);
+    const progress = { charIndex: 0 };
+
+    typewriterAnimRef.current = animate(progress, {
+      charIndex: fullText.length,
+      duration: fullText.length * 70,
+      ease: "linear",
+      autoplay: true,
+      onUpdate: () => {
+        setDisplayedText(fullText.slice(0, Math.floor(progress.charIndex)));
+      },
+      onComplete: () => {
         setTimeout(() => {
           setCurrentRole((prev) => (prev + 1) % ROLES.length);
         }, 2500);
-      }
-    }, 70);
-    
-    return () => clearInterval(typeInterval);
-  }, [currentRole, mounted]);
-
-  useEffect(() => {
-    if (!mounted) return;
-    
-    STATS.forEach((stat, index) => {
-      let current = 0;
-      const increment = stat.value / 30;
-      const interval = setInterval(() => {
-        current += increment;
-        if (current >= stat.value) {
-          setDisplayedStats((prev) => ({ ...prev, [index]: stat.value }));
-          clearInterval(interval);
-        } else {
-          setDisplayedStats((prev) => ({ ...prev, [index]: Math.floor(current) }));
-        }
-      }, 50);
+      },
     });
-  }, [mounted]);
+
+    return () => {
+      if (typewriterAnimRef.current) {
+        typewriterAnimRef.current.cancel();
+      }
+    };
+  }, [currentRole]);
+
+  // Stat counter animations — replaces setInterval
+  useEffect(() => {
+    STATS.forEach((stat, index) => {
+      const progress = { value: 0 };
+
+      statAnimRefs.current[index] = animate(progress, {
+        value: stat.value,
+        duration: 1500,
+        ease: "outExpo",
+        autoplay: true,
+        onUpdate: () => {
+          setDisplayedStats((prev) => ({ ...prev, [index]: Math.floor(progress.value) }));
+        },
+        onComplete: () => {
+          setDisplayedStats((prev) => ({ ...prev, [index]: stat.value }));
+        },
+      });
+    });
+
+    return () => {
+      statAnimRefs.current.forEach((anim) => {
+        if (anim) anim.cancel();
+      });
+      statAnimRefs.current = [];
+    };
+  }, []);
 
   return (
     <div className="relative min-h-screen flex items-center justify-center px-4 md:px-8">
@@ -126,24 +130,23 @@ export default function HeroText() {
         <div className="pixel-badge mb-8">
           <span className="relative">AVAILABLE FOR PROJECTS</span>
         </div>
-        
-        <animated.h1
+
+        <h1
           ref={nameRef}
-          style={nameSpring}
           className="font-sora text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-4 tracking-tight"
         >
           AMR YOUSRY
-        </animated.h1>
-        
-        <animated.div ref={subtitleRef} style={subtitleSpring}>
+        </h1>
+
+        <div ref={subtitleRef}>
           <div className="h-1 w-32 bg-gradient-to-r from-[#00ffcc] to-transparent mb-6" />
-          
+
           <div className="pixel-text text-[#00ffcc] text-sm md:text-base mb-4">
             <span data-text="VISUAL STORYTELLER" className="glitch-text">
               VISUAL STORYTELLER
             </span>
           </div>
-          
+
           <div className="flex items-center gap-2 mb-8">
             <span className="text-white text-lg md:text-xl font-light">
               &quot;
@@ -156,10 +159,10 @@ export default function HeroText() {
               &quot;
             </span>
           </div>
-        </animated.div>
-        
-        <animated.div
-          style={statsSpring}
+        </div>
+
+        <div
+          ref={statsRef}
           className="flex flex-wrap gap-4 mb-10"
         >
           {STATS.map((stat, i) => {
@@ -174,25 +177,24 @@ export default function HeroText() {
               </div>
             );
           })}
-        </animated.div>
-        
-        <animated.div
+        </div>
+
+        <div
           ref={buttonsRef}
-          style={buttonsSpring}
           className="flex flex-wrap gap-4"
         >
           <button className="pixel-btn flex items-center gap-2">
             <span>▶</span>
             <span>WATCH SHOWREEL</span>
           </button>
-          
+
           <button className="pixel-btn-outline flex items-center gap-2">
             <span>→</span>
             <span>GET IN TOUCH</span>
           </button>
-        </animated.div>
+        </div>
       </div>
-      
+
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
         <span className="pixel-text text-[#00ffcc]/50 text-xs">SCROLL</span>
         <div className="w-6 h-10 border-2 border-[#00ffcc]/30 rounded-full flex justify-center pt-2">
