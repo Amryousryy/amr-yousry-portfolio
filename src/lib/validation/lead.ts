@@ -8,7 +8,7 @@ export const leadCreateSchema = z.object({
   message: z.string().min(1, "Message is required").trim(),
   offerType: z.enum(["general", "free_audit"]).default("general"),
   status: z.enum(["new", "contacted", "qualified", "closed"]).default("new"),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 export const leadPublicSchema = leadCreateSchema.omit({ offerType: true, status: true }).extend({

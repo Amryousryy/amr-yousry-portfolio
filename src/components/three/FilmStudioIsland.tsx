@@ -164,7 +164,9 @@ function FilmStudioScene({ isVisibleRef }: { isVisibleRef: React.RefObject<boole
   const clapperTopRef = useRef<THREE.Mesh>(null);
   const light1Ref = useRef<THREE.SpotLight>(null);
   const light2Ref = useRef<THREE.SpotLight>(null);
-  const screenRefs = useRef<(THREE.Mesh | null)[]>([]);
+  const screen1Ref = useRef<THREE.Mesh>(null);
+  const screen2Ref = useRef<THREE.Mesh>(null);
+  const screen3Ref = useRef<THREE.Mesh>(null);
 
   // States
   const [cameraHovered, setCameraHovered] = useState(false);
@@ -223,7 +225,8 @@ function FilmStudioScene({ isVisibleRef }: { isVisibleRef: React.RefObject<boole
     if (light2Ref.current) light2Ref.current.intensity = 1.2 + Math.sin(t * 2 + 1) * 0.3;
 
     // 7. Screens
-    screenRefs.current.forEach((screen, i) => {
+    const screens = [screen1Ref.current, screen2Ref.current, screen3Ref.current];
+    screens.forEach((screen, i) => {
       if (screen) {
         screen.position.y = [1.5, 2, 2.5][i] + Math.sin(t * 0.5 + i) * 0.1;
         screen.rotation.y = [ -0.3, 0.3, 0][i] + t * 0.2;
@@ -240,7 +243,7 @@ function FilmStudioScene({ isVisibleRef }: { isVisibleRef: React.RefObject<boole
       <GiantCamera groupRef={cameraGroupRef} lensRef={cameraLensRef} hovered={cameraHovered} setHovered={setCameraHovered} />
       <FilmReel groupRef={reelGroupRef} />
       <DirectorsChair groupRef={chairGroupRef} />
-      <Clapperboard groupRef={clapperGroupRef} topRef={clapperTopRef} hovered={clapperHovered} setHovered={setClapperHovered} clapped={clapperClapped} setClapped={setClapperClapped} />
+      <Clapperboard groupRef={clapperGroupRef} topRef={clapperTopRef} hovered={clapperHovered} setHovered={setCameraHovered} clapped={clapperClapped} setClapped={setClapperClapped} />
       <group position={[-2, 1.5, 2]}>
         <mesh><cylinderGeometry args={[0.03, 0.03, 1.5]} /><meshStandardMaterial color="#333333" /></mesh>
         <spotLight ref={light1Ref} position={[0, 1, 0]} angle={0.5} penumbra={0.5} color="#fff5e0" />
@@ -251,9 +254,9 @@ function FilmStudioScene({ isVisibleRef }: { isVisibleRef: React.RefObject<boole
       </group>
       {!isMobile && (
         <>
-          <HolographicScreen meshRef={(el) => { screenRefs.current[0] = el; }} position={[3, 1.5, 0]} rotation={[0, -0.3, 0]} projectIndex={0} hovered={screensHovered[0]} setHovered={(v) => { const s = [...screensHovered]; s[0] = v; setScreensHovered(s); }} />
-          <HolographicScreen meshRef={(el) => { screenRefs.current[1] = el; }} position={[-3, 2, 0]} rotation={[0, 0.3, 0]} projectIndex={1} hovered={screensHovered[1]} setHovered={(v) => { const s = [...screensHovered]; s[1] = v; setScreensHovered(s); }} />
-          <HolographicScreen meshRef={(el) => { screenRefs.current[2] = el; }} position={[0, 2.5, -2]} rotation={[0, 0, 0]} projectIndex={2} hovered={screensHovered[2]} setHovered={(v) => { const s = [...screensHovered]; s[2] = v; setScreensHovered(s); }} />
+          <HolographicScreen meshRef={screen1Ref} position={[3, 1.5, 0]} rotation={[0, -0.3, 0]} projectIndex={0} hovered={screensHovered[0]} setHovered={(v) => { const s = [...screensHovered]; s[0] = v; setScreensHovered(s); }} />
+          <HolographicScreen meshRef={screen2Ref} position={[-3, 2, 0]} rotation={[0, 0.3, 0]} projectIndex={1} hovered={screensHovered[1]} setHovered={(v) => { const s = [...screensHovered]; s[1] = v; setScreensHovered(s); }} />
+          <HolographicScreen meshRef={screen3Ref} position={[0, 2.5, -2]} rotation={[0, 0, 0]} projectIndex={2} hovered={screensHovered[2]} setHovered={(v) => { const s = [...screensHovered]; s[2] = v; setScreensHovered(s); }} />
         </>
       )}
     </>
