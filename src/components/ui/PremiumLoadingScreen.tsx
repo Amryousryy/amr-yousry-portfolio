@@ -3,8 +3,10 @@
 import { useEffect, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
 
+const TOTAL_FRAMES = 24;
+
 export default function PremiumLoadingScreen() {
-  const [stage, setStage] = useState(0);
+  const [frame, setFrame] = useState(0);
   const [progress, setProgress] = useState(0);
   const [isExiting, setIsExiting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
@@ -24,10 +26,7 @@ export default function PremiumLoadingScreen() {
       const elapsed = Date.now() - startTimeRef.current;
       const newProgress = Math.min((elapsed / totalDuration) * 100, 100);
       setProgress(newProgress);
-
-      // Stage transitions
-      if (elapsed > 800 && stage < 1) setStage(1);
-      if (elapsed > 1600 && stage < 2) setStage(2);
+      setFrame(Math.min(Math.floor((elapsed / totalDuration) * TOTAL_FRAMES), TOTAL_FRAMES));
 
       if (newProgress >= 100) {
         clearInterval(interval);
@@ -49,121 +48,79 @@ export default function PremiumLoadingScreen() {
         isExiting ? "opacity-0" : "opacity-100"
       }`}
     >
-      {/* Cinematic Film Reel Frame */}
-      <div className="relative w-64 md:w-80 aspect-[3/4] max-h-[80vh]">
-        {/* Film strip top */}
-        <div className="absolute top-0 left-0 right-0 h-12 bg-white flex items-center overflow-hidden">
-          {[...Array(16)].map((_, i) => (
-            <div
-              key={i}
-              className="h-full flex-1"
-              style={{
-                background: i % 2 === 0 ? "#ffffff" : "#000000",
-              }}
-            />
-          ))}
+      {/* Film Reel Loading Experience */}
+      <div className="relative w-80 md:w-96 aspect-video max-h-[60vh] frame-border">
+        {/* Frame counter - top left */}
+        <div className="absolute -top-8 -left-8 frame-number">
+          FRAME {String(frame).padStart(2, '0')}
         </div>
 
-        {/* Content area */}
-        <div className="absolute top-12 left-0 right-0 bottom-12 bg-[#0a0a0f] flex flex-col items-center justify-center p-6">
-          {/* Stage 0: Name */}
-          <div
-            className={`transition-all duration-500 ${
-              stage >= 0 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            }`}
-          >
-            <div className="pixel-text text-[#00ffcc] text-[10px] mb-2 tracking-widest text-center">
+        {/* Reel indicator - top right */}
+        <div className="absolute -top-8 -right-8 frame-label">
+          LOADING REEL
+        </div>
+
+        {/* Main content area */}
+        <div className="absolute inset-0 bg-[#0a0a0f] flex flex-col items-center justify-center">
+          {/* Name reveal */}
+          <div className="mb-4 transition-opacity duration-500" style={{ opacity: frame >= 6 ? 1 : 0 }}>
+            <div className="text-mono text-[#00ffcc] text-[10px] tracking-[0.4em] mb-2">
               AMR YOUSRY
             </div>
+            <div className="w-16 h-[1px] bg-[#00ffcc]/30 mx-auto" />
           </div>
 
-          {/* Stage 1: Title */}
-          <div
-            className={`mt-4 transition-all duration-500 delay-300 ${
-              stage >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            }`}
-          >
-            <div className="text-mono text-white/40 text-[10px] tracking-wider text-center mb-1">
-              CREATIVE STRATEGIST
-            </div>
-            <div className="text-mono text-[#00ffcc] text-[10px] tracking-wider text-center">
-              & VIDEO EDITOR
+          {/* Title */}
+          <div className="text-center transition-opacity duration-500" style={{ opacity: frame >= 12 ? 1 : 0 }}>
+            <div className="text-hero font-black text-white leading-none mb-2">
+              FRAME
+              <br />
+              <span className="text-[#00ffcc]">LOGIC</span>
             </div>
           </div>
 
-          {/* Progress bar */}
-          <div className="absolute bottom-6 left-6 right-6">
+          {/* Frame strip indicator */}
+          <div className="absolute bottom-8 left-8 right-8">
             <div className="flex justify-between mb-2">
-              {[...Array(10)].map((_, i) => (
+              {[...Array(TOTAL_FRAMES)].map((_, i) => (
                 <div
                   key={i}
-                  className="w-4 h-8 border-2 border-[#00ffcc] transition-colors duration-100"
-                  style={{
-                    background: progress >= (i + 1) * 10 ? "#00ffcc" : "transparent",
-                  }}
+                  className={`w-1.5 h-4 transition-colors duration-100 ${
+                    i <= frame ? "bg-[#00ffcc]" : "bg-[#00ffcc]/20"
+                  }`}
                 />
               ))}
             </div>
-            <div className="w-full h-1.5 bg-[#1a1a2e]">
+            <div className="w-full h-1 bg-[#1a1a2e]">
               <div
                 className="h-full bg-[#00ffcc] transition-all duration-100"
                 style={{ width: `${progress}%` }}
               />
             </div>
+            <div className="flex justify-between mt-2">
+              <span className="frame-number">TC: {String(frame).padStart(2, '0')}</span>
+              <span className="frame-number">{Math.round(progress)}%</span>
+            </div>
           </div>
         </div>
 
-        {/* Film strip bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-12 bg-[#1a1a1a] flex items-center overflow-hidden">
-          {[...Array(16)].map((_, i) => (
-            <div
-              key={i}
-              className="h-full flex-1 border-r border-[#050508]/20"
-              style={{
-                background: i % 2 === 0 ? "#ffffff" : "#000000",
-              }}
-            />
-          ))}
-        </div>
-
         {/* Perforation marks */}
-        <div className="absolute top-12 left-0 w-4 h-8 -translate-x-full flex flex-col justify-around">
+        <div className="absolute top-0 left-0 w-4 h-full -translate-x-full flex flex-col justify-around py-4">
           {[...Array(8)].map((_, i) => (
             <div key={i} className="w-4 h-2 border border-[#00ffcc]/30 rounded-sm" />
           ))}
         </div>
-        <div className="absolute top-12 right-0 w-4 h-8 translate-x-full flex flex-col justify-around">
+        <div className="absolute top-0 right-0 w-4 h-full translate-x-full flex flex-col justify-around py-4">
           {[...Array(8)].map((_, i) => (
             <div key={i} className="w-4 h-2 border border-[#00ffcc]/30 rounded-sm" />
           ))}
         </div>
       </div>
 
-      {/* Loading text */}
-      <div className="absolute bottom-12 text-center">
-        <div className="pixel-text text-[#00ffcc] text-[10px] tracking-widest mb-2">
-          LOADING REEL...
-        </div>
-        <div className="pixel-text text-white text-xl">
-          {Math.round(progress)}%
-        </div>
-      </div>
-
-      {/* Exit animation */}
+      {/* Exit shutter transition */}
       {isExiting && (
-        <div className="absolute inset-0 bg-white animate-burn pointer-events-none" />
+        <div className="absolute inset-0 bg-white shutter-transition pointer-events-none" />
       )}
-
-      <style jsx>{`
-        @keyframes burn {
-          0% { opacity: 0; }
-          50% { opacity: 1; }
-          100% { opacity: 0; }
-        }
-        .animate-burn {
-          animation: burn 0.8s ease-out forwards;
-        }
-      `}</style>
     </div>
   );
 }

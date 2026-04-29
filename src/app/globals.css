@@ -87,7 +87,170 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: uppercase;
 }
 
-/* Pixel Border Enhancement */
+/* === FRAME LOGIC DESIGN SYSTEM === */
+
+/* Frame Border - Core visual treatment */
+.frame-border {
+  border: 2px solid rgba(0, 245, 212, 0.2);
+  position: relative;
+}
+
+.frame-border::before,
+.frame-border::after {
+  content: '';
+  position: absolute;
+  background: #00ffcc;
+  width: 8px;
+  height: 8px;
+}
+
+.frame-border::before {
+  top: -4px;
+  left: -4px;
+}
+
+.frame-border::after {
+  bottom: -4px;
+  right: -4px;
+}
+
+/* Frame Number - Timeline markers */
+.frame-number {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: rgba(0, 245, 212, 0.4);
+  text-transform: uppercase;
+}
+
+/* Frame Label - Section labels */
+.frame-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  color: rgba(0, 245, 212, 0.6);
+  text-transform: uppercase;
+}
+
+/* Timeline Marker - Nav/divider */
+.timeline-marker {
+  width: 1px;
+  height: 24px;
+  background: rgba(0, 245, 212, 0.2);
+}
+
+/* Frame Divider - Section separators */
+.frame-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 245, 212, 0.3), transparent);
+  margin: 2rem 0;
+}
+
+/* Shutter Transition */
+.shutter-transition {
+  animation: shutterReveal 0.8s ease-out forwards;
+}
+
+@keyframes shutterReveal {
+  0% {
+    clip-path: inset(0 0 100% 0);
+    opacity: 0;
+  }
+  50% {
+    clip-path: inset(0 0 50% 0);
+    opacity: 0.5;
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
+/* Film Reel Loading */
+.film-reel {
+  position: relative;
+  overflow: hidden;
+}
+
+.film-reel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: repeating-linear-gradient(
+    90deg,
+    #ffffff 0px,
+    #ffffff 20px,
+    #000000 20px,
+    #000000 40px
+  );
+  z-index: 10;
+}
+
+.film-reel::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: repeating-linear-gradient(
+    90deg,
+    #ffffff 0px,
+    #ffffff 20px,
+    #000000 20px,
+    #000000 40px
+  );
+  z-index: 10;
+}
+
+/* Perforation Marks */
+.perforation-marks {
+  position: absolute;
+  left: -8px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.perforation-marks::before,
+.perforation-marks::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 4px;
+  height: 2px;
+  background: rgba(0, 245, 212, 0.3);
+  border-radius: 1px;
+}
+
+/* Frame Counter Animation */
+@keyframes frameAdvance {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.frame-advance {
+  animation: frameAdvance 0.3s ease-out forwards;
+}
+
+/* Cinematic Cut - Section transitions */
+.cinematic-cut {
+  transition: opacity var(--duration-normal) ease, transform var(--duration-normal) ease;
+}
+
+.cinematic-cut.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Keep existing pixel borders for backward compatibility */
 .pixel-border {
   border: 2px solid var(--accent);
   box-shadow: 4px 4px 0 0 var(--primary);

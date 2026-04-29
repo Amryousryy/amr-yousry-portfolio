@@ -23,7 +23,7 @@ export default function Hero() {
       ref={sectionRef}
       className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[#050508]"
     >
-      {/* Background grid - subtle technical feel */}
+      {/* Background grid - frame timing marks */}
       <div className="absolute inset-0 opacity-[0.03]">
         <div
           className="w-full h-full"
@@ -37,19 +37,45 @@ export default function Hero() {
         />
       </div>
 
-      {/* Cinematic frame edges */}
-      <div className="absolute inset-4 md:inset-8 border border-[#00ffcc]/10 pointer-events-none" />
-      <div className="absolute top-8 left-8 w-16 h-[1px] bg-[#00ffcc]/20" />
-      <div className="absolute top-8 left-8 w-[1px] h-16 bg-[#00ffcc]/20" />
-      <div className="absolute top-8 right-8 w-16 h-[1px] bg-[#00ffcc]/20" />
-      <div className="absolute top-8 right-8 w-[1px] h-16 bg-[#00ffcc]/20" />
-      <div className="absolute bottom-8 left-8 w-16 h-[1px] bg-[#00ffcc]/20" />
-      <div className="absolute bottom-8 left-8 w-[1px] h-16 bg-[#00ffcc]/20" />
-      <div className="absolute bottom-8 right-8 w-16 h-[1px] bg-[#00ffcc]/20" />
-      <div className="absolute bottom-8 right-8 w-[1px] h-16 bg-[#00ffcc]/20" />
+      {/* Frame Logic - Film frame treatment */}
+      <div className="absolute inset-4 md:inset-8 frame-border pointer-events-none" />
+      
+      {/* Frame number - top left */}
+      <div className="absolute top-6 left-6 md:top-10 md:left-10 frame-number">
+        FRAME 01
+      </div>
+      
+      {/* Frame label - top right */}
+      <div className="absolute top-6 right-6 md:top-10 md:right-10 frame-label">
+        PRINCIPLE
+      </div>
+      
+      {/* Timeline markers - left side */}
+      <div className="absolute top-12 left-8 w-4 h-full -translate-x-full flex flex-col justify-around py-4">
+        {[...Array(8)].map((_, i) => (
+          <div key={i} className="w-4 h-2 border border-[#00ffcc]/30 rounded-sm" />
+        ))}
+      </div>
+      
+      {/* Timeline markers - right side */}
+      <div className="absolute top-12 right-8 w-4 h-full translate-x-full flex flex-col justify-around py-4">
+        {[...Array(8)].map((_, i) => (
+          <div key={i} className="w-4 h-2 border border-[#00ffcc]/30 rounded-sm" />
+        ))}
+      </div>
 
       <div className="container mx-auto px-6 text-center relative z-10">
-        {/* Badge - STR8FIRE inspired minimal tag */}
+        {/* Frame number - top left */}
+        <div className="absolute top-6 left-6 md:top-10 md:left-10 frame-number">
+          FRAME 01
+        </div>
+        
+        {/* Frame label - top right */}
+        <div className="absolute top-6 right-6 md:top-10 md:right-10 frame-label">
+          PRINCIPLE
+        </div>
+        
+        {/* Badge - minimal frame tag */}
         <div className="mb-8 inline-block animate-fade-up">
           <div className="text-mono text-[#00ffcc] text-[10px] tracking-[0.4em] mb-2">
             AMR YOUSRY
@@ -57,7 +83,7 @@ export default function Hero() {
           <div className="w-16 h-[1px] bg-[#00ffcc]/30 mx-auto" />
         </div>
 
-        {/* Main Headline - Conversion + Positioning */}
+        {/* Main Headline - Frame Logic + Conversion */}
         <h1 className="text-hero font-black text-white mb-6 tracking-tighter animate-fade-up-delay-1">
           I Turn
           <br />
@@ -73,14 +99,14 @@ export default function Hero() {
           Multimedia design, film & AI creative that drives measurable growth for ambitious brands.
         </p>
 
-        {/* Trust signals - Immediate credibility */}
+        {/* Trust signals - Frame-styled stats */}
         <div className="flex flex-wrap justify-center gap-8 mb-6 animate-fade-up-delay-2">
           {[
             { value: "50M+", label: "Views", context: "Across campaigns" },
-            { value: "3.5X", label: "Avg ROI", context: "Increase proven" },
+            { value: "3.5X", label: "ROI", context: "Increase proven" },
             { value: "100+", label: "Brands", context: "Scaled to 6 figs" },
           ].map((stat, i) => (
-            <div key={i} className="text-center px-6">
+            <div key={i} className="text-center px-6 frame-border p-4">
               <div className="text-5xl md:text-6xl font-black text-[#00ffcc] mb-1">{stat.value}</div>
               <div className="text-mono text-white/40 text-[9px] uppercase tracking-[0.15em]">{stat.label}</div>
               <div className="text-mono text-white/20 text-[8px]">{stat.context}</div>
@@ -88,7 +114,7 @@ export default function Hero() {
           ))}
         </div>
 
-        {/* Location proof */}
+        {/* Location proof - Frame label style */}
         <div className="text-mono text-white/30 text-[10px] tracking-wider text-center mb-10 animate-fade-up-delay-3">
           TRUSTED IN EGYPT & SAUDI ARABIA
         </div>
