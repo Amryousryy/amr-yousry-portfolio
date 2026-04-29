@@ -57,32 +57,40 @@ export default function Hero() {
           <div className="w-16 h-[1px] bg-[#00ffcc]/30 mx-auto" />
         </div>
 
-        {/* Main Headline - Conversion-focused */}
+        {/* Main Headline - Conversion + Positioning */}
         <h1 className="text-hero font-black text-white mb-6 tracking-tighter animate-fade-up-delay-1">
-          I Turn Video
+          I Turn
           <br />
-          <span className="text-[#00ffcc]">Into Leads</span>
+          <span className="text-[#00ffcc]">Multimedia</span>
+          <br />
+          Into Growth
           <br />
           For Ambitious Brands
         </h1>
 
-        {/* Subheadline - Business outcome focused */}
+        {/* Subheadline - Accurate to core offers */}
         <p className="text-display text-white/60 max-w-2xl mx-auto mb-8 leading-relaxed animate-fade-up-delay-2">
-          Strategic video content that generates leads and scales your brand to 6 figures.
+          Multimedia design, film & AI creative that drives measurable growth for ambitious brands.
         </p>
 
-        {/* Trust signals - Moved up for immediate credibility */}
-        <div className="flex flex-wrap justify-center gap-6 mb-10 animate-fade-up-delay-2">
+        {/* Trust signals - Immediate credibility */}
+        <div className="flex flex-wrap justify-center gap-8 mb-6 animate-fade-up-delay-2">
           {[
-            { value: "50M+", label: "Views Generated" },
-            { value: "3.5X", label: "Avg ROI" },
-            { value: "100+", label: "Brands Scaled" },
+            { value: "50M+", label: "Views", context: "Across campaigns" },
+            { value: "3.5X", label: "Avg ROI", context: "Increase proven" },
+            { value: "100+", label: "Brands", context: "Scaled to 6 figs" },
           ].map((stat, i) => (
-            <div key={i} className="text-center px-4">
-              <div className="text-display font-black text-[#00ffcc]">{stat.value}</div>
-              <div className="text-mono text-white/40 text-[9px]">{stat.label}</div>
+            <div key={i} className="text-center px-6">
+              <div className="text-5xl md:text-6xl font-black text-[#00ffcc] mb-1">{stat.value}</div>
+              <div className="text-mono text-white/40 text-[9px] uppercase tracking-[0.15em]">{stat.label}</div>
+              <div className="text-mono text-white/20 text-[8px]">{stat.context}</div>
             </div>
           ))}
+        </div>
+
+        {/* Location proof */}
+        <div className="text-mono text-white/30 text-[10px] tracking-wider text-center mb-10 animate-fade-up-delay-3">
+          TRUSTED IN EGYPT & SAUDI ARABIA
         </div>
 
         {/* CTAs - Premium button treatment */}
@@ -91,7 +99,7 @@ export default function Hero() {
             href="#contact"
             className="group relative px-12 py-5 min-h-[64px] bg-[#00ffcc] text-[#050508] font-bold uppercase tracking-[0.2em] text-xs overflow-hidden transition-all duration-500 hover:shadow-[0_0_50px_rgba(0,245,212,0.5)] hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center"
           >
-            <span className="relative z-10">Start Your Project</span>
+            <span className="relative z-10">Get a Quote</span>
             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
           </a>
 
