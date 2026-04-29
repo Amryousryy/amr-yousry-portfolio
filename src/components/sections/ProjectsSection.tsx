@@ -8,7 +8,16 @@ interface Project {
   category: string;
   description: string;
   image: string;
-  views?: string;
+  metrics: {
+    views?: string;
+    roi?: string;
+    conversion?: string;
+    client?: string;
+  };
+  testimonial?: {
+    quote: string;
+    author: string;
+  };
   slug: string;
 }
 
@@ -18,7 +27,15 @@ const PROJECTS: Project[] = [
     category: "Brand Storytelling",
     description: "A cinematic brand film for a luxury fashion label, telling their heritage story through motion.",
     image: "https://images.unsplash.com/photo-1539107515679-261c5b31d3c?w=800",
-    views: "2M+",
+    metrics: {
+      views: "2M+",
+      roi: "4X",
+      client: "Maison Élégante",
+    },
+    testimonial: {
+      quote: "Transformed our brand perception completely.",
+      author: "Creative Director",
+    },
     slug: "luxury-brand-film",
   },
   {
@@ -26,7 +43,15 @@ const PROJECTS: Project[] = [
     category: "Motion Design",
     description: "Dynamic motion graphics package for a Series A tech startup's investor pitch.",
     image: "https://images.unsplash.com/photo-1550745165-731e2e4dd6e?w=800",
-    views: "1.5M+",
+    metrics: {
+      views: "1.5M+",
+      conversion: "+340%",
+      client: "DataFlow",
+    },
+    testimonial: {
+      quote: "Secured $5M in Series A after this reel.",
+      author: "CEO, DataFlow",
+    },
     slug: "tech-startup-reel",
   },
   {
@@ -34,7 +59,15 @@ const PROJECTS: Project[] = [
     category: "Content Strategy",
     description: "End-to-end content strategy and editing for a travel influencer's YouTube series.",
     image: "https://images.unsplash.com/photo-1488644615296-10ddf06822d3?w=800",
-    views: "5M+",
+    metrics: {
+      views: "5M+",
+      roi: "3.5X",
+      client: "Wanderlust Co.",
+    },
+    testimonial: {
+      quote: "Grew from 10K to 500K subscribers in 6 months.",
+      author: "Founder",
+    },
     slug: "travel-series",
   },
 ];
@@ -78,47 +111,73 @@ export default function ProjectsSection() {
           </h2>
         </div>
 
-        {/* Projects grid - cinematic layout */}
+        {/* Projects grid - proof-focused layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {PROJECTS.map((project, i) => (
             <a
               key={i}
               href={`/projects/${project.slug}`}
-              className="project-card reveal group relative aspect-video bg-[#0a0a0f] overflow-hidden border border-white/5 hover:border-[#00ffcc]/30 transition-all duration-500"
+              className="project-card reveal group relative bg-[#0a0a0f] overflow-hidden border border-white/5 hover:border-[#00ffcc]/30 transition-all duration-500"
               style={{ transitionDelay: `${i * 150}ms` }}
             >
               {/* Thumbnail */}
               <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                className="aspect-video bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
                 style={{ backgroundImage: `url(${project.image})` }}
               />
-              
-              {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-transparent to-transparent opacity-70 group-hover:opacity-90 transition-opacity duration-500" />
 
-              {/* Content */}
-              <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
-                <div className="text-mono text-[#00ffcc] text-[10px] tracking-wider mb-2">
-                  {project.category}
+              {/* Content - always visible metrics */}
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-mono text-[#00ffcc] text-[10px] tracking-wider">
+                    {project.category}
+                  </div>
+                  <div className="frame-number text-[8px]">
+                    FRAME {String(i + 1).padStart(2, '0')}
+                  </div>
                 </div>
-                <h3 className="text-display text-white mb-2 group-hover:text-[#00ffcc] transition-colors duration-300">
+
+                <h3 className="text-display text-white mb-3 group-hover:text-[#00ffcc] transition-colors duration-300">
                   {project.title}
                 </h3>
-                <p className="text-white/60 text-sm leading-relaxed mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  {project.description}
-                </p>
-                {project.views && (
-                  <div className="text-mono text-white/40 text-[10px]">
-                    {project.views} VIEWS
+
+                {/* Proof metrics - key differentiator from Services */}
+                <div className="flex flex-wrap gap-3 mb-4">
+                  {project.metrics.views && (
+                    <div className="px-3 py-1 bg-[#00ffcc]/5 border border-[#00ffcc]/20">
+                      <div className="text-[#00ffcc] text-xs font-bold">{project.metrics.views}</div>
+                      <div className="text-mono text-white/40 text-[8px]">VIEWS</div>
+                    </div>
+                  )}
+                  {project.metrics.roi && (
+                    <div className="px-3 py-1 bg-[#00ffcc]/5 border border-[#00ffcc]/20">
+                      <div className="text-[#00ffcc] text-xs font-bold">{project.metrics.roi} ROI</div>
+                      <div className="text-mono text-white/40 text-[8px]">RETURN</div>
+                    </div>
+                  )}
+                  {project.metrics.conversion && (
+                    <div className="px-3 py-1 bg-[#00ffcc]/5 border border-[#00ffcc]/20">
+                      <div className="text-[#00ffcc] text-xs font-bold">{project.metrics.conversion}</div>
+                      <div className="text-mono text-white/40 text-[8px]">CONVERSION</div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Client testimonial snippet */}
+                {project.testimonial && (
+                  <div className="border-l-2 border-[#00ffcc]/30 pl-3 mb-4">
+                    <p className="text-white/60 text-xs italic leading-relaxed">
+                      "{project.testimonial.quote}"
+                    </p>
+                    <p className="text-mono text-white/40 text-[8px] mt-1">
+                      — {project.testimonial.author}
+                    </p>
                   </div>
                 )}
-              </div>
 
-              {/* Play icon on hover */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="w-16 h-16 rounded-full bg-[#00ffcc]/20 border-2 border-[#00ffcc] flex items-center justify-center">
-                  <Play size={24} fill="#00ffcc" className="text-[#00ffcc] ml-1" />
-                </div>
+                <p className="text-white/60 text-sm leading-relaxed line-clamp-2">
+                  {project.description}
+                </p>
               </div>
             </a>
           ))}
