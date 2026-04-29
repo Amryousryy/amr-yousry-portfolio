@@ -334,16 +334,7 @@ button:focus-visible {
   }
 }
 
-/* Keep existing pixel borders for backward compatibility (admin pages) */
-.pixel-border {
-  border: 2px solid var(--accent);
-  box-shadow: 4px 4px 0 0 var(--primary);
-}
 
-.pixel-border-enhanced {
-  border: 2px solid var(--accent);
-  box-shadow: 4px 4px 0 0 var(--accent), 8px 8px 0 0 rgba(0, 245, 212, 0.3);
-}
 
 /* Frame Divider - strengthened for better visibility */
 .frame-divider {
@@ -351,6 +342,32 @@ button:focus-visible {
   height: 2px;
   background: linear-gradient(90deg, transparent, rgba(0, 255, 204, 0.7), transparent);
   margin: 2rem 0;
+}
+
+/* === PIXEL BORDER SYSTEM === */
+/* Used for section-level containers, active nav, CTAs */
+.pixel-border {
+  border: 2px solid rgba(0, 255, 204, 0.3);
+  position: relative;
+}
+
+.pixel-border::before,
+.pixel-border::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #00ffcc;
+}
+
+.pixel-border::before {
+  top: -1px;
+  left: -1px;
+}
+
+.pixel-border::after {
+  bottom: -1px;
+  right: -1px;
 }
 
 /* === PIXEL BUTTON SYSTEM === */
@@ -453,12 +470,6 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
-/* Smooth scrolling for browsers that respect prefers-reduced-motion */
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-behavior: smooth;
-  }
-}
 
 /* Respect reduced motion - disable ALL animations */
 @media (prefers-reduced-motion: reduce) {
