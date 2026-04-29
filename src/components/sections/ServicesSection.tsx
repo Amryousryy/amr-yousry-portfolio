@@ -108,31 +108,28 @@ export default function ServicesSection() {
 
   return (
     <section ref={sectionRef} className="relative min-h-screen w-full bg-[#050508] section-padding">
-      {/* Left vertical text */}
-      <div className="absolute left-8 top-1/2 -translate-y-1/2 hidden lg:block">
-        <div className="writing-vertical text-mono text-[#00ffcc]/20 text-[10px] tracking-[0.3em]">
-          SERVICES
-        </div>
-      </div>
+      {/* Frame Logic - Timeline markers */}
+      <div className="absolute left-8 top-0 bottom-0 w-[1px] bg-[#00ffcc]/10 hidden lg:block" />
+      <div className="absolute right-8 top-0 bottom-0 w-[1px] bg-[#00ffcc]/10 hidden lg:block" />
 
       <div className="container mx-auto px-6 relative z-10">
-        {/* Section header - STR8FIRE style */}
+        {/* Section header - Frame Logic */}
         <div className="mb-20 reveal">
-          <div className="text-mono text-[#00ffcc]/40 text-[12px] tracking-widest mb-2">02</div>
-          <div className="w-24 h-[1px] bg-[#00ffcc]/30 mb-8" />
+          <div className="frame-number mb-2">FRAME 02</div>
+          <div className="frame-divider" />
           <h2 className="text-section text-white">
-            What I
+            <span className="frame-label">BLUEPRINTS</span>
             <br />
-            <span className="text-[#00ffcc]">Deliver</span>
+            What I Deliver
           </h2>
         </div>
 
-        {/* Services grid - Numbered like STR8FIRE */}
+        {/* Services grid - Frame-styled cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {SERVICES.map((service, i) => (
             <div
               key={i}
-              className="service-card reveal group relative bg-[#0a0a0f] p-8 md:p-12 border border-white/5 hover:border-[#00ffcc]/30 transition-all duration-500"
+              className="service-card reveal group relative bg-[#0a0a0f] p-8 md:p-12 frame-border hover:border-[#00ffcc]/30 transition-all duration-500"
             >
               {/* Service number - HUGE background */}
               <div className="absolute -top-4 -right-4 text-[120px] font-black text-white/[0.03] leading-none pointer-events-none">

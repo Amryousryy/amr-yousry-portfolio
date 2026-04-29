@@ -56,26 +56,23 @@ export default function ProcessSection() {
 
   return (
     <section ref={sectionRef} className="relative min-h-screen w-full bg-[#050508] section-padding">
-      {/* Left vertical text */}
-      <div className="absolute left-8 top-1/2 -translate-y-1/2 hidden lg:block">
-        <div className="writing-vertical text-mono text-[#00ffcc]/20 text-[10px] tracking-[0.3em]">
-          PROCESS
-        </div>
-      </div>
+      {/* Frame Logic - Timeline markers */}
+      <div className="absolute left-8 top-0 bottom-0 w-[1px] bg-[#00ffcc]/10 hidden lg:block" />
+      <div className="absolute right-8 top-0 bottom-0 w-[1px] bg-[#00ffcc]/10 hidden lg:block" />
 
       <div className="container mx-auto px-6 relative z-10">
-        {/* Section header */}
+        {/* Section header - Frame Logic */}
         <div className="mb-20 reveal">
-          <div className="text-mono text-[#00ffcc]/40 text-[12px] tracking-widest mb-2">04</div>
-          <div className="w-24 h-[1px] bg-[#00ffcc]/30 mb-8" />
+          <div className="frame-number mb-2">FRAME 05</div>
+          <div className="frame-divider" />
           <h2 className="text-section text-white">
-            My
+            <span className="frame-label">EDITORIAL</span>
             <br />
-            <span className="text-[#00ffcc]">Process</span>
+            My Process
           </h2>
         </div>
 
-        {/* Process steps - STR8FIRE numbered style */}
+        {/* Process steps - Frame Logic numbered */}
         <div className="space-y-16 md:space-y-24">
           {PROCESS_STEPS.map((step, i) => (
             <div
@@ -112,7 +109,7 @@ export default function ProcessSection() {
               </div>
 
               {/* Visual indicator */}
-              <div className="relative z-10 w-full md:w-64 aspect-square bg-[#0a0a0f] border border-white/5 flex items-center justify-center">
+              <div className="relative z-10 w-full md:w-64 aspect-square bg-[#0a0a0f] frame-border flex items-center justify-center">
                 <div className="text-center">
                   <div className="text-hero font-black text-[#00ffcc]/20 mb-2">
                     {step.number}

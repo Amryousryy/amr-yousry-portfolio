@@ -32,31 +32,28 @@ export default function TechStackSection() {
 
   return (
     <section ref={sectionRef} className="relative min-h-screen w-full bg-[#050508] section-padding">
-      {/* Left vertical text */}
-      <div className="absolute left-8 top-1/2 -translate-y-1/2 hidden lg:block">
-        <div className="writing-vertical text-mono text-[#00ffcc]/20 text-[10px] tracking-[0.3em]">
-          STACK
-        </div>
-      </div>
+      {/* Frame Logic - Timeline markers */}
+      <div className="absolute left-8 top-0 bottom-0 w-[1px] bg-[#00ffcc]/10 hidden lg:block" />
+      <div className="absolute right-8 top-0 bottom-0 w-[1px] bg-[#00ffcc]/10 hidden lg:block" />
 
       <div className="container mx-auto px-6 relative z-10">
-        {/* Section header */}
+        {/* Section header - Frame Logic */}
         <div className="mb-20 reveal">
-          <div className="text-mono text-[#00ffcc]/40 text-[12px] tracking-widest mb-2">05</div>
-          <div className="w-24 h-[1px] bg-[#00ffcc]/30 mb-8" />
+          <div className="frame-number mb-2">FRAME 06</div>
+          <div className="frame-divider" />
           <h2 className="text-section text-white">
-            Tech
+            <span className="frame-label">TOOLKIT</span>
             <br />
-            <span className="text-[#00ffcc]">Stack</span>
+            Tech Stack
           </h2>
         </div>
 
-        {/* STR8FIRE partner grid style */}
+        {/* Frame-styled tech grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {TECH_STACK.map((group, i) => (
             <div
               key={i}
-              className="tech-card reveal bg-[#0a0a0f] border border-white/5 p-8 hover:border-[#00ffcc]/30 transition-all duration-500"
+              className="tech-card reveal bg-[#0a0a0f] frame-border p-8 hover:border-[#00ffcc]/30 transition-all duration-500"
             >
               <div className="text-mono text-[#00ffcc]/60 text-[10px] tracking-[0.2em] mb-6">
                 {group.category}

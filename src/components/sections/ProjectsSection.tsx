@@ -62,22 +62,19 @@ export default function ProjectsSection() {
 
   return (
     <section ref={sectionRef} className="relative min-h-screen w-full bg-[#050508] section-padding">
-      {/* Left vertical text */}
-      <div className="absolute left-8 top-1/2 -translate-y-1/2 hidden lg:block">
-        <div className="writing-vertical text-mono text-[#00ffcc]/20 text-[10px] tracking-[0.3em]">
-          PROJECTS
-        </div>
-      </div>
+      {/* Frame Logic - Timeline markers */}
+      <div className="absolute left-8 top-0 bottom-0 w-[1px] bg-[#00ffcc]/10 hidden lg:block" />
+      <div className="absolute right-8 top-0 bottom-0 w-[1px] bg-[#00ffcc]/10 hidden lg:block" />
 
       <div className="container mx-auto px-6 relative z-10">
-        {/* Section header */}
+        {/* Section header - Frame Logic */}
         <div className="mb-20 reveal">
-          <div className="text-mono text-[#00ffcc]/40 text-[12px] tracking-widest mb-2">03</div>
-          <div className="w-24 h-[1px] bg-[#00ffcc]/30 mb-8" />
+          <div className="frame-number mb-2">FRAME 03</div>
+          <div className="frame-divider" />
           <h2 className="text-section text-white">
-            Selected
+            <span className="frame-label">SELECTS</span>
             <br />
-            <span className="text-[#00ffcc]">Work</span>
+            Featured Work
           </h2>
         </div>
 
@@ -87,7 +84,7 @@ export default function ProjectsSection() {
             <a
               key={i}
               href={`/projects/${project.slug}`}
-              className="project-card reveal group relative aspect-video bg-[#0a0a0f] overflow-hidden border border-white/5 hover:border-[#00ffcc]/30 transition-all duration-500"
+              className="project-card reveal group relative aspect-video bg-[#0a0a0f] overflow-hidden frame-border hover:border-[#00ffcc]/30 transition-all duration-500"
               style={{ transitionDelay: `${i * 150}ms` }}
             >
               {/* Thumbnail */}

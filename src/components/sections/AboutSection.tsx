@@ -25,30 +25,34 @@ export default function AboutSection() {
       ref={sectionRef}
       className="relative min-h-screen w-full flex items-center justify-center bg-[#050508] section-padding"
     >
-      {/* STR8FIRE inspired vertical text */}
-      <div className="absolute left-8 top-1/2 -translate-y-1/2 hidden lg:block">
-        <div className="writing-vertical text-mono text-[#00ffcc]/20 text-[10px] tracking-[0.3em]">
-          ABOUT
+      {/* Frame Logic - Timeline markers */}
+      <div className="absolute left-8 top-0 bottom-0 w-[1px] bg-[#00ffcc]/10 hidden lg:block" />
+      <div className="absolute right-8 top-0 bottom-0 w-[1px] bg-[#00ffcc]/10 hidden lg:block" />
+
+      {/* Right vertical text */}
+      <div className="absolute right-8 top-1/2 -translate-y-1/2 hidden lg:block">
+        <div className="writing-vertical text-mono text-white/20 text-[10px] tracking-[0.3em]">
+          STRATEGY
         </div>
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
-        {/* Section number - STR8FIRE style */}
+        {/* Section header - Frame Logic */}
         <div className="mb-12 reveal">
-          <div className="text-mono text-white/20 text-[12px] tracking-widest mb-2">01</div>
-          <div className="w-24 h-[1px] bg-[#00ffcc]/30" />
+          <div className="frame-number mb-2">FRAME 04</div>
+          <div className="frame-divider" />
+          <h2 className="text-section text-white mb-8">
+            <span className="frame-label">PROFILE</span>
+            <br />
+            Creative Strategist
+            <br />
+            <span className="text-[#00ffcc]">& Filmmaker</span>
+          </h2>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left: Text content */}
           <div className="reveal">
-            <h2 className="text-section text-white mb-8">
-              Creative<br />
-              <span className="text-[#00ffcc]">Strategist</span>
-              <br />
-              & Filmmaker
-            </h2>
-
             <div className="w-16 h-[1px] bg-[#00ffcc]/40 mb-8" />
 
             <p className="text-lg text-white/60 leading-relaxed mb-6">
@@ -118,13 +122,6 @@ export default function AboutSection() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Right vertical text */}
-      <div className="absolute right-8 top-1/2 -translate-y-1/2 hidden lg:block">
-        <div className="writing-vertical text-mono text-white/20 text-[10px] tracking-[0.3em]">
-          STRATEGY
         </div>
       </div>
     </section>
