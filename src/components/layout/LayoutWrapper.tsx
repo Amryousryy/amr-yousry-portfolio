@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import FloatingCTA from "@/components/ui/FloatingCTA";
-import LoadingScreen from "@/components/ui/LoadingScreen";
+import LoadingScreen from "@/components/ui/PremiumLoadingScreen";
 import "@/styles/pixel-system.css";
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {

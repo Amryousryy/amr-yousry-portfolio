@@ -1,188 +1,195 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { SettingsService } from "@/lib/api-client";
-import { ArrowRight } from "lucide-react";
+import { useRef, useEffect } from "react";
 
-interface ServiceCard {
-  title: string | { en: string; ar?: string };
-  description: string | { en: string; ar?: string };
-  icon?: string;
-}
-
-const DEFAULT_SERVICES: ServiceCard[] = [
+const SERVICES = [
   {
+    number: "01",
     title: "Video Editing",
-    description: "Turn raw footage into scroll-stopping content that converts viewers into buyers. Every cut serves a purpose.",
-    icon: "play-circle",
+    subtitle: "TURNING RAW INTO REEL",
+    description: "Cinematic edits that stop the scroll and drive action. From raw footage to a story that sells.",
+    features: [
+      "Short-form content (Reels, TikTok, YouTube Shorts)",
+      "Brand films & commercial edits",
+      "Documentary & event coverage",
+      "Color grading & sound design",
+    ],
+    icon: (
+      <svg viewBox="0 0 32 32" className="w-12 h-12">
+        <rect x="4" y="8" width="24" height="16" fill="#00ffcc" rx="2" />
+        <rect x="8" y="12" width="12" height="8" fill="#050508" />
+        <circle cx="24" cy="10" r="2" fill="#050508" />
+      </svg>
+    ),
   },
   {
+    number: "02",
     title: "Motion Design",
-    description: "Animated graphics that grab attention and hold it across every platform—from reels to presentations.",
-    icon: "sparkles",
+    subtitle: "MOTION THAT GRABS",
+    description: "Animated logos, kinetic typography, and motion graphics that make your brand impossible to ignore.",
+    features: [
+      "Logo animation & brand intros",
+      "Kinetic typography videos",
+      "UI/UX motion for apps & websites",
+      "Explainer animations",
+    ],
+    icon: (
+      <svg viewBox="0 0 32 32" className="w-12 h-12">
+        <rect x="4" y="4" width="24" height="24" fill="#00ffcc" rx="2" />
+        <rect x="8" y="8" width="6" height="6" fill="#050508" />
+        <rect x="16" y="8" width="4" height="6" fill="#050508" />
+        <rect x="22" y="8" width="4" height="6" fill="#050508" />
+        <rect x="8" y="16" width="4" height="6" fill="#050508" />
+        <rect x="14" y="16" width="6" height="6" fill="#050508" />
+        <rect x="22" y="16" width="4" height="6" fill="#050508" />
+      </svg>
+    ),
   },
   {
+    number: "03",
     title: "Content Strategy",
-    description: "Strategic video content that aligns with your brand voice and drives measurable business growth.",
-    icon: "target",
+    subtitle: "DATA-DRIVEN GROWTH",
+    description: "Data-driven content plans that grow your audience and turn followers into paying customers.",
+    features: [
+      "Monthly content calendar planning",
+      "Platform-specific content (IG, TikTok, YouTube)",
+      "Content audit & performance analysis",
+      "Scripting & creative direction",
+    ],
+    icon: (
+      <svg viewBox="0 0 32 32" className="w-12 h-12">
+        <rect x="4" y="4" width="24" height="24" fill="#00ffcc" rx="2" />
+        <circle cx="16" cy="16" r="8" fill="#050508" />
+        <circle cx="16" cy="16" r="4" fill="#00ffcc" />
+      </svg>
+    ),
   },
   {
-    title: "UGC Production",
-    description: "Authentic creator-style content that builds trust and drives conversions for high-ticket offers.",
-    icon: "users",
+    number: "04",
+    title: "Brand Storytelling",
+    subtitle: "NARRATIVE THAT SELLS",
+    description: "Full brand narrative — from concept to final cut. I help brands find their voice and tell it cinematically.",
+    features: [
+      "Brand documentary films",
+      "Founder story videos",
+      "Company culture content",
+      "Campaign creative direction",
+    ],
+    icon: (
+      <svg viewBox="0 0 32 32" className="w-12 h-12">
+        <rect x="2" y="6" width="28" height="20" fill="#00ffcc" rx="2" />
+        <rect x="6" y="10" width="20" height="12" fill="#050508" />
+        <rect x="10" y="2" width="12" height="4" fill="#00ffcc" />
+      </svg>
+    ),
   },
 ];
 
-function ServiceIcon({ name, className }: { name: string; className?: string }) {
-  const iconMap: Record<string, React.ReactNode> = {
-    "play-circle": (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-        <circle cx="12" cy="12" r="10" />
-        <polygon points="10,8 16,12 10,16" fill="currentColor" stroke="none" />
-      </svg>
-    ),
-    "sparkles": (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-        <path d="M12 3L13.5 8.5L19 10L13.5 11.5L12 17L10.5 11.5L5 10L10.5 8.5L12 3Z" />
-        <path d="M5 3L5.5 5L7 5.5L5.5 6L5 8L4.5 6L3 5.5L4.5 5L5 3Z" />
-        <path d="M19 17L19.3 18.2L20.5 18.5L19.3 19L19 20.2L18.7 19L17.5 18.7L18.7 18.2L19 17Z" />
-      </svg>
-    ),
-    "target": (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-        <circle cx="12" cy="12" r="10" />
-        <circle cx="12" cy="12" r="6" />
-        <circle cx="12" cy="12" r="2" />
-      </svg>
-    ),
-    "users": (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-      </svg>
-    ),
-    "default": (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-        <rect x="3" y="3" width="18" height="18" rx="2" />
-        <path d="M9 9L15 15" />
-        <path d="M15 9L9 15" />
-      </svg>
-    ),
-  };
+export default function ServicesSection() {
+  const sectionRef = useRef<HTMLDivElement>(null);
 
-  return iconMap[name] || iconMap["default"];
-}
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!sectionRef.current) return;
+      const cards = sectionRef.current.querySelectorAll(".service-card");
+      cards.forEach((card) => {
+        const rect = card.getBoundingClientRect();
+        const isVisible = rect.top < window.innerHeight * 0.8;
+        if (isVisible) {
+          card.classList.add("visible");
+        }
+      });
+    };
 
-interface ServiceCardProps {
-  service: {
-    title: string | { en: string; ar?: string } | undefined;
-    description: string | { en: string; ar?: string } | undefined;
-    icon?: string;
-  };
-  index: number;
-  isPrimary?: boolean;
-}
-
-function ServiceCard({ service, index, isPrimary }: ServiceCardProps) {
-  const icon = service.icon || "default";
-  const iconClass = "w-8 h-8 text-accent";
-  
-  const getTitle = (title: typeof service.title) => {
-    if (!title) return "Service";
-    if (typeof title === "string") return title;
-    return title.en || "Service";
-  };
-  
-  const getDescription = (desc: typeof service.description) => {
-    if (!desc) return "";
-    if (typeof desc === "string") return desc;
-    return desc.en || "";
-  };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <div 
-      className={`
-        relative p-8 border border-white/5 
-        ${isPrimary ? "bg-accent/5 lg:col-span-2 lg:row-span-1" : "bg-zinc-900/30"}
-        hover:border-accent/30 transition-all duration-500 group will-change-transform
-      `}
-    >
-      <div className="absolute inset-0 bg-gradient-to-br from-accent/0 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      
-      <div className="relative z-10">
-        <div className="mb-6">
-          <ServiceIcon name={icon} className={iconClass} />
-        </div>
-        
-        <h3 className="text-xl md:text-2xl font-bold text-white mb-4 tracking-tight">
-          {getTitle(service.title)}
-        </h3>
-        
-        <p className="text-zinc-400 text-sm md:text-base leading-relaxed mb-6">
-          {getDescription(service.description)}
-        </p>
-        
-        <div className="flex items-center text-accent text-xs font-semibold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <span>Learn more</span>
-          <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+    <section ref={sectionRef} className="relative min-h-screen w-full bg-[#050508] section-padding">
+      {/* Left vertical text */}
+      <div className="absolute left-8 top-1/2 -translate-y-1/2 hidden lg:block">
+        <div className="writing-vertical text-mono text-[#00ffcc]/20 text-[10px] tracking-[0.3em]">
+          SERVICES
         </div>
       </div>
-    </div>
-  );
-}
 
-export default function ServicesSection() {
-  const { data: contentResponse, error, isLoading } = useQuery({
-    queryKey: ["site-content"],
-    queryFn: () => SettingsService.getContent(),
-  });
-
-  const servicesCards = contentResponse?.data?.servicesCards?.length
-    ? contentResponse.data.servicesCards
-    : DEFAULT_SERVICES;
-
-  const sectionTitle = contentResponse?.data?.servicesTitle || "What I Deliver";
-  const sectionSubtitle = contentResponse?.data?.servicesSubtitle || "Premium video content that drives real business results.";
-
-  return (
-    <section className="py-24 md:py-32 bg-[#050508] relative">
-      <div className="container mx-auto px-6">
-        <div className="max-w-2xl mb-16">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 tracking-tight">
-            {sectionTitle}
+      <div className="container mx-auto px-6 relative z-10">
+        {/* Section header - STR8FIRE style */}
+        <div className="mb-20 reveal">
+          <div className="text-mono text-[#00ffcc]/40 text-[12px] tracking-widest mb-2">02</div>
+          <div className="w-24 h-[1px] bg-[#00ffcc]/30 mb-8" />
+          <h2 className="text-section text-white">
+            What I
+            <br />
+            <span className="text-[#00ffcc]">Deliver</span>
           </h2>
-          <p className="text-zinc-400 text-lg leading-relaxed">
-            {sectionSubtitle}
-          </p>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {servicesCards.map((service: ServiceCard, i: number) => (
-            <ServiceCard 
-              key={i} 
-              service={service} 
-              index={i}
-              isPrimary={i === 0}
-            />
+
+        {/* Services grid - Numbered like STR8FIRE */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {SERVICES.map((service, i) => (
+            <div
+              key={i}
+              className="service-card reveal group relative bg-[#0a0a0f] p-8 md:p-12 border border-white/5 hover:border-[#00ffcc]/30 transition-all duration-500"
+            >
+              {/* Service number - HUGE background */}
+              <div className="absolute -top-4 -right-4 text-[120px] font-black text-white/[0.03] leading-none pointer-events-none">
+                {service.number}
+              </div>
+
+              <div className="relative z-10">
+                {/* Icon */}
+                <div className="mb-6 text-[#00ffcc]">
+                  {service.icon}
+                </div>
+
+                {/* Subtitle */}
+                <div className="text-mono text-[#00ffcc]/60 text-[10px] tracking-[0.2em] mb-2">
+                  {service.subtitle}
+                </div>
+
+                {/* Title */}
+                <h3 className="text-display text-white mb-4">
+                  {service.title}
+                </h3>
+
+                {/* Description */}
+                <p className="text-white/60 leading-relaxed mb-6">
+                  {service.description}
+                </p>
+
+                {/* Features */}
+                <div className="space-y-3 mb-6">
+                  {service.features.map((feature, j) => (
+                    <div key={j} className="flex items-center gap-3 text-sm text-white/70">
+                      <span className="text-[#00ffcc] text-[10px]">◆</span>
+                      <span>{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA */}
+                <a
+                  href="#projects"
+                  className="inline-flex items-center text-[#00ffcc] text-mono text-[11px] tracking-wider hover:text-white transition-colors duration-300 group"
+                >
+                  <span>Learn more</span>
+                  <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </a>
+              </div>
+            </div>
           ))}
         </div>
-        
-        <div className="mt-16 pt-8 border-t border-white/5">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-            <div>
-              <p className="text-white text-lg font-medium mb-2">Ready to elevate your content?</p>
-              <p className="text-zinc-400 text-sm">Let's discuss your project and create something exceptional.</p>
-            </div>
-            <a 
-              href="#contact"
-              className="inline-flex items-center px-8 py-4 bg-accent text-background font-bold text-sm uppercase tracking-wider hover:bg-accent/90 transition-colors"
-            >
-              Start a Project
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </a>
-          </div>
+      </div>
+
+      {/* Right vertical text */}
+      <div className="absolute right-8 top-1/2 -translate-y-1/2 hidden lg:block">
+        <div className="writing-vertical text-mono text-white/20 text-[10px] tracking-[0.3em]">
+          EXPERTISE
         </div>
       </div>
     </section>

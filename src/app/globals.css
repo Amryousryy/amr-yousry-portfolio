@@ -1,11 +1,33 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0A0A0F;
-  --foreground: #FFFFFF;
+  --background: #050508;
+  --foreground: #ffffff;
   --primary: #2D1B69;
   --secondary: #6C4AB6;
   --accent: #00F5D4;
+  
+  /* Design System - Surface Layering */
+  --surface-base: #050508;
+  --surface-elevated: #0a0a0f;
+  --surface-premium: rgba(0, 245, 212, 0.05);
+  --surface-glass: rgba(255, 255, 255, 0.05);
+  
+  /* Design System - Text Hierarchy */
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --text-muted: rgba(255, 255, 255, 0.3);
+  --text-accent: #00F5D4;
+  
+  /* Design System - Motion */
+  --duration-fast: 300ms;
+  --duration-normal: 600ms;
+  --duration-slow: 1200ms;
+  --duration-cinematic: 2000ms;
+  
+  /* Design System - Glow */
+  --glow-accent: 0 0 30px rgba(0, 245, 212, 0.3);
+  --glow-accent-strong: 0 0 50px rgba(0, 245, 212, 0.5);
 }
 
 @theme inline {
@@ -19,7 +41,8 @@
   --font-display: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
   --font-pixel: var(--font-vt323), monospace;
   --font-press-start: var(--font-press-start), monospace;
-
+  --font-mono: var(--font-jetbrains-mono), monospace;
+  
   --animate-glitch: glitch 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
   --animate-spin-slow: spin 3s linear infinite;
 }
@@ -35,15 +58,44 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
 }
 
-.pixel-border {
-  border: 2px solid var(--accent);
-  box-shadow: 4px 4px 0px 0px var(--primary);
+/* Typography Scale - Editorial Feel */
+.text-hero {
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
 }
 
-.pixel-text {
-  font-family: var(--font-pixel);
-  letter-spacing: 0.1em;
+.text-display {
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.text-section {
+  font-size: clamp(2rem, 3vw, 3.5rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
+}
+
+.text-mono {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* Pixel Border Enhancement */
+.pixel-border {
+  border: 2px solid var(--accent);
+  box-shadow: 4px 4px 0 0 var(--primary);
+}
+
+.pixel-border-enhanced {
+  border: 2px solid var(--accent);
+  box-shadow: 4px 4px 0 0 var(--accent), 8px 8px 0 0 rgba(0, 245, 212, 0.3);
 }
 
 /* Focus styles for accessibility - single source of truth */
@@ -112,24 +164,7 @@ h1, h2, h3, h4, h5, h6 {
   90% { transform: translate(-2%, -2%); }
 }
 
-/* Pixel Border Enhancement */
-.pixel-border-enhanced {
-  border: 2px solid var(--accent);
-  box-shadow: 4px 4px 0 0 var(--accent), 8px 8px 0 0 rgba(0, 245, 212, 0.3);
-}
-
-/* Writing Vertical */
-.writing-vertical {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-}
-
-/* Film Frame */
-.film-frame {
-  background: linear-gradient(180deg, #1a1a2e 0%, #0a0a0f 100%);
-}
-
-/* Scale animation for cursor click */
+/* Premium Animations */
 @keyframes scale-in {
   0% { transform: scale(0); opacity: 1; }
   100% { transform: scale(2); opacity: 0; }
@@ -187,6 +222,17 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* Writing Vertical */
+.writing-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+/* Film Frame */
+.film-frame {
+  background: linear-gradient(180deg, #1a1a2e 0%, #0a0a0f 100%);
+}
+
 /* Screen reader only class */
 .sr-only {
   position: absolute;
@@ -198,4 +244,41 @@ h1, h2, h3, h4, h5, h6 {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* Premium Section Spacing */
+.section-padding {
+  padding-top: clamp(4rem, 10vh, 8rem);
+  padding-bottom: clamp(4rem, 10vh, 8rem);
+}
+
+/* Cinematic Reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity var(--duration-normal) ease, transform var(--duration-normal) ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Glow Effects */
+.glow-text {
+  text-shadow: var(--glow-accent);
+}
+
+.glow-border {
+  box-shadow: var(--glow-accent);
+}
+
+/* Premium Hover */
+.premium-hover {
+  transition: all var(--duration-fast) ease;
+}
+
+.premium-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--glow-accent-strong);
 }

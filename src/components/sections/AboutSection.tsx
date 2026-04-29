@@ -1,63 +1,132 @@
 "use client";
 
-const skills = [
-  { name: 'Premiere Pro', level: 95 },
-  { name: 'After Effects', level: 90 },
-  { name: 'DaVinci Resolve', level: 85 },
-  { name: 'Cinema 4D', level: 75 },
-];
+import { useRef, useEffect } from "react";
 
-const AboutSection = () => {
+export default function AboutSection() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!sectionRef.current) return;
+      const rect = sectionRef.current.getBoundingClientRect();
+      const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+      if (isVisible) {
+        sectionRef.current.classList.add("visible");
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <section className="py-24 bg-[#050508] relative overflow-hidden">
-      <div className="container mx-auto px-6">
-        <div className="flex flex-col lg:flex-row gap-20 items-center">
-          <div className="flex-1">
-            <div className="pixel-box p-2 inline-block mb-8">
-              <div className="w-64 h-80 bg-zinc-800 grayscale hover:grayscale-0 transition-all duration-500 overflow-hidden relative">
-                <div className="absolute inset-0 border-4 border-[#050508] pointer-events-none" />
-                {/* Placeholder for photo */}
-                <div className="flex items-center justify-center h-full text-zinc-600 font-mono text-xs uppercase">
-                  [ PHOTO_SCAN ]
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex-[1.5]">
-            <h2 
-              className="text-3xl text-teal-400 mb-8"
-              style={{ fontFamily: "'Press Start 2P', monospace" }}
-            >
-              ABOUT THE <span className="text-white">DIRECTOR</span>
+    <section
+      ref={sectionRef}
+      className="relative min-h-screen w-full flex items-center justify-center bg-[#050508] section-padding"
+    >
+      {/* STR8FIRE inspired vertical text */}
+      <div className="absolute left-8 top-1/2 -translate-y-1/2 hidden lg:block">
+        <div className="writing-vertical text-mono text-[#00ffcc]/20 text-[10px] tracking-[0.3em]">
+          ABOUT
+        </div>
+      </div>
+
+      <div className="container mx-auto px-6 relative z-10">
+        {/* Section number - STR8FIRE style */}
+        <div className="mb-12 reveal">
+          <div className="text-mono text-white/20 text-[12px] tracking-widest mb-2">01</div>
+          <div className="w-24 h-[1px] bg-[#00ffcc]/30" />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          {/* Left: Text content */}
+          <div className="reveal">
+            <h2 className="text-section text-white mb-8">
+              Creative<br />
+              <span className="text-[#00ffcc]">Strategist</span>
+              <br />
+              & Filmmaker
             </h2>
-            <p className="text-zinc-400 text-lg mb-12 leading-relaxed">
-              Based in Cairo, I specialize in crafting visual experiences that bridge the gap between 
-              traditional filmmaking and modern digital trends. With over 3 years of experience and 
-              50+ successful projects, I bring a unique "pixel-perfect" attention to detail to every frame.
+
+            <div className="w-16 h-[1px] bg-[#00ffcc]/40 mb-8" />
+
+            <p className="text-lg text-white/60 leading-relaxed mb-6">
+              I don't just edit videos — I craft visual stories that convert viewers into
+              loyal customers. Every frame serves a purpose: to stop the scroll,
+              evoke emotion, and drive action.
             </p>
-            
-            <div className="space-y-6">
-              {skills.map((skill) => (
-                <div key={skill.name}>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-xs text-white uppercase font-mono tracking-widest">{skill.name}</span>
-                    <span className="text-xs text-teal-400 font-mono">{skill.level}%</span>
-                  </div>
-                  <div className="h-4 bg-zinc-900 border border-zinc-800 p-1">
-                    <div 
-                      className="h-full bg-teal-500"
-                      style={{ width: `${skill.level}%` }}
-                    />
-                  </div>
+
+            <p className="text-lg text-white/60 leading-relaxed mb-8">
+              With 3+ years in the industry and 50+ projects delivered,
+              I've helped brands across Egypt and Saudi Arabia scale their content
+              from forgettable to unforgettable.
+            </p>
+
+            <div className="flex flex-wrap gap-4">
+              {[
+                { label: "Video Editing", icon: "▶" },
+                { label: "Motion Design", icon: "◆" },
+                { label: "Content Strategy", icon: "★" },
+              ].map((skill, i) => (
+                <div
+                  key={i}
+                  className="px-6 py-3 border border-[#00ffcc]/20 bg-[#00ffcc]/5 text-[#00ffcc] text-mono text-[11px] tracking-wider hover:bg-[#00ffcc]/10 transition-colors duration-300"
+                >
+                  <span className="mr-2">{skill.icon}</span>
+                  {skill.label}
                 </div>
               ))}
             </div>
           </div>
+
+          {/* Right: Stats & Visual */}
+          <div className="reveal">
+            <div className="relative">
+              {/* Cinematic frame */}
+              <div className="absolute -inset-4 border border-[#00ffcc]/10 pointer-events-none" />
+              <div className="absolute -top-4 -left-4 w-16 h-[1px] bg-[#00ffcc]/20" />
+              <div className="absolute -top-4 -left-4 w-[1px] h-16 bg-[#00ffcc]/20" />
+
+              <div className="bg-[#0a0a0f] p-8 md:p-12 border border-white/5">
+                <div className="text-mono text-[#00ffcc]/40 text-[10px] mb-6 tracking-widest">
+                  POSITIONING
+                </div>
+
+                <h3 className="text-display text-white mb-6">
+                  Your Content<br />
+                  <span className="text-[#00ffcc]">Strategist</span>
+                </h3>
+
+                <div className="space-y-6">
+                  {[
+                    { number: "50+", label: "Projects Delivered", desc: "Across industries" },
+                    { number: "3+", label: "Years Experience", desc: "In video production" },
+                    { number: "1M+", label: "Views Generated", desc: "Across campaigns" },
+                  ].map((stat, i) => (
+                    <div key={i} className="flex items-end gap-4 pb-6 border-b border-white/5 last:border-0">
+                      <div className="text-hero text-[#00ffcc]/80 font-black leading-none">
+                        {stat.number}
+                      </div>
+                      <div>
+                        <div className="text-white font-semibold">{stat.label}</div>
+                        <div className="text-mono text-white/30 text-[10px]">{stat.desc}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right vertical text */}
+      <div className="absolute right-8 top-1/2 -translate-y-1/2 hidden lg:block">
+        <div className="writing-vertical text-mono text-white/20 text-[10px] tracking-[0.3em]">
+          STRATEGY
         </div>
       </div>
     </section>
   );
-};
-
-export default AboutSection;
+}
