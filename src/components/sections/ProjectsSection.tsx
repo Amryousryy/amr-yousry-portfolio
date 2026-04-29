@@ -61,7 +61,7 @@ export default function ProjectsSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative min-h-screen w-full bg-[#050508] section-padding">
+    <section ref={sectionRef} data-frame="03" className="relative min-h-screen w-full bg-[#050508] section-padding">
       {/* Frame Logic - Timeline markers */}
       <div className="absolute left-8 top-0 bottom-0 w-[1px] bg-[#00ffcc]/10 hidden lg:block" />
       <div className="absolute right-8 top-0 bottom-0 w-[1px] bg-[#00ffcc]/10 hidden lg:block" />
@@ -84,7 +84,7 @@ export default function ProjectsSection() {
             <a
               key={i}
               href={`/projects/${project.slug}`}
-              className="project-card reveal group relative aspect-video bg-[#0a0a0f] overflow-hidden frame-border hover:border-[#00ffcc]/30 transition-all duration-500"
+              className="project-card reveal group relative aspect-video bg-[#0a0a0f] overflow-hidden border border-white/5 hover:border-[#00ffcc]/30 transition-all duration-500"
               style={{ transitionDelay: `${i * 150}ms` }}
             >
               {/* Thumbnail */}

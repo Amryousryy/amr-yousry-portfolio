@@ -117,18 +117,18 @@ h1, h2, h3, h4, h5, h6 {
 /* Frame Number - Timeline markers */
 .frame-number {
   font-family: var(--font-mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.2em;
-  color: rgba(0, 245, 212, 0.4);
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  color: rgba(0, 245, 212, 0.6);
   text-transform: uppercase;
 }
 
 /* Frame Label - Section labels */
 .frame-label {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
-  color: rgba(0, 245, 212, 0.6);
+  font-size: 0.875rem;
+  letter-spacing: 0.2em;
+  color: rgba(0, 245, 212, 0.8);
   text-transform: uppercase;
 }
 
@@ -143,8 +143,33 @@ h1, h2, h3, h4, h5, h6 {
 .frame-divider {
   width: 100%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0, 245, 212, 0.3), transparent);
-  margin: 2rem 0;
+  background: linear-gradient(90deg, transparent, rgba(0, 245, 212, 0.5), transparent);
+  margin: 1.5rem 0;
+}
+
+/* Frame Border - Section-level only (not cards) */
+.frame-border {
+  border: 2px solid rgba(0, 245, 212, 0.2);
+  position: relative;
+}
+
+.frame-border::before,
+.frame-border::after {
+  content: '';
+  position: absolute;
+  background: #00ffcc;
+  width: 8px;
+  height: 8px;
+}
+
+.frame-border::before {
+  top: -4px;
+  left: -4px;
+}
+
+.frame-border::after {
+  bottom: -4px;
+  right: -4px;
 }
 
 /* Shutter Transition */

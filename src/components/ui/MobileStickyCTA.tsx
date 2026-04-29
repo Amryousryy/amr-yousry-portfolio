@@ -22,7 +22,7 @@ export default function MobileStickyCTA() {
         isVisible ? "translate-y-0" : "translate-y-full"
       }`}
     >
-      <div className="frame-border bg-[#050508]/95 backdrop-blur-sm p-4">
+      <div className="border-t border-[#00ffcc]/20 bg-[#050508]/95 backdrop-blur-sm p-4">
         <div className="flex gap-3">
           <Link
             href="/contact"

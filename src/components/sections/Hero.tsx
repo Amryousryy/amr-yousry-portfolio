@@ -21,6 +21,7 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
+      data-frame="01"
       className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[#050508]"
     >
       {/* Background grid - frame timing marks */}

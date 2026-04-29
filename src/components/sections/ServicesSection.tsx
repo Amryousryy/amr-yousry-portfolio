@@ -107,7 +107,7 @@ export default function ServicesSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative min-h-screen w-full bg-[#050508] section-padding">
+    <section ref={sectionRef} data-frame="02" className="relative min-h-screen w-full bg-[#050508] section-padding">
       {/* Frame Logic - Timeline markers */}
       <div className="absolute left-8 top-0 bottom-0 w-[1px] bg-[#00ffcc]/10 hidden lg:block" />
       <div className="absolute right-8 top-0 bottom-0 w-[1px] bg-[#00ffcc]/10 hidden lg:block" />
@@ -129,7 +129,7 @@ export default function ServicesSection() {
           {SERVICES.map((service, i) => (
             <div
               key={i}
-              className="service-card reveal group relative bg-[#0a0a0f] p-8 md:p-12 frame-border hover:border-[#00ffcc]/30 transition-all duration-500"
+              className="service-card reveal group relative bg-[#0a0a0f] p-8 md:p-12 border border-white/5 hover:border-[#00ffcc]/30 transition-all duration-500"
             >
               {/* Service number - HUGE background */}
               <div className="absolute -top-4 -right-4 text-[120px] font-black text-white/[0.03] leading-none pointer-events-none">

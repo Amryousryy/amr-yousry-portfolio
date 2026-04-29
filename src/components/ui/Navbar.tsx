@@ -38,12 +38,33 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: navLabels.home, href: "/" },
-    { name: navLabels.services, href: "/services" },
-    { name: navLabels.projects, href: "/projects" },
-    { name: navLabels.about, href: "/about" },
-    { name: navLabels.contact, href: "/contact" },
+    { name: navLabels.home, href: "/", frame: "01" },
+    { name: navLabels.services, href: "/services", frame: "02" },
+    { name: navLabels.projects, href: "/projects", frame: "03" },
+    { name: navLabels.about, href: "/about", frame: "04" },
+    { name: navLabels.contact, href: "/contact", frame: "05" },
   ];
+
+  const [activeFrame, setActiveFrame] = useState("01");
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = document.querySelectorAll("section[id]");
+      let current = "01";
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= window.innerHeight / 2) {
+          const frame = section.getAttribute("data-frame");
+          if (frame) current = frame;
+        }
+      });
+      setActiveFrame(current);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <nav 
@@ -71,19 +92,26 @@ export default function Navbar() {
 
         {/* Timeline-style nav - Frame Logic */}
         <div className="hidden md:flex items-center space-x-1">
-          {navLinks.map((link, i) => (
+          {navLinks.map((link) => (
             <div key={link.name} className="flex items-center">
               <Link
                 href={link.href}
-                className="relative text-[10px] font-bold uppercase tracking-[0.25em] hover:text-accent transition-colors duration-300 px-3 py-2 group"
+                className={`relative text-[10px] font-bold uppercase tracking-[0.25em] transition-colors duration-300 px-3 py-2 group ${
+                  activeFrame === link.frame ? "text-accent" : "hover:text-accent"
+                }`}
               >
-                <span className="frame-number !text-[0.6rem] !text-accent/40 !static !mb-1 block">
-                  {String(i + 1).padStart(2, '0')}
+                <span className={`frame-number !text-[0.6rem] !static !mb-1 block ${
+                  activeFrame === link.frame ? "!text-accent/80" : "!text-accent/40"
+                }`}>
+                  {link.frame}
                 </span>
                 {link.name}
+                {activeFrame === link.frame && (
+                  <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-accent" />
+                )}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full" />
               </Link>
-              {i < navLinks.length - 1 && (
+              {link.frame !== "05" && (
                 <div className="timeline-marker ml-1" />
               )}
             </div>
@@ -122,15 +150,19 @@ export default function Navbar() {
             >
               <X size={32} />
             </button>
-            {navLinks.map((link, i) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-3xl font-display font-bold uppercase tracking-tighter hover:text-accent transition-colors"
+                className={`text-3xl font-display font-bold uppercase tracking-tighter hover:text-accent transition-colors ${
+                  activeFrame === link.frame ? "text-accent" : ""
+                }`}
                 onClick={() => setIsOpen(false)}
               >
-                <span className="frame-number !text-accent/60 !text-[0.8rem] !static block mb-1">
-                  FRAME {String(i + 1).padStart(2, '0')}
+                <span className={`frame-number !static block mb-1 ${
+                  activeFrame === link.frame ? "!text-accent/80" : "!text-accent/60 !text-[0.8rem]"
+                }`}>
+                  FRAME {link.frame}
                 </span>
                 {link.name}
               </Link>

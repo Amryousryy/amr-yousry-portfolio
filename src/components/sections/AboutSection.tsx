@@ -23,6 +23,7 @@ export default function AboutSection() {
   return (
     <section
       ref={sectionRef}
+      data-frame="04"
       className="relative min-h-screen w-full flex items-center justify-center bg-[#050508] section-padding"
     >
       {/* Frame Logic - Timeline markers */}

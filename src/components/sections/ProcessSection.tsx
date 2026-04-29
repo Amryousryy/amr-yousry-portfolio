@@ -109,7 +109,7 @@ export default function ProcessSection() {
               </div>
 
               {/* Visual indicator */}
-              <div className="relative z-10 w-full md:w-64 aspect-square bg-[#0a0a0f] frame-border flex items-center justify-center">
+              <div className="relative z-10 w-full md:w-64 aspect-square bg-[#0a0a0f] border border-white/5 flex items-center justify-center">
                 <div className="text-center">
                   <div className="text-hero font-black text-[#00ffcc]/20 mb-2">
                     {step.number}
