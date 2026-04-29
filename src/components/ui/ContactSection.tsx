@@ -58,39 +58,86 @@ export default function ContactSection({ projectId, projectTitle }: ContactSecti
   };
 
   return (
-    <section id="contact" ref={sectionRef} className="py-24 md:py-32 bg-[#050508]">
+    <section id="contact" ref={sectionRef} data-frame="07" className="py-24 md:py-32 bg-[#050508]">
       <div className="container mx-auto px-6">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2
-            ref={headingRef}
-            className="text-4xl md:text-5xl font-bold text-white mb-4"
-          >
-            Ready to Scale Your Brand?
-          </h2>
-          <p className="text-foreground/60 text-lg mb-8">
-            Book a free 15-minute strategy call. I'll audit your current content and show you exactly how to improve it.
-          </p>
+        <div className="max-w-3xl mx-auto text-center">
+          {/* Frame Logic Header */}
+          <div className="mb-12">
+            <div className="frame-number mb-2">FRAME 07</div>
+            <div className="frame-divider" />
+            <h2
+              ref={headingRef}
+              className="text-hero font-black text-white mt-6 mb-6 tracking-tighter"
+            >
+              Ready to turn your<br />
+              <span className="text-[#00ffcc]">multimedia into growth?</span>
+            </h2>
+            <p className="text-display text-white/60 mb-8">
+              Book a free 15-minute strategy call to discuss your project and discover how I can help you scale.
+            </p>
+          </div>
 
-          {/* Primary CTA - Single strong action */}
-          <a
-            href="https://calendly.com/your-link"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full md:w-auto md:inline-block px-12 py-5 bg-[#00ffcc] text-[#050508] font-bold uppercase tracking-[0.2em] text-sm hover:shadow-[0_0_50px_rgba(0,245,212,0.5)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 mb-6"
-          >
-            Book Free Strategy Call
-          </a>
+          {/* CTA Hierarchy */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+            {/* Primary CTA */}
+            <a
+              href="/contact"
+              className="px-12 py-5 bg-[#00ffcc] text-[#050508] font-bold uppercase tracking-[0.15em] text-[11px] hover:bg-[#00ffcc]/90 transition-all duration-300"
+            >
+              Get a Quote
+            </a>
+
+            {/* Secondary CTA */}
+            <a
+              href="https://calendly.com/your-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-12 py-5 border border-[#00ffcc]/30 text-[#00ffcc] font-bold uppercase tracking-[0.15em] text-[11px] hover:bg-[#00ffcc]/10 transition-all duration-300"
+            >
+              Book Free Strategy Call
+            </a>
+          </div>
+
+          {/* Tertiary CTA */}
+          <div className="mb-8">
+            <a
+              href="/projects"
+              className="text-[#00ffcc]/60 text-[11px] uppercase tracking-[0.15em] hover:text-[#00ffcc] transition-colors"
+            >
+              View My Work
+            </a>
+          </div>
 
           {/* Urgency */}
-          <p className="text-[#00ffcc]/60 text-[10px] font-mono tracking-wider mb-8">
-            ⏳ Only 2 new projects accepted for May 2026
+          <p className="text-[#00ffcc]/60 text-[10px] font-mono tracking-wider mb-12">
+            Only 2 new projects accepted for May 2026
           </p>
 
-          {/* Alternative */}
+          {/* Trust Indicators - Frame-styled */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
+            {[
+              { value: "50M+", label: "Views", context: "Across campaigns" },
+              { value: "3.5X", label: "Avg ROI", context: "Increase proven" },
+              { value: "100+", label: "Brands", context: "Scaled to 6 figs" },
+            ].map((stat, i) => (
+              <div key={i} className="bg-[#0a0a0f] p-6 border border-white/5">
+                <div className="text-hero text-[#00ffcc] font-black mb-1">{stat.value}</div>
+                <div className="text-mono text-white/80 text-[10px] tracking-[0.15em] mb-1">{stat.label}</div>
+                <div className="text-mono text-white/30 text-[8px]">{stat.context}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Geographic Trust */}
+          <div className="text-mono text-white/30 text-[10px] tracking-wider mb-8">
+            TRUSTED IN EGYPT & SAUDI ARABIA
+          </div>
+
+          {/* Email Fallback */}
           <p className="text-foreground/40 text-sm">
-            Or email me directly at{" "}
-            <a href="mailto:hello@amryousry.com" className="text-[#00ffcc] hover:underline">
-              hello@amryousry.com
+            Prefer email?{" "}
+            <a href="mailto:amr@amryousry.com" className="text-[#00ffcc] hover:underline">
+              amr@amryousry.com
             </a>
           </p>
 

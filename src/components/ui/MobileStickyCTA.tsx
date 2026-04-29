@@ -30,12 +30,14 @@ export default function MobileStickyCTA() {
           >
             GET A QUOTE
           </Link>
-          <Link
-            href="/projects"
+          <a
+            href="https://calendly.com/your-link"
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex-1 border border-[#00ffcc]/30 text-[#00ffcc] text-center py-3 text-mono text-[11px] tracking-[0.15em] font-bold hover:bg-[#00ffcc]/10 transition-colors"
           >
-            VIEW WORK
-          </Link>
+            BOOK CALL
+          </a>
         </div>
         <div className="text-center mt-2">
           <span className="frame-number text-[8px]">FRAMED FOR CONVERSION</span>

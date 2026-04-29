@@ -155,44 +155,85 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
       {/* NAVIGATION + CTA */}
       <section className="section-padding border-t border-white/5">
         <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-            {/* Previous/Next Navigation */}
-            <div className="flex gap-6">
-              {prevProject && (
-                <Link
-                  href={`/projects/${prevProject.slug}`}
-                  className="text-left hover:text-[#00ffcc] transition-colors"
-                >
-                  <div className="frame-number text-[10px] mb-2">PREVIOUS</div>
-                  <div className="text-white/60">{prevProject.title}</div>
-                </Link>
-              )}
-              {nextProject && (
-                <Link
-                  href={`/projects/${nextProject.slug}`}
-                  className="text-right hover:text-[#00ffcc] transition-colors"
-                >
-                  <div className="frame-number text-[10px] mb-2">NEXT</div>
-                  <div className="text-white/60">{nextProject.title}</div>
-                </Link>
-              )}
-            </div>
-
-            {/* CTAs */}
-            <div className="flex gap-4">
-              <Link
-                href="/projects"
-                className="px-6 py-3 border border-[#00ffcc]/30 text-[#00ffcc] text-mono text-[11px] tracking-[0.15em] hover:bg-[#00ffcc]/10 transition-colors"
-              >
-                VIEW ALL WORK
-              </Link>
+          {/* CTA Hierarchy */}
+          <div className="text-center mb-12">
+            <h3 className="text-section text-white mb-6">
+              Ready to turn your <span className="text-[#00ffcc]">multimedia into growth?</span>
+            </h3>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+              {/* Primary CTA */}
               <Link
                 href="/contact"
-                className="px-6 py-3 bg-[#00ffcc] text-[#050508] text-mono text-[11px] tracking-[0.15em] font-bold hover:bg-[#00ffcc]/90 transition-colors"
+                className="px-12 py-5 bg-[#00ffcc] text-[#050508] font-bold uppercase tracking-[0.15em] text-[11px] hover:bg-[#00ffcc]/90 transition-all duration-300"
               >
-                GET A QUOTE
+                Get a Quote
+              </Link>
+
+              {/* Secondary CTA */}
+              <a
+                href="https://calendly.com/your-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-12 py-5 border border-[#00ffcc]/30 text-[#00ffcc] font-bold uppercase tracking-[0.15em] text-[11px] hover:bg-[#00ffcc]/10 transition-all duration-300"
+              >
+                Book Free Strategy Call
+              </a>
+            </div>
+
+            {/* Tertiary CTA */}
+            <div className="mb-8">
+              <Link
+                href="/projects"
+                className="text-[#00ffcc]/60 text-[11px] uppercase tracking-[0.15em] hover:text-[#00ffcc] transition-colors"
+              >
+                View My Work
               </Link>
             </div>
+
+            {/* Email Fallback */}
+            <p className="text-foreground/40 text-sm">
+              Prefer email?{" "}
+              <a href="mailto:amr@amryousry.com" className="text-[#00ffcc] hover:underline">
+                amr@amryousry.com
+              </a>
+            </p>
+          </div>
+
+          {/* Trust Indicators */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
+            {[
+              { value: "50M+", label: "Views", context: "Across campaigns" },
+              { value: "3.5X", label: "Avg ROI", context: "Increase proven" },
+              { value: "100+", label: "Brands", context: "Scaled to 6 figs" },
+            ].map((stat, i) => (
+              <div key={i} className="bg-[#0a0a0f] p-6 border border-white/5">
+                <div className="text-hero text-[#00ffcc] font-black mb-1">{stat.value}</div>
+                <div className="text-mono text-white/80 text-[10px] tracking-[0.15em] mb-1">{stat.label}</div>
+                <div className="text-mono text-white/30 text-[8px]">{stat.context}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Previous/Next Navigation */}
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-8 pt-8 border-t border-white/5">
+            {prevProject && (
+              <Link
+                href={`/projects/${prevProject.slug}`}
+                className="text-left hover:text-[#00ffcc] transition-colors"
+              >
+                <div className="frame-number text-[10px] mb-2">PREVIOUS</div>
+                <div className="text-white/60">{prevProject.title}</div>
+              </Link>
+            )}
+            {nextProject && (
+              <Link
+                href={`/projects/${nextProject.slug}`}
+                className="text-right hover:text-[#00ffcc] transition-colors"
+              >
+                <div className="frame-number text-[10px] mb-2">NEXT</div>
+                <div className="text-white/60">{nextProject.title}</div>
+              </Link>
+            )}
           </div>
         </div>
       </section>
