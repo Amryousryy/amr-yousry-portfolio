@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { animate, createAnimatable } from "animejs";
 
 interface ProjectCard3DProps {
@@ -16,8 +16,7 @@ export default function ProjectCard3D({ title, category, thumbnail, views, onCli
   const [isHovered, setIsHovered] = useState(false);
 
   // anime.js createAnimatable for smooth tilt (replaces GSAP)
-  const rotateXRef = useRef<ReturnType<typeof createAnimatable> | null>(null);
-  const rotateYRef = useRef<ReturnType<typeof createAnimatable> | null>(null);
+  const tiltRef = useRef<ReturnType<typeof createAnimatable> | null>(null);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!cardRef.current) return;
@@ -32,32 +31,32 @@ export default function ProjectCard3D({ title, category, thumbnail, views, onCli
     const rotateX = (y - centerY) / 10;
     const rotateY = (centerX - x) / 10;
 
-    // Initialize animatables on first use
-    if (!rotateXRef.current) {
-      rotateXRef.current = createAnimatable(cardRef.current, "rotateX", { duration: 300, ease: "outQuint" });
-    }
-    if (!rotateYRef.current) {
-      rotateYRef.current = createAnimatable(cardRef.current, "rotateY", { duration: 300, ease: "outQuint" });
+    // Initialize animatable on first use
+    if (!tiltRef.current) {
+      tiltRef.current = createAnimatable(cardRef.current, { rotateX: 0, rotateY: 0, duration: 300, ease: "outQuint" });
     }
 
     // Use anime.js createAnimatable for efficient tracking
-    if (rotateXRef.current) rotateXRef.current(rotateX);
-    if (rotateYRef.current) rotateYRef.current(rotateY);
+    if (tiltRef.current) {
+      tiltRef.current.rotateX(rotateX);
+      tiltRef.current.rotateY(rotateY);
+    }
   };
 
   const handleMouseLeave = () => {
     setIsHovered(false);
 
     // Revert to default position
-    if (rotateXRef.current) rotateXRef.current(0);
-    if (rotateYRef.current) rotateYRef.current(0);
+    if (tiltRef.current) {
+      tiltRef.current.rotateX(0);
+      tiltRef.current.rotateY(0);
+    }
   };
 
-  // Cleanup animatables on unmount
+  // Cleanup animatable on unmount
   useEffect(() => {
     return () => {
-      if (rotateXRef.current) rotateXRef.current.revert();
-      if (rotateYRef.current) rotateYRef.current.revert();
+      if (tiltRef.current) tiltRef.current.revert();
     };
   }, []);
 

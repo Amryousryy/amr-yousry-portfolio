@@ -128,7 +128,7 @@ export default function ServicesSection() {
         animate(validCards, {
           opacity: [0, 1],
           translateY: [60, 0],
-          rotate: (el, i) => [i % 2 === 0 ? -5 : 5, i % 2 === 0 ? -1 : 1],
+          rotate: (_el: any, i: number) => [i % 2 === 0 ? -5 : 5, i % 2 === 0 ? -1 : 1],
           delay: stagger(150),
           duration: 800,
           ease: "outQuint",

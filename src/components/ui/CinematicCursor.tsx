@@ -25,15 +25,13 @@ export default function CinematicCursor() {
 
     // Initialize anime.js animatables for cursor position
     if (cursorRef.current) {
-      cursorXRef.current = createAnimatable(cursorRef.current, "x", { duration: 200, ease: "outQuint" });
-      cursorYRef.current = createAnimatable(cursorRef.current, "y", { duration: 200, ease: "outQuint" });
+      cursorXRef.current = createAnimatable(cursorRef.current, { x: 0, y: 0, duration: 200, ease: "outQuint" });
     }
 
     // Initialize trail animatables
     trailRefs.current.forEach((trail, i) => {
       if (!trail) return;
-      trailRefsAnime.current[i] = createAnimatable(trail, "x", { duration: 200 + i * 50, ease: "outQuint" });
-      trailRefsAnime.current[i + 8] = createAnimatable(trail, "y", { duration: 200 + i * 50, ease: "outQuint" });
+      trailRefsAnime.current[i] = createAnimatable(trail, { x: 0, y: 0, duration: 200 + i * 50, ease: "outQuint" });
     });
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -44,12 +42,16 @@ export default function CinematicCursor() {
       currentPos.current = { x: clientX, y: clientY };
 
       // Use anime.js createAnimatable for smooth tracking
-      if (cursorXRef.current) cursorXRef.current(clientX);
-      if (cursorYRef.current) cursorYRef.current(clientY);
+      if (cursorXRef.current) {
+        cursorXRef.current.x(clientX);
+        cursorXRef.current.y(clientY);
+      }
 
-      trailRefsAnime.current.forEach((anim, i) => {
-        if (anim && i < 8) anim(clientX); // x positions
-        else if (anim) anim(clientY); // y positions
+      trailRefsAnime.current.forEach((anim) => {
+        if (anim) {
+          anim.x(clientX);
+          anim.y(clientY);
+        }
       });
     };
 
@@ -107,7 +109,6 @@ export default function CinematicCursor() {
 
       // Revert all anime.js animatables on cleanup
       if (cursorXRef.current) cursorXRef.current.revert();
-      if (cursorYRef.current) cursorYRef.current.revert();
       trailRefsAnime.current.forEach(anim => {
         if (anim) anim.revert();
       });
