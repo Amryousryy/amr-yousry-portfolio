@@ -8,10 +8,6 @@ import Hero from "@/components/sections/Hero";
 import { PreviewBanner, isPreviewMode } from "@/components/admin/PreviewBanner";
 import { SettingsService } from "@/lib/api-client";
 
-const FilmStripSection = dynamic(() => import("@/components/ui/FilmStripSection"), {
-  ssr: false,
-});
-
 const ServicesSection = dynamic(() => import("@/components/sections/ServicesSection"), {
   ssr: false,
 });
@@ -20,7 +16,7 @@ const TestimonialsSection = dynamic(() => import("@/components/ui/TestimonialsSe
   ssr: false,
 });
 
-const AboutSection = dynamic(() => import("@/components/ui/AboutSection"), {
+const AboutSection = dynamic(() => import("@/components/sections/AboutSection"), {
   ssr: false,
 });
 
@@ -58,7 +54,6 @@ export default function PreviewPage() {
       <SectionNarrator sections={["hero", "projects", "services", "testimonials", "about", "contact"]} />
       <Hero />
       <Marquee />
-      <FilmStripSection />
       <ServicesSection />
       <TestimonialsSection />
       <AboutSection />

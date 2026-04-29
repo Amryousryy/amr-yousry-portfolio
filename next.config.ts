@@ -48,7 +48,7 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    optimizePackageImports: ['three', '@react-three/fiber', '@react-three/drei', 'gsap', 'lenis'],
+    optimizePackageImports: ['framer-motion', 'lucide-react', '@tanstack/react-query', 'recharts'],
   },
   async headers() {
     return [

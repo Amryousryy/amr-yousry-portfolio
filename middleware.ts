@@ -1,11 +1,11 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
-function proxy(req: any) {
+function middleware(req: any) {
   return NextResponse.next();
 }
 
-export default withAuth(proxy, {
+export default withAuth(middleware, {
   callbacks: {
     authorized: ({ token }) => !!token,
   },
