@@ -273,6 +273,67 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
+/* === PIXEL SCROLLBAR === */
+/* Thin, functional scrollbar with accent color */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050508;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 204, 0.3);
+  border: 1px solid rgba(0, 255, 204, 0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 204, 0.5);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 255, 204, 0.3) #050508;
+}
+
+/* === TEXT SELECTION COLOR === */
+::selection {
+  background: rgba(0, 255, 204, 0.3);
+  color: #ffffff;
+}
+
+/* === SUBTLE TYPEWRITER POLISH (CSS-ONLY) === */
+/* Only apply to main headings, not every text element */
+.typewriter-reveal {
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid rgba(0, 255, 204, 0.5);
+  animation: typewriter 2s steps(20) 1s forwards, blink-caret 0.75s step-end infinite;
+  width: 0;
+}
+
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent; }
+  50% { border-color: rgba(0, 255, 204, 0.5); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typewriter-reveal {
+    animation: none;
+    width: 100%;
+    border-right: none;
+    white-space: normal;
+  }
+}
+
 /* Keep existing pixel borders for backward compatibility (admin pages) */
 .pixel-border {
   border: 2px solid var(--accent);
@@ -410,46 +471,24 @@ button:focus-visible {
   }
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
+/* Old scrollbar styles removed - replaced by pixel scrollbar above */
 
-::-webkit-scrollbar-track {
-  background: var(--background);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--primary);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--secondary);
-}
-
-/* Film Grain Overlay */
+/* Subtle Film Grain Overlay - Performance optimized */
 .film-grain {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 9999;
-  opacity: 0.03;
+  opacity: 0.02;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
-  animation: grain 0.5s steps(1) infinite;
+  animation: grain 8s steps(10) infinite;
 }
 
 @keyframes grain {
   0%, 100% { transform: translate(0, 0); }
-  10% { transform: translate(-2%, -2%); }
-  20% { transform: translate(2%, 2%); }
-  30% { transform: translate(-1%, 1%); }
-  40% { transform: translate(1%, -1%); }
-  50% { transform: translate(-2%, 2%); }
-  60% { transform: translate(2%, -2%); }
-  70% { transform: translate(-1%, -1%); }
-  80% { transform: translate(1%, 1%); }
-  90% { transform: translate(-2%, -2%); }
+  25% { transform: translate(-1%, -1%); }
+  50% { transform: translate(1%, 1%); }
+  75% { transform: translate(-1%, 1%); }
 }
 
 /* Premium Animations */
@@ -462,8 +501,8 @@ button:focus-visible {
   animation: scale-in 0.3s ease-out forwards;
 }
 
-/* Glitch effect */
-@keyframes glitch {
+/* Glitch effect - disabled for performance */
+/* @keyframes glitch {
   0% { transform: translate(0); }
   20% { transform: translate(-3px, 3px); }
   40% { transform: translate(-3px, -3px); }
@@ -473,7 +512,7 @@ button:focus-visible {
 }
 
 .animate-glitch {
-  animation: glitch 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+  animation: none;
 }
 
 /* LCP Fix - Immediate paint for hero content */

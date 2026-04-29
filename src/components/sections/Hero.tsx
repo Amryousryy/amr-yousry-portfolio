@@ -86,13 +86,13 @@ export default function Hero() {
 
         {/* Main Headline - Frame Logic + Conversion */}
         <h1 className="text-hero font-black text-white mb-6 tracking-tighter animate-fade-up-delay-1">
-          I Turn
+          <span className="typewriter-reveal">I Turn</span>
           <br />
-          <span className="text-[#00ffcc]">Multimedia</span>
+          <span className="text-[#00ffcc] typewriter-reveal" style={{ animationDelay: '0.5s' }}>Multimedia</span>
           <br />
-          Into Growth
+          <span className="typewriter-reveal" style={{ animationDelay: '1s' }}>Into Growth</span>
           <br />
-          For Ambitious Brands
+          <span className="typewriter-reveal" style={{ animationDelay: '1.5s' }}>For Ambitious Brands</span>
         </h1>
 
         {/* Subheadline - Accurate to core offers */}
