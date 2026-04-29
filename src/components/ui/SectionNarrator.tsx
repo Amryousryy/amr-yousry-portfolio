@@ -22,15 +22,14 @@ export default function SectionNarrator({ sections }: { sections: string[] }) {
   const [sectionProgress, setSectionProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const lastUpdateChapter = useRef(-1);
-  
+
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Root margin creates a "center-focused" detection area
     const observerOptions = {
       root: null,
       rootMargin: "-25% 0px -25% 0px",
-      threshold: Array.from({ length: 10 }, (_, i) => i / 10),
+      threshold: [0, 0.5, 1], // Reduced from 10 steps to 3
     };
 
     const handleIntersect = (entries: IntersectionObserverEntry[]) => {
@@ -38,9 +37,8 @@ export default function SectionNarrator({ sections }: { sections: string[] }) {
         if (entry.isIntersecting) {
           const sectionId = entry.target.id || entry.target.getAttribute('data-section');
           const index = sections.indexOf(sectionId || "");
-          
+
           if (index !== -1) {
-            // Only update chapter state if it actually changed
             if (lastUpdateChapter.current !== index) {
               lastUpdateChapter.current = index;
               setCurrentChapter(index);
@@ -73,6 +71,8 @@ export default function SectionNarrator({ sections }: { sections: string[] }) {
       className={`fixed bottom-8 left-8 z-50 transition-all duration-700 transform ${
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
       } hidden md:block`}
+      role="status"
+      aria-live="polite"
     >
       <div className="pixel-box bg-[#0a0a0f]/90 backdrop-blur-md p-4 border border-white/5">
         <div className="pixel-text text-[#00ffcc] text-[10px] mb-1 tracking-widest">

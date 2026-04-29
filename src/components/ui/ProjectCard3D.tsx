@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import gsap from "gsap";
+import { animate, createAnimatable } from "animejs";
 
 interface ProjectCard3DProps {
   title: string;
@@ -14,48 +14,47 @@ interface ProjectCard3DProps {
 export default function ProjectCard3D({ title, category, thumbnail, views, onClick }: ProjectCard3DProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  // anime.js createAnimatable for smooth tilt (replaces GSAP)
+  const rotateXRef = useRef<ReturnType<typeof createAnimatable> | null>(null);
+  const rotateYRef = useRef<ReturnType<typeof createAnimatable> | null>(null);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!cardRef.current) return;
-    
+
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
+
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    
+
     const rotateX = (y - centerY) / 10;
     const rotateY = (centerX - x) / 10;
-    
-    setTilt({ x: rotateX, y: rotateY });
-    
-    gsap.to(cardRef.current, {
-      rotateX: rotateX,
-      rotateY: rotateY,
-      duration: 0.3,
-      ease: "power2.out",
-    });
+
+    if (!rotateXRef.current) {
+      rotateXRef.current = createAnimatable(cardRef.current, "rotateX", { duration: 300, ease: "outQuint" });
+    }
+    if (!rotateYRef.current) {
+      rotateYRef.current = createAnimatable(cardRef.current, "rotateY", { duration: 300, ease: "outQuint" });
+    }
+
+    rotateXRef.current(rotateX);
+    rotateYRef.current(rotateY);
   };
 
   const handleMouseLeave = () => {
     setIsHovered(false);
-    setTilt({ x: 0, y: 0 });
-    
-    gsap.to(cardRef.current, {
-      rotateX: 0,
-      rotateY: 0,
-      duration: 0.5,
-      ease: "elastic.out(1, 0.5)",
-    });
+
+    if (rotateXRef.current) rotateXRef.current(0);
+    if (rotateYRef.current) rotateYRef.current(0);
   };
 
   return (
     <div
       ref={cardRef}
       className="relative w-full aspect-video bg-[#0a0a0f] border-2 border-[#1a1a2e] cursor-pointer overflow-hidden transition-shadow duration-300"
-      style={{ 
+      style={{
         transformStyle: "preserve-3d",
         perspective: "1000px",
         boxShadow: isHovered ? "0 20px 40px rgba(0, 255, 204, 0.2)" : "0 4px 20px rgba(0, 0, 0, 0.5)",
@@ -64,6 +63,9 @@ export default function ProjectCard3D({ title, category, thumbnail, views, onCli
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") onClick?.(); }}
     >
       <div
         className={`absolute inset-0 bg-cover bg-center transition-all duration-300 ${
@@ -71,13 +73,13 @@ export default function ProjectCard3D({ title, category, thumbnail, views, onCli
         }`}
         style={{ backgroundImage: `url(${thumbnail})` }}
       />
-      
+
       <div
         className={`absolute inset-0 bg-gradient-to-t from-[#050508] via-transparent to-transparent transition-opacity duration-300 ${
           isHovered ? "opacity-100" : "opacity-70"
         }`}
       />
-      
+
       <div
         className={`absolute inset-0 flex flex-col justify-end p-4 transition-all duration-300 ${
           isHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
@@ -93,7 +95,7 @@ export default function ProjectCard3D({ title, category, thumbnail, views, onCli
           </div>
         )}
       </div>
-      
+
       <div
         className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${
           isHovered ? "opacity-100" : "opacity-0"
@@ -105,13 +107,13 @@ export default function ProjectCard3D({ title, category, thumbnail, views, onCli
           </svg>
         </div>
       </div>
-      
+
       <div className="absolute top-2 right-2 pixel-text text-[#00ffcc]/50 text-xs">
         ▶ PLAY
       </div>
-      
+
       <div
-        className={`absolute inset-0 border-2 border-transparent transition-colors duration-300 ${
+        className={`absolute inset-0 border-2 transition-colors duration-300 ${
           isHovered ? "border-[#00ffcc]" : "border-transparent"
         }`}
       />

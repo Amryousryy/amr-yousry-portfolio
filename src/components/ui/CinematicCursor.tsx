@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
+import { animate, createAnimatable } from "animejs";
 
 type CursorState = "default" | "hover-link" | "hover-project" | "hover-cta" | "click";
 
@@ -11,39 +11,44 @@ export default function CinematicCursor() {
   const rippleContainerRef = useRef<HTMLDivElement>(null);
   const [cursorState, setCursorState] = useState<CursorState>("default");
   const [isVisible, setIsVisible] = useState(false);
-  
+
   const currentPos = useRef({ x: 0, y: 0 });
   const lastState = useRef<CursorState>("default");
+
+  // anime.js createAnimatable for cursor tracking (replaces GSAP quickTo)
+  const cursorXRef = useRef<ReturnType<typeof createAnimatable> | null>(null);
+  const cursorYRef = useRef<ReturnType<typeof createAnimatable> | null>(null);
+  const trailRefsAnime = useRef<(ReturnType<typeof createAnimatable> | null)[]>([]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Use GSAP for high-performance positioning (bypasses React)
-    const xTo = gsap.quickTo(cursorRef.current, "x", { duration: 0.2, ease: "power3" });
-    const yTo = gsap.quickTo(cursorRef.current, "y", { duration: 0.2, ease: "power3" });
+    // Initialize anime.js animatables for cursor position
+    if (cursorRef.current) {
+      cursorXRef.current = createAnimatable(cursorRef.current, "x", { duration: 200, ease: "outQuint" });
+      cursorYRef.current = createAnimatable(cursorRef.current, "y", { duration: 200, ease: "outQuint" });
+    }
 
-    const trailSetters = trailRefs.current.map((trail, i) => {
-      if (!trail) return null;
-      return {
-        x: gsap.quickTo(trail, "x", { duration: 0.2 + i * 0.05, ease: "power2" }),
-        y: gsap.quickTo(trail, "y", { duration: 0.2 + i * 0.05, ease: "power2" })
-      };
+    // Initialize trail animatables
+    trailRefs.current.forEach((trail, i) => {
+      if (!trail) return;
+      trailRefsAnime.current[i] = createAnimatable(trail, "x", { duration: 200 + i * 50, ease: "outQuint" });
+      trailRefsAnime.current[i + 8] = createAnimatable(trail, "y", { duration: 200 + i * 50, ease: "outQuint" });
     });
 
     const handleMouseMove = (e: MouseEvent) => {
       if (!isVisible) setIsVisible(true);
-      
+
       const { clientX, clientY } = e;
       currentPos.current = { x: clientX, y: clientY };
-      
-      xTo(clientX);
-      yTo(clientY);
-      
-      trailSetters.forEach((setter) => {
-        if (setter) {
-          setter.x(clientX);
-          setter.y(clientY);
-        }
+
+      // Use anime.js createAnimatable for smooth tracking
+      if (cursorXRef.current) cursorXRef.current(clientX);
+      if (cursorYRef.current) cursorYRef.current(clientY);
+
+      trailRefsAnime.current.forEach((anim, i) => {
+        if (anim && i < 8) anim(clientX); // x positions
+        else if (anim) anim(clientY); // y positions
       });
     };
 
@@ -67,14 +72,14 @@ export default function CinematicCursor() {
 
     const createRipple = (x: number, y: number) => {
       if (!rippleContainerRef.current) return;
-      
+
       const ripple = document.createElement("div");
       ripple.className = "absolute w-4 h-4 rounded-full border-2 border-[#00ffcc] pointer-events-none z-[9997]";
       ripple.style.left = `${x}px`;
       ripple.style.top = `${y}px`;
       ripple.style.transform = "translate(-50%, -50%)";
       ripple.style.animation = "ripple 0.6s ease-out forwards";
-      
+
       rippleContainerRef.current.appendChild(ripple);
       setTimeout(() => ripple.remove(), 700);
     };
@@ -121,10 +126,10 @@ export default function CinematicCursor() {
           />
         ))}
       </div>
-      
+
       {/* Ripple Container (Native DOM) */}
       <div ref={rippleContainerRef} className="fixed inset-0 pointer-events-none z-[9997]" />
-      
+
       <div
         ref={cursorRef}
         className={`fixed top-0 left-0 pointer-events-none z-[9999] will-change-transform ${
@@ -176,8 +181,10 @@ export default function CinematicCursor() {
       </div>
 
       <style jsx global>{`
-        * {
-          cursor: none !important;
+        @media (prefers-reduced-motion: reduce) {
+          * {
+            cursor: auto !important;
+          }
         }
         
         @keyframes ripple {
