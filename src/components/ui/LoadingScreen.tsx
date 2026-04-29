@@ -28,6 +28,18 @@ export default function LoadingScreen({ minDuration = 2500 }: LoadingScreenProps
 
     hasShownRef.current = true;
 
+    // Respect prefers-reduced-motion
+    const prefersReducedMotion = typeof window !== "undefined" && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      setProgress(100);
+      setTimeout(() => {
+        setIsExiting(true);
+        setTimeout(() => setIsComplete(true), 800);
+      }, 100);
+      return;
+    }
+
     const progressObj = { value: 0 };
 
     animationRef.current = animate(progressObj, {

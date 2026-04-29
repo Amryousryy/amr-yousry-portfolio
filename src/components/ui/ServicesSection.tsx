@@ -102,6 +102,11 @@ export default function ServicesSection() {
   useEffect(() => {
     if (!sectionRef.current) return;
 
+    // Skip anime.js animations if user prefers reduced motion
+    if (typeof window !== "undefined" && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
     observerRef.current = onScroll({
       target: sectionRef.current,
       enter: "top 80%",
@@ -109,12 +114,23 @@ export default function ServicesSection() {
         if (hasAnimatedRef.current) return;
         hasAnimatedRef.current = true;
 
+        const header = sectionRef.current?.querySelector(".section-header") as HTMLElement;
+        if (header) {
+          animate(header, {
+            opacity: [0, 1],
+            translateY: [50, 0],
+            duration: 800,
+            ease: "outQuint",
+          });
+        }
+
         const validCards = cardsRef.current.filter(Boolean) as HTMLElement[];
         animate(validCards, {
           opacity: [0, 1],
-          translateY: [50, 0],
-          duration: 600,
-          delay: stagger(100),
+          translateY: [60, 0],
+          rotate: (el, i) => [i % 2 === 0 ? -5 : 5, i % 2 === 0 ? -1 : 1],
+          delay: stagger(150),
+          duration: 800,
           ease: "outQuint",
         });
       },

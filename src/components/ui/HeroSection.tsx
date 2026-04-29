@@ -64,6 +64,17 @@ export default function HeroSection() {
   }, [currentRole]);
 
   useEffect(() => {
+    // Respect prefers-reduced-motion
+    const prefersReducedMotion = typeof window !== "undefined" && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    if (prefersReducedMotion) {
+      // Set final values immediately without animation
+      STATS.forEach((stat, index) => {
+        setDisplayedStats((prev) => ({ ...prev, [index]: stat.value }));
+      });
+      return;
+    }
+
     STATS.forEach((stat, index) => {
       const progress = { value: 0 };
 

@@ -31,6 +31,29 @@ export default function HeroText() {
   useEffect(() => {
     setMounted(true);
 
+    // Respect prefers-reduced-motion
+    const prefersReducedMotion = typeof window !== "undefined" && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      // Set final states immediately without animation
+      if (nameRef.current) {
+        nameRef.current.style.opacity = "1";
+        nameRef.current.style.transform = "translateY(0)";
+      }
+      if (subtitleRef.current) {
+        subtitleRef.current.style.opacity = "1";
+        subtitleRef.current.style.transform = "translateY(0)";
+      }
+      if (statsRef.current) {
+        statsRef.current.style.opacity = "1";
+      }
+      if (buttonsRef.current) {
+        buttonsRef.current.style.opacity = "1";
+        buttonsRef.current.style.transform = "translateY(0)";
+      }
+      return;
+    }
+
     timelineRef.current = createTimeline({
       autoplay: true,
       defaults: { ease: "outQuint" },
@@ -73,6 +96,18 @@ export default function HeroText() {
   // Typewriter animation — replaces setInterval
   useEffect(() => {
     const fullText = ROLES[currentRole];
+
+    // Respect prefers-reduced-motion
+    const prefersReducedMotion = typeof window !== "undefined" && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    if (prefersReducedMotion) {
+      setDisplayedText(fullText);
+      const timeout = setTimeout(() => {
+        setCurrentRole((prev) => (prev + 1) % ROLES.length);
+      }, 2500);
+      return () => clearTimeout(timeout);
+    }
+
     const progress = { charIndex: 0 };
 
     typewriterAnimRef.current = animate(progress, {
@@ -99,6 +134,17 @@ export default function HeroText() {
 
   // Stat counter animations — replaces setInterval
   useEffect(() => {
+    // Respect prefers-reduced-motion
+    const prefersReducedMotion = typeof window !== "undefined" && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    if (prefersReducedMotion) {
+      // Set final values immediately without animation
+      STATS.forEach((stat, index) => {
+        setDisplayedStats((prev) => ({ ...prev, [index]: stat.value }));
+      });
+      return;
+    }
+
     STATS.forEach((stat, index) => {
       const progress = { value: 0 };
 

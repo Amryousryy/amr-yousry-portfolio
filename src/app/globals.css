@@ -24,15 +24,6 @@
   --animate-spin-slow: spin 3s linear infinite;
 }
 
-@keyframes glitch {
-  0% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(-2px, -2px); }
-  60% { transform: translate(2px, 2px); }
-  80% { transform: translate(2px, -2px); }
-  100% { transform: translate(0); }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
@@ -55,13 +46,13 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: uppercase;
 }
 
-/* Focus styles for accessibility */
+/* Focus styles for accessibility - single source of truth */
 *:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
-/* Smooth scrolling - respect prefers-reduced-motion */
+/* Smooth scrolling for browsers that respect prefers-reduced-motion */
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
@@ -76,13 +67,6 @@ h1, h2, h3, h4, h5, h6 {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-  
-  /* Disable anime.js and GSAP animations via CSS */
-  [data-animejs], 
-  .anime-js-controlled {
-    animation: none !important;
-    transition: none !important;
   }
 }
 
@@ -104,7 +88,7 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--secondary);
 }
 
-/* Film Grain Overlay - reduced intensity */
+/* Film Grain Overlay */
 .film-grain {
   position: fixed;
   inset: 0;
@@ -214,10 +198,4 @@ h1, h2, h3, h4, h5, h6 {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
-}
-
-/* Focus visible for accessibility */
-*:focus-visible {
-  outline: 2px solid #00ffcc;
-  outline-offset: 2px;
 }

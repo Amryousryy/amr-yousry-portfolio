@@ -40,6 +40,7 @@ export default function CinematicCursor() {
       if (!isVisible) setIsVisible(true);
 
       const { clientX, clientY } = e;
+
       currentPos.current = { x: clientX, y: clientY };
 
       // Use anime.js createAnimatable for smooth tracking
@@ -103,6 +104,14 @@ export default function CinematicCursor() {
       window.removeEventListener("mouseover", handleMouseOver);
       window.removeEventListener("mousedown", handleMouseDown);
       window.removeEventListener("mouseup", handleMouseUp);
+
+      // Revert all anime.js animatables on cleanup
+      if (cursorXRef.current) cursorXRef.current.revert();
+      if (cursorYRef.current) cursorYRef.current.revert();
+      trailRefsAnime.current.forEach(anim => {
+        if (anim) anim.revert();
+      });
+      trailRefsAnime.current = [];
     };
   }, [isVisible]);
 
@@ -186,7 +195,7 @@ export default function CinematicCursor() {
             cursor: auto !important;
           }
         }
-        
+
         @keyframes ripple {
           0% { width: 4px; height: 4px; opacity: 1; }
           100% { width: 60px; height: 60px; opacity: 0; }

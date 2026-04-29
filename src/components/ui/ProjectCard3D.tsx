@@ -32,6 +32,7 @@ export default function ProjectCard3D({ title, category, thumbnail, views, onCli
     const rotateX = (y - centerY) / 10;
     const rotateY = (centerX - x) / 10;
 
+    // Initialize animatables on first use
     if (!rotateXRef.current) {
       rotateXRef.current = createAnimatable(cardRef.current, "rotateX", { duration: 300, ease: "outQuint" });
     }
@@ -39,16 +40,26 @@ export default function ProjectCard3D({ title, category, thumbnail, views, onCli
       rotateYRef.current = createAnimatable(cardRef.current, "rotateY", { duration: 300, ease: "outQuint" });
     }
 
-    rotateXRef.current(rotateX);
-    rotateYRef.current(rotateY);
+    // Use anime.js createAnimatable for efficient tracking
+    if (rotateXRef.current) rotateXRef.current(rotateX);
+    if (rotateYRef.current) rotateYRef.current(rotateY);
   };
 
   const handleMouseLeave = () => {
     setIsHovered(false);
 
+    // Revert to default position
     if (rotateXRef.current) rotateXRef.current(0);
     if (rotateYRef.current) rotateYRef.current(0);
   };
+
+  // Cleanup animatables on unmount
+  useEffect(() => {
+    return () => {
+      if (rotateXRef.current) rotateXRef.current.revert();
+      if (rotateYRef.current) rotateYRef.current.revert();
+    };
+  }, []);
 
   return (
     <div
@@ -106,10 +117,6 @@ export default function ProjectCard3D({ title, category, thumbnail, views, onCli
             <path d="M8 5v14l11-7z" />
           </svg>
         </div>
-      </div>
-
-      <div className="absolute top-2 right-2 pixel-text text-[#00ffcc]/50 text-xs">
-        ▶ PLAY
       </div>
 
       <div

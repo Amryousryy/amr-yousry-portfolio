@@ -36,6 +36,11 @@ export default function TestimonialsSection() {
   useEffect(() => {
     if (!sectionRef.current || testimonials.length === 0) return;
 
+    // Skip anime.js animations if user prefers reduced motion
+    if (typeof window !== "undefined" && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
     observerRef.current = onScroll({
       target: sectionRef.current,
       enter: "top 80%",
