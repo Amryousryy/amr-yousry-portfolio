@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { animate } from "animejs";
 
 interface LoadingScreenProps {
   minDuration?: number;
@@ -14,7 +13,7 @@ export default function LoadingScreen({ minDuration = 2500 }: LoadingScreenProps
   const [isExiting, setIsExiting] = useState(false);
   const pathname = usePathname();
   const hasShownRef = useRef(false);
-  const animationRef = useRef<ReturnType<typeof animate> | null>(null);
+  const startTimeRef = useRef(0);
 
   useEffect(() => {
     if (pathname.startsWith("/admin")) {
@@ -27,8 +26,8 @@ export default function LoadingScreen({ minDuration = 2500 }: LoadingScreenProps
     }
 
     hasShownRef.current = true;
+    startTimeRef.current = Date.now();
 
-    // Respect prefers-reduced-motion
     const prefersReducedMotion = typeof window !== "undefined" && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (prefersReducedMotion) {
@@ -40,29 +39,21 @@ export default function LoadingScreen({ minDuration = 2500 }: LoadingScreenProps
       return;
     }
 
-    const progressObj = { value: 0 };
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTimeRef.current;
+      const newProgress = Math.min((elapsed / minDuration) * 100, 100);
+      setProgress(newProgress);
 
-    animationRef.current = animate(progressObj, {
-      value: 100,
-      duration: minDuration,
-      ease: "linear",
-      autoplay: true,
-      onUpdate: () => {
-        setProgress(progressObj.value);
-      },
-      onComplete: () => {
+      if (newProgress >= 100) {
+        clearInterval(interval);
         setTimeout(() => {
           setIsExiting(true);
           setTimeout(() => setIsComplete(true), 800);
         }, 500);
-      },
-    });
-
-    return () => {
-      if (animationRef.current) {
-        animationRef.current.cancel();
       }
-    };
+    }, 16);
+
+    return () => clearInterval(interval);
   }, [minDuration, pathname]);
 
   if (pathname.startsWith("/admin") || isComplete) return null;

@@ -34,7 +34,7 @@ const DEFAULT_SERVICES: ServiceCard[] = [
 ];
 
 function ServiceIcon({ name, className }: { name: string; className?: string }) {
-  const iconMap: Record<string, JSX.Element> = {
+  const iconMap: Record<string, React.ReactNode> = {
     "play-circle": (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
         <circle cx="12" cy="12" r="10" />

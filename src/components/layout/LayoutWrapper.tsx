@@ -5,13 +5,7 @@ import Navbar from "@/components/ui/Navbar";
 import Footer from "@/components/ui/Footer";
 import FloatingCTA from "@/components/ui/FloatingCTA";
 import LoadingScreen from "@/components/ui/LoadingScreen";
-import SmoothScroll from "@/components/ui/SmoothScroll";
-import dynamic from "next/dynamic";
 import "@/styles/pixel-system.css";
-
-const CinematicCursor = dynamic(() => import("@/components/ui/CinematicCursor"), {
-  ssr: false,
-});
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -23,14 +17,11 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
 
   return (
     <>
-      <CinematicCursor />
       <LoadingScreen />
-      <SmoothScroll>
-        <Navbar />
-        <main className="min-h-screen">{children}</main>
-        <Footer />
-        <FloatingCTA />
-      </SmoothScroll>
+      <Navbar />
+      <main className="min-h-screen">{children}</main>
+      <Footer />
+      <FloatingCTA />
       <div className="film-grain" />
     </>
   );

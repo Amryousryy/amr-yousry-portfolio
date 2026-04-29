@@ -1,9 +1,7 @@
 "use client";
 
-import { useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Quote, ArrowRight } from "lucide-react";
-import { animate, stagger, onScroll } from "animejs";
 import { TestimonialService } from "@/lib/api-client";
 
 interface TestimonialData {
@@ -20,61 +18,12 @@ interface TestimonialData {
 const EMPTY_TESTIMONIALS: TestimonialData[] = [];
 
 export default function TestimonialsSection() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-
   const { data: testimonialsData, isLoading } = useQuery({
     queryKey: ["testimonials"],
     queryFn: () => TestimonialService.getAll(false),
   });
 
   const testimonials = testimonialsData?.data || EMPTY_TESTIMONIALS;
-
-  const hasAnimatedRef = useRef(false);
-  const observerRef = useRef<ReturnType<typeof onScroll> | null>(null);
-
-  useEffect(() => {
-    if (!sectionRef.current || testimonials.length === 0) return;
-
-    // Skip anime.js animations if user prefers reduced motion
-    if (typeof window !== "undefined" && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      return;
-    }
-
-    observerRef.current = onScroll({
-      target: sectionRef.current,
-      enter: "top 80%",
-      onEnter: () => {
-        if (hasAnimatedRef.current) return;
-        hasAnimatedRef.current = true;
-
-        const header = sectionRef.current?.querySelector(".section-header") as HTMLElement;
-        if (header) {
-          animate(header, {
-            opacity: [0, 1],
-            translateY: [30, 0],
-            duration: 800,
-            ease: "outQuint",
-          });
-        }
-
-        const validCards = cardsRef.current.filter(Boolean) as HTMLElement[];
-        animate(validCards, {
-          opacity: [0, 1],
-          translateY: [40, 0],
-          delay: stagger(150),
-          duration: 800,
-          ease: "outQuint",
-        });
-      },
-    });
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.revert();
-      }
-    };
-  }, [testimonials.length]);
 
   if (isLoading) {
     return (
@@ -100,10 +49,9 @@ export default function TestimonialsSection() {
   }
 
   return (
-    <section ref={sectionRef} className="py-24 md:py-32 bg-[#050508] relative overflow-hidden">
-      {/* Optimized Background: Radial gradient instead of heavy blur filter */}
+    <section className="py-24 md:py-32 bg-[#050508] relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
-        <div 
+        <div
           className="absolute top-1/3 left-1/4 w-[500px] h-[500px] opacity-10"
           style={{
             background: "radial-gradient(circle, #00ffcc 0%, transparent 70%)",
@@ -112,7 +60,7 @@ export default function TestimonialsSection() {
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="section-header mb-16">
+        <div className="mb-16">
           <span className="text-accent text-xs font-semibold uppercase tracking-widest mb-4 block">Testimonials</span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
             What Clients Say
@@ -129,22 +77,21 @@ export default function TestimonialsSection() {
             {testimonials.slice(0, 3).map((testimonial, i) => (
               <div
                 key={testimonial._id}
-                ref={(el) => { cardsRef.current[i] = el; }}
-                className="p-8 bg-zinc-900/30 border border-white/5 will-change-transform opacity-0 translate-y-10"
+                className="p-8 bg-zinc-900/30 border border-white/5"
               >
                 <Quote className="w-8 h-8 text-accent/40 mb-6" />
-                
+
                 <blockquote className="text-foreground/80 text-base leading-relaxed mb-8">
                   "{testimonial.quote}"
                 </blockquote>
-                
+
                 <div className="flex items-center justify-between pt-6 border-t border-white/5">
                   <div>
                     <div className="text-white font-medium">{testimonial.name}</div>
                     <div className="text-foreground/50 text-sm">{testimonial.role}, {testimonial.company}</div>
                   </div>
                   {testimonial.projectSlug && (
-                    <a 
+                    <a
                       href={`/projects/${testimonial.projectSlug}`}
                       className="flex items-center text-accent text-xs font-semibold hover:text-accent/80 transition-colors"
                     >

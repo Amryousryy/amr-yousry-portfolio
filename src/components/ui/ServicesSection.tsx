@@ -1,8 +1,3 @@
-"use client";
-
-import { useRef, useEffect } from "react";
-import { animate, stagger, onScroll } from "animejs";
-
 const SERVICES = [
   {
     problem: "YOUR VIDEOS AREN'T CONVERTING?",
@@ -94,57 +89,8 @@ const SERVICES = [
 ];
 
 export default function ServicesSection() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const observerRef = useRef<ReturnType<typeof onScroll> | null>(null);
-  const hasAnimatedRef = useRef(false);
-
-  useEffect(() => {
-    if (!sectionRef.current) return;
-
-    // Skip anime.js animations if user prefers reduced motion
-    if (typeof window !== "undefined" && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      return;
-    }
-
-    observerRef.current = onScroll({
-      target: sectionRef.current,
-      enter: "top 80%",
-      onEnter: () => {
-        if (hasAnimatedRef.current) return;
-        hasAnimatedRef.current = true;
-
-        const header = sectionRef.current?.querySelector(".section-header") as HTMLElement;
-        if (header) {
-          animate(header, {
-            opacity: [0, 1],
-            translateY: [50, 0],
-            duration: 800,
-            ease: "outQuint",
-          });
-        }
-
-        const validCards = cardsRef.current.filter(Boolean) as HTMLElement[];
-        animate(validCards, {
-          opacity: [0, 1],
-          translateY: [60, 0],
-          rotate: (_el: any, i: number) => [i % 2 === 0 ? -5 : 5, i % 2 === 0 ? -1 : 1],
-          delay: stagger(150),
-          duration: 800,
-          ease: "outQuint",
-        });
-      },
-    });
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.revert();
-      }
-    };
-  }, []);
-
   return (
-    <section ref={sectionRef} className="min-h-screen bg-[#050508] py-20 px-4 md:px-8">
+    <section className="min-h-screen bg-[#050508] py-20 px-4 md:px-8">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <div className="pixel-badge mb-4 mx-auto">
@@ -160,8 +106,7 @@ export default function ServicesSection() {
           {SERVICES.map((service, i) => (
             <div
               key={i}
-              ref={(el) => { cardsRef.current[i] = el; }}
-              className="pixel-box bg-[#0a0a0f] p-6 opacity-0 translate-y-8"
+              className="pixel-box bg-[#0a0a0f] p-6"
             >
               <div className="flex items-start gap-4 mb-4">
                 <div className="flex-shrink-0">{service.icon}</div>
