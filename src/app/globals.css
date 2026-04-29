@@ -153,28 +153,19 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
 }
 
-.frame-border::before,
-.frame-border::after {
-  content: '';
-  position: absolute;
-  background: #00ffcc;
-  width: 8px;
-  height: 8px;
-}
-
-.frame-border::before {
-  top: -4px;
-  left: -4px;
-}
-
-.frame-border::after {
-  bottom: -4px;
-  right: -4px;
-}
+/* Removed corner squares - too decorative, reduced visual clarity */
 
 /* Shutter Transition */
 .shutter-transition {
   animation: shutterReveal 0.8s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shutter-transition {
+    animation: none;
+    opacity: 1;
+    clip-path: none;
+  }
 }
 
 @keyframes shutterReveal {
@@ -275,7 +266,14 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateY(0);
 }
 
-/* Keep existing pixel borders for backward compatibility */
+/* Focus states for accessibility */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid #00ffcc;
+  outline-offset: 2px;
+}
+
+/* Keep existing pixel borders for backward compatibility (admin pages) */
 .pixel-border {
   border: 2px solid var(--accent);
   box-shadow: 4px 4px 0 0 var(--primary);
@@ -284,6 +282,14 @@ h1, h2, h3, h4, h5, h6 {
 .pixel-border-enhanced {
   border: 2px solid var(--accent);
   box-shadow: 4px 4px 0 0 var(--accent), 8px 8px 0 0 rgba(0, 245, 212, 0.3);
+}
+
+/* Frame Divider - adjust margin for better separation */
+.frame-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 245, 212, 0.5), transparent);
+  margin: 2rem 0;
 }
 
 /* Focus styles for accessibility - single source of truth */
@@ -434,10 +440,19 @@ h1, h2, h3, h4, h5, h6 {
   border: 0;
 }
 
-/* Premium Section Spacing */
+/* Premium Section Spacing - consistent vertical rhythm */
 .section-padding {
-  padding-top: clamp(4rem, 10vh, 8rem);
-  padding-bottom: clamp(4rem, 10vh, 8rem);
+  padding-top: clamp(3rem, 8vh, 6rem);
+  padding-bottom: clamp(3rem, 8vh, 6rem);
+  padding-left: clamp(1rem, 4vw, 1.5rem);
+  padding-right: clamp(1rem, 4vw, 1.5rem);
+}
+
+@media (min-width: 768px) {
+  .section-padding {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
 }
 
 /* Cinematic Reveal */

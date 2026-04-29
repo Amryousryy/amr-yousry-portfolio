@@ -7,7 +7,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     client: "Maison Élégante",
     category: "Brand Storytelling",
     year: "2025",
-    heroImage: "https://images.unsplash.com/photo-1539107515679-261c5b31d3c?w=1200",
+    heroImage: "https://images.unsplash.com/photo-1539107515679-261c5b31d3c?w=1200&q=80&auto=format",
     strategicSummary:
       "Position Maison Élégante as a heritage luxury brand for the Middle Eastern market through cinematic brand storytelling.",
     metrics: [
@@ -36,9 +36,9 @@ export const CASE_STUDIES: CaseStudy[] = [
       role: "Creative Director, Maison Élégante",
     },
     gallery: [
-      "https://images.unsplash.com/photo-1509631179647-0177331693a9?w=800",
-      "https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=800",
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800",
+      "https://images.unsplash.com/photo-1509631179647-0177331693a9?w=800&q=80&auto=format",
+      "https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=800&q=80&auto=format",
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&q=80&auto=format",
     ],
   },
   {
@@ -47,7 +47,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     client: "DataFlow",
     category: "Motion Design",
     year: "2025",
-    heroImage: "https://images.unsplash.com/photo-1550745165-731e2e4dd6e?w=1200",
+    heroImage: "https://images.unsplash.com/photo-1550745165-731e2e4dd6e?w=1200&q=80&auto=format",
     strategicSummary:
       "Create a high-impact investor pitch reel that secured $5M Series A funding by demonstrating product value through motion design.",
     metrics: [
@@ -76,9 +76,9 @@ export const CASE_STUDIES: CaseStudy[] = [
       role: "CEO, DataFlow",
     },
     gallery: [
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800",
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800",
-      "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=800",
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80&auto=format",
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80&auto=format",
+      "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=800&q=80&auto=format",
     ],
   },
   {
@@ -87,7 +87,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     client: "Wanderlust Co.",
     category: "Content Strategy",
     year: "2024",
-    heroImage: "https://images.unsplash.com/photo-1488644615296-10ddf06822d3?w=1200",
+    heroImage: "https://images.unsplash.com/photo-1488644615296-10ddf06822d3?w=1200&q=80&auto=format",
     strategicSummary:
       "Scale a travel influencer's YouTube channel from 10K to 500K subscribers in 6 months through strategic content editing and thumbnail optimization.",
     metrics: [
@@ -116,9 +116,9 @@ export const CASE_STUDIES: CaseStudy[] = [
       role: "Founders, Wanderlust Co.",
     },
     gallery: [
-      "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5fa?w=800",
-      "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800",
-      "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800",
+      "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5fa?w=800&q=80&auto=format",
+      "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800&q=80&auto=format",
+      "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800&q=80&auto=format",
     ],
   },
 ];

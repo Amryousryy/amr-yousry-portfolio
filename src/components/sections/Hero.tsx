@@ -77,7 +77,7 @@ export default function Hero() {
         </div>
         
         {/* Badge - minimal frame tag */}
-        <div className="mb-8 inline-block animate-fade-up">
+        <div className="mb-12 inline-block animate-fade-up">
           <div className="text-mono text-[#00ffcc] text-[10px] tracking-[0.4em] mb-2">
             AMR YOUSRY
           </div>

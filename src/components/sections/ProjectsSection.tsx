@@ -101,7 +101,7 @@ export default function ProjectsSection() {
 
       <div className="container mx-auto px-6 relative z-10">
         {/* Section header - Frame Logic */}
-        <div className="mb-20 reveal">
+        <div className="frame-header reveal">
           <div className="frame-number mb-2">FRAME 03</div>
           <div className="frame-divider" />
           <h2 className="text-section text-white">
@@ -123,7 +123,7 @@ export default function ProjectsSection() {
               {/* Thumbnail */}
               <div
                 className="aspect-video bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                style={{ backgroundImage: `url(${project.image})` }}
+                style={{ backgroundImage: `url(${project.image}?w=800&q=80&auto=format)` }}
               />
 
               {/* Content - always visible metrics */}

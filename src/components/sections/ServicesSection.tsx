@@ -114,7 +114,7 @@ export default function ServicesSection() {
 
       <div className="container mx-auto px-6 relative z-10">
         {/* Section header - Frame Logic */}
-        <div className="mb-20 reveal">
+        <div className="frame-header reveal">
           <div className="frame-number mb-2">FRAME 02</div>
           <div className="frame-divider" />
           <h2 className="text-section text-white">

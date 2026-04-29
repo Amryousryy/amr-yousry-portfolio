@@ -26,7 +26,7 @@ export default function MobileStickyCTA() {
         <div className="flex gap-3">
           <Link
             href="/contact"
-            className="flex-1 bg-[#00ffcc] text-[#050508] text-center py-3 text-mono text-[11px] tracking-[0.15em] font-bold hover:bg-[#00ffcc]/90 transition-colors"
+            className="flex-1 bg-[#00ffcc] text-[#050508] text-center py-4 text-mono text-[11px] tracking-[0.15em] font-bold hover:bg-[#00ffcc]/90 transition-colors min-h-[44px] flex items-center justify-center"
           >
             GET A QUOTE
           </Link>
@@ -34,7 +34,7 @@ export default function MobileStickyCTA() {
             href="https://calendly.com/your-link"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 border border-[#00ffcc]/30 text-[#00ffcc] text-center py-3 text-mono text-[11px] tracking-[0.15em] font-bold hover:bg-[#00ffcc]/10 transition-colors"
+            className="flex-1 border border-[#00ffcc]/30 text-[#00ffcc] text-center py-4 text-mono text-[11px] tracking-[0.15em] font-bold hover:bg-[#00ffcc]/10 transition-colors min-h-[44px] flex items-center justify-center"
           >
             BOOK CALL
           </a>
