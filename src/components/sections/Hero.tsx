@@ -120,24 +120,29 @@ export default function Hero() {
           TRUSTED IN EGYPT & SAUDI ARABIA
         </div>
 
-        {/* CTAs - Premium button treatment */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-6 animate-fade-up-delay-3">
+        {/* CTAs - Pixel Style */}
+        <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12">
           <a
-            href="#contact"
-            className="group relative px-12 py-5 min-h-[64px] bg-[#00ffcc] text-[#050508] font-bold uppercase tracking-[0.2em] text-xs overflow-hidden transition-all duration-500 hover:shadow-[0_0_50px_rgba(0,245,212,0.5)] hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center"
+            href="/contact"
+            className="pixel-button-primary"
           >
-            <span className="relative z-10">Get a Quote</span>
-            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+            Get a Quote
+          </a>
+
+          <a
+            href="https://calendly.com/your-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="pixel-button-secondary"
+          >
+            Book Free Strategy Call
           </a>
 
           <a
             href="#projects"
-            className="group flex items-center space-x-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70 hover:text-[#00ffcc] transition-all duration-300 px-6 py-5 min-h-[64px]"
+            className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/60 hover:text-[#00ffcc] transition-colors duration-300 px-6 py-3"
           >
-            <div className="w-14 h-14 bg-white/5 flex items-center justify-center border border-[#00ffcc]/20 group-hover:bg-[#00ffcc] group-hover:text-[#050508] group-hover:border-[#00ffcc] transition-all duration-300">
-              <Play size={20} fill="currentColor" />
-            </div>
-            <span>View My Work</span>
+            View My Work
           </a>
         </div>
 

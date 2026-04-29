@@ -164,7 +164,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
               {/* Primary CTA */}
               <Link
                 href="/contact"
-                className="px-12 py-5 bg-[#00ffcc] text-[#050508] font-bold uppercase tracking-[0.15em] text-[11px] hover:bg-[#00ffcc]/90 transition-all duration-300"
+                className="pixel-button-primary"
               >
                 Get a Quote
               </Link>
@@ -174,7 +174,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
                 href="https://calendly.com/your-link"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-12 py-5 border border-[#00ffcc]/30 text-[#00ffcc] font-bold uppercase tracking-[0.15em] text-[11px] hover:bg-[#00ffcc]/10 transition-all duration-300"
+                className="pixel-button-secondary"
               >
                 Book Free Strategy Call
               </a>

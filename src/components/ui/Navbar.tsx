@@ -97,7 +97,7 @@ export default function Navbar() {
               <Link
                 href={link.href}
                 className={`relative text-[10px] font-bold uppercase tracking-[0.25em] transition-colors duration-300 px-3 py-2 group ${
-                  activeFrame === link.frame ? "text-accent" : "hover:text-accent"
+                  activeFrame === link.frame ? "text-accent pixel-border" : "hover:text-accent"
                 }`}
               >
                 <span className={`frame-number !text-[0.6rem] !static !mb-1 block ${
@@ -106,9 +106,6 @@ export default function Navbar() {
                   {link.frame}
                 </span>
                 {link.name}
-                {activeFrame === link.frame && (
-                  <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-accent" />
-                )}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full" />
               </Link>
               {link.frame !== "05" && (

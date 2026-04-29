@@ -78,11 +78,11 @@ export default function ContactSection({ projectId, projectTitle }: ContactSecti
           </div>
 
           {/* CTA Hierarchy */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center mb-8">
             {/* Primary CTA */}
             <a
               href="/contact"
-              className="px-12 py-5 bg-[#00ffcc] text-[#050508] font-bold uppercase tracking-[0.15em] text-[11px] hover:bg-[#00ffcc]/90 transition-all duration-300"
+              className="pixel-button-primary"
             >
               Get a Quote
             </a>
@@ -92,9 +92,17 @@ export default function ContactSection({ projectId, projectTitle }: ContactSecti
               href="https://calendly.com/your-link"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-12 py-5 border border-[#00ffcc]/30 text-[#00ffcc] font-bold uppercase tracking-[0.15em] text-[11px] hover:bg-[#00ffcc]/10 transition-all duration-300"
+              className="pixel-button-secondary"
             >
               Book Free Strategy Call
+            </a>
+
+            {/* Tertiary CTA */}
+            <a
+              href="/projects"
+              className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/60 hover:text-[#00ffcc] transition-colors duration-300 px-6 py-3"
+            >
+              View My Work
             </a>
           </div>
 
