@@ -139,20 +139,23 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "100vh" }}
             exit={{ opacity: 0, height: 0 }}
-            className="fixed inset-0 top-0 bg-background z-40 md:hidden flex flex-col items-center justify-center space-y-6"
+            className="fixed inset-0 top-0 bg-[#050508] z-40 md:hidden flex flex-col items-center justify-center space-y-8"
           >
+            {/* Close button with pixel border */}
             <button 
-              className="absolute top-8 right-6 text-white p-2"
+              className="absolute top-8 right-6 text-white p-2 pixel-border"
               onClick={() => setIsOpen(false)}
             >
               <X size={32} />
             </button>
+
+            {/* Navigation links */}
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className={`text-3xl font-display font-bold uppercase tracking-tighter hover:text-accent transition-colors ${
-                  activeFrame === link.frame ? "text-accent" : ""
+                className={`text-3xl font-display font-bold uppercase tracking-tighter hover:text-accent transition-colors min-h-[44px] flex items-center ${
+                  activeFrame === link.frame ? "text-accent pixel-border" : ""
                 }`}
                 onClick={() => setIsOpen(false)}
               >
@@ -164,9 +167,11 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
+
+            {/* Hire Me button with pixel styling */}
             <Link
               href="/contact"
-              className="px-10 py-4 bg-accent text-background font-bold uppercase tracking-[0.2em] text-sm"
+              className="pixel-button-primary text-2xl px-12 py-4"
               onClick={() => setIsOpen(false)}
             >
               {navLabels.hireMe}

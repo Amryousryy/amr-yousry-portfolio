@@ -1,53 +1,93 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
+
+const footerLinks = {
+  navigation: [
+    { name: "Home", href: "/" },
+    { name: "Services", href: "/services" },
+    { name: "Projects", href: "/projects" },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
+  ],
+  social: [
+    { name: "Instagram", href: "https://instagram.com/amryousry" },
+    { name: "LinkedIn", href: "https://linkedin.com/in/amryousry" },
+    { name: "YouTube", href: "https://youtube.com/@amryousry" },
+    { name: "Twitter", href: "https://twitter.com/amryousry" },
+  ],
+};
 
 export default function Footer() {
   return (
-    <footer className="py-12 bg-[#050508] border-t border-[#1a1a2e]">
+    <footer className="bg-[#050508] border-t border-white/5 py-16">
       <div className="container mx-auto px-6">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex flex-col items-center md:items-start">
-            <Link href="/" className="mb-4 group">
-              <span className="text-lg font-sora font-bold text-white">AMR YOUSRY</span>
-            </Link>
-            <p className="text-white/30 text-sm pixel-text">© 2026 AMR YOUSRY — All Rights Reserved</p>
-            <p className="text-[#00ffcc]/30 text-xs pixel-text mt-2">CRAFTED FRAME BY FRAME</p>
+        {/* Pixel divider */}
+        <div className="frame-divider mb-12" />
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+          {/* Brand block */}
+          <div>
+            <div className="text-hero font-black text-white mb-4">
+              <span className="text-[#00ffcc]">Frame</span> Logic
+            </div>
+            <p className="text-white/60 text-sm leading-relaxed mb-6">
+              Multimedia Designer & Film Maker turning content into growth for ambitious brands.
+            </p>
+            <div className="frame-number text-[8px]">
+              © {new Date().getFullYear()} Amr Yousry
+            </div>
           </div>
 
-          <div className="flex gap-4">
-            <a href="#" className="pixel-box w-10 h-10 bg-[#0a0a0f] flex items-center justify-center hover:bg-[#00ffcc]/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00ffcc] focus-visible:ring-offset-2" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#00ffcc]" fill="currentColor">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.059-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.2-4.358 2.618-6.78 2.618-4.771 0-3.204-.013-3.583-.07-4.849-.2-4.354-2.618-6.78-6.979-6.98-1.281-.059-1.689-.073-4.949-.073zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98 1.281-.058 1.689-.072 4.948-.072zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-              </svg>
-            </a>
-            <a href="#" className="pixel-box w-10 h-10 bg-[#0a0a0f] flex items-center justify-center hover:bg-[#00ffcc]/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00ffcc] focus-visible:ring-offset-2" aria-label="YouTube" target="_blank" rel="noopener noreferrer">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#00ffcc]" fill="currentColor">
-                <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816-3.6-.245-11.626-.246-15.23zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
-              </svg>
-            </a>
-            <a href="#" className="pixel-box w-10 h-10 bg-[#0a0a0f] flex items-center justify-center hover:bg-[#00ffcc]/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00ffcc] focus-visible:ring-offset-2" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#00ffcc]" fill="currentColor">
-                <path d="M4.98 3.5c0 1.381-1.11 2.5-2.49 2.5s-2.49-1.119-2.49-2.5c0-1.38 1.11-2.5 2.49-2.5s2.49 1.12 2.49 2.5zm5.696 7.518c.775.926 1.898 1.618 3.206 1.618 3.232 0 4.623-2.37 4.623-5.653 0-3.283-1.391-5.653-4.623-5.653-1.308 0-2.431.744-3.206 1.618v-1.042h-2.776v12.006h2.776v-7.297zm-5.696 0c.004-2.997 2.43-5.425 5.43-5.425 3.001 0 5.428 2.428 5.428 5.425 0 2.997-2.427 5.423-5.428 5.423-3 0-5.426-2.426-5.43-5.423zm10.206 5.423c0-2.997 2.427-5.425 5.428-5.425 3 0 5.428 2.428 5.428 5.425 0 2.997-2.428 5.423-5.428 5.423-3.001 0-5.428-2.426-5.428-5.423zm5.428-3.949c.622 0 1.126.504 1.126 1.127 0 .623-.504 1.127-1.126 1.127-.622 0-1.126-.504-1.126-1.127 0-.623.504-1.127 1.126-1.127zm-1.272 1.127c0 .623-.504 1.127-1.126 1.127-.622 0-1.126-.504-1.126-1.127 0-.623.504-1.127 1.126-1.127.622 0 1.126.504 1.126 1.127zm1.272 1.127c0 .623-.504 1.127-1.126 1.127-.622 0-1.126-.504-1.126-1.127 0-.623.504-1.127 1.126-1.127.622 0 1.126.504 1.126 1.127z"/>
-              </svg>
-            </a>
-            <a href="#" className="pixel-box w-10 h-10 bg-[#0a0a0f] flex items-center justify-center hover:bg-[#00ffcc]/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00ffcc] focus-visible:ring-offset-2" aria-label="Behance" target="_blank" rel="noopener noreferrer">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#00ffcc]" fill="currentColor">
-                <path d="M22 7h-7v-2h7v2zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.564-1.974-5.564-5.354 0-3.626 2.745-5.439 5.658-5.439 3.017 0 4.85 1.732 5.044 5.066h-2.139c-.28-.78-1.559-1.645-2.905-1.645-2.273 0-3.768 1.667-3.768 3.912 0 2.356 1.453 3.815 3.77 3.815 2.008 0 3.302-1.245 3.302-3.085h2.141c.155 2.655 2.157 2.885 3.168 2.885.522 0 2.098-.2 2.372-1.535h1.424zm-8.682-.5c1.62.012 2.522-1.08 2.522-2.454 0-1.394-.902-2.46-2.522-2.46s-2.522 1.066-2.522 2.46c0 1.374.902 2.442 2.522 2.454zm-7.048 2.5h6.796v-1.26h-6.796v1.26z"/>
-              </svg>
-            </a>
+          {/* Navigation */}
+          <div>
+            <div className="frame-label text-sm mb-6">NAVIGATION</div>
+            <div className="space-y-3">
+              {footerLinks.navigation.map((link) => (
+                <div key={link.name}>
+                  <Link
+                    href={link.href}
+                    className="text-white/60 hover:text-[#00ffcc] transition-colors text-sm"
+                  >
+                    {link.name}
+                  </Link>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="text-center md:text-right">
-            <p className="pixel-text text-white/30 text-xs mb-2">BACK TO TOP</p>
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="pixel-box w-10 h-10 flex items-center justify-center hover:bg-[#00ffcc]/20 transition-colors mx-auto md:ml-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00ffcc] focus-visible:ring-offset-2"
-              aria-label="Scroll to top"
-            >
-              <span className="text-[#00ffcc]">↑</span>
-            </button>
+          {/* Social & Contact */}
+          <div>
+            <div className="frame-label text-sm mb-6">CONNECT</div>
+            <div className="space-y-3 mb-6">
+              {footerLinks.social.map((link) => (
+                <div key={link.name}>
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white/60 hover:text-[#00ffcc] transition-colors text-sm"
+                  >
+                    {link.name}
+                  </a>
+                </div>
+              ))}
+            </div>
+            <div className="text-sm text-white/40">
+              <a href="mailto:amr@amryousry.com" className="hover:text-[#00ffcc] transition-colors">
+                amr@amryousry.com
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="frame-number text-[8px]">
+            FRAME 00: CREDITS
+          </div>
+          <div className="text-white/30 text-[10px]">
+            Built with Next.js 16 • Designed with Frame Logic
           </div>
         </div>
       </div>

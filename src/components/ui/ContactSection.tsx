@@ -121,14 +121,14 @@ export default function ContactSection({ projectId, projectTitle }: ContactSecti
             Only 2 new projects accepted for May 2026
           </p>
 
-          {/* Trust Indicators - Frame-styled */}
+            {/* Trust Indicators - Frame-styled */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
             {[
               { value: "50M+", label: "Views", context: "Across campaigns" },
               { value: "3.5X", label: "Avg ROI", context: "Increase proven" },
               { value: "100+", label: "Brands", context: "Scaled to 6 figs" },
             ].map((stat, i) => (
-              <div key={i} className="bg-[#0a0a0f] p-6 border border-white/5">
+              <div key={i} className="bg-[#0a0a0f] p-6 border border-white/5 hover:border-[#00ffcc]/20 transition-colors duration-300">
                 <div className="text-hero text-[#00ffcc] font-black mb-1">{stat.value}</div>
                 <div className="text-mono text-white/80 text-[10px] tracking-[0.15em] mb-1">{stat.label}</div>
                 <div className="text-mono text-white/30 text-[8px]">{stat.context}</div>

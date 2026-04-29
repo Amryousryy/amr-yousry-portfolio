@@ -6,22 +6,52 @@ interface PixelIconProps extends SVGProps<SVGSVGElement> {
   color?: string;
 }
 
-const iconPaths = {
+const pixelIcons = {
   menu: {
-    16: "M2,4 h12 M2,8 h12 M2,12 h12",
-    24: "M4,6 h16 M4,12 h16 M4,18 h16",
+    16: [
+      [2, 3, 14, 3], // top line
+      [2, 8, 14, 8], // middle line
+      [2, 13, 14, 13], // bottom line
+    ],
+    24: [
+      [4, 5, 20, 5],
+      [4, 12, 20, 12],
+      [4, 19, 20, 19],
+    ],
   },
   close: {
-    16: "M4,4 l8,8 M12,4 l-8,8",
-    24: "M6,6 l12,12 M18,6 l-12,12",
+    16: [
+      [3, 3, 13, 13], // diagonal \
+      [13, 3, 3, 13], // diagonal /
+    ],
+    24: [
+      [5, 5, 19, 19],
+      [19, 5, 5, 19],
+    ],
   },
   play: {
-    16: "M4,2 l10,6 l-10,6 z",
-    24: "M6,3 l14,9 l-14,9 z",
+    16: [
+      [3, 2, 3, 14], // left edge
+      [3, 2, 13, 8], // top diagonal
+      [3, 14, 13, 8], // bottom diagonal
+    ],
+    24: [
+      [4, 3, 4, 21],
+      [4, 3, 20, 12],
+      [4, 21, 20, 12],
+    ],
   },
   edit: {
-    16: "M10,2 l4,4 l-8,8 l-4,-4 z M6,14 l8,0",
-    24: "M14,3 l6,6 l-12,12 l-6,-6 z M9,21 l12,0",
+    16: [
+      [9, 2, 14, 7], // top-right box
+      [1, 7, 9, 14], // main diagonal
+      [1, 14, 5, 14], // bottom line
+    ],
+    24: [
+      [13, 3, 21, 11],
+      [3, 11, 13, 21],
+      [3, 21, 7, 21],
+    ],
   },
 };
 
@@ -33,7 +63,7 @@ export default function PixelIcon({
   ...props
 }: PixelIconProps) {
   const viewBox = size === 16 ? "0 0 16 16" : "0 0 24 24";
-  const path = iconPaths[name][size];
+  const lines = pixelIcons[name][size];
 
   return (
     <svg
@@ -41,13 +71,21 @@ export default function PixelIcon({
       height={size}
       viewBox={viewBox}
       fill="none"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
       className={className}
       {...props}
     >
-      <path d={path} />
+      {lines.map((line: number[], i: number) => (
+        <line
+          key={i}
+          x1={line[0]}
+          y1={line[1]}
+          x2={line[2]}
+          y2={line[3]}
+          stroke={color}
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      ))}
     </svg>
   );
 }
