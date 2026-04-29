@@ -57,19 +57,33 @@ export default function Hero() {
           <div className="w-16 h-[1px] bg-[#00ffcc]/30 mx-auto" />
         </div>
 
-        {/* Main Headline - STR8FIRE inspired massive typography */}
+        {/* Main Headline - Conversion-focused */}
         <h1 className="text-hero font-black text-white mb-6 tracking-tighter animate-fade-up-delay-1">
-          I Turn
+          I Turn Video
           <br />
-          <span className="text-[#00ffcc]">Content</span>
+          <span className="text-[#00ffcc]">Into Leads</span>
           <br />
-          Into Clients
+          For Ambitious Brands
         </h1>
 
-        {/* Subheadline - editorial style */}
-        <p className="text-display text-white/60 max-w-2xl mx-auto mb-12 leading-relaxed animate-fade-up-delay-2">
-          Strategic video content that generates leads and scales brands for ambitious companies.
+        {/* Subheadline - Business outcome focused */}
+        <p className="text-display text-white/60 max-w-2xl mx-auto mb-8 leading-relaxed animate-fade-up-delay-2">
+          Strategic video content that generates leads and scales your brand to 6 figures.
         </p>
+
+        {/* Trust signals - Moved up for immediate credibility */}
+        <div className="flex flex-wrap justify-center gap-6 mb-10 animate-fade-up-delay-2">
+          {[
+            { value: "50M+", label: "Views Generated" },
+            { value: "3.5X", label: "Avg ROI" },
+            { value: "100+", label: "Brands Scaled" },
+          ].map((stat, i) => (
+            <div key={i} className="text-center px-4">
+              <div className="text-display font-black text-[#00ffcc]">{stat.value}</div>
+              <div className="text-mono text-white/40 text-[9px]">{stat.label}</div>
+            </div>
+          ))}
+        </div>
 
         {/* CTAs - Premium button treatment */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-6 animate-fade-up-delay-3">
