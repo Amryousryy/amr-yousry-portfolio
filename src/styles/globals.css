@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+@theme {
+  --font-pixel: "Pixelify Sans", system-ui;
+  --font-modern: "Inter", "Geist Sans", system-ui;
+
+  --color-brand-purple: #6D28D9;
+  --color-brand-cyan: #22D3EE;
+  --color-brand-blue: #1E1B4B;
+  --color-brand-pink: #F472B6;
+
+  --color-bg-deep: #1E1B4B;
+  --color-text-main: #F8FAFC;
+  --color-text-dim: #94A3B8;
+
+  --spacing-8: 0.5rem;
+  --spacing-16: 1rem;
+  --spacing-24: 1.5rem;
+  --spacing-32: 2rem;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-blue text-text-main font-modern antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-pixel uppercase tracking-tighter;
+  }
+}
+
+@layer components {
+  .pixel-border {
+    @apply border-4 border-slate-800;
+  }
+
+  .pixel-shadow {
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.5);
+  }
+
+  .pixel-grid {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+}

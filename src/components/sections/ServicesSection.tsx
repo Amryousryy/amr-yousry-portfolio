@@ -1,7 +1,5 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { SettingsService } from "@/lib/api-client";
 import { ArrowRight } from "lucide-react";
 
 interface ServiceCard {
@@ -134,17 +132,9 @@ function ServiceCard({ service, index, isPrimary }: ServiceCardProps) {
 }
 
 export default function ServicesSection() {
-  const { data: contentResponse, error, isLoading } = useQuery({
-    queryKey: ["site-content"],
-    queryFn: () => SettingsService.getContent(),
-  });
-
-  const servicesCards = contentResponse?.data?.servicesCards?.length
-    ? contentResponse.data.servicesCards
-    : DEFAULT_SERVICES;
-
-  const sectionTitle = contentResponse?.data?.servicesTitle || "What I Deliver";
-  const sectionSubtitle = contentResponse?.data?.servicesSubtitle || "Premium video content that drives real business results.";
+  const servicesCards = DEFAULT_SERVICES;
+  const sectionTitle = "What I Deliver";
+  const sectionSubtitle = "Premium video content that drives real business results.";
 
   return (
     <section className="py-24 md:py-32 bg-[#050508] relative">
