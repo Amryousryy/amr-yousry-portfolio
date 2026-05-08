@@ -1,11 +1,171 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0A0A0F;
-  --foreground: #FFFFFF;
-  --primary: #2D1B69;
-  --secondary: #6C4AB6;
-  --accent: #00F5D4;
+  --background: #0a0a0f;
+  --foreground: #e0e0e0;
+  --primary: #1a1a2e;
+  --secondary: #16213e;
+  --accent: #00ffcc;
+  --accent-dim: rgba(0, 255, 204, 0.6);
+  
+  /* Retro Game Palette */
+  --retro-dark: #0a0a0f;
+  --retro-medium: #1a1a2e;
+  --retro-light: #16213e;
+  --retro-accent: #00ffcc;
+  
+  /* Design System - Surface Layering */
+  --surface-base: #0a0a0f;
+  --surface-elevated: #12121f;
+  
+  /* Design System - Text Hierarchy */
+  --text-primary: #e0e0e0;
+  --text-secondary: rgba(224, 224, 224, 0.7);
+  --text-muted: rgba(224, 224, 224, 0.4);
+  --text-accent: #00ffcc;
+    
+  /* Design System - Motion */
+  --duration-fast: 200ms;
+  --duration-normal: 400ms;
+    
+  /* 8pt Spacing System */
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  
+  /* Container System */
+  --container-narrow: 800px;
+  --container-default: 1200px;
+  
+  /* Section Spacing */
+  --section-py: clamp(4rem, 10vh, 6rem);
+  --section-px: clamp(1rem, 4vw, 1.5rem);
+}
+
+/* Typography Scale */
+.text-hero {
+  font-size: clamp(2.5rem, 6vw, 5.5rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.text-display {
+  font-size: clamp(2rem, 4vw, 4rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+.text-section {
+  font-size: clamp(1.75rem, 3vw, 3rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.text-subtitle {
+  font-size: clamp(1.125rem, 2vw, 1.5rem);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.text-body {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.text-mono {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* Pixel stars background */
+.pixel-stars {
+  position: relative;
+  overflow: hidden;
+}
+
+.pixel-stars::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(1px 1px at 10% 20%, var(--retro-accent) 50%, transparent 50%),
+    radial-gradient(1px 1px at 30% 60%, var(--retro-accent) 50%, transparent 50%),
+    radial-gradient(1px 1px at 50% 10%, var(--retro-accent) 50%, transparent 50%),
+    radial-gradient(1px 1px at 70% 80%, var(--retro-accent) 50%, transparent 50%),
+    radial-gradient(1px 1px at 90% 40%, var(--retro-accent) 50%, transparent 50%);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* Pixel separator */
+.pixel-separator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 0;
+}
+
+.pixel-separator::before,
+.pixel-separator::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 204, 0.3), transparent);
+}
+
+.pixel-separator-dot {
+  width: 4px;
+  height: 4px;
+  background: var(--retro-accent);
+}
+
+/* Level badge */
+.level-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: var(--retro-dark);
+  border: 2px solid var(--retro-accent);
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  color: var(--retro-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+/* Section padding */
+.section-padding {
+  padding-top: var(--section-py);
+  padding-bottom: var(--section-py);
+  padding-left: var(--section-px);
+  padding-right: var(--section-px);
+}
+
+/* Container system */
+.container-narrow {
+  max-width: var(--container-narrow);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.container-default {
+  max-width: var(--container-default);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 @theme inline {
@@ -16,9 +176,8 @@
   --color-accent: var(--accent);
   
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
-  --font-pixel: var(--font-vt323), monospace;
-  --font-press-start: var(--font-press-start), monospace;
+  --font-display: var(--font-press-start), ui-sans-serif, system-ui, sans-serif;
+  --font-pixel: var(--font-press-start), monospace;
 
   --animate-glitch: glitch 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
   --animate-spin-slow: spin 3s linear infinite;
@@ -32,7 +191,9 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
+  font-family: var(--font-press-start);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .pixel-border {
@@ -198,4 +359,14 @@ h1, h2, h3, h4, h5, h6 {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* Loading Bar Animation */
+@keyframes loadingBar {
+  0%, 100% { 
+    clip-path: inset(0 100% 0 0); 
+  }
+  50% { 
+    clip-path: inset(0 0 0 0); 
+  }
 }

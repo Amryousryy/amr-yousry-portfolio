@@ -1,35 +1,33 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { footerContent } from "@/content/footer";
+import { socialLinksArray } from "@/data/social-links";
 
 export function Footer() {
   return (
     <footer className="bg-brand-blue border-t border-slate-800 py-16 md:py-24">
       <Container>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-          
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            
           {/* Brand & Tagline */}
-          <div className="lg:col-span-5">
-            <Link href="/" className="group flex items-center gap-3 mb-6">
-              <div className="w-6 h-6 bg-brand-cyan flex items-center justify-center font-pixel text-brand-blue border-2 border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] group-hover:bg-white transition-colors">
-                A
-              </div>
-              <span className="font-pixel text-white text-xs tracking-widest">{footerContent.wordmark}</span>
+          <div className="lg:col-span-6">
+            <Link href="/" className="group block mb-6">
+              <img src="/images/footer-logo.svg" alt="AMR YOUSRY" className="w-30 h-auto md:w-36 transition-transform group-hover:scale-105" />
             </Link>
-            <p className="font-modern text-text-dim text-base max-w-sm leading-relaxed antialiased">
+            <p className="font-modern text-text-dim text-base max-w-[520px] leading-relaxed antialiased">
               {footerContent.tagline}
             </p>
           </div>
 
           {/* Navigation Links */}
           <div className="lg:col-span-3">
-            <h4 className="font-pixel text-[10px] text-brand-cyan tracking-widest mb-8 uppercase">Navigation</h4>
-            <ul className="space-y-4">
+            <h4 className="font-pixel text-[10px] text-brand-cyan tracking-widest mb-6 uppercase">Navigation</h4>
+            <ul className="space-y-3">
               {footerContent.links.map((link) => (
                 <li key={link.label}>
                   <Link 
                     href={link.href}
-                    className="font-modern text-text-dim hover:text-white transition-colors text-sm uppercase tracking-wider"
+                    className="font-modern text-text-dim hover:text-brand-cyan transition-all duration-200 text-sm uppercase tracking-wider inline-block hover:translate-x-0.5"
                   >
                     {link.label}
                   </Link>
@@ -39,16 +37,16 @@ export function Footer() {
           </div>
 
           {/* Social Links */}
-          <div className="lg:col-span-4">
-            <h4 className="font-pixel text-[10px] text-brand-cyan tracking-widest mb-8 uppercase">Connect</h4>
-            <ul className="space-y-4">
-              {footerContent.socials.map((social) => (
+          <div className="lg:col-span-3">
+            <h4 className="font-pixel text-[10px] text-brand-cyan tracking-widest mb-6 uppercase">Connect</h4>
+            <ul className="space-y-3">
+              {socialLinksArray.map((social) => (
                 <li key={social.label}>
                   <a 
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-modern text-text-dim hover:text-white transition-colors text-sm uppercase tracking-wider flex items-center gap-2 group"
+                    className="font-modern text-text-dim hover:text-brand-cyan transition-all duration-200 text-sm uppercase tracking-wider inline-flex items-center gap-2 group hover:translate-x-0.5"
                   >
                     <span>{social.label}</span>
                     <span className="font-pixel text-[8px] opacity-0 group-hover:opacity-100 transition-opacity">LVL. UP</span>
@@ -60,14 +58,17 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-24 pt-8 border-t border-slate-800/50 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="mt-16 pt-8 border-t border-slate-800/50 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="font-pixel text-[8px] text-text-dim tracking-widest uppercase">
             {footerContent.copyright}
           </p>
-          <div className="flex gap-4">
-            <div className="w-2 h-2 bg-brand-cyan animate-pulse" />
-            <div className="w-2 h-2 bg-brand-purple animate-pulse delay-75" />
-            <div className="w-2 h-2 bg-brand-pink animate-pulse delay-150" />
+          <div className="flex items-center gap-3">
+            <span className="font-pixel text-[7px] text-text-dim/50 tracking-[0.2em] uppercase">System Palette</span>
+            <div className="flex gap-3">
+              <div className="w-2 h-2 bg-brand-cyan" />
+              <div className="w-2 h-2 bg-brand-purple" />
+              <div className="w-2 h-2 bg-brand-pink" />
+            </div>
           </div>
         </div>
       </Container>

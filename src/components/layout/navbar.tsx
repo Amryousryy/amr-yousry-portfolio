@@ -32,21 +32,19 @@ export function Navbar() {
     <header 
       className={cn(
         "fixed top-0 w-full z-50 transition-all duration-300",
-        scrolled ? "bg-brand-blue/80 backdrop-blur-md border-b border-slate-800 py-4" : "bg-transparent py-8"
+        scrolled ? "bg-brand-blue/90 backdrop-blur-md border-b border-slate-800/50 py-3" : "bg-transparent py-6"
       )}
     >
       <Container>
         <nav className="flex items-center justify-between">
-          {/* Logo / Wordmark */}
-          <Link href="/" className="group flex items-center gap-2">
-            <div className="w-8 h-8 bg-brand-cyan flex items-center justify-center font-pixel text-brand-blue border-2 border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] group-hover:bg-white transition-colors">
-              A
-            </div>
-            <span className="font-pixel text-white text-sm tracking-widest hidden sm:block">AMR YOUSRY</span>
+          {/* Logo */}
+          <Link href="/" className="group flex items-center gap-3">
+            <img src="/images/logo.svg" alt="AMR YOUSRY" className="w-9 h-9 md:w-10 md:h-10 transition-transform group-hover:scale-105" />
+            <span className="font-pixel text-sm text-brand-cyan tracking-[0.2em] hidden sm:inline-block">AMR YOUSRY</span>
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-12">
+          <div className="hidden md:flex items-center gap-10">
             {navLinks.map((link) => (
               <Link 
                 key={link.label} 
@@ -54,7 +52,7 @@ export function Navbar() {
                 className={cn(
                   "font-pixel text-[10px] tracking-[0.2em] transition-all duration-200 relative group",
                   link.isCTA 
-                    ? "bg-brand-cyan text-brand-blue px-6 py-2 border-2 border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]" 
+                    ? "bg-brand-cyan text-brand-blue px-5 py-2 border-2 border-brand-cyan shadow-[2px_2px_0px_0px_rgba(0,0,0,0.8)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,0.8)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none" 
                     : "text-text-dim hover:text-brand-cyan"
                 )}
               >
@@ -68,10 +66,10 @@ export function Navbar() {
 
           {/* Mobile Menu Toggle */}
           <button 
-            className="md:hidden text-white p-2"
+            className="md:hidden text-white p-2 hover:text-brand-cyan transition-colors"
             onClick={() => setIsOpen(!isOpen)}
           >
-            {isOpen ? <X /> : <Menu />}
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </nav>
       </Container>
@@ -80,19 +78,20 @@ export function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 w-full bg-brand-blue border-b border-slate-800 md:hidden overflow-hidden"
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="absolute top-full left-0 w-full bg-brand-blue/95 backdrop-blur-sm border-b border-slate-800/50 md:hidden"
           >
-            <div className="flex flex-col p-8 gap-8 items-center text-center">
+            <div className="flex flex-col p-6 gap-6 items-center text-center">
               {navLinks.map((link) => (
                 <Link 
                   key={link.label} 
                   href={link.href}
                   className={cn(
-                    "font-pixel text-sm tracking-widest",
-                    link.isCTA ? "text-brand-cyan border-b-2 border-brand-cyan pb-1" : "text-text-dim"
+                    "font-pixel text-sm tracking-widest py-2",
+                    link.isCTA ? "text-brand-cyan" : "text-text-dim hover:text-brand-cyan transition-colors"
                   )}
                 >
                   {link.label}

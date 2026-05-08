@@ -27,7 +27,8 @@ export async function apiRequest<T>(
       return { error: json.error || "Something went wrong" };
     }
     
-    return { data: json.data };
+    // Some routes return { data: T }, others return T directly
+    return { data: json.data !== undefined ? json.data : json };
   } catch {
     return { error: "Network error occurred" };
   }

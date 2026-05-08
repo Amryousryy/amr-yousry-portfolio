@@ -1,14 +1,14 @@
 export const heroContent = {
-  headline: "Crafting Cinematic Stories. Designed to Convert.",
-  subheadline: "Creative Direction and High-Impact Video Production for brands that demand professional visual storytelling and measurable results.",
+  headline: "MAKE IDEAS\nMATTER",
+  subheadline: "Creative Direction and High-Impact Video Production for brands that need content built for attention, trust, and conversion.",
   ctas: {
     primary: {
       text: "Start a Project",
-      href: "#contact",
+      href: "/#contact",
     },
     secondary: {
-      text: "Watch Showreel",
-      href: "#showreel",
+      text: "View Missions",
+      href: "/projects",
     },
   },
 };

@@ -1,3 +1,10 @@
+export interface ProjectMedia {
+  type: "image" | "video" | "process" | "before-after" | "result";
+  src: string; // image path, video URL, etc.
+  alt?: string;
+  caption?: string;
+}
+
 export interface ProjectResult {
   label: string;
   value: string;
@@ -11,16 +18,20 @@ export interface Project {
   category: string;
   services: string[];
   summary: string;
+  
+  // Home/Projects list
   thumbnail: string;
-  bannerImage: string;
+  mainResult: string;
   featured?: boolean;
   
-  // High-level result for the card
-  mainResult: string;
-
-  // Case Study Details
+  // Case study page
+  bannerImage: string;
   problem: string;
   idea: string;
   execution: string;
   detailedResults: ProjectResult[];
+  
+  // Media support
+  caseStudyMedia?: ProjectMedia[];
+  heroVideo?: string; // optional hero video for case study
 }

@@ -8,13 +8,15 @@ interface AdminEmptyStateProps {
   description?: string;
   actionLabel?: string;
   actionHref?: string;
+  onActionClick?: () => void;
 }
 
 export default function AdminEmptyState({ 
   title = "No data found", 
   description = "Get started by adding your first item.",
   actionLabel = "Add New",
-  actionHref
+  actionHref,
+  onActionClick
 }: AdminEmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px] p-8 border border-dashed border-primary/20">
@@ -26,6 +28,7 @@ export default function AdminEmptyState({
       {actionHref && (
         <a
           href={actionHref}
+          onClick={onActionClick}
           className="flex items-center space-x-2 px-6 py-3 bg-accent text-background font-bold uppercase tracking-widest text-xs pixel-border hover:scale-105 transition-all"
         >
           <Plus size={16} />

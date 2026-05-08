@@ -1,6 +1,8 @@
+import { socialLinks, socialLinksArray } from "@/data/social-links";
+
 export const contactContent = {
-  heading: "Start the Conversation.",
-  subheading: "Transforming your brand through cinematic storytelling and strategic design. Reach out to discuss your next high-impact project.",
+  heading: "START YOUR\nPROJECT.",
+  subheading: "Have a project, campaign, brand, video, or digital product in mind? Send the mission brief and I'll help you shape the right creative direction.",
   form: {
     labels: {
       name: "Full Name",
@@ -16,19 +18,17 @@ export const contactContent = {
     },
     services: [
       "Creative Direction",
-      "Cinematic Video Production",
-      "UGC & Content Strategy",
-      "Motion Design & Animation",
-      "Full Digital Experience",
+      "Brand Identity",
+      "Video Editing",
+      "Motion Graphics",
+      "UX/UI Design",
+      "AI Ads",
+      "Other",
     ],
   },
-  socials: [
-    { label: "INSTAGRAM", href: "https://instagram.com/amryousryy", icon: "instagram" },
-    { label: "BEHANCE", href: "https://behance.net/amryousryy", icon: "behance" },
-    { label: "FACEBOOK", href: "https://facebook.com/amryousryy", icon: "facebook" },
-  ],
+  socials: socialLinksArray,
   whatsapp: {
     label: "DIRECT MESSAGE",
-    number: "201021213533", // Production number
+    number: "201021213533",
   },
 };

@@ -3,17 +3,18 @@ export interface Stat {
   value: string;
 }
 
+// Neutral service indicators - not fake stats
 export const heroStats: Stat[] = [
   {
-    label: "STAT: VIEWS",
-    value: "10M+",
+    label: "VIDEO EDITING",
+    value: "◆",
   },
   {
-    label: "STAT: PROJECTS",
-    value: "50+",
+    label: "MOTION DESIGN",
+    value: "◆",
   },
   {
-    label: "STAT: CLIENTS",
-    value: "30+",
+    label: "BRAND STRATEGY",
+    value: "◆",
   },
 ];
