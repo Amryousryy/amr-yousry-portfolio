@@ -71,33 +71,46 @@ export default function OGImage() {
 
         <div
           style={{
-            width: "40%",
-            height: "100%",
+            width: 630,
+            height: 630,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: "0 20px 0 48px",
+            flexShrink: 0,
           }}
         >
-          <img
-            src={logoSrc}
-            alt=""
+          <div
             style={{
-              width: 280,
-              height: 280,
-              display: "block",
+              width: 500,
+              height: 500,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "rgba(15, 5, 36, 0.6)",
+              border: "2px solid rgba(110, 224, 215, 0.25)",
+              borderRadius: 40,
             }}
-          />
+          >
+            <img
+              src={logoSrc}
+              alt=""
+              style={{
+                width: 400,
+                height: 400,
+                display: "block",
+              }}
+            />
+          </div>
         </div>
 
         <div
           style={{
-            width: "60%",
-            height: "100%",
+            width: 570,
+            height: 630,
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            padding: "0 64px 0 24px",
+            paddingRight: 64,
           }}
         >
           <span
@@ -142,7 +155,7 @@ export default function OGImage() {
               color: "#a0a0b0",
               fontFamily: "system-ui, sans-serif",
               lineHeight: 1.5,
-              maxWidth: 520,
+              maxWidth: 480,
             }}
           >
             Cinematic visuals, brand systems, and digital experiences built for
