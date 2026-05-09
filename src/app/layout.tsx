@@ -32,7 +32,7 @@ export const metadata: Metadata = {
       "Cinematic visuals, brand systems, and digital experiences built for attention, trust, and conversion.",
     images: [
       {
-        url: "/images/meta/og-preview-v4.png",
+        url: "/images/meta/og-preview-v5.png",
         width: 1200,
         height: 630,
         alt: "Amr Yousry | Senior Multimedia Designer",
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     title: "Amr Yousry | Senior Multimedia Designer",
     description:
       "Cinematic visuals, brand systems, and digital experiences built for attention, trust, and conversion.",
-    images: ["/images/meta/og-preview-v4.png"],
+    images: ["/images/meta/og-preview-v5.png"],
   },
 };
 
