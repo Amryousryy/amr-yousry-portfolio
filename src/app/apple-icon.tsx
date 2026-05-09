@@ -1,9 +1,11 @@
 import { ImageResponse } from "next/og";
+import { getLogoSvgDataUri } from "@/lib/logo-data-uri";
 
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
 export default function AppleIcon() {
+  const logoSrc = getLogoSvgDataUri();
   return new ImageResponse(
     (
       <div
@@ -16,27 +18,19 @@ export default function AppleIcon() {
           justifyContent: "center",
           background: "#240e68",
           borderRadius: 32,
-          position: "relative",
         }}
       >
-        <span
-          style={{
-            fontSize: 80,
-            fontWeight: 900,
-            color: "#f5db0a",
-            fontFamily: "monospace",
-            lineHeight: 1,
-            letterSpacing: 6,
-          }}
-        >
-          A
-        </span>
+        <img
+          src={logoSrc}
+          alt=""
+          style={{ width: 90, height: 90, display: "block" }}
+        />
         <div
           style={{
             width: 80,
             height: 6,
             background: "#6ee0d7",
-            marginTop: 12,
+            marginTop: 16,
             borderRadius: 3,
           }}
         />
@@ -45,7 +39,7 @@ export default function AppleIcon() {
             fontSize: 16,
             color: "#ffffff",
             fontFamily: "monospace",
-            marginTop: 12,
+            marginTop: 14,
             letterSpacing: 2,
           }}
         >
