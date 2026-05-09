@@ -16,10 +16,26 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Amr Yousry | Cinematic Stories & Creative Direction",
-  description: "A premium creative portfolio focused on high-impact video production, cinematic storytelling, and design results.",
-  icons: {
-    icon: "/images/logo.svg",
+  metadataBase: new URL("https://amr-yousry-portfolio.vercel.app"),
+  title: {
+    default: "Amr Yousry | Senior Multimedia Designer",
+    template: "%s | Amr Yousry",
+  },
+  description:
+    "Cinematic visuals, brand systems, and digital experiences built for attention, trust, and conversion.",
+  openGraph: {
+    type: "website",
+    url: "https://amr-yousry-portfolio.vercel.app",
+    siteName: "Amr Yousry Portfolio",
+    title: "Amr Yousry | Senior Multimedia Designer",
+    description:
+      "Cinematic visuals, brand systems, and digital experiences built for attention, trust, and conversion.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Amr Yousry | Senior Multimedia Designer",
+    description:
+      "Cinematic visuals, brand systems, and digital experiences built for attention, trust, and conversion.",
   },
 };
 
