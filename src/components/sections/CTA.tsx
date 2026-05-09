@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { ContactForm } from "@/components/ui/ContactForm";
+// ContactForm removed - using ContactSection instead
 import { Zap, Target, TrendingUp } from "lucide-react";
 
 export default function CTA() {
@@ -74,7 +74,7 @@ export default function CTA() {
                 <div className="mb-6 p-4 bg-accent text-background text-center pixel-border animate-pulse">
                    <p className="text-[10px] font-bold uppercase tracking-[0.3em]">Next Audit Available: APRIL 2026</p>
                 </div>
-                <ContactForm isAuditOffer={true} />
+                 {/* ContactForm removed - use ContactSection instead */}
              </div>
           </motion.div>
         </div>

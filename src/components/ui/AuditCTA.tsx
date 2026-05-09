@@ -20,21 +20,21 @@ export default function AuditCTA() {
                 <Zap size={12} fill="currentColor" />
                 <span>Limited Offer</span>
              </div>
-             <h2 className="text-4xl md:text-5xl font-display font-bold uppercase tracking-tighter leading-tight">
-               Get a Free 15-Min <br /> <span className="text-accent">Content Audit</span>
-             </h2>
-             <p className="text-foreground/60 max-w-md text-lg italic">
-               We'll analyze your current strategy and give you 3 actionable steps to increase your conversion rate instantly.
-             </p>
+              <h2 className="text-4xl md:text-5xl font-display font-bold uppercase tracking-tighter leading-tight">
+                Claim Your Free 15-Min <br /> <span className="text-accent">Content Audit</span>
+              </h2>
+              <p className="text-foreground/60 max-w-md text-lg italic">
+                Get 3 actionable steps to boost your conversion rate. Limited slots available this month.
+              </p>
           </div>
 
           <motion.a
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            href="https://wa.me/your-number?text=I%20want%20a%20free%20content%20audit"
+            href="https://wa.me/201021213533?text=Hi%20Amr%2C%20I%27d%20like%20to%20claim%20my%20free%2015-min%20content%20audit."
             className="flex items-center space-x-4 px-12 py-6 bg-accent text-background font-bold uppercase tracking-[0.2em] text-xs pixel-border whitespace-nowrap"
           >
-            <span>Start Your Transformation</span>
+            <span>Book My Free Audit</span>
             <ChevronRight size={18} />
           </motion.a>
         </div>

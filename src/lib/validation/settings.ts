@@ -98,7 +98,7 @@ export const contentDefaultValues: ContentCreateInput = {
   contactEmail: "",
   whatsappNumber: "",
   socialLinks: {
-    instagram: "",
+    instagram: socialLinks.instagram,
     twitter: "",
     youtube: "",
     linkedin: "",
@@ -112,6 +112,8 @@ export const contentDefaultValues: ContentCreateInput = {
   ],
 };
 
+import { socialLinks } from "@/data/social-links";
+
 export function createContentFormValues(existing?: Partial<ContentCreateInput>): ContentCreateInput {
   return {
     about: existing?.about || "",
@@ -121,7 +123,7 @@ export function createContentFormValues(existing?: Partial<ContentCreateInput>):
     contactEmail: existing?.contactEmail || "",
     whatsappNumber: existing?.whatsappNumber || "",
     socialLinks: existing?.socialLinks || {
-      instagram: "",
+      instagram: socialLinks.instagram,
       twitter: "",
       youtube: "",
       linkedin: "",

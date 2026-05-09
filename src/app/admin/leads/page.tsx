@@ -58,11 +58,20 @@ export default function LeadsPage() {
     }),
   });
 
+  const { data: leadStats } = useQuery({
+    queryKey: ["lead-analytics"],
+    queryFn: async () => {
+      const res = await fetch("/api/analytics/leads");
+      return res.json();
+    }
+  });
+
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: string }) => 
       LeadService.updateStatus(id, status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["leads"] });
+      queryClient.invalidateQueries({ queryKey: ["lead-analytics"] });
       toast.success("Lead status updated");
     },
     onError: () => {
@@ -78,6 +87,7 @@ export default function LeadsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["leads"] });
+      queryClient.invalidateQueries({ queryKey: ["lead-analytics"] });
       toast.success("Lead removed");
     }
   });
@@ -212,11 +222,13 @@ export default function LeadsPage() {
 
   const leadsData = Array.isArray(leads?.data) ? leads.data : [];
   const meta = leads?.meta;
-  const totalLeads = meta?.total || 0;
-
-  const newCount = leadsData.filter(l => l.status === "new").length;
-  const contactedCount = leadsData.filter(l => l.status === "contacted").length;
-  const auditCount = leadsData.filter(l => l.offerType === "free_audit").length;
+  
+  const totalLeads = leadStats?.total || meta?.total || 0;
+  const newCount = leadStats?.byStatus?.new || 0;
+  const contactedCount = leadStats?.byStatus?.contacted || 0;
+  // Note: auditCount isn't explicitly in analytics but we can approximate or ignore if needed
+  // For now, let's just use the ones we have total counts for
+  const auditCount = leadsData.filter(l => l.offerType === "free_audit").length; // Still local, but better than nothing for now
 
   return (
     <div className="space-y-6">

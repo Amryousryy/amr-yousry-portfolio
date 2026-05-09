@@ -1,50 +1,30 @@
 import type { Metadata } from "next";
-import { Inter, Sora, VT323, Cairo, Press_Start_2P } from "next/font/google";
-import "./globals.css";
-import SessionProviderWrapper from "@/components/providers/SessionProviderWrapper";
-import QueryProvider from "@/components/providers/QueryProvider";
-import { Toaster } from "sonner";
-import RootLayoutClient from "@/components/layout/RootLayoutClient";
-import AnalyticsProvider from "@/components/providers/AnalyticsProvider";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const sora = Sora({
-  subsets: ["latin"],
-  variable: "--font-sora",
-  display: "swap",
-});
-
-const vt323 = VT323({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-vt323",
-  display: "swap",
-});
-
-const cairo = Cairo({
-  subsets: ["arabic", "latin"],
-  variable: "--font-cairo",
-  display: "swap",
-  weight: ["400", "700"],
-});
+import { Press_Start_2P, Inter } from "next/font/google";
+import "@/styles/globals.css";
 
 const pressStart2P = Press_Start_2P({
-  weight: "400",
   subsets: ["latin"],
+  weight: "400",
   variable: "--font-press-start",
   display: "swap",
 });
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-modern",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "Amr Yousry | Creative Strategist & Video Editor",
-  description: "I turn content into clients for brands. Creative strategist & video editor helping brands grow through high-converting content.",
-  keywords: ["Video Editing", "Content Strategy", "UGC Ads", "Brand Growth", "Amr Yousry"],
+  title: "Amr Yousry | Cinematic Stories & Creative Direction",
+  description: "A premium creative portfolio focused on high-impact video production, cinematic storytelling, and design results.",
+  icons: {
+    icon: "/images/logo.svg",
+  },
 };
+
+import { Navbar } from "@/components/layout/navbar";
+import { Footer } from "@/components/layout/footer";
 
 export default function RootLayout({
   children,
@@ -52,15 +32,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html suppressHydrationWarning className={`${inter.variable} ${sora.variable} ${vt323.variable} ${cairo.variable} ${pressStart2P.variable} selection:bg-accent selection:text-background`}>
-      <body className="antialiased bg-background text-foreground">
-        <SessionProviderWrapper>
-          <QueryProvider>
-            <Toaster richColors theme="dark" position="top-right" />
-            <RootLayoutClient>{children}</RootLayoutClient>
-            <AnalyticsProvider />
-          </QueryProvider>
-        </SessionProviderWrapper>
+    <html lang="en" className={`${pressStart2P.variable} ${inter.variable}`}>
+      <body className="pixel-grid min-h-screen flex flex-col">
+        <Navbar />
+
+        <main className="pt-20 flex-grow">{children}</main>
+
+        <Footer />
       </body>
     </html>
   );

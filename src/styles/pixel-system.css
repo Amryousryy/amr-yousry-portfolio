@@ -25,7 +25,6 @@
   color: var(--pixel-teal);
   box-shadow: 4px 4px 0 var(--pixel-teal);
   transition: all 0.1s;
-  cursor: pointer;
 }
 
 .pixel-btn:hover {
@@ -43,7 +42,6 @@
   border: 2px solid var(--pixel-teal);
   color: var(--pixel-teal);
   transition: all 0.1s;
-  cursor: pointer;
 }
 
 .pixel-btn-outline:hover {

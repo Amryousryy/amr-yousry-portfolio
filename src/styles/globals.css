@@ -1,0 +1,100 @@
+﻿@import "tailwindcss";
+
+@theme {
+  --font-pixel: var(--font-press-start);
+  --font-modern: var(--font-modern);
+
+  --color-brand-purple: #6D28D9;
+  --color-brand-cyan: #22D3EE;
+  --color-brand-blue: #1E1B4B;
+  --color-brand-pink: #F472B6;
+
+  --color-bg-deep: #1E1B4B;
+  --color-text-main: #F8FAFC;
+  --color-text-dim: #94A3B8;
+
+  --spacing-8: 0.5rem;
+  --spacing-16: 1rem;
+  --spacing-24: 1.5rem;
+  --spacing-32: 2rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-brand-blue text-text-main font-modern antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-pixel uppercase tracking-tighter;
+  }
+
+  section[id] {
+    scroll-margin-top: 60px;
+  }
+}
+
+@layer components {
+  .pixel-grid {
+    position: relative;
+  }
+
+  .pixel-grid::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* Ensure all sections and content sit above the pixel grid */
+  section, main, header, footer {
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Ensure text containers sit above grid */
+  h1, h2, h3, h4, h5, h6, p {
+    position: relative;
+    z-index: 20;
+  }
+}
+
+@layer utilities {
+  .image-pixel {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+
+  .pixel-shadow {
+    box-shadow:
+      4px 4px 0 rgba(34, 211, 238, 0.12),
+      8px 8px 0 rgba(91, 51, 255, 0.08);
+  }
+
+  .game-grid-bg {
+    background-image:
+      linear-gradient(rgba(34, 211, 238, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34, 211, 238, 0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+}
+
+/* Custom pixel star cursor - desktop/mouse only */
+@media (hover: hover) and (pointer: fine) {
+  body {
+    /* Normal: tilted star, hotspot at top spike tip (~8 2 after -15° rotation) */
+    cursor: url('/images/cursor/cursor-normal.svg') 8 2, auto;
+  }
+
+  /* Hover: upright star, hotspot at top spike center (12 2 for 24x24 SVG) */
+  a, button, [role="button"], [role="link"], input, select, textarea, nav a {
+    cursor: url('/images/cursor/cursor-hover.svg') 12 2, pointer;
+  }
+}

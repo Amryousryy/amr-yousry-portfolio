@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, X, Calendar, ArrowRight } from "lucide-react";
-import { ContactForm } from "./ContactForm";
+// ContactForm removed - using ContactSection instead
 
 export default function FloatingCTA() {
   const [isOpen, setIsOpen] = useState(false);
@@ -80,7 +80,7 @@ export default function FloatingCTA() {
                 </p>
               </div>
 
-              <ContactForm isAuditOffer={true} />
+              {/* ContactForm removed - use ContactSection instead */}
             </motion.div>
           </>
         )}

@@ -1,36 +1,16 @@
-import { Metadata } from "next";
-import { ProjectService } from "@/lib/api-client";
-import ProjectArchiveClient from "@/components/sections/ProjectArchiveClient";
+import { Container } from "@/components/ui/container";
+import { Section } from "@/components/ui/section";
+import { getAllProjects } from "@/data/projects";
+import { ProjectsClient } from "./ProjectsClient";
 
-export const metadata: Metadata = {
-  title: "Gallery | Amr Yousry Archive",
-  description: "Explore the archive of high-end real estate and UGC content by Amr Yousry.",
-};
+export default function ProjectsPage() {
+  const projects = getAllProjects();
 
-export const dynamic = 'force-dynamic';
-
-export default async function ProjectsPage() {
-  try {
-    const { data: projects = [] } = await ProjectService.getAll();
-    const safeProjects = Array.isArray(projects) ? projects : [];
-
-    return (
-      <div className="pt-32 pb-24 bg-background min-h-screen">
-        <div className="container mx-auto px-6">
-          <ProjectArchiveClient initialProjects={safeProjects} />
-        </div>
-      </div>
-    );
-  } catch (error) {
-    console.error("ProjectsPage error:", error);
-    return (
-      <div className="pt-32 pb-24 bg-background min-h-screen">
-        <div className="container mx-auto px-6">
-          <div className="text-center py-40">
-            <p className="text-foreground/50">Unable to load projects at this time.</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  return (
+    <Section className="min-h-screen py-32 bg-background">
+      <Container>
+        <ProjectsClient projects={projects} />
+      </Container>
+    </Section>
+  );
 }
