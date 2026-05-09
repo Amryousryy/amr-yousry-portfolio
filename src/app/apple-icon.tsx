@@ -13,7 +13,6 @@ export default function AppleIcon() {
           width: "100%",
           height: "100%",
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
           background: "#240e68",
@@ -23,28 +22,8 @@ export default function AppleIcon() {
         <img
           src={logoSrc}
           alt=""
-          style={{ width: 90, height: 90, display: "block" }}
+          style={{ width: 150, height: 150, display: "block" }}
         />
-        <div
-          style={{
-            width: 80,
-            height: 6,
-            background: "#6ee0d7",
-            marginTop: 16,
-            borderRadius: 3,
-          }}
-        />
-        <span
-          style={{
-            fontSize: 16,
-            color: "#ffffff",
-            fontFamily: "monospace",
-            marginTop: 14,
-            letterSpacing: 2,
-          }}
-        >
-          YOUSRY
-        </span>
       </div>
     ),
     { ...size },

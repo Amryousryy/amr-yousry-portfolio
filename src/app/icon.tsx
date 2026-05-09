@@ -16,13 +16,12 @@ export default function Icon() {
           alignItems: "center",
           justifyContent: "center",
           background: "#240e68",
-          borderRadius: 6,
         }}
       >
         <img
           src={logoSrc}
           alt=""
-          style={{ width: 28, height: 28, display: "block" }}
+          style={{ width: 30, height: 30, display: "block" }}
         />
       </div>
     ),

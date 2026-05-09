@@ -14,12 +14,9 @@ export default function OGImage() {
           width: "100%",
           height: "100%",
           display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
+          flexDirection: "row",
           background:
             "linear-gradient(135deg, #0f0524 0%, #240e68 50%, #1a0a3e 100%)",
-          padding: 60,
           position: "relative",
         }}
       >
@@ -71,84 +68,87 @@ export default function OGImage() {
             borderRadius: 6,
           }}
         />
-        <div
-          style={{
-            position: "absolute",
-            top: 80,
-            left: 60,
-            right: 60,
-            height: 1,
-            background: "rgba(110, 224, 215, 0.08)",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            bottom: 80,
-            left: 60,
-            right: 60,
-            height: 1,
-            background: "rgba(110, 224, 215, 0.08)",
-          }}
-        />
-
-        <img
-          src={logoSrc}
-          alt=""
-          style={{ width: 110, height: 110, display: "block", marginBottom: 32 }}
-        />
-
-        <span
-          style={{
-            fontSize: 56,
-            fontWeight: 700,
-            color: "#ffffff",
-            fontFamily: "monospace",
-            letterSpacing: 4,
-            marginBottom: 16,
-            textAlign: "center",
-            lineHeight: 1.2,
-          }}
-        >
-          AMR YOUSRY
-        </span>
 
         <div
           style={{
-            width: 160,
-            height: 4,
-            background: "#6ee0d7",
-            borderRadius: 2,
-            marginBottom: 20,
-          }}
-        />
-
-        <span
-          style={{
-            fontSize: 24,
-            color: "#6ee0d7",
-            fontFamily: "monospace",
-            letterSpacing: 3,
-            marginBottom: 28,
-            textAlign: "center",
+            width: "40%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "0 20px 0 48px",
           }}
         >
-          SENIOR MULTIMEDIA DESIGNER
-        </span>
+          <img
+            src={logoSrc}
+            alt=""
+            style={{
+              width: 280,
+              height: 280,
+              display: "block",
+            }}
+          />
+        </div>
 
-        <span
+        <div
           style={{
-            fontSize: 16,
-            color: "#a0a0b0",
-            fontFamily: "system-ui, sans-serif",
-            textAlign: "center",
-            maxWidth: 640,
-            lineHeight: 1.6,
+            width: "60%",
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            padding: "0 64px 0 24px",
           }}
         >
-          Cinematic visuals, brand systems, and digital experiences built for
-          attention, trust, and conversion.
-        </span>
+          <span
+            style={{
+              fontSize: 64,
+              fontWeight: 700,
+              color: "#ffffff",
+              fontFamily: "monospace",
+              letterSpacing: 4,
+              lineHeight: 1.15,
+              marginBottom: 20,
+            }}
+          >
+            AMR YOUSRY
+          </span>
+
+          <div
+            style={{
+              width: 120,
+              height: 4,
+              background: "#6ee0d7",
+              borderRadius: 2,
+              marginBottom: 24,
+            }}
+          />
+
+          <span
+            style={{
+              fontSize: 28,
+              color: "#6ee0d7",
+              fontFamily: "monospace",
+              letterSpacing: 3,
+              marginBottom: 20,
+            }}
+          >
+            SENIOR MULTIMEDIA DESIGNER
+          </span>
+
+          <span
+            style={{
+              fontSize: 18,
+              color: "#a0a0b0",
+              fontFamily: "system-ui, sans-serif",
+              lineHeight: 1.5,
+              maxWidth: 520,
+            }}
+          >
+            Cinematic visuals, brand systems, and digital experiences built for
+            attention, trust, and conversion.
+          </span>
+        </div>
 
         <div
           style={{
