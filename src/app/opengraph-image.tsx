@@ -1,12 +1,12 @@
 import { ImageResponse } from "next/og";
-import { getLogoSvgDataUri } from "@/lib/logo-data-uri";
+import { getOgLogoMarkPngDataUri } from "@/lib/logo-data-uri";
 
 export const alt = "Amr Yousry | Senior Multimedia Designer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default function OGImage() {
-  const logoSrc = getLogoSvgDataUri();
+  const logoSrc = getOgLogoMarkPngDataUri();
   return new ImageResponse(
     (
       <div
