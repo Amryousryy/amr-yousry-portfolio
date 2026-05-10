@@ -63,7 +63,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
             <span className="font-pixel text-brand-cyan text-[10px] sm:text-sm tracking-widest uppercase mb-4 block">
               {project.category}
             </span>
-            <h1 className="text-[clamp(2rem,9vw,4rem)] md:text-6xl lg:text-7xl font-display font-bold uppercase tracking-tighter break-words leading-tight">
+            <h1 className="text-[clamp(1.75rem,8vw,4rem)] md:text-6xl lg:text-7xl font-display font-bold uppercase tracking-tighter break-words leading-tight">
               {project.title}
             </h1>
           </Container>

@@ -1,8 +1,8 @@
 // @ts-nocheck
 "use client";
 
-import { Suspense } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { Suspense, useState } from "react";
+import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import SectionNarrator from "@/components/ui/SectionNarrator";
@@ -53,9 +53,13 @@ function PreviewContent() {
 }
 
 export default function PreviewPage() {
+  const [queryClient] = useState(() => new QueryClient());
+
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center px-4 text-center">Loading...</div>}>
-      <PreviewContent />
-    </Suspense>
+    <QueryClientProvider client={queryClient}>
+      <Suspense fallback={<div className="min-h-screen flex items-center justify-center px-4 text-center">Loading...</div>}>
+        <PreviewContent />
+      </Suspense>
+    </QueryClientProvider>
   );
 }
