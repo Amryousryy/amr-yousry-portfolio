@@ -22,8 +22,8 @@ export const projects: Project[] = [
     execution: "On-site multi-cam coverage over 2 days, with a heavy emphasis on color grading to match the brand's palette.",
     caseStudyMedia: [
       { type: "image", src: "https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?auto=format&fit=crop&q=80&w=800", alt: "Al Ghazal Exhibition Main Shot" },
-      { type: "process", src: "https://images.unsplash.com/photo-1516035046-2271a6ca4d84?auto=format&fit=crop&q=80&w=800", alt: "On-set filming process" },
-      { type: "result", src: "https://images.unsplash.com/photo-1534809020511-7c6b24cfc67?auto=format&fit=crop&q=80&w=800", alt: "Final cinematic result" },
+      { type: "process", src: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800", alt: "On-set filming process" },
+      { type: "result", src: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800", alt: "Final cinematic result" },
     ],
   },
   {
@@ -47,8 +47,8 @@ export const projects: Project[] = [
     execution: "Managed 20+ creators, edited 100+ variations for A/B testing, and optimized based on real-time performance data.",
     caseStudyMedia: [
       { type: "video", src: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", alt: "UGC Ad Example" },
-      { type: "image", src: "https://images.unsplash.com/photo-1558617334-5cade0a2d2?auto=format&fit=crop&q=80&w=800", alt: "Creator filming process" },
-      { type: "result", src: "https://images.unsplash.com/photo-1558617334-5cade0a2d2?auto=format&fit=crop&q=80&w=800", alt: "Conversion results dashboard" },
+      { type: "image", src: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800", alt: "Creator filming process" },
+      { type: "result", src: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800", alt: "Conversion results dashboard" },
     ],
   },
   {
@@ -73,7 +73,7 @@ export const projects: Project[] = [
     caseStudyMedia: [
       { type: "image", src: "/images/projects/gpt-image-2-medium-_b_90s_Sega_arcade_game-3.jpg", alt: "Arcade concept main visual" },
       { type: "process", src: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=800", alt: "Pixel art creation process" },
-      { type: "result", src: "https://images.unsplash.com/photo-153848-band?auto=format&fit=crop&q=80&w=800", alt: "Final interactive result" },
+      { type: "result", src: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&q=80&w=800", alt: "Final interactive result" },
     ],
   }
 ];
