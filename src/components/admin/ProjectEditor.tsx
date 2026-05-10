@@ -104,6 +104,7 @@ export default function ProjectEditor({ initialData, onSave, onSaveSuccess, isSa
         execution: getString(initialData.execution),
         results: getString(initialData.results),
         featured: initialData.featured || false,
+        featuredOrder: initialData.featuredOrder ?? 0,
         status: initialData.status || "draft",
         displayOrder: initialData.displayOrder || 0,
         year: initialData.year || new Date().getFullYear().toString(),
@@ -286,6 +287,19 @@ export default function ProjectEditor({ initialData, onSave, onSaveSuccess, isSa
             <input type="checkbox" {...register("featured")} className="w-4 h-4 accent-accent" />
             <span className="text-xs font-bold uppercase">Featured</span>
           </label>
+
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-bold uppercase">Order</label>
+            <input
+              type="number"
+              {...register("featuredOrder", { valueAsNumber: true })}
+              className="w-16 bg-background/50 border border-primary/20 p-2 outline-none focus:border-accent transition-colors"
+              placeholder="0"
+            />
+            <span className="text-[10px] text-foreground/40">
+              (Lower = first on homepage)
+            </span>
+          </div>
 
           <Controller
             name="status"
