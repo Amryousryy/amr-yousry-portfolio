@@ -11,8 +11,15 @@ export default async function AdminLayout({
 }) {
   const session = await getServerSession(authOptions);
   
+  // This layout is for everything inside /admin, but we must exclude /admin/login
+  // Since this is a server component, we need a different approach or move the login page
+  // Actually, standard Next.js pattern is to have login in a separate layout or route.
+  
+  // Checking path in a server layout is difficult/impossible directly.
+  // Move /admin/login to /login instead.
+  
   if (!session) {
-    redirect("/admin/login");
+    redirect("/login");
   }
 
   return (
