@@ -21,6 +21,14 @@ import { ErrorSummary, scrollToFirstError } from "@/components/admin/ErrorSummar
 
 const categories = ["Real Estate", "UGC / Ads", "Social Media", "Corporate", "Brand Film"];
 
+const PROJECT_CATEGORIES = [
+  { value: "filmmaking", label: "Filmmaking" },
+  { value: "graphic-design", label: "Graphic Design" },
+  { value: "motion-graphic", label: "Motion Graphic" },
+  { value: "video-editing", label: "Video Editing" },
+  { value: "ai", label: "AI" },
+] as const;
+
 interface ProjectEditorProps {
   initialData?: Project;
   onSave: (data: Partial<ProjectCreateInput>, options?: { isAutoSave?: boolean }) => void;
@@ -87,6 +95,7 @@ export default function ProjectEditor({ initialData, onSave, onSaveSuccess, isSa
         shortDescription: getString(initialData.shortDescription),
         fullDescription: getString(initialData.fullDescription),
         category: initialData.category,
+        categories: initialData.categories || [],
         image: initialData.image || "",
         video: initialData.video || "",
         problem: getString(initialData.problem),
@@ -222,6 +231,54 @@ export default function ProjectEditor({ initialData, onSave, onSaveSuccess, isSa
               placeholder="0"
             />
           </div>
+        </div>
+
+        <div className="space-y-3 p-6 bg-primary/5 border border-primary/10">
+          <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
+            Project Categories
+          </label>
+          <p className="text-[10px] text-foreground/40">
+            Select one or more categories for filtering on the public site.
+          </p>
+          <Controller
+            name="categories"
+            control={control}
+            render={({ field }) => (
+              <div className="flex flex-wrap gap-4">
+                {PROJECT_CATEGORIES.map((cat) => {
+                  const checked = (field.value || []).includes(cat.value);
+                  return (
+                    <label
+                      key={cat.value}
+                      className="flex items-center gap-2 cursor-pointer group"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => {
+                          const current = field.value || [];
+                          const updated = checked
+                            ? current.filter((v) => v !== cat.value)
+                            : [...current, cat.value];
+                          field.onChange(updated);
+                        }}
+                        className="w-4 h-4 accent-accent"
+                      />
+                      <span
+                        className={`text-xs font-bold uppercase tracking-wider transition-colors ${
+                          checked
+                            ? "text-accent"
+                            : "text-foreground/60 group-hover:text-foreground/80"
+                        }`}
+                      >
+                        {cat.label}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+          />
         </div>
 
         <div className="flex items-center gap-6">
