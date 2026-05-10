@@ -10,6 +10,18 @@ const ProjectSectionSchema = new Schema({
   }]
 }, { _id: false });
 
+const CaseStudyMediaSchema = new Schema({
+  type: { type: String, enum: ["image", "video", "process", "before-after", "result"], required: true },
+  src: { type: String, required: true },
+  alt: { type: String },
+  caption: { type: String },
+}, { _id: false });
+
+const DetailedResultSchema = new Schema({
+  label: { type: String, required: true },
+  value: { type: String, required: true },
+}, { _id: false });
+
 const ProjectSchema: Schema = new Schema({
   title: { type: String, required: true },
   slug: { type: String, required: true, unique: true },
@@ -31,11 +43,19 @@ const ProjectSchema: Schema = new Schema({
   displayOrder: { type: Number, default: 0 },
   year: { type: String },
   clientName: { type: String },
+  client: { type: String },
   seo: {
     title: { type: String },
     description: { type: String },
     keywords: { type: [String] },
   },
+  categories: { type: [String], default: [] },
+  services: { type: [String], default: [] },
+  mainResult: { type: String },
+  idea: { type: String },
+  detailedResults: { type: [DetailedResultSchema], default: [] },
+  caseStudyMedia: { type: [CaseStudyMediaSchema], default: [] },
+  featuredOrder: { type: Number, default: 0 },
   publishedAt: { type: Date },
   lastStatusChangeAt: { type: Date },
 }, { timestamps: true });
@@ -69,11 +89,19 @@ export interface IProject extends Document {
   displayOrder: number;
   year?: string;
   clientName?: string;
+  client?: string;
   seo?: {
     title?: string;
     description?: string;
     keywords?: string[];
   };
+  categories: string[];
+  services: string[];
+  mainResult?: string;
+  idea?: string;
+  detailedResults: { label: string; value: string }[];
+  caseStudyMedia: { type: "image" | "video" | "process" | "before-after" | "result"; src: string; alt?: string; caption?: string }[];
+  featuredOrder: number;
   publishedAt?: Date;
   lastStatusChangeAt?: Date;
   createdAt: Date;

@@ -30,8 +30,16 @@ export interface Project {
   displayOrder: number;
   year?: string;
   clientName?: string;
+  client?: string;
   role?: string;
   tools?: string[];
+  categories?: string[];
+  services?: string[];
+  mainResult?: string;
+  idea?: string;
+  detailedResults?: { label: string; value: string }[];
+  caseStudyMedia?: { type: "image" | "video" | "process" | "before-after" | "result"; src: string; alt?: string; caption?: string }[];
+  featuredOrder?: number;
   seo: {
     title?: string;
     description?: string;

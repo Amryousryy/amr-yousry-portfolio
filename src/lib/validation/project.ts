@@ -11,12 +11,29 @@ import {
   stringSchema,
 } from "./shared";
 
+const caseStudyMediaItemSchema = z.object({
+  type: z.enum(["image", "video", "process", "before-after", "result"]),
+  src: z.string().min(1, "Media source is required"),
+  alt: z.string().optional(),
+  caption: z.string().optional(),
+});
+
+const caseStudyMediaArraySchema = z.array(caseStudyMediaItemSchema).default([]);
+
+const detailedResultSchema = z.object({
+  label: z.string().min(1, "Label is required"),
+  value: z.string().min(1, "Value is required"),
+});
+
+const detailedResultArraySchema = z.array(detailedResultSchema).default([]);
+
 export const projectCreateSchema = z.object({
   slug: z.string().min(1, "Slug is required").transform(normalizeSlug),
   title: stringSchema,
   shortDescription: stringSchema,
   fullDescription: stringSchema,
   category: z.string().min(1, "Category is required"),
+  categories: z.array(z.string()).default([]),
   image: z.string().url("Valid cover image URL is required"),
   video: optionalUrlSchema,
   problem: stringSchema.optional(),
@@ -24,7 +41,14 @@ export const projectCreateSchema = z.object({
   solution: stringSchema.optional(),
   execution: stringSchema.optional(),
   results: stringSchema.optional(),
+  idea: stringSchema.optional(),
+  mainResult: stringSchema.optional(),
+  client: z.string().optional(),
+  services: z.array(z.string()).default([]),
+  detailedResults: detailedResultArraySchema,
+  caseStudyMedia: caseStudyMediaArraySchema,
   featured: z.boolean().default(false),
+  featuredOrder: z.number().int().default(0),
   status: contentStatusSchema.default("draft"),
   displayOrder: z.number().int().default(0),
   year: z.string().optional(),
@@ -51,6 +75,7 @@ export const projectDefaultValues: ProjectCreateInput = {
   shortDescription: "",
   fullDescription: "",
   category: "",
+  categories: [],
   image: "",
   video: undefined,
   problem: undefined,
@@ -58,7 +83,14 @@ export const projectDefaultValues: ProjectCreateInput = {
   solution: undefined,
   execution: undefined,
   results: undefined,
+  idea: undefined,
+  mainResult: undefined,
+  client: undefined,
+  services: [],
+  detailedResults: [],
+  caseStudyMedia: [],
   featured: false,
+  featuredOrder: 0,
   status: "draft",
   displayOrder: 0,
   year: new Date().getFullYear().toString(),
@@ -76,6 +108,7 @@ export function createProjectFormValues(existing?: Partial<ProjectCreateInput>):
     shortDescription: existing?.shortDescription || "",
     fullDescription: existing?.fullDescription || "",
     category: existing?.category || "",
+    categories: existing?.categories || [],
     image: existing?.image || "",
     video: existing?.video,
     problem: existing?.problem,
@@ -83,7 +116,14 @@ export function createProjectFormValues(existing?: Partial<ProjectCreateInput>):
     solution: existing?.solution,
     execution: existing?.execution,
     results: existing?.results,
+    idea: existing?.idea,
+    mainResult: existing?.mainResult,
+    client: existing?.client,
+    services: existing?.services || [],
+    detailedResults: existing?.detailedResults || [],
+    caseStudyMedia: existing?.caseStudyMedia || [],
     featured: existing?.featured || false,
+    featuredOrder: existing?.featuredOrder ?? 0,
     status: existing?.status || "draft",
     displayOrder: existing?.displayOrder || 0,
     year: existing?.year || new Date().getFullYear().toString(),
