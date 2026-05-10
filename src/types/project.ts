@@ -16,6 +16,7 @@ export interface Project {
   title: string;
   client: string;
   category: string;
+  categories: string[];
   services: string[];
   summary: string;
   
