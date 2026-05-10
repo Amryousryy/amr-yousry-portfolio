@@ -54,7 +54,7 @@ function PreviewContent() {
 
 export default function PreviewPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center px-4 text-center">Loading...</div>}>
       <PreviewContent />
     </Suspense>
   );

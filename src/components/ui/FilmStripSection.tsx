@@ -71,7 +71,7 @@ export default function FilmStripSection() {
 
   if (isLoading) {
     return (
-      <section id="projects" ref={containerRef} className="h-screen overflow-hidden bg-[#050508] flex items-center justify-center">
+      <section id="projects" ref={containerRef} className="min-h-[360px] md:h-screen overflow-hidden bg-[#050508] flex items-center justify-center px-4 text-center">
         <div className="pixel-text text-white/50 text-xs animate-pulse">Loading projects...</div>
       </section>
     );
@@ -86,10 +86,10 @@ export default function FilmStripSection() {
       id="projects" 
       data-section="projects"
       ref={containerRef} 
-      className="h-screen overflow-hidden bg-[#050508] will-change-transform"
+      className="min-h-screen md:h-screen overflow-hidden bg-[#050508] will-change-transform"
     >
       <div className="absolute top-0 left-0 right-0 h-12 bg-[#0a0a0f] flex items-center px-4 z-10 border-b border-white/5">
-        <div className="pixel-text text-[#00ffcc] text-[10px] tracking-widest mr-8">THE WORK</div>
+        <div className="pixel-text text-[#00ffcc] text-[10px] tracking-widest mr-4 md:mr-8 shrink-0">THE WORK</div>
         <div className="flex-1 flex overflow-hidden opacity-20">
           {[...Array(20)].map((_, i) => (
             <div key={i} className="w-12 h-6 border-r border-white/20 flex-shrink-0" />
@@ -97,7 +97,7 @@ export default function FilmStripSection() {
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-12 bg-[#0a0a0f] flex items-center px-4 z-10 border-t border-white/5">
+      <div className="absolute bottom-0 left-0 right-0 h-12 bg-[#0a0a0f] hidden md:flex items-center px-4 z-10 border-t border-white/5">
         <div className="flex-1 flex overflow-hidden opacity-20">
           {[...Array(20)].map((_, i) => (
             <div key={i} className="w-12 h-6 border-r border-white/20 flex-shrink-0" />
@@ -108,21 +108,21 @@ export default function FilmStripSection() {
 
       <div 
         ref={stripRef} 
-        className="flex items-center h-full px-[20vw] gap-12 py-16"
+        className="flex flex-col md:flex-row items-stretch md:items-center h-full px-4 sm:px-6 md:px-[20vw] gap-6 md:gap-12 py-20 md:py-16"
       >
         {projects.map((project) => (
           <a
             key={project._id}
             href={`/projects/${project.slug}`}
             data-project
-            className="case-study-card flex-shrink-0 w-[450px] bg-[#0a0a0f] border border-white/5 relative group cursor-pointer overflow-hidden transition-colors duration-500 hover:border-accent/30"
+            className="case-study-card w-full max-w-[440px] md:w-[450px] mx-auto md:mx-0 md:flex-shrink-0 bg-[#0a0a0f] border border-white/5 relative group cursor-pointer overflow-hidden transition-colors duration-500 hover:border-accent/30"
             style={{ 
               contentVisibility: 'auto', 
               containIntrinsicSize: 'auto 600px',
               willChange: 'transform'
             } as any}
           >
-            <div className="relative h-64 overflow-hidden">
+            <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
               <img
                 src={project.image}
                 alt={project.title}
@@ -139,17 +139,17 @@ export default function FilmStripSection() {
 
               {project.category && (
                 <div className="absolute top-4 right-4">
-                  <span className="pixel-text text-accent text-[9px] bg-accent/10 backdrop-blur-md px-3 py-1.5 border border-accent/20 uppercase tracking-widest">
+                  <span className="pixel-text text-accent text-[8px] sm:text-[9px] bg-accent/10 backdrop-blur-md px-2.5 sm:px-3 py-1.5 border border-accent/20 uppercase tracking-widest">
                     {project.category}
                   </span>
                 </div>
               )}
             </div>
 
-            <div className="p-8 space-y-4">
+            <div className="p-5 sm:p-8 space-y-4">
               <div className="space-y-1">
                 <span className="pixel-text text-white/30 text-[9px] uppercase tracking-widest">Selected Work</span>
-                <h3 className="text-2xl font-display font-bold text-white tracking-tighter group-hover:text-accent transition-colors duration-300">
+                <h3 className="text-xl sm:text-2xl font-display font-bold text-white tracking-tighter group-hover:text-accent transition-colors duration-300 break-words leading-tight">
                   {project.title}
                 </h3>
               </div>
@@ -158,7 +158,7 @@ export default function FilmStripSection() {
                 {project.shortDescription}
               </p>
 
-              <div className="pt-4 flex items-center justify-between border-t border-white/5">
+              <div className="pt-4 flex flex-wrap items-center justify-between gap-3 border-t border-white/5">
                 <span className="pixel-text text-white/30 text-[9px] uppercase tracking-widest">
                   {project.year || "2026"}
                 </span>

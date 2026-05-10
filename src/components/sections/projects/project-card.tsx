@@ -17,7 +17,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
     <motion.div 
       initial={false}
       whileHover={shouldReduceMotion ? {} : { y: -10 }}
-      className="group relative flex flex-col h-full"
+      className="group relative flex min-w-0 flex-col h-full"
     >
       {/* Pixel Frame Container */}
       <div className="relative aspect-[16/10] w-full overflow-hidden border-2 border-slate-800 bg-slate-900 pixel-shadow group-hover:border-brand-cyan/30 transition-colors duration-500">
@@ -41,7 +41,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%)] bg-[length:100%_4px] pointer-events-none" />
 
         {/* Category Tag - Floating Pixel UI */}
-        <div className="absolute top-6 left-6 bg-brand-cyan text-brand-blue font-pixel text-[9px] px-3 py-1 uppercase tracking-wider border border-brand-blue z-30 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <div className="absolute top-4 left-4 sm:top-6 sm:left-6 max-w-[calc(100%-2rem)] bg-brand-cyan text-brand-blue font-pixel text-[8px] sm:text-[9px] px-2.5 sm:px-3 py-1 uppercase tracking-wider border border-brand-blue z-30 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] leading-tight">
           {project.category}
         </div>
       </div>
@@ -49,7 +49,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         {/* Content */}
         <div className="flex flex-col flex-grow pt-6 pb-4">
           <div className="min-h-[3.5rem] mb-3">
-            <h3 className="text-xl md:text-2xl font-display font-bold group-hover:text-brand-cyan transition-colors duration-500 leading-tight">
+            <h3 className="text-xl md:text-2xl font-display font-bold group-hover:text-brand-cyan transition-colors duration-500 leading-tight break-words">
               {project.title}
             </h3>
           </div>

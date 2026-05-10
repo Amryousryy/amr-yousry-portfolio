@@ -30,7 +30,7 @@ export function PixelButton({
   };
 
   const classes = cn(
-    "font-pixel uppercase transition-all duration-75 relative inline-block",
+    "font-pixel uppercase transition-all duration-75 relative inline-flex min-h-[44px] max-w-full items-center justify-center text-center leading-tight whitespace-normal break-words",
     variants[variant],
     sizes[size],
     className

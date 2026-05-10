@@ -59,7 +59,7 @@ export default function ContactSection() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="max-w-2xl mx-auto text-center space-y-8 py-20 bg-slate-900/40 border-2 border-brand-cyan/30 pixel-shadow p-12"
+            className="max-w-2xl mx-auto text-center space-y-8 py-14 sm:py-20 bg-slate-900/40 border-2 border-brand-cyan/30 pixel-shadow p-5 sm:p-8 md:p-12"
           >
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -94,7 +94,7 @@ export default function ContactSection() {
   }
 
   return (
-    <Section id="contact" className="bg-brand-blue/95 relative pb-36 pt-24 md:pt-32">
+    <Section id="contact" className="bg-brand-blue/95 relative pb-24 sm:pb-36 pt-20 md:pt-32 overflow-hidden">
       {/* Atmospheric overlay - action-oriented lighting */}
       <div className="absolute inset-0 bg-gradient-to-b from-brand-blue/95 via-brand-cyan/2 to-brand-blue/95 pointer-events-none" />
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-cyan/25 to-transparent pointer-events-none" />
@@ -109,10 +109,10 @@ export default function ContactSection() {
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="flex items-center gap-4 mb-8"
+              className="flex min-w-0 items-center gap-3 sm:gap-4 mb-8"
             >
-              <div className="h-[2px] w-12 bg-brand-cyan" />
-              <span className="font-pixel text-brand-cyan text-[10px] tracking-[0.3em] uppercase">
+              <div className="h-[2px] w-8 sm:w-12 bg-brand-cyan shrink-0" />
+              <span className="font-pixel text-brand-cyan text-[9px] sm:text-[10px] tracking-[0.22em] sm:tracking-[0.3em] uppercase">
                 Next Steps: Contact
               </span>
             </motion.div>
@@ -121,8 +121,8 @@ export default function ContactSection() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="font-display font-bold tracking-tighter text-white mb-6"
-              style={{ fontSize: 'clamp(2rem, 3.8vw, 3.4rem)', lineHeight: '0.95' }}
+              className="font-display font-bold tracking-tighter text-white mb-6 break-words"
+              style={{ fontSize: 'clamp(1.85rem, 8.5vw, 3.4rem)', lineHeight: '0.98' }}
             >
               START YOUR<br/>PROJECT.
             </motion.h2>
@@ -158,7 +158,7 @@ export default function ContactSection() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp - Fastest response"
-                className="flex items-center gap-4 text-white font-pixel text-xs group transition-colors mb-8"
+                className="flex min-h-[56px] items-center gap-4 text-white font-pixel text-xs group transition-colors mb-8"
               >
                 <ContactIconImage 
                   src="/images/social/whatsapp-pixel-v2.png" 
@@ -177,7 +177,7 @@ export default function ContactSection() {
                 whileHover={shouldReduceMotion ? {} : { x: 8 }}
                 href="mailto:amryousryy@gmail.com"
                 aria-label="Email - Business inquiries"
-                className="flex items-center gap-4 text-white font-pixel text-xs group transition-colors mb-8"
+                className="flex min-h-[56px] items-center gap-4 text-white font-pixel text-xs group transition-colors mb-8"
               >
                 <ContactIconImage 
                   src="/images/social/email-pixel-v2.png" 
@@ -235,7 +235,7 @@ export default function ContactSection() {
               className="relative lg:mt-4"
             >
               {/* Form Status HUD */}
-              <div className="absolute -top-3 right-0 flex items-center gap-2 z-10">
+              <div className="absolute -top-3 left-0 right-0 flex flex-wrap justify-end gap-1.5 z-10">
                 <div className="flex items-center gap-1.5 px-2.5 py-1 bg-brand-blue/90 border border-slate-700/60">
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   <span className="font-pixel text-[7px] text-emerald-400/80 tracking-[0.25em] uppercase">System Ready</span>
@@ -246,7 +246,7 @@ export default function ContactSection() {
                 </div>
               </div>
 
-              <div className="bg-slate-900/40 border-2 border-slate-800 p-8 md:p-10 lg:p-10 pixel-shadow relative overflow-hidden">
+              <div className="bg-slate-900/40 border-2 border-slate-800 p-5 sm:p-6 md:p-10 lg:p-10 pixel-shadow relative overflow-hidden">
                 {/* Subtle Background Pattern */}
                 <div className="absolute inset-0 opacity-[0.02] pointer-events-none" 
                   style={{ backgroundImage: 'radial-gradient(var(--color-brand-cyan) 1px, transparent 1px)', backgroundSize: '24px 24px' }} 
@@ -267,7 +267,7 @@ export default function ContactSection() {
                         value={formData.name}
                         onChange={handleChange}
                         placeholder={contactContent.form.placeholders.name}
-                        className={`w-full bg-slate-800/30 border-2 px-4 py-3.5 font-modern text-white placeholder:text-text-dim/40 outline-none transition-all duration-300 text-base
+                        className={`w-full min-h-[48px] bg-slate-800/30 border-2 px-4 py-3.5 font-modern text-white placeholder:text-text-dim/40 outline-none transition-all duration-300 text-base
                           ${errors.name 
                             ? 'border-red-400/60 focus:border-red-400 focus:bg-slate-800/70' 
                             : 'border-slate-800 hover:border-slate-700 focus:border-brand-cyan/60 focus:bg-slate-800/60 focus:shadow-[0_0_12px_-4px_#22D3EE]'}`}
@@ -283,7 +283,7 @@ export default function ContactSection() {
                         value={formData.email}
                         onChange={handleChange}
                         placeholder={contactContent.form.placeholders.email}
-                        className={`w-full bg-slate-800/30 border-2 px-4 py-3.5 font-modern text-white placeholder:text-text-dim/40 outline-none transition-all duration-300 text-base
+                        className={`w-full min-h-[48px] bg-slate-800/30 border-2 px-4 py-3.5 font-modern text-white placeholder:text-text-dim/40 outline-none transition-all duration-300 text-base
                           ${errors.email 
                             ? 'border-red-400/60 focus:border-red-400 focus:bg-slate-800/70' 
                             : 'border-slate-800 hover:border-slate-700 focus:border-brand-cyan/60 focus:bg-slate-800/60 focus:shadow-[0_0_12px_-4px_#22D3EE]'}`}
@@ -300,7 +300,7 @@ export default function ContactSection() {
                         name="service"
                         value={formData.service}
                         onChange={handleChange}
-                        className="w-full bg-slate-800/30 border-2 border-slate-800 hover:border-slate-700 px-4 py-3.5 font-modern text-white focus:border-brand-cyan/60 focus:bg-slate-800/60 focus:shadow-[0_0_12px_-4px_#22D3EE] outline-none transition-all duration-300 appearance-none cursor-pointer text-base pr-12"
+                        className="w-full min-h-[48px] bg-slate-800/30 border-2 border-slate-800 hover:border-slate-700 px-4 py-3.5 font-modern text-white focus:border-brand-cyan/60 focus:bg-slate-800/60 focus:shadow-[0_0_12px_-4px_#22D3EE] outline-none transition-all duration-300 appearance-none cursor-pointer text-base pr-12"
                       >
                         {contactContent.form.services.map((service) => (
                           <option key={service} value={service} className="bg-slate-900">{service}</option>
@@ -339,7 +339,7 @@ export default function ContactSection() {
                     <PixelButton 
                       type="submit" 
                       variant="primary" 
-                      className="w-full py-5 text-xs tracking-[0.3em] font-bold"
+                      className="w-full py-5 text-xs tracking-[0.22em] sm:tracking-[0.3em] font-bold"
                     >
                       {contactContent.form.labels.submit.toUpperCase()}
                     </PixelButton>

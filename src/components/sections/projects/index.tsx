@@ -25,10 +25,10 @@ export default function ProjectsSection() {
                initial={{ opacity: 0, x: -20 }}
                whileInView={{ opacity: 1, x: 0 }}
                viewport={{ once: true }}
-               className="flex items-center gap-4 mb-4"
+               className="flex min-w-0 items-center gap-3 sm:gap-4 mb-4"
              >
-               <div className="h-[2px] w-12 bg-brand-cyan" />
-               <span className="font-pixel text-brand-cyan text-[10px] tracking-[0.3em] uppercase">
+               <div className="h-[2px] w-8 sm:w-12 bg-brand-cyan shrink-0" />
+               <span className="font-pixel text-brand-cyan text-[9px] sm:text-[10px] tracking-[0.22em] sm:tracking-[0.3em] uppercase">
                  Mission Log: Selected Works
                </span>
              </motion.div>
@@ -36,8 +36,8 @@ export default function ProjectsSection() {
                initial={{ opacity: 0, y: 20 }}
                whileInView={{ opacity: 1, y: 0 }}
                viewport={{ once: true }}
-               className="font-display font-bold tracking-tighter text-white"
-               style={{ fontSize: 'clamp(2.25rem, 4.2vw, 4.25rem)', lineHeight: '0.95' }}
+               className="font-display font-bold tracking-tighter text-white break-words"
+               style={{ fontSize: 'clamp(1.95rem, 9vw, 4.25rem)', lineHeight: '0.98' }}
              >
                SELECTED<br /><span className="text-brand-cyan">MISSIONS.</span>
              </motion.h2>
@@ -58,7 +58,7 @@ export default function ProjectsSection() {
                className="mt-5"
              >
                <Link href="/projects">
-                 <PixelButton variant="outline" className="px-8 py-4 text-xs tracking-widest">
+                 <PixelButton variant="outline" className="w-full sm:w-auto px-6 sm:px-8 py-4 text-xs tracking-widest">
                    Browse Full Archive
                  </PixelButton>
                </Link>

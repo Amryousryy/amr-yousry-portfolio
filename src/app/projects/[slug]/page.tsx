@@ -36,9 +36,9 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
   if (!project) return notFound();
 
   return (
-    <Section className="min-h-screen py-32 bg-background">
+    <Section className="min-h-screen py-24 md:py-32 bg-background overflow-hidden">
       {/* Hero Media */}
-      <div className="relative h-[60vh] mb-20 overflow-hidden">
+      <div className="relative h-[56vh] min-h-[420px] md:h-[60vh] mb-14 md:mb-20 overflow-hidden">
         {project.heroVideo ? (
           <div className="absolute inset-0">
             <iframe
@@ -58,12 +58,12 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
-        <div className="absolute bottom-0 left-0 w-full p-8 md:p-16">
+        <div className="absolute bottom-0 left-0 w-full p-4 sm:p-8 md:p-16">
           <Container>
-            <span className="font-pixel text-brand-cyan text-sm tracking-widest uppercase mb-4 block">
+            <span className="font-pixel text-brand-cyan text-[10px] sm:text-sm tracking-widest uppercase mb-4 block">
               {project.category}
             </span>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold uppercase tracking-tighter">
+            <h1 className="text-[clamp(2rem,9vw,4rem)] md:text-6xl lg:text-7xl font-display font-bold uppercase tracking-tighter break-words leading-tight">
               {project.title}
             </h1>
           </Container>

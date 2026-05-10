@@ -31,14 +31,14 @@ export function Navbar() {
   return (
     <header 
       className={cn(
-        "fixed top-0 w-full z-50 transition-all duration-300",
+        "fixed top-0 inset-x-0 w-full z-50 transition-all duration-300",
         scrolled ? "bg-brand-blue/90 backdrop-blur-md border-b border-slate-800/50 py-3" : "bg-transparent py-6"
       )}
     >
       <Container>
-        <nav className="flex items-center justify-between">
+        <nav className="flex min-w-0 items-center justify-between gap-3">
           {/* Logo */}
-          <Link href="/" className="group flex items-center gap-3">
+          <Link href="/" className="group flex min-w-0 items-center gap-3">
             <img src="/images/logo.svg" alt="AMR YOUSRY" className="w-9 h-9 md:w-10 md:h-10 transition-transform group-hover:scale-105" />
             <span className="font-pixel text-sm text-brand-cyan tracking-[0.2em] hidden sm:inline-block">AMR YOUSRY</span>
           </Link>
@@ -66,8 +66,10 @@ export function Navbar() {
 
           {/* Mobile Menu Toggle */}
           <button 
-            className="md:hidden text-white p-2 hover:text-brand-cyan transition-colors"
+            className="md:hidden text-white p-3 hover:text-brand-cyan transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
             onClick={() => setIsOpen(!isOpen)}
+            aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={isOpen}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -84,13 +86,13 @@ export function Navbar() {
             transition={{ duration: 0.2 }}
             className="absolute top-full left-0 w-full bg-brand-blue/95 backdrop-blur-sm border-b border-slate-800/50 md:hidden"
           >
-            <div className="flex flex-col p-6 gap-6 items-center text-center">
+            <div className="flex flex-col p-5 gap-4 items-center text-center">
               {navLinks.map((link) => (
                 <Link 
                   key={link.label} 
                   href={link.href}
                   className={cn(
-                    "font-pixel text-sm tracking-widest py-2",
+                    "font-pixel text-sm tracking-widest py-3 min-h-[44px] flex items-center justify-center w-full",
                     link.isCTA ? "text-brand-cyan" : "text-text-dim hover:text-brand-cyan transition-colors"
                   )}
                 >

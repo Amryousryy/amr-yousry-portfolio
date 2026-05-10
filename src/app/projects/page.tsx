@@ -7,7 +7,7 @@ export default function ProjectsPage() {
   const projects = getAllProjects();
 
   return (
-    <Section className="min-h-screen py-32 bg-background">
+    <Section className="min-h-screen py-24 md:py-32 bg-background overflow-hidden">
       <Container>
         <ProjectsClient projects={projects} />
       </Container>

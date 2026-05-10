@@ -52,20 +52,20 @@ export default function TestimonialsSection() {
     <section className="py-24 md:py-32 bg-[#050508] relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div
-          className="absolute top-1/3 left-1/4 w-[500px] h-[500px] opacity-10"
+          className="absolute top-1/3 left-1/4 w-[320px] h-[320px] md:w-[500px] md:h-[500px] opacity-10"
           style={{
             background: "radial-gradient(circle, #00ffcc 0%, transparent 70%)",
           }}
         />
       </div>
 
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="mb-16">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
+        <div className="mb-12 md:mb-16">
           <span className="text-accent text-xs font-semibold uppercase tracking-widest mb-4 block">Testimonials</span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+          <h2 className="text-[clamp(2rem,9vw,3.75rem)] md:text-5xl lg:text-6xl font-bold text-white mb-6 break-words leading-tight">
             What Clients Say
           </h2>
-          <p className="text-foreground/60 text-lg max-w-xl">
+          <p className="text-foreground/60 text-base md:text-lg max-w-xl leading-relaxed">
             Real feedback from projects delivered. Each testimonial relates to specific work completed.
           </p>
         </div>
@@ -77,7 +77,7 @@ export default function TestimonialsSection() {
             {testimonials.slice(0, 3).map((testimonial, i) => (
               <div
                 key={testimonial._id}
-                className="p-8 bg-zinc-900/30 border border-white/5"
+                className="p-6 md:p-8 bg-zinc-900/30 border border-white/5 min-w-0"
               >
                 <Quote className="w-8 h-8 text-accent/40 mb-6" />
 
@@ -85,10 +85,10 @@ export default function TestimonialsSection() {
                   "{testimonial.quote}"
                 </blockquote>
 
-                <div className="flex items-center justify-between pt-6 border-t border-white/5">
-                  <div>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-6 border-t border-white/5">
+                  <div className="min-w-0">
                     <div className="text-white font-medium">{testimonial.name}</div>
-                    <div className="text-foreground/50 text-sm">{testimonial.role}, {testimonial.company}</div>
+                    <div className="text-foreground/50 text-sm break-words">{testimonial.role}, {testimonial.company}</div>
                   </div>
                   {testimonial.projectSlug && (
                     <a

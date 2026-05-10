@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Container } from "@/components/ui/container";
 import { PixelButton } from "@/components/ui/pixel-button";
 import Image from "next/image";
 
@@ -23,12 +22,12 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
   return (
     <>
       {/* Section Header */}
-      <div className="mb-20">
+      <div className="mb-14 md:mb-20 min-w-0">
         <motion.span
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          className="font-pixel text-brand-cyan text-sm tracking-widest mb-4 block"
+          className="font-pixel text-brand-cyan text-[10px] sm:text-sm tracking-widest mb-4 block"
         >
           MISSION LOG: SELECTED WORKS
         </motion.span>
@@ -36,7 +35,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-4xl md:text-5xl lg:text-6xl mb-6"
+          className="text-[clamp(2rem,9vw,3.75rem)] md:text-5xl lg:text-6xl mb-6 break-words leading-tight"
         >
           Proven Results. High Impact.
         </motion.h1>
@@ -45,14 +44,14 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
-          className="font-modern text-text-dim text-lg leading-relaxed max-w-2xl"
+          className="font-modern text-text-dim text-base md:text-lg leading-relaxed max-w-2xl"
         >
           A selection of projects that bridge the gap between cinematic visual artistry and measurable business conversion.
         </motion.p>
       </div>
 
       {/* Projects Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
         {projects.map((project, index) => (
           <motion.div
             key={project.id}
@@ -61,7 +60,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 }}
           >
-            <Link href={`/projects/${project.slug}`} className="group block">
+            <Link href={`/projects/${project.slug}`} className="group block min-w-0">
               <div className="relative overflow-hidden pixel-border mb-6 bg-slate-900/50">
                 <Image
                   src={project.thumbnail}
@@ -76,7 +75,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
                 <span className="font-pixel text-[10px] text-brand-cyan tracking-widest uppercase">
                   {project.category}
                 </span>
-                <h3 className="font-display text-xl font-bold uppercase tracking-tighter group-hover:text-brand-cyan transition-colors">
+                <h3 className="font-display text-xl font-bold uppercase tracking-tighter group-hover:text-brand-cyan transition-colors break-words leading-tight">
                   {project.title}
                 </h3>
                 <p className="font-modern text-text-dim text-sm">

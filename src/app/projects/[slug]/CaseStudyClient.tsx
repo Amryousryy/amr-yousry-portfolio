@@ -24,7 +24,7 @@ export function CaseStudyClient({ project }: CaseStudyClientProps) {
   return (
     <>
       {/* Narrative */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mb-20">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 mb-16 md:mb-20">
         <div className="lg:col-span-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -35,10 +35,10 @@ export function CaseStudyClient({ project }: CaseStudyClientProps) {
             {/* Problem */}
             {project.problem && (
               <div>
-                <h2 className="font-pixel text-brand-cyan text-sm tracking-widest uppercase mb-4">
+                <h2 className="font-pixel text-brand-cyan text-xs sm:text-sm tracking-widest uppercase mb-4">
                   Problem
                 </h2>
-                <p className="font-modern text-lg text-foreground/80 leading-relaxed">
+                <p className="font-modern text-base md:text-lg text-foreground/80 leading-relaxed">
                   {project.problem}
                 </p>
               </div>
@@ -47,10 +47,10 @@ export function CaseStudyClient({ project }: CaseStudyClientProps) {
             {/* Idea */}
             {project.idea && (
               <div>
-                <h2 className="font-pixel text-brand-cyan text-sm tracking-widest uppercase mb-4">
+                <h2 className="font-pixel text-brand-cyan text-xs sm:text-sm tracking-widest uppercase mb-4">
                   The Idea
                 </h2>
-                <p className="font-modern text-lg text-foreground/80 leading-relaxed">
+                <p className="font-modern text-base md:text-lg text-foreground/80 leading-relaxed">
                   {project.idea}
                 </p>
               </div>
@@ -59,10 +59,10 @@ export function CaseStudyClient({ project }: CaseStudyClientProps) {
             {/* Execution */}
             {project.execution && (
               <div>
-                <h2 className="font-pixel text-brand-cyan text-sm tracking-widest uppercase mb-4">
+                <h2 className="font-pixel text-brand-cyan text-xs sm:text-sm tracking-widest uppercase mb-4">
                   Execution
                 </h2>
-                <p className="font-modern text-lg text-foreground/80 leading-relaxed">
+                <p className="font-modern text-base md:text-lg text-foreground/80 leading-relaxed">
                   {project.execution}
                 </p>
               </div>
@@ -71,14 +71,14 @@ export function CaseStudyClient({ project }: CaseStudyClientProps) {
             {/* Result - only render if detailedResults exist */}
             {detailedResults.length > 0 && (
               <div>
-                <h2 className="font-pixel text-brand-cyan text-sm tracking-widest uppercase mb-4">
+                <h2 className="font-pixel text-brand-cyan text-xs sm:text-sm tracking-widest uppercase mb-4">
                   Result
                 </h2>
                 <div className="space-y-4">
                   {detailedResults.map((result, i) => (
-                    <div key={i} className="flex items-baseline gap-3 pb-4 border-b border-slate-800 last:border-0">
-                      <span className="font-pixel text-3xl text-white">{result.value}</span>
-                      <span className="font-pixel text-[10px] text-text-dim tracking-wider uppercase">{result.label}</span>
+                    <div key={i} className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-3 pb-4 border-b border-slate-800 last:border-0">
+                      <span className="font-pixel text-2xl sm:text-3xl text-white break-words">{result.value}</span>
+                      <span className="font-pixel text-[10px] text-text-dim tracking-wider uppercase break-words">{result.label}</span>
                     </div>
                   ))}
                 </div>
@@ -94,7 +94,7 @@ export function CaseStudyClient({ project }: CaseStudyClientProps) {
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="bg-slate-900/50 border-2 border-slate-800 p-8 sticky top-24"
+              className="bg-slate-900/50 border-2 border-slate-800 p-5 sm:p-8 sticky top-24"
             >
               <h3 className="font-pixel text-brand-cyan text-xs tracking-widest uppercase mb-6">
                 Key Results
@@ -105,7 +105,7 @@ export function CaseStudyClient({ project }: CaseStudyClientProps) {
                     <span className="font-pixel text-text-dim text-[10px] tracking-wider">
                       {result.label}
                     </span>
-                    <p className="font-pixel text-2xl text-white mt-1">
+                    <p className="font-pixel text-xl sm:text-2xl text-white mt-1 break-words">
                       {result.value}
                     </p>
                   </div>
@@ -124,10 +124,10 @@ export function CaseStudyClient({ project }: CaseStudyClientProps) {
           viewport={{ once: true }}
           className="mt-20"
         >
-          <h2 className="font-pixel text-brand-cyan text-sm tracking-widest uppercase mb-8">
+          <h2 className="font-pixel text-brand-cyan text-xs sm:text-sm tracking-widest uppercase mb-8">
             Project Media
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {caseStudyMedia.map((media: ProjectMedia, i: number) => (
               <div key={i} className="relative overflow-hidden pixel-border bg-slate-900/50">
                 {media.type === "video" ? (
@@ -146,7 +146,7 @@ export function CaseStudyClient({ project }: CaseStudyClientProps) {
                       alt={media.alt || project.title}
                       width={600}
                       height={400}
-                      className="w-full h-64 object-cover"
+                      className="w-full h-56 sm:h-64 object-cover"
                     />
                     {media.caption && (
                       <p className="p-4 text-sm text-text-dim font-modern">

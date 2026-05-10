@@ -65,12 +65,12 @@ export default function CharacterSelector() {
   
   if (phase === 'exit') {
     animationClasses = direction === 'next' 
-      ? "opacity-0 translate-x-8 scale-[0.98]" 
-      : "opacity-0 -translate-x-8 scale-[0.98]";
+      ? "opacity-0 translate-x-4 sm:translate-x-8 scale-[0.98]"
+      : "opacity-0 -translate-x-4 sm:-translate-x-8 scale-[0.98]";
   } else if (phase === 'enter') {
     animationClasses = direction === 'next' 
-      ? "opacity-0 -translate-x-8 scale-[0.98]" 
-      : "opacity-0 translate-x-8 scale-[0.98]";
+      ? "opacity-0 -translate-x-4 sm:-translate-x-8 scale-[0.98]"
+      : "opacity-0 translate-x-4 sm:translate-x-8 scale-[0.98]";
   }
 
   return (
@@ -81,7 +81,7 @@ export default function CharacterSelector() {
           onClick={() => handleTransition('prev')}
           disabled={phase !== 'idle'}
           aria-label="Previous character"
-          className="absolute left-2 top-1/2 -translate-y-1/2 z-20 font-pixel text-brand-cyan text-xl bg-slate-900/50 border border-slate-700 hover:border-brand-cyan disabled:opacity-30 disabled:cursor-not-allowed w-8 h-8 flex items-center justify-center transition-colors"
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-20 font-pixel text-brand-cyan text-xl bg-slate-900/50 border border-slate-700 hover:border-brand-cyan disabled:opacity-30 disabled:cursor-not-allowed w-11 h-11 flex items-center justify-center transition-colors"
         >
           ‹
         </button>
@@ -93,7 +93,7 @@ export default function CharacterSelector() {
           onClick={() => handleTransition('next')}
           disabled={phase !== 'idle'}
           aria-label="Next character"
-          className="absolute right-2 top-1/2 -translate-y-1/2 z-20 font-pixel text-brand-cyan text-xl bg-slate-900/50 border border-slate-700 hover:border-brand-cyan disabled:opacity-30 disabled:cursor-not-allowed w-8 h-8 flex items-center justify-center transition-colors"
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-20 font-pixel text-brand-cyan text-xl bg-slate-900/50 border border-slate-700 hover:border-brand-cyan disabled:opacity-30 disabled:cursor-not-allowed w-11 h-11 flex items-center justify-center transition-colors"
         >
           ›
         </button>

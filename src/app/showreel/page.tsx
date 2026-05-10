@@ -11,19 +11,19 @@ export default function ShowreelPage() {
   const isVideo = isLocal || isYouTube || isVimeo;
 
   return (
-    <Section className="min-h-screen py-32 bg-background">
+    <Section className="min-h-screen py-24 md:py-32 bg-background overflow-hidden">
       <Container>
         <div className="max-w-5xl mx-auto">
           {/* Header */}
-          <div className="mb-12 text-center">
+          <div className="mb-10 md:mb-12 text-center">
             <span className="font-pixel text-brand-cyan text-[10px] tracking-[0.3em] uppercase block mb-4">
               Showreel
             </span>
-            <h1 className="text-4xl md:text-6xl font-pixel uppercase tracking-tighter mb-6">
+            <h1 className="text-[clamp(2rem,9vw,3.75rem)] md:text-6xl font-pixel uppercase tracking-tighter mb-6 break-words leading-tight">
               {showreelConfig.title}
             </h1>
             {showreelConfig.description && (
-              <p className="font-modern text-text-dim text-lg max-w-2xl mx-auto">
+              <p className="font-modern text-text-dim text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
                 {showreelConfig.description}
               </p>
             )}
@@ -81,7 +81,7 @@ export default function ShowreelPage() {
           </div>
 
           {/* Duration + Back CTA */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-6">
             {showreelConfig.duration && (
               <span className="font-pixel text-text-dim text-[10px] tracking-widest">
                 Duration: {showreelConfig.duration}
@@ -90,7 +90,7 @@ export default function ShowreelPage() {
             <PixelButton
               variant="outline"
               href="/"
-              className="px-8 py-4 text-xs tracking-widest"
+              className="w-full sm:w-auto px-8 py-4 text-xs tracking-widest"
             >
               ← Back to Home
             </PixelButton>

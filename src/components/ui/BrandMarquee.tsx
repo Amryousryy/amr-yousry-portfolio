@@ -9,7 +9,7 @@ export default function BrandMarquee() {
   }
 
   return (
-    <div className="bg-brand-blue/80 border-y border-slate-800/50 py-10 md:py-12 overflow-hidden">
+    <div className="bg-brand-blue/80 border-y border-slate-800/50 py-8 md:py-12 overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 mb-6 md:mb-8">
         <p className="font-pixel text-brand-cyan/60 text-[10px] tracking-[0.3em] uppercase text-center">
           Trusted By
@@ -17,13 +17,13 @@ export default function BrandMarquee() {
       </div>
       
       <div className="relative group">
-        <div className="flex items-center gap-12 md:gap-16 animate-marquee hover:[animation-play-state:paused]">
+        <div className="flex items-center gap-8 md:gap-16 animate-marquee hover:[animation-play-state:paused]">
           {/* First set of logos */}
           {BRAND_LOGOS.map((brand, i) => (
             <div
               key={`first-${brand.id}-${i}`}
               className="flex-shrink-0 flex items-center justify-center"
-              style={{ width: '160px', height: '60px', padding: '0 8px' }}
+              style={{ width: 'clamp(112px, 34vw, 160px)', height: '60px', padding: '0 8px' }}
             >
               {brand.logoPath ? (
                 <a
@@ -39,7 +39,7 @@ export default function BrandMarquee() {
                     src={brand.logoPath}
                     alt={`${brand.name} logo`}
                     className="max-h-full w-auto object-contain hover:brightness-125 transition-all duration-300"
-                    style={{ maxHeight: '56px', maxWidth: '150px' }}
+                    style={{ maxHeight: '56px', maxWidth: '100%' }}
                   />
                 </a>
               ) : (
@@ -54,7 +54,7 @@ export default function BrandMarquee() {
             <div
               key={`second-${brand.id}-${i}`}
               className="flex-shrink-0 flex items-center justify-center"
-              style={{ width: '160px', height: '60px', padding: '0 8px' }}
+              style={{ width: 'clamp(112px, 34vw, 160px)', height: '60px', padding: '0 8px' }}
             >
               {brand.logoPath ? (
                 <a
@@ -70,7 +70,7 @@ export default function BrandMarquee() {
                     src={brand.logoPath}
                     alt={`${brand.name} logo`}
                     className="max-h-full w-auto object-contain hover:brightness-125 transition-all duration-300"
-                    style={{ maxHeight: '56px', maxWidth: '150px' }}
+                    style={{ maxHeight: '56px', maxWidth: '100%' }}
                   />
                 </a>
               ) : (
@@ -83,8 +83,8 @@ export default function BrandMarquee() {
         </div>
         
         {/* Subtle fade edges - reduced width to preserve logo visibility */}
-        <div className="absolute top-0 left-0 w-16 h-full bg-gradient-to-r from-brand-blue/95 to-transparent z-10 pointer-events-none" />
-        <div className="absolute top-0 right-0 w-16 h-full bg-gradient-to-l from-brand-blue/95 to-transparent z-10 pointer-events-none" />
+        <div className="absolute top-0 left-0 w-8 sm:w-16 h-full bg-gradient-to-r from-brand-blue/95 to-transparent z-10 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-8 sm:w-16 h-full bg-gradient-to-l from-brand-blue/95 to-transparent z-10 pointer-events-none" />
       </div>
       
       <style jsx>{`

@@ -28,7 +28,7 @@ export default function AboutSection() {
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                className="font-pixel text-brand-cyan text-[10px] tracking-[0.3em] uppercase mb-3 block"
+                className="font-pixel text-brand-cyan text-[9px] sm:text-[10px] tracking-[0.24em] sm:tracking-[0.3em] uppercase mb-3 block"
               >
                 {aboutContent.badge}
               </motion.span>
@@ -36,8 +36,8 @@ export default function AboutSection() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="font-display font-bold tracking-tighter text-white"
-                style={{ fontSize: 'clamp(2.25rem, 4.5vw, 4.25rem)', lineHeight: '0.92' }}
+                className="font-display font-bold tracking-tighter text-white break-words"
+                style={{ fontSize: 'clamp(1.75rem, 8.6vw, 4.25rem)', lineHeight: '0.96' }}
               >
                 <span className="text-white">SENIOR</span>
                 <br />
@@ -70,7 +70,7 @@ export default function AboutSection() {
                 <p className="text-sm text-foreground/60 mb-3">
                   Need a creative partner who can connect design, video, and digital experience?
                 </p>
-                <Link href="/#contact" className="group inline-flex items-center space-x-4 text-sm font-bold uppercase tracking-[0.2em] border-b border-brand-cyan pb-2">
+                <Link href="/#contact" className="group inline-flex min-h-[44px] max-w-full items-center gap-3 sm:gap-4 text-sm font-bold uppercase tracking-[0.16em] sm:tracking-[0.2em] border-b border-brand-cyan pb-2">
                   <span>Start a Project</span>
                   <div className="w-8 h-[1px] bg-brand-cyan transition-all group-hover:w-16" />
                 </Link>
@@ -85,7 +85,7 @@ export default function AboutSection() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  className="bg-slate-900/30 border-2 border-slate-800 p-4 w-full"
+                  className="bg-slate-900/30 border-2 border-slate-800 p-4 w-full min-w-0"
                 >
                   <h4 className="font-pixel text-[10px] text-brand-cyan tracking-wider mb-3">{cluster.title}</h4>
                   <div className="flex flex-wrap gap-1.5">
@@ -106,7 +106,7 @@ export default function AboutSection() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="bg-slate-900/30 border-2 border-slate-800 p-4 w-full sm:col-span-2"
+                className="bg-slate-900/30 border-2 border-slate-800 p-4 w-full min-w-0 sm:col-span-2"
               >
                 <h4 className="font-pixel text-[10px] text-brand-cyan tracking-wider mb-3">MISSION SECTORS</h4>
                 <div className="flex flex-wrap gap-1.5">
@@ -136,7 +136,7 @@ export default function AboutSection() {
                   transition={{ delay: index * 0.1 }}
                   className="flex items-center justify-between gap-4 border-t-2 border-slate-800 pt-3"
                 >
-                  <span className="font-pixel text-[8px] sm:text-[9px] text-brand-cyan tracking-wider uppercase shrink-0">{stat.label}</span>
+                  <span className="font-pixel text-[8px] sm:text-[9px] text-brand-cyan tracking-wider uppercase min-w-0">{stat.label}</span>
                   <span className="font-pixel text-xs sm:text-sm md:text-base text-white whitespace-nowrap leading-none text-right">{stat.value}</span>
                 </motion.div>
               ))}
@@ -148,7 +148,7 @@ export default function AboutSection() {
                whileInView={{ opacity: 1, y: 0 }}
                viewport={{ once: true }}
                transition={{ duration: 0.8, ease: "easeOut" }}
-               className="relative group w-full flex-1 min-h-[520px]"
+                className="relative group w-full flex-1 min-h-[300px] md:min-h-[520px]"
              >
                <div className="relative w-full h-full bg-slate-900/40 border-2 border-slate-800 p-4 flex items-center justify-center overflow-hidden">
                  <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 

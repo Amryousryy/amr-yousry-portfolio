@@ -34,16 +34,16 @@ const services = [
 export default function Services() {
   return (
     <section id="services" className="py-24 bg-background relative overflow-hidden">
-      <div className="container mx-auto px-6">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
-          <div className="max-w-2xl">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-16 gap-8">
+          <div className="max-w-2xl min-w-0">
             <h2 className="pixel-text text-accent text-sm mb-4">My Services</h2>
-            <h3 className="text-4xl md:text-6xl font-display font-bold leading-tight">
+            <h3 className="text-[clamp(1.75rem,8vw,3.75rem)] md:text-6xl font-display font-bold leading-tight break-words">
               Scaling brands with <br />
               <span className="text-primary italic">high-performance</span> content.
             </h3>
           </div>
-          <div className="pixel-border p-4 bg-primary/10">
+          <div className="pixel-border p-4 bg-primary/10 w-full sm:w-auto">
             <span className="text-sm font-sans text-foreground/70">
               Expertise built on results, <br /> not just views.
             </span>
@@ -58,7 +58,7 @@ export default function Services() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="group relative p-8 bg-background border border-primary/20 hover:border-accent transition-all duration-500 overflow-hidden"
+              className="group relative p-6 md:p-8 bg-background border border-primary/20 hover:border-accent transition-all duration-500 overflow-hidden"
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-accent/10 transition-colors" />   
 
@@ -66,7 +66,7 @@ export default function Services() {
                 <div className="w-16 h-16 mb-8 flex items-center justify-center bg-primary/10 pixel-border group-hover:bg-accent transition-colors">
                   <service.icon className="w-8 h-8 text-accent group-hover:text-background transition-colors" />
                 </div>
-                <h4 className="text-xl font-display font-bold mb-4 group-hover:text-accent transition-colors">
+                <h4 className="text-lg md:text-xl font-display font-bold mb-4 group-hover:text-accent transition-colors break-words leading-snug">
                   {service.title}
                 </h4>
                 <p className="text-foreground/60 leading-relaxed mb-6">
