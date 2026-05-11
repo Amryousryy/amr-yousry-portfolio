@@ -173,351 +173,382 @@ export default function ProjectEditor({ initialData, onSave, onSaveSuccess, isSa
         <ErrorSummary errors={errors as unknown as Record<string, unknown>} />
       )}
 
-      <div className="space-y-8">
-        <div>
-          <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-            Title <span className="text-red-500">*</span>
-          </label>
-          <input
-            {...register("title")}
-            className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-            placeholder="Project title"
-          />
-          {getFieldError(errors, "title") && (
-            <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "title")}</p>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="space-y-12">
+        {/* Section 1: Basic Information */}
+        <div className="space-y-4">
+          <h2 className="text-sm font-display font-bold uppercase tracking-wider text-accent border-b border-primary/10 pb-2">Basic Information</h2>
           <div>
             <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-              Slug <span className="text-red-500">*</span>
+              Title <span className="text-red-500">*</span>
             </label>
             <input
-              {...register("slug")}
+              {...register("title")}
               className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-              placeholder="project-slug"
+              placeholder="Project title"
             />
-            {getFieldError(errors, "slug") && (
-              <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "slug")}</p>
+            {getFieldError(errors, "title") && (
+              <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "title")}</p>
             )}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
+                Slug <span className="text-red-500">*</span>
+              </label>
+              <input
+                {...register("slug")}
+                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
+                placeholder="project-slug"
+              />
+              {getFieldError(errors, "slug") && (
+                <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "slug")}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">Client Name</label>
+              <input
+                {...register("clientName")}
+                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
+                placeholder="Client Name"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">Year</label>
+              <input
+                {...register("year")}
+                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
+                placeholder="2024"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
+                Category <span className="text-red-500">*</span>
+              </label>
+              <select
+                {...register("category")}
+                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors appearance-none"
+              >
+                <option value="">Select category</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+              {getFieldError(errors, "category") && (
+                <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "category")}</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Section 2: Categories & Filters */}
+        <div className="space-y-4">
+          <h2 className="text-sm font-display font-bold uppercase tracking-wider text-accent border-b border-primary/10 pb-2">Categories &amp; Filters</h2>
+          <p className="text-[10px] text-foreground/40">These control which filter groups the project appears under on the public /projects page.</p>
+          <div className="space-y-3 p-6 bg-primary/5 border border-primary/10">
+            <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
+              Project Categories
+            </label>
+            <p className="text-[10px] text-foreground/40">
+              Select one or more categories.
+            </p>
+            <Controller
+              name="categories"
+              control={control}
+              render={({ field }) => (
+                <div className="flex flex-wrap gap-4">
+                  {PROJECT_CATEGORIES.map((cat) => {
+                    const checked = (field.value || []).includes(cat.value);
+                    return (
+                      <label
+                        key={cat.value}
+                        className="flex items-center gap-2 cursor-pointer group"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => {
+                            const current = field.value || [];
+                            const updated = checked
+                              ? current.filter((v) => v !== cat.value)
+                              : [...current, cat.value];
+                            field.onChange(updated);
+                          }}
+                          className="w-4 h-4 accent-accent"
+                        />
+                        <span
+                          className={`text-xs font-bold uppercase tracking-wider transition-colors ${
+                            checked
+                              ? "text-accent"
+                              : "text-foreground/60 group-hover:text-foreground/80"
+                          }`}
+                        >
+                          {cat.label}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+            />
+          </div>
+        </div>
+
+        {/* Section 3: Project Summary */}
+        <div className="space-y-4">
+          <h2 className="text-sm font-display font-bold uppercase tracking-wider text-accent border-b border-primary/10 pb-2">Project Summary</h2>
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
+              Short Description
+            </label>
+            <textarea
+              {...register("shortDescription")}
+              rows={3}
+              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors resize-none"
+            />
           </div>
 
           <div>
             <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-              Category <span className="text-red-500">*</span>
+              Full Description
             </label>
-            <select
-              {...register("category")}
-              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors appearance-none"
-            >
-              <option value="">Select category</option>
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-            {getFieldError(errors, "category") && (
-              <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "category")}</p>
-            )}
+            <textarea
+              {...register("fullDescription")}
+              rows={6}
+              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors resize-none"
+            />
+          </div>
+
+          <div className="space-y-4 p-6 bg-primary/5 border border-primary/10">
+            <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
+              Tags (comma-separated)
+            </label>
+
+            <Controller
+              name="tags"
+              control={control}
+              render={({ field }) => (
+                <input
+                  {...field}
+                  value={field.value?.join(", ") || ""}
+                  onChange={(e) => {
+                    const tags = e.target.value.split(",").map(t => t.trim()).filter(Boolean);
+                    field.onChange(tags);
+                  }}
+                  className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
+                  placeholder="tag1, tag2, tag3"
+                />
+              )}
+            />
+          </div>
+        </div>
+
+        {/* Section 4: Case Study Story */}
+        <div className="space-y-4">
+          <h2 className="text-sm font-display font-bold uppercase tracking-wider text-accent border-b border-primary/10 pb-2">Case Study Story</h2>
+          <p className="text-[10px] text-foreground/40">Describe the project narrative — the challenge, approach, and outcome.</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
+                Problem
+              </label>
+              <textarea
+                {...register("problem")}
+                rows={3}
+                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors resize-none"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
+                Strategy / Idea
+              </label>
+              <textarea
+                {...register("strategy")}
+                rows={3}
+                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors resize-none"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
+                Solution
+              </label>
+              <textarea
+                {...register("solution")}
+                rows={3}
+                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors resize-none"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
+                Execution
+              </label>
+              <textarea
+                {...register("execution")}
+                rows={3}
+                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors resize-none"
+              />
+            </div>
           </div>
 
           <div>
             <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-              Display Order
+              Results
             </label>
+            <textarea
+              {...register("results")}
+              rows={3}
+              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors resize-none"
+            />
+          </div>
+
+          <div className="space-y-4 p-6 bg-primary/5 border border-primary/10">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
+                Sections
+              </label>
+              <button
+                type="button"
+                onClick={() => appendSection(createEmptyProjectSection())}
+                className="flex items-center gap-1 px-3 py-1 bg-accent text-background text-xs font-bold uppercase"
+              >
+                <Plus size={14} /> Add Section
+              </button>
+            </div>
+
+            {sectionFields.map((section, sIndex) => (
+              <div key={section.id} className="border border-primary/20 p-4 space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase">Section {sIndex + 1}</span>
+                  <button type="button" onClick={() => removeSection(sIndex)} className="text-red-500">
+                    <X size={14} />
+                  </button>
+                </div>
+
+                <div>
+                  <input
+                    {...register(`sections.${sIndex}.title` as const)}
+                    placeholder="Section title"
+                    className="w-full bg-background/50 border border-primary/20 p-2 text-sm"
+                  />
+                </div>
+
+                <textarea
+                  {...register(`sections.${sIndex}.content` as const)}
+                  placeholder="Section content"
+                  rows={3}
+                  className="w-full bg-background/50 border border-primary/20 p-2 text-sm resize-none"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Section 5: Media & Gallery */}
+        <div className="space-y-4">
+          <h2 className="text-sm font-display font-bold uppercase tracking-wider text-accent border-b border-primary/10 pb-2">Media &amp; Gallery</h2>
+          <p className="text-[10px] text-foreground/40">Upload project images via Cloudinary or paste a URL.</p>
+
+          <div className="space-y-4 p-6 bg-primary/5 border border-primary/10">
+            <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
+              Gallery
+            </label>
+
+            <Controller
+              name="gallery"
+              control={control}
+              render={({ field }) => (
+                <>
+                  <div className="grid grid-cols-4 gap-4">
+                    {(field.value || []).map((url: string, index: number) => (
+                      <div key={index} className="relative aspect-video bg-primary/5">
+                        {url && <Image src={url} alt="" fill className="object-cover" />}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newGallery = [...field.value];
+                            newGallery.splice(index, 1);
+                            field.onChange(newGallery);
+                          }}
+                          className="absolute top-1 right-1 p-1 bg-red-500 text-white"
+                        >
+                          <X size={12} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <CldUploadWidget
+                    uploadPreset={mediaConfig.uploadPreset}
+                    onSuccess={(result: any) => {
+                      field.onChange([...(field.value || []), result.secure_url]);
+                    }}
+                  >
+                    {({ open }) => (
+                      <button
+                        type="button"
+                        onClick={() => open()}
+                        className="px-4 py-2 bg-accent/10 text-accent text-xs font-bold uppercase"
+                      >
+                        <Upload size={14} className="inline mr-2" /> Add Image
+                      </button>
+                    )}
+                  </CldUploadWidget>
+                </>
+              )}
+            />
+          </div>
+        </div>
+
+        {/* Section 6: Publishing & Homepage */}
+        <div className="space-y-4">
+          <h2 className="text-sm font-display font-bold uppercase tracking-wider text-accent border-b border-primary/10 pb-2">Publishing &amp; Homepage</h2>
+          <p className="text-[10px] text-foreground/40">Control visibility and homepage featured placement.</p>
+
+          <div className="flex items-center gap-6">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" {...register("featured")} className="w-4 h-4 accent-accent" />
+              <span className="text-xs font-bold uppercase">Featured</span>
+            </label>
+
+            <div className="flex items-center gap-2">
+              <label className="text-xs font-bold uppercase">Featured Order</label>
+              <input
+                type="number"
+                {...register("featuredOrder", { valueAsNumber: true })}
+                className="w-16 bg-background/50 border border-primary/20 p-2 outline-none focus:border-accent transition-colors"
+                placeholder="0"
+              />
+              <span className="text-[10px] text-foreground/40">
+                (Lower = first on homepage)
+              </span>
+            </div>
+
+            <Controller
+              name="status"
+              control={control}
+              render={({ field }) => (
+                <select {...field} className="bg-primary/5 border border-primary/20 p-2 text-xs font-bold">
+                  <option value="draft">Draft</option>
+                  <option value="published">Published</option>
+                </select>
+              )}
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-bold uppercase">Display Order</label>
             <input
               type="number"
               {...register("displayOrder", { valueAsNumber: true })}
-              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-              placeholder="0"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-3 p-6 bg-primary/5 border border-primary/10">
-          <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
-            Project Categories
-          </label>
-          <p className="text-[10px] text-foreground/40">
-            Select one or more categories for filtering on the public site.
-          </p>
-          <Controller
-            name="categories"
-            control={control}
-            render={({ field }) => (
-              <div className="flex flex-wrap gap-4">
-                {PROJECT_CATEGORIES.map((cat) => {
-                  const checked = (field.value || []).includes(cat.value);
-                  return (
-                    <label
-                      key={cat.value}
-                      className="flex items-center gap-2 cursor-pointer group"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={checked}
-                        onChange={() => {
-                          const current = field.value || [];
-                          const updated = checked
-                            ? current.filter((v) => v !== cat.value)
-                            : [...current, cat.value];
-                          field.onChange(updated);
-                        }}
-                        className="w-4 h-4 accent-accent"
-                      />
-                      <span
-                        className={`text-xs font-bold uppercase tracking-wider transition-colors ${
-                          checked
-                            ? "text-accent"
-                            : "text-foreground/60 group-hover:text-foreground/80"
-                        }`}
-                      >
-                        {cat.label}
-                      </span>
-                    </label>
-                  );
-                })}
-              </div>
-            )}
-          />
-        </div>
-
-        <div className="flex items-center gap-6">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" {...register("featured")} className="w-4 h-4 accent-accent" />
-            <span className="text-xs font-bold uppercase">Featured</span>
-          </label>
-
-          <div className="flex items-center gap-2">
-            <label className="text-xs font-bold uppercase">Order</label>
-            <input
-              type="number"
-              {...register("featuredOrder", { valueAsNumber: true })}
-              className="w-16 bg-background/50 border border-primary/20 p-2 outline-none focus:border-accent transition-colors"
+              className="w-20 bg-background/50 border border-primary/20 p-2 outline-none focus:border-accent transition-colors"
               placeholder="0"
             />
             <span className="text-[10px] text-foreground/40">
-              (Lower = first on homepage)
+              (Sorting order within lists)
             </span>
-          </div>
-
-          <Controller
-            name="status"
-            control={control}
-            render={({ field }) => (
-              <select {...field} className="bg-primary/5 border border-primary/20 p-2 text-xs font-bold">
-                <option value="draft">Draft</option>
-                <option value="published">Published</option>
-              </select>
-            )}
-          />
-        </div>
-
-        <div>
-          <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-            Short Description
-          </label>
-          <textarea
-            {...register("shortDescription")}
-            rows={3}
-            className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors resize-none"
-          />
-        </div>
-
-        <div>
-          <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-            Full Description
-          </label>
-          <textarea
-            {...register("fullDescription")}
-            rows={6}
-            className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors resize-none"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-              Problem
-            </label>
-            <textarea
-              {...register("problem")}
-              rows={3}
-              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors resize-none"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-              Strategy
-            </label>
-            <textarea
-              {...register("strategy")}
-              rows={3}
-              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors resize-none"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-              Solution
-            </label>
-            <textarea
-              {...register("solution")}
-              rows={3}
-              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors resize-none"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-              Execution
-            </label>
-            <textarea
-              {...register("execution")}
-              rows={3}
-              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors resize-none"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-            Results
-          </label>
-          <textarea
-            {...register("results")}
-            rows={3}
-            className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors resize-none"
-          />
-        </div>
-
-        <div className="space-y-4 p-6 bg-primary/5 border border-primary/10">
-          <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
-            Tags (comma-separated)
-          </label>
-          
-          <Controller
-            name="tags"
-            control={control}
-            render={({ field }) => (
-              <input
-                {...field}
-                value={field.value?.join(", ") || ""}
-                onChange={(e) => {
-                  const tags = e.target.value.split(",").map(t => t.trim()).filter(Boolean);
-                  field.onChange(tags);
-                }}
-                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-                placeholder="tag1, tag2, tag3"
-              />
-            )}
-          />
-        </div>
-
-        <div className="space-y-4 p-6 bg-primary/5 border border-primary/10">
-          <div className="flex items-center justify-between">
-            <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
-              Sections
-            </label>
-            <button
-              type="button"
-              onClick={() => appendSection(createEmptyProjectSection())}
-              className="flex items-center gap-1 px-3 py-1 bg-accent text-background text-xs font-bold uppercase"
-            >
-              <Plus size={14} /> Add Section
-            </button>
-          </div>
-
-          {sectionFields.map((section, sIndex) => (
-            <div key={section.id} className="border border-primary/20 p-4 space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase">Section {sIndex + 1}</span>
-                <button type="button" onClick={() => removeSection(sIndex)} className="text-red-500">
-                  <X size={14} />
-                </button>
-              </div>
-
-              <div>
-                <input
-                  {...register(`sections.${sIndex}.title` as const)}
-                  placeholder="Section title"
-                  className="w-full bg-background/50 border border-primary/20 p-2 text-sm"
-                />
-              </div>
-
-              <textarea
-                {...register(`sections.${sIndex}.content` as const)}
-                placeholder="Section content"
-                rows={3}
-                className="w-full bg-background/50 border border-primary/20 p-2 text-sm resize-none"
-              />
-            </div>
-          ))}
-        </div>
-
-        <div className="space-y-4 p-6 bg-primary/5 border border-primary/10">
-          <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
-            Gallery
-          </label>
-
-          <Controller
-            name="gallery"
-            control={control}
-            render={({ field }) => (
-              <>
-                <div className="grid grid-cols-4 gap-4">
-                  {(field.value || []).map((url: string, index: number) => (
-                    <div key={index} className="relative aspect-video bg-primary/5">
-                      {url && <Image src={url} alt="" fill className="object-cover" />}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const newGallery = [...field.value];
-                          newGallery.splice(index, 1);
-                          field.onChange(newGallery);
-                        }}
-                        className="absolute top-1 right-1 p-1 bg-red-500 text-white"
-                      >
-                        <X size={12} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-                <CldUploadWidget
-                  uploadPreset={mediaConfig.uploadPreset}
-                  onSuccess={(result: any) => {
-                    field.onChange([...(field.value || []), result.secure_url]);
-                  }}
-                >
-                  {({ open }) => (
-                    <button
-                      type="button"
-                      onClick={() => open()}
-                      className="px-4 py-2 bg-accent/10 text-accent text-xs font-bold uppercase"
-                    >
-                      <Upload size={14} className="inline mr-2" /> Add Image
-                    </button>
-                  )}
-                </CldUploadWidget>
-              </>
-            )}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 bg-primary/5 border border-primary/10">
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">Year</label>
-            <input
-              {...register("year")}
-              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-              placeholder="2024"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">Client Name</label>
-            <input
-              {...register("clientName")}
-              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-              placeholder="Client Name"
-            />
           </div>
         </div>
       </div>
