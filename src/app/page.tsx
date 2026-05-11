@@ -6,6 +6,8 @@ import BrandMarquee from "@/components/ui/BrandMarquee";
 import { Section } from "@/components/ui/section";
 import { getFeaturedProjects } from "@/lib/projects/public-projects";
 
+export const revalidate = 60;
+
 export default async function Home() {
   const featuredProjects = await getFeaturedProjects(3);
 

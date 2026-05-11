@@ -8,6 +8,8 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { CaseStudyClient } from "./CaseStudyClient";
 
+export const revalidate = 60;
+
 interface CaseStudyPageProps {
   params: Promise<{ slug: string }>;
 }

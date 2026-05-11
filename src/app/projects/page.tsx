@@ -3,6 +3,8 @@ import { Section } from "@/components/ui/section";
 import { getPublicProjects } from "@/lib/projects/public-projects";
 import { ProjectsClient } from "./ProjectsClient";
 
+export const revalidate = 60;
+
 export default async function ProjectsPage() {
   const projects = await getPublicProjects();
 
