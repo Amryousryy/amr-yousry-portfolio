@@ -80,6 +80,7 @@ export default function ProjectEditor({ initialData, onSave, onSaveSuccess, isSa
 
   const watchedTitle = watch("title");
   const watchedSlug = watch("slug");
+  const watchedImage = watch("image");
   const watchedGallery = watch("gallery") || [];
 
   useEffect(() => {
@@ -450,55 +451,88 @@ export default function ProjectEditor({ initialData, onSave, onSaveSuccess, isSa
         {/* Section 5: Media & Gallery */}
         <div className="space-y-4">
           <h2 className="text-sm font-display font-bold uppercase tracking-wider text-accent border-b border-primary/10 pb-2">Media &amp; Gallery</h2>
-          <p className="text-[10px] text-foreground/40">Upload project images via Cloudinary or paste a URL.</p>
+          <p className="text-[10px] text-foreground/40">Add project media — cover image, video, and gallery images.</p>
 
-          <div className="space-y-4 p-6 bg-primary/5 border border-primary/10">
-            <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
-              Gallery
-            </label>
+          <div className="space-y-6 p-6 bg-primary/5 border border-primary/10">
+            <div className="space-y-2">
+              <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70">
+                Main Image / Thumbnail <span className="text-red-500">*</span>
+              </label>
+              <input
+                {...register("image")}
+                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
+                placeholder="https://res.cloudinary.com/.../image.jpg"
+              />
+              {getFieldError(errors, "image") && (
+                <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "image")}</p>
+              )}
+              {watchedImage && (
+                <div className="relative w-full max-w-xs aspect-video bg-background/30 border border-primary/10 mt-2 overflow-hidden">
+                  <img src={watchedImage} alt="Preview" className="w-full h-full object-cover" />
+                </div>
+              )}
+            </div>
 
-            <Controller
-              name="gallery"
-              control={control}
-              render={({ field }) => (
-                <>
-                  <div className="grid grid-cols-4 gap-4">
-                    {(field.value || []).map((url: string, index: number) => (
-                      <div key={index} className="relative aspect-video bg-primary/5">
-                        {url && <Image src={url} alt="" fill className="object-cover" />}
+            <div className="space-y-2">
+              <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70">
+                Video URL
+              </label>
+              <input
+                {...register("video")}
+                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
+                placeholder="https://youtube.com/watch?v=..."
+              />
+              <p className="text-[10px] text-foreground/40">YouTube, Vimeo, Cloudinary, or direct video URL.</p>
+            </div>
+
+            <div className="space-y-4 pt-6 border-t border-primary/10">
+              <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
+                Gallery
+              </label>
+
+              <Controller
+                name="gallery"
+                control={control}
+                render={({ field }) => (
+                  <>
+                    <div className="grid grid-cols-4 gap-4">
+                      {(field.value || []).map((url: string, index: number) => (
+                        <div key={index} className="relative aspect-video bg-primary/5">
+                          {url && <Image src={url} alt="" fill className="object-cover" />}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newGallery = [...field.value];
+                              newGallery.splice(index, 1);
+                              field.onChange(newGallery);
+                            }}
+                            className="absolute top-1 right-1 p-1 bg-red-500 text-white"
+                          >
+                            <X size={12} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    <CldUploadWidget
+                      uploadPreset={mediaConfig.uploadPreset}
+                      onSuccess={(result: any) => {
+                        field.onChange([...(field.value || []), result.secure_url]);
+                      }}
+                    >
+                      {({ open }) => (
                         <button
                           type="button"
-                          onClick={() => {
-                            const newGallery = [...field.value];
-                            newGallery.splice(index, 1);
-                            field.onChange(newGallery);
-                          }}
-                          className="absolute top-1 right-1 p-1 bg-red-500 text-white"
+                          onClick={() => open()}
+                          className="px-4 py-2 bg-accent/10 text-accent text-xs font-bold uppercase"
                         >
-                          <X size={12} />
+                          <Upload size={14} className="inline mr-2" /> Add Image
                         </button>
-                      </div>
-                    ))}
-                  </div>
-                  <CldUploadWidget
-                    uploadPreset={mediaConfig.uploadPreset}
-                    onSuccess={(result: any) => {
-                      field.onChange([...(field.value || []), result.secure_url]);
-                    }}
-                  >
-                    {({ open }) => (
-                      <button
-                        type="button"
-                        onClick={() => open()}
-                        className="px-4 py-2 bg-accent/10 text-accent text-xs font-bold uppercase"
-                      >
-                        <Upload size={14} className="inline mr-2" /> Add Image
-                      </button>
-                    )}
-                  </CldUploadWidget>
-                </>
-              )}
-            />
+                      )}
+                    </CldUploadWidget>
+                  </>
+                )}
+              />
+            </div>
           </div>
         </div>
 
