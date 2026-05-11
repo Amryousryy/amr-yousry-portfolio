@@ -5,10 +5,14 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { PixelButton } from "@/components/ui/pixel-button";
 import { ProjectCard } from "./project-card";
-import { featuredProjects } from "@/data/projects";
+import type { Project } from "@/types/project";
 import Link from "next/link";
 
-export default function ProjectsSection() {
+interface ProjectsSectionProps {
+  projects: Project[];
+}
+
+export default function ProjectsSection({ projects }: ProjectsSectionProps) {
   const shouldReduceMotion = useReducedMotion();
 
   return (
@@ -68,7 +72,7 @@ export default function ProjectsSection() {
 
         {/* Project Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {featuredProjects.map((project, index) => (
+          {projects.map((project, index) => (
             <motion.div
               key={project.id}
               initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 30 }}
