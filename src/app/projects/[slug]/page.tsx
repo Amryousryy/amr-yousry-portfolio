@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { PixelButton } from "@/components/ui/pixel-button";
-import { getProjectBySlug, getAllProjects } from "@/data/projects";
+import { getProjectBySlug, getPublicProjects } from "@/lib/projects/public-projects";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { CaseStudyClient } from "./CaseStudyClient";
@@ -14,7 +14,7 @@ interface CaseStudyPageProps {
 
 export async function generateMetadata({ params }: CaseStudyPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
   
   if (!project) return {};
   
@@ -25,13 +25,13 @@ export async function generateMetadata({ params }: CaseStudyPageProps): Promise<
 }
 
 export async function generateStaticParams() {
-  const projects = getAllProjects();
+  const projects = await getPublicProjects();
   return projects.map((p) => ({ slug: p.slug }));
 }
 
 export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
 
   if (!project) return notFound();
 
