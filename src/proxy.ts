@@ -10,7 +10,7 @@ export default withAuth(proxy, {
     authorized: ({ token }) => !!token,
   },
   pages: {
-    signIn: "/admin/login",
+    signIn: "/login",
   },
 });
 
