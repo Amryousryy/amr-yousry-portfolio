@@ -14,13 +14,13 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const adminEmail = process.env.ADMIN_EMAIL;
-        const adminPass = process.env.ADMIN_PASSWORD;
+        const adminEmail = (process.env.ADMIN_EMAIL || "").trim();
+        const adminPass = (process.env.ADMIN_PASSWORD || "").trim();
 
-        if (
-          credentials.email === adminEmail &&
-          credentials.password === adminPass
-        ) {
+        const inputEmail = credentials.email?.trim();
+        const inputPassword = credentials.password?.trim();
+
+        if (inputEmail === adminEmail && inputPassword === adminPass) {
           return {
             id: "1",
             name: "Admin",

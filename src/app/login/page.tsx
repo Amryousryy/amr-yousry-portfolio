@@ -11,6 +11,7 @@ function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/admin";
@@ -18,7 +19,8 @@ function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+    setError("");
+
     try {
       const res = await signIn("credentials", {
         email,
@@ -28,15 +30,14 @@ function LoginForm() {
       });
 
       if (res?.error) {
-        toast.error("Invalid credentials. Access Denied.");
+        setError("Invalid credentials. Please check your email and passcode.");
         setLoading(false);
       } else if (res?.ok) {
-        toast.success("Authentication Successful");
         router.push(callbackUrl);
         router.refresh();
       }
     } catch (error) {
-      toast.error("An error occurred. Please try again.");
+      setError("An error occurred. Please try again.");
       setLoading(false);
     }
   };
@@ -54,6 +55,10 @@ function LoginForm() {
         <h1 className="text-3xl font-display font-bold uppercase tracking-tighter">Terminal Access</h1>
         <p className="text-foreground/40 pixel-text text-xs mt-2 uppercase">Admin Authentication Required</p>
       </div>
+
+      {error && (
+        <p className="text-red-500 pixel-text text-[10px] mb-6 uppercase tracking-widest text-center">{error}</p>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
