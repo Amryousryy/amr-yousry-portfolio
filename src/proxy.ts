@@ -18,6 +18,5 @@ export const config = {
   matcher: [
     "/admin/((?!login).*)",
     "/admin",
-    "/api/analytics/:path*",
   ],
 };
