@@ -19,6 +19,5 @@ export const config = {
     "/admin/((?!login).*)",
     "/admin",
     "/api/analytics/:path*",
-    "/api/leads/:path*",
   ],
 };

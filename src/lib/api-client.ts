@@ -88,49 +88,6 @@ export const ProjectService = {
     }),
 };
 
-export interface LeadData {
-  _id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  projectType: string;
-  message: string;
-  offerType: "general" | "free_audit";
-  status: "new" | "contacted" | "qualified" | "closed";
-  createdAt: string;
-  updatedAt: string;
-}
-
-export const LeadService = {
-  getAll: async (params?: { page?: number; limit?: number; status?: string; search?: string }) => {
-    try {
-      const query = new URLSearchParams();
-      if (params?.page) query.set("page", String(params.page));
-      if (params?.limit) query.set("limit", String(params.limit));
-      if (params?.status) query.set("status", params.status);
-      if (params?.search) query.set("search", params.search);
-      
-      const res = await fetch(`/api/leads?${query.toString()}`);
-      const json: ApiResponse<LeadData[]> = await res.json();
-      
-      if (!res.ok) return { data: [], error: json.data as unknown as string };
-      
-      return { 
-        data: Array.isArray(json.data) ? json.data : [], 
-        meta: json.meta 
-      };
-    } catch (err) {
-      return { data: [], error: String(err) };
-    }
-  },
-  updateStatus: async (id: string, status: string) => {
-    return apiRequest<LeadData>(`/api/leads`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, status }),
-    });
-  },
-};
 
 export const FilterService = {
   getAll: (isAdmin = false, params?: { page?: number; limit?: number }) => {

@@ -6,21 +6,14 @@ import { usePathname } from "next/navigation";
 import { 
   LayoutDashboard, 
   FolderKanban, 
-  Settings, 
   MonitorPlay, 
   BarChart3, 
   LogOut,
   ExternalLink,
   Plus,
   Clapperboard,
-  Users,
-  TrendingUp,
-  TrendingDown,
-  Zap,
-  Megaphone,
-  Layers,
   Pencil,
-  Target,
+  Layers,
   Rocket,
   MessageSquare
 } from "lucide-react";
@@ -41,7 +34,6 @@ const menuGroups = [
   {
     title: "Growth",
     items: [
-      { name: "Leads", icon: Users, href: "/admin/leads", badge: true },
       { name: "Analytics", icon: BarChart3, href: "/admin/analytics" },
     ]
   },
@@ -99,9 +91,6 @@ export default function AdminSidebar() {
                         <item.icon size={16} className={isActive ? "text-accent" : "group-hover:text-accent transition-colors"} />
                         <span className="text-[11px] font-medium uppercase tracking-tight">{item.name}</span>
                       </div>
-                      {item.badge && (
-                        <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-                      )}
                     </Link>
                   );
                 })}

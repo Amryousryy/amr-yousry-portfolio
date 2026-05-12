@@ -3,15 +3,11 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { 
-  TrendingUp, 
   Zap, 
   AlertCircle, 
   CheckCircle, 
-  Target, 
   BarChart3,
   Loader2,
-  Users,
-  Eye,
   FileText,
   Clock,
   Star,
@@ -22,13 +18,10 @@ import {
   Bar, 
   XAxis, 
   YAxis, 
-  CartesianGrid, 
   Tooltip, 
   ResponsiveContainer, 
   Cell 
 } from "recharts";
-import StatsChart from "@/components/admin/StatsChart";
-import Link from "next/link";
 
 interface EditorialData {
   projects: {
@@ -57,20 +50,6 @@ interface EditorialData {
   }>;
 }
 
-interface LeadsData {
-  total: number;
-  byDate: Array<{ _id: string; count: number }>;
-  recent: Array<{
-    _id: string;
-    email: string;
-    name: string;
-    status: string;
-    createdAt: Date;
-    projectType?: string;
-  }>;
-  byStatus: Record<string, number>;
-}
-
 export default function AnalyticsPage() {
   const { data: insightsData, isLoading: insightsLoading } = useQuery({
     queryKey: ["business-insights"],
@@ -78,14 +57,6 @@ export default function AnalyticsPage() {
       const res = await fetch("/api/analytics/insights");
       return await res.json();
     }
-  });
-
-  const { data: trafficData, isLoading: trafficLoading } = useQuery({
-    queryKey: ["analytics-dashboard"],
-    queryFn: async () => {
-      const res = await fetch("/api/analytics");
-      return await res.json();
-    },
   });
 
   const { data: editorialData, isLoading: editorialLoading } = useQuery<EditorialData>({
@@ -96,27 +67,12 @@ export default function AnalyticsPage() {
     },
   });
 
-  const { data: leadsData, isLoading: leadsLoading } = useQuery<LeadsData>({
-    queryKey: ["leads-analytics"],
-    queryFn: async () => {
-      const res = await fetch("/api/analytics/leads");
-      return await res.json();
-    },
-  });
-
-  const isLoading = insightsLoading || trafficLoading || editorialLoading || leadsLoading;
+  const isLoading = insightsLoading || editorialLoading;
 
   if (isLoading) return <div className="p-20 text-center"><Loader2 className="animate-spin inline mr-2" /> Loading Analytics...</div>;
 
   const insights = insightsData?.insights ?? [];
-  const metrics = insightsData?.metrics ?? { globalCR: 0, completionRate: 0, totalViews: 0, totalLeads: 0 };
-
-  const funnelData = [
-    { name: "Total Visitors", value: metrics.totalViews, color: "#2D1B69" },
-    { name: "Engagers", value: Math.round(metrics.totalViews * 0.4), color: "#3B2A82" },
-    { name: "Prospects", value: Math.round((leadsData?.total || 0) * 1.5), color: "#00F5D4" },
-    { name: "Leads", value: leadsData?.total || 0, color: "#00F5D4" }
-  ];
+  const metrics = insightsData?.metrics ?? { completionRate: 0, totalViews: 0 };
 
   const projectStatusData = editorialData ? [
     { name: "Published", value: editorialData.projects.published, color: "#00F5D4" },
@@ -136,7 +92,7 @@ export default function AnalyticsPage() {
           <FileText size={18} />
           Editorial Status
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="p-6 bg-primary/5 border border-primary/10">
             <div className="flex items-center gap-3 mb-2">
               <Layers size={16} className="text-accent" />
@@ -173,15 +129,6 @@ export default function AnalyticsPage() {
             ) : (
               <p className="text-sm text-foreground/40">No published projects</p>
             )}
-          </div>
-
-          <div className="p-6 bg-primary/5 border border-primary/10">
-            <div className="flex items-center gap-3 mb-2">
-              <Users size={16} className="text-accent" />
-              <span className="text-[10px] font-bold uppercase text-foreground/40">Total Leads</span>
-            </div>
-            <p className="text-3xl font-display font-bold">{leadsData?.total || 0}</p>
-            <p className="text-[10px] text-foreground/40 mt-2">lifetime</p>
           </div>
         </div>
       </div>
@@ -251,12 +198,7 @@ export default function AnalyticsPage() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-12">
-        {/* Traffic Visualization */}
         <div className="xl:col-span-8 space-y-8">
-          {trafficData?.dailyViews && (
-            <StatsChart data={trafficData.dailyViews} title="Daily Page Views" />
-          )}
-
           <div className="p-8 bg-primary/5 border border-primary/10">
             <h3 className="text-xl font-display font-bold mb-6 uppercase">Project Status Distribution</h3>
             <div className="h-[200px] w-full">
@@ -277,37 +219,9 @@ export default function AnalyticsPage() {
               </ResponsiveContainer>
             </div>
           </div>
-
-          <div className="p-8 bg-primary/5 border border-primary/10">
-            <h3 className="text-xl font-display font-bold mb-6 uppercase">Conversion Funnel</h3>
-            <div className="h-[250px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart layout="vertical" data={funnelData} margin={{ left: 20 }}>
-                  <XAxis type="number" hide />
-                  <YAxis dataKey="name" type="category" stroke="#ffffff40" fontSize={10} width={100} />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: "#0A0A0F", border: "1px solid #2D1B69" }}
-                    cursor={{ fill: 'transparent' }}
-                  />
-                  <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={30}>
-                    {funnelData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
         </div>
 
-        {/* KPIs & Metrics */}
         <div className="xl:col-span-4 space-y-8">
-          <div className="p-8 bg-accent text-background pixel-border">
-            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4">Global Conversion Rate</h3>
-            <p className="text-5xl font-display font-bold">{metrics.globalCR.toFixed(1)}%</p>
-            <p className="text-xs font-bold uppercase tracking-widest opacity-60 mt-2">of visitors become leads</p>
-          </div>
-
           <div className="p-6 bg-primary/5 border border-primary/10 space-y-6">
             <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Key Metrics</h3>
             
@@ -318,14 +232,6 @@ export default function AnalyticsPage() {
               </div>
               <p className="text-2xl font-display font-bold">{metrics.completionRate.toFixed(1)}%</p>
             </div>
-            
-            <div className="flex justify-between items-end border-b border-primary/10 pb-3">
-              <div>
-                <p className="text-[10px] font-bold uppercase">Total Leads</p>
-                <p className="text-[8px] text-foreground/40">Lifetime</p>
-              </div>
-              <p className="text-2xl font-display font-bold">{leadsData?.total || 0}</p>
-            </div>
 
             <div className="flex justify-between items-end pb-3">
               <div>
@@ -334,27 +240,6 @@ export default function AnalyticsPage() {
               </div>
               <p className="text-2xl font-display font-bold">{metrics.totalViews}</p>
             </div>
-          </div>
-
-          {/* Recent Leads */}
-          <div className="p-6 bg-primary/5 border border-primary/10">
-            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40 mb-4">Recent Leads</h3>
-            <div className="space-y-3">
-              {leadsData?.recent?.slice(0, 5).map((lead: any) => (
-                <div key={lead._id} className="flex justify-between items-center text-xs">
-                  <span className="truncate flex-1">{lead.email}</span>
-                  <span className={`ml-2 px-2 py-0.5 ${lead.status === 'new' ? 'bg-green-500/20 text-green-500' : 'text-foreground/40'}`}>
-                    {lead.status}
-                  </span>
-                </div>
-              ))}
-              {(!leadsData?.recent || leadsData.recent.length === 0) && (
-                <p className="text-xs text-foreground/40">No leads yet</p>
-              )}
-            </div>
-            <Link href="/admin/leads" className="block mt-4 text-center text-[10px] text-accent hover:underline">
-              View all leads →
-            </Link>
           </div>
         </div>
       </div>

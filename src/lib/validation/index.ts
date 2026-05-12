@@ -45,14 +45,6 @@ export {
 export type { SettingsCreateInput, SettingsUpdateInput, ContentCreateInput, ContentUpdateInput } from "./settings";
 
 export { 
-  leadCreateSchema, 
-  leadPublicSchema, 
-  leadUpdateSchema,
-  leadDefaultValues,
-} from "./lead";
-export type { LeadCreateInput, LeadPublicInput, LeadUpdateInput } from "./lead";
-
-export { 
   contentStatusSchema,
   stringSchema,
   mediaItemSchema,

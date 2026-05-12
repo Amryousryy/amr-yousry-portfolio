@@ -3,7 +3,7 @@ import ActivityLog from "@/models/ActivityLog";
 
 interface LogParams {
   action: "create" | "update" | "delete" | "login" | "publish";
-  targetType: "project" | "settings" | "auth" | "showreel" | "filter" | "lead";
+  targetType: "project" | "settings" | "auth" | "showreel" | "filter";
   targetName: string;
   adminEmail: string;
   metadata?: any;
