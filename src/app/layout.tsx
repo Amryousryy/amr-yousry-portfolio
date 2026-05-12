@@ -48,9 +48,6 @@ export const metadata: Metadata = {
   },
 };
 
-import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -59,11 +56,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${pressStart2P.variable} ${inter.variable}`}>
       <body className="pixel-grid min-h-screen flex flex-col">
-        <Navbar />
-
-        <main className="pt-20 flex-grow">{children}</main>
-
-        <Footer />
+        {children}
       </body>
     </html>
   );
