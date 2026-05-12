@@ -128,9 +128,9 @@ export default function MediaUploader({
       return (
         <div className="aspect-video bg-primary/5 border-2 border-dashed border-primary/20 flex flex-col items-center justify-center p-6">
           <AlertCircle className="text-amber-500 mb-3" size={32} />
-          <p className="text-xs text-foreground/60 text-center mb-4">
-            Media service is not configured. You can still paste a media URL manually.
-          </p>
+<p className="text-xs text-foreground/60 text-center mb-4">
+              Cloudinary upload is not configured. Set NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET in Vercel or paste a media URL manually.
+            </p>
           <button
             type="button"
             onClick={() => setInputMode("url")}

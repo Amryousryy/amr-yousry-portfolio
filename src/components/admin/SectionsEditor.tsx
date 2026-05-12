@@ -93,42 +93,56 @@ export default function SectionsEditor({ sections, onChange }: SectionsEditorPro
               </div>
 
               <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                   <label className="pixel-text text-[10px] text-accent block uppercase tracking-widest">Section Media</label>
-                   <div className="flex space-x-4">
-                     <CldUploadWidget
-                           uploadPreset={mediaConfig.uploadPreset}
-                         onSuccess={(result) => {
-                           if (typeof result.info === 'object' && 'secure_url' in result.info) {
-                             addMedia(section.id, "image", result.info.secure_url as string);
-                             toast.success("Image added to section!");
-                           }
-                         }}
-                       >
-                         {({ open }) => (
+                    <div className="flex justify-between items-center">
+                       <label className="pixel-text text-[10px] text-accent block uppercase tracking-widest">Section Media</label>
+                       <div className="flex space-x-4">
+                         {mediaConfig.isUploadConfigured ? (
+                           <CldUploadWidget
+                             uploadPreset={mediaConfig.uploadPreset}
+                             onSuccess={(result) => {
+                               if (typeof result.info === 'object' && 'secure_url' in result.info) {
+                                 addMedia(section.id, "image", result.info.secure_url as string);
+                                 toast.success("Image added to section!");
+                               }
+                             }}
+                           >
+                             {({ open }) => (
+                               <button
+                                 type="button"
+                                 onClick={() => open()}
+                                 className="flex items-center space-x-2 px-3 py-1 bg-primary/10 text-[9px] font-bold uppercase hover:bg-accent hover:text-background transition-all"
+                               >
+                                 <ImageIcon size={14} />
+                                 <span>Add Image</span>
+                               </button>
+                             )}
+                           </CldUploadWidget>
+                         ) : (
                            <button
                              type="button"
-                             onClick={() => open()}
+                             onClick={() => {
+                               const url = window.prompt("Enter Image URL");
+                               if (url) addMedia(section.id, "image", url);
+                             }}
                              className="flex items-center space-x-2 px-3 py-1 bg-primary/10 text-[9px] font-bold uppercase hover:bg-accent hover:text-background transition-all"
                            >
                              <ImageIcon size={14} />
-                             <span>Add Image</span>
+                             <span>Add Image URL</span>
                            </button>
                          )}
-                       </CldUploadWidget>
 
-                       <button
-                         type="button"
-                         onClick={() => {
-                           const url = window.prompt("Enter Video URL (MP4/Vimeo/YouTube)");
-                           if (url) addMedia(section.id, "video", url);
-                         }}
-                         className="flex items-center space-x-2 px-3 py-1 bg-primary/10 text-[9px] font-bold uppercase hover:bg-accent hover:text-background transition-all"
-                       >
-                         <Video size={14} />
-                         <span>Add Video URL</span>
-                       </button>
-                    </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const url = window.prompt("Enter Video URL (MP4/Vimeo/YouTube)");
+                            if (url) addMedia(section.id, "video", url);
+                          }}
+                          className="flex items-center space-x-2 px-3 py-1 bg-primary/10 text-[9px] font-bold uppercase hover:bg-accent hover:text-background transition-all"
+                        >
+                          <Video size={14} />
+                          <span>Add Video URL</span>
+                        </button>
+                     </div>
                  </div>
 
                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">

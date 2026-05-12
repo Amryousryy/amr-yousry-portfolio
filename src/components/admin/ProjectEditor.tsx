@@ -621,22 +621,35 @@ export default function ProjectEditor({ initialData, onSave, onSaveSuccess, isSa
                         </div>
                       ))}
                     </div>
-                    <CldUploadWidget
-                      uploadPreset={mediaConfig.uploadPreset}
-                      onSuccess={(result: any) => {
-                        field.onChange([...(field.value || []), result.secure_url]);
-                      }}
-                    >
-                      {({ open }) => (
-                        <button
-                          type="button"
-                          onClick={() => open()}
-                          className="px-4 py-2 bg-accent/10 text-accent text-xs font-bold uppercase"
-                        >
-                          <Upload size={14} className="inline mr-2" /> Add Image
-                        </button>
-                      )}
-                    </CldUploadWidget>
+                    {mediaConfig.isUploadConfigured ? (
+                      <CldUploadWidget
+                        uploadPreset={mediaConfig.uploadPreset}
+                        onSuccess={(result: any) => {
+                          field.onChange([...(field.value || []), result.info?.secure_url || result.secure_url]);
+                        }}
+                      >
+                        {({ open }) => (
+                          <button
+                            type="button"
+                            onClick={() => open()}
+                            className="px-4 py-2 bg-accent/10 text-accent text-xs font-bold uppercase"
+                          >
+                            <Upload size={14} className="inline mr-2" /> Upload Image
+                          </button>
+                        )}
+                      </CldUploadWidget>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const url = window.prompt("Enter image URL");
+                          if (url) field.onChange([...(field.value || []), url]);
+                        }}
+                        className="px-4 py-2 bg-accent/10 text-accent text-xs font-bold uppercase"
+                      >
+                        <Upload size={14} className="inline mr-2" /> Add Image URL
+                      </button>
+                    )}
                   </>
                 )}
               />
