@@ -38,3 +38,8 @@ next-env.d.ts
 
 # Local Netlify folder
 .netlify
+
+# Local QA/dev artifacts
+notepad
+start-dev.bat
+qa-*
