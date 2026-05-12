@@ -83,6 +83,11 @@ export default function ProjectEditor({ initialData, onSave, onSaveSuccess, isSa
     name: "detailedResults",
   });
 
+  const { fields: mediaFields, append: appendMedia, remove: removeMedia } = useFieldArray({
+    control,
+    name: "caseStudyMedia",
+  });
+
   const watchedTitle = watch("title");
   const watchedSlug = watch("slug");
   const watchedImage = watch("image");
@@ -119,6 +124,7 @@ export default function ProjectEditor({ initialData, onSave, onSaveSuccess, isSa
         gallery: initialData.gallery || [],
         tags: initialData.tags || [],
         detailedResults: initialData.detailedResults || [],
+        caseStudyMedia: initialData.caseStudyMedia || [],
         sections: initialData.sections?.map(s => ({
           ...s,
           title: typeof s.title === "string" ? s.title : (s.title as any)?.en || "",
@@ -528,6 +534,63 @@ export default function ProjectEditor({ initialData, onSave, onSaveSuccess, isSa
                 placeholder="https://youtube.com/watch?v=..."
               />
               <p className="text-[10px] text-foreground/40">YouTube, Vimeo, Cloudinary, or direct video URL.</p>
+            </div>
+
+            <div className="space-y-4 pt-6 border-t border-primary/10">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
+                  Case Study Media
+                </label>
+                <button
+                  type="button"
+                  onClick={() => appendMedia({ type: "image", src: "", alt: "", caption: "" })}
+                  className="flex items-center gap-1 px-3 py-1 bg-accent text-background text-xs font-bold uppercase"
+                >
+                  <Plus size={14} /> Add Media
+                </button>
+              </div>
+              <p className="text-[10px] text-foreground/40">Add images or videos shown inside the public project case study. Use alt text and captions for clarity.</p>
+
+              {mediaFields.map((field, mIndex) => (
+                <div key={field.id} className="border border-primary/10 p-4 space-y-3">
+                  <div className="flex items-start justify-between">
+                    <span className="text-[10px] font-bold uppercase text-foreground/50">Media {mIndex + 1}</span>
+                    <button type="button" onClick={() => removeMedia(mIndex)} className="text-red-500">
+                      <X size={14} />
+                    </button>
+                  </div>
+                  <select
+                    {...register(`caseStudyMedia.${mIndex}.type` as const)}
+                    className="w-full bg-background/50 border border-primary/20 p-2 text-sm outline-none focus:border-accent transition-colors"
+                  >
+                    <option value="image">Image</option>
+                    <option value="video">Video</option>
+                    <option value="process">Process</option>
+                    <option value="before-after">Before / After</option>
+                    <option value="result">Result</option>
+                  </select>
+                  <input
+                    {...register(`caseStudyMedia.${mIndex}.src` as const)}
+                    placeholder="Media URL"
+                    className="w-full bg-background/50 border border-primary/20 p-2 text-sm outline-none focus:border-accent transition-colors"
+                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <input
+                      {...register(`caseStudyMedia.${mIndex}.alt` as const)}
+                      placeholder="Alt text"
+                      className="w-full bg-background/50 border border-primary/20 p-2 text-sm outline-none focus:border-accent transition-colors"
+                    />
+                    <input
+                      {...register(`caseStudyMedia.${mIndex}.caption` as const)}
+                      placeholder="Caption"
+                      className="w-full bg-background/50 border border-primary/20 p-2 text-sm outline-none focus:border-accent transition-colors"
+                    />
+                  </div>
+                </div>
+              ))}
+              {mediaFields.length === 0 && (
+                <p className="text-[10px] text-foreground/30 italic">No case study media added yet.</p>
+              )}
             </div>
 
             <div className="space-y-4 pt-6 border-t border-primary/10">
