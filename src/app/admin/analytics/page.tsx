@@ -3,15 +3,22 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { 
-  Zap, 
-  AlertCircle, 
-  CheckCircle, 
+  Zap,
+  AlertCircle,
+  CheckCircle,
   BarChart3,
   Loader2,
   FileText,
   Clock,
   Star,
-  Layers
+  Layers,
+  Eye,
+  MousePointerClick,
+  Filter,
+  MessageSquare,
+  Video,
+  TrendingUp,
+  Calendar,
 } from "lucide-react";
 import { 
   BarChart, 
@@ -23,38 +30,46 @@ import {
   Cell 
 } from "recharts";
 
+interface SummaryData {
+  totalEvents: number;
+  pageViews: number;
+  projectDetailViews: number;
+  projectCardClicks: number;
+  categoryFilterClicks: number;
+  contactCtaClicks: number;
+  showreelClicks: number;
+  recentEventsCount: number;
+  topProjects: Array<{ slug: string; title: string; count: number }>;
+  topCategories: Array<{ _id: string; count: number }>;
+  dailyViews: Array<{ _id: string; count: number }>;
+}
+
 interface EditorialData {
-  projects: {
-    total: number;
-    published: number;
-    draft: number;
-    featured: number;
-  };
+  projects: { total: number; published: number; draft: number; featured: number };
   content: {
     hero: { status: string; lastPublished: Date | null };
     siteContent: { status: string; lastPublished: Date | null };
   };
-  recentProjects: Array<{
-    _id: string;
-    title: string;
-    status: string;
-    featured: boolean;
-    updatedAt: Date;
-  }>;
   lastPublishedProject: { title: string; publishedAt: Date } | null;
-  recentUpdates: Array<{
-    _id: string;
-    title: string;
-    status: string;
-    updatedAt: Date;
-  }>;
 }
 
+const METRIC_CARDS = [
+  { key: "totalEvents", label: "Total Events", icon: BarChart3, color: "#00F5D4" },
+  { key: "pageViews", label: "Page Views", icon: Eye, color: "#22D3EE" },
+  { key: "projectDetailViews", label: "Project Detail Views", icon: Eye, color: "#818CF8" },
+  { key: "projectCardClicks", label: "Project Card Clicks", icon: MousePointerClick, color: "#F59E0B" },
+  { key: "categoryFilterClicks", label: "Filter Clicks", icon: Filter, color: "#10B981" },
+  { key: "contactCtaClicks", label: "Contact CTA Clicks", icon: MessageSquare, color: "#EC4899" },
+  { key: "showreelClicks", label: "Showreel Clicks", icon: Video, color: "#8B5CF6" },
+  { key: "recentEventsCount", label: "Recent Events (7d)", icon: Calendar, color: "#F97316" },
+] as const;
+
 export default function AnalyticsPage() {
-  const { data: insightsData, isLoading: insightsLoading } = useQuery({
-    queryKey: ["business-insights"],
+  const { data: summaryData, isLoading: summaryLoading, isError: summaryError } = useQuery<SummaryData>({
+    queryKey: ["analytics-summary"],
     queryFn: async () => {
-      const res = await fetch("/api/analytics/insights");
+      const res = await fetch("/api/analytics/summary");
+      if (!res.ok) throw new Error("Failed to fetch summary");
       return await res.json();
     }
   });
@@ -67,12 +82,31 @@ export default function AnalyticsPage() {
     },
   });
 
-  const isLoading = insightsLoading || editorialLoading;
+  const { data: insightsData } = useQuery({
+    queryKey: ["business-insights"],
+    queryFn: async () => {
+      const res = await fetch("/api/analytics/insights");
+      return await res.json();
+    }
+  });
 
-  if (isLoading) return <div className="p-20 text-center"><Loader2 className="animate-spin inline mr-2" /> Loading Analytics...</div>;
+  const isLoading = summaryLoading || editorialLoading;
+
+  if (isLoading) {
+    return <div className="p-20 text-center"><Loader2 className="animate-spin inline mr-2" /> Loading Analytics...</div>;
+  }
+
+  if (summaryError) {
+    return (
+      <div className="p-20 text-center">
+        <AlertCircle className="inline mr-2 text-red-500" size={20} />
+        <span className="text-foreground/60">Failed to load analytics data.</span>
+      </div>
+    );
+  }
 
   const insights = insightsData?.insights ?? [];
-  const metrics = insightsData?.metrics ?? { completionRate: 0, totalViews: 0 };
+  const s = summaryData!;
 
   const projectStatusData = editorialData ? [
     { name: "Published", value: editorialData.projects.published, color: "#00F5D4" },
@@ -86,7 +120,41 @@ export default function AnalyticsPage() {
         <p className="text-foreground/40 pixel-text text-[10px] uppercase tracking-widest">Performance metrics and editorial guidance</p>
       </header>
 
-      {/* Editorial Insights Section */}
+      {/* Summary Metric Cards */}
+      <div>
+        <h2 className="text-lg font-bold uppercase tracking-wider text-accent mb-6 flex items-center gap-2">
+          <TrendingUp size={18} />
+          Engagement Summary
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {METRIC_CARDS.map(({ key, label, icon: Icon, color }) => (
+            <div key={key} className="p-4 bg-primary/5 border border-primary/10">
+              <div className="flex items-center gap-2 mb-2">
+                <Icon size={14} style={{ color }} />
+                <span className="text-[9px] font-bold uppercase text-foreground/40">{label}</span>
+              </div>
+              <p className="text-2xl font-display font-bold" style={{ color }}>
+                {String((s as any)[key] ?? 0)}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Empty State */}
+      {s.totalEvents === 0 && (
+        <div className="p-10 bg-primary/5 border border-primary/10 text-center">
+          <BarChart3 size={32} className="mx-auto mb-4 text-foreground/20" />
+          <p className="text-sm font-bold uppercase tracking-wider text-foreground/60">
+            No analytics events recorded yet.
+          </p>
+          <p className="text-[10px] text-foreground/40 mt-2">
+            Visit the public site to generate engagement data.
+          </p>
+        </div>
+      )}
+
+      {/* Editorial Status */}
       <div>
         <h2 className="text-lg font-bold uppercase tracking-wider text-accent mb-6 flex items-center gap-2">
           <FileText size={18} />
@@ -171,78 +239,141 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* High-Level Insights */}
+      {/* Top Projects */}
       <div>
         <h2 className="text-lg font-bold uppercase tracking-wider text-accent mb-6 flex items-center gap-2">
-          <Zap size={18} />
-          Business Insights
+          <Eye size={18} />
+          Top Projects
         </h2>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {insights.map((insight: any, i: number) => (
-            <div key={i} className={`p-6 border-l-4 ${
-              insight.type === 'positive' ? 'bg-green-500/5 border-green-500' :
-              insight.type === 'negative' ? 'bg-red-500/5 border-red-500' :
-              'bg-accent/5 border-accent'
-            }`}>
-              <div className="flex items-center space-x-3 mb-4">
-                {insight.type === 'positive' ? <CheckCircle size={18} className="text-green-500" /> :
-                 insight.type === 'negative' ? <AlertCircle size={18} className="text-red-500" /> :
-                 <Zap size={18} className="text-accent" />}
-                <h3 className="font-bold uppercase text-sm">{insight.title}</h3>
+        {s.topProjects.length > 0 ? (
+          <div className="space-y-2">
+            {s.topProjects.map((p, i) => (
+              <div key={p.slug || i} className="flex items-center justify-between p-4 bg-primary/5 border border-primary/10">
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="text-[10px] font-bold text-foreground/30 w-5">{i + 1}.</span>
+                  <span className="text-sm font-bold truncate">{p.title || p.slug}</span>
+                </div>
+                <span className="text-sm font-display font-bold text-accent shrink-0">{p.count} views</span>
               </div>
-              <p className="text-xs text-foreground/80 leading-relaxed mb-3">{insight.description}</p>
-              <p className="text-[10px] font-bold uppercase text-accent">{insight.action}</p>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-foreground/40 italic">No project detail views yet.</p>
+        )}
       </div>
 
+      {/* Top Categories */}
+      <div>
+        <h2 className="text-lg font-bold uppercase tracking-wider text-accent mb-6 flex items-center gap-2">
+          <Filter size={18} />
+          Top Categories
+        </h2>
+        {s.topCategories.length > 0 ? (
+          <div className="space-y-2">
+            {s.topCategories.map((c, i) => (
+              <div key={c._id || i} className="flex items-center justify-between p-4 bg-primary/5 border border-primary/10">
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] font-bold text-foreground/30 w-5">{i + 1}.</span>
+                  <span className="text-sm font-bold uppercase">{c._id}</span>
+                </div>
+                <span className="text-sm font-display font-bold text-accent">{c.count} clicks</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-foreground/40 italic">No category filter clicks yet.</p>
+        )}
+      </div>
+
+      {/* Project Status + Daily Views side by side */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-12">
-        <div className="xl:col-span-8 space-y-8">
+        <div className="xl:col-span-7 space-y-8">
           <div className="p-8 bg-primary/5 border border-primary/10">
             <h3 className="text-xl font-display font-bold mb-6 uppercase">Project Status Distribution</h3>
-            <div className="h-[200px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart layout="vertical" data={projectStatusData} margin={{ left: 20 }}>
-                  <XAxis type="number" hide />
-                  <YAxis dataKey="name" type="category" stroke="#ffffff40" fontSize={10} width={80} />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: "#0A0A0F", border: "1px solid #2D1B69" }}
-                    cursor={{ fill: 'transparent' }}
-                  />
-                  <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={30}>
-                    {projectStatusData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+            {projectStatusData.some(d => d.value > 0) ? (
+              <div className="h-[200px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart layout="vertical" data={projectStatusData} margin={{ left: 20 }}>
+                    <XAxis type="number" hide />
+                    <YAxis dataKey="name" type="category" stroke="#ffffff40" fontSize={10} width={80} />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: "#0A0A0F", border: "1px solid #2D1B69" }}
+                      cursor={{ fill: 'transparent' }}
+                    />
+                    <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={30}>
+                      {projectStatusData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <p className="text-sm text-foreground/40 italic">No project data yet.</p>
+            )}
           </div>
         </div>
 
-        <div className="xl:col-span-4 space-y-8">
-          <div className="p-6 bg-primary/5 border border-primary/10 space-y-6">
-            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Key Metrics</h3>
-            
-            <div className="flex justify-between items-end border-b border-primary/10 pb-3">
-              <div>
-                <p className="text-[10px] font-bold uppercase">Showreel Completion</p>
-                <p className="text-[8px] text-foreground/40">Viewer retention</p>
+        <div className="xl:col-span-5 space-y-8">
+          <div className="p-8 bg-primary/5 border border-primary/10">
+            <h3 className="text-xl font-display font-bold mb-6 uppercase">Daily Views (7d)</h3>
+            {s.dailyViews.length > 0 ? (
+              <div className="h-[200px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={s.dailyViews} margin={{ bottom: 20, left: 0, right: 0 }}>
+                    <XAxis
+                      dataKey="_id"
+                      stroke="#ffffff40"
+                      fontSize={9}
+                      tickFormatter={(val: string) => val.slice(5)}
+                    />
+                    <YAxis hide />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: "#0A0A0F", border: "1px solid #2D1B69" }}
+                      labelFormatter={(val) => typeof val === 'string' ? new Date(val).toLocaleDateString() : val}
+                    />
+                    <Bar dataKey="count" radius={[2, 2, 0, 0]} barSize={24}>
+                      {s.dailyViews.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill="#00F5D4" />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
-              <p className="text-2xl font-display font-bold">{metrics.completionRate.toFixed(1)}%</p>
-            </div>
-
-            <div className="flex justify-between items-end pb-3">
-              <div>
-                <p className="text-[10px] font-bold uppercase">Page Views</p>
-                <p className="text-[8px] text-foreground/40">All time</p>
-              </div>
-              <p className="text-2xl font-display font-bold">{metrics.totalViews}</p>
-            </div>
+            ) : (
+              <p className="text-sm text-foreground/40 italic">No views in the last 7 days.</p>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Business Insights */}
+      {insights.length > 0 && (
+        <div>
+          <h2 className="text-lg font-bold uppercase tracking-wider text-accent mb-6 flex items-center gap-2">
+            <Zap size={18} />
+            Business Insights
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {insights.map((insight: any, i: number) => (
+              <div key={i} className={`p-6 border-l-4 ${
+                insight.type === 'positive' ? 'bg-green-500/5 border-green-500' :
+                insight.type === 'negative' ? 'bg-red-500/5 border-red-500' :
+                'bg-accent/5 border-accent'
+              }`}>
+                <div className="flex items-center space-x-3 mb-4">
+                  {insight.type === 'positive' ? <CheckCircle size={18} className="text-green-500" /> :
+                   insight.type === 'negative' ? <AlertCircle size={18} className="text-red-500" /> :
+                   <Zap size={18} className="text-accent" />}
+                  <h3 className="font-bold uppercase text-sm">{insight.title}</h3>
+                </div>
+                <p className="text-xs text-foreground/80 leading-relaxed mb-3">{insight.description}</p>
+                <p className="text-[10px] font-bold uppercase text-accent">{insight.action}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

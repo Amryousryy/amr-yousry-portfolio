@@ -21,10 +21,10 @@ export async function generateBusinessInsights() {
   if (totalViews === 0) {
     insights.push({
       type: "opportunity",
-      title: "Analytics Tracking Not Wired",
-      description: "No page views recorded yet. Client-side tracking middleware needs to be implemented to capture visitor data.",
-      impact: "Cannot measure audience engagement or conversion without page view data.",
-      action: "Add a lightweight analytics middleware or layout effect to POST page_view events to /api/analytics on every route change."
+      title: "No Page Views Yet",
+      description: "Client-side analytics tracking has been implemented but no page views have been recorded yet.",
+      impact: "Engagement data will populate once visitors browse the public site.",
+      action: "Visit the public site and navigate between pages to generate initial tracking data."
     });
   }
 
