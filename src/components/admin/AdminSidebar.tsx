@@ -4,44 +4,26 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
-  LayoutDashboard, 
   FolderKanban, 
-  MonitorPlay, 
   BarChart3, 
   LogOut,
   ExternalLink,
   Plus,
-  Clapperboard,
-  Pencil,
-  Layers,
-  Rocket,
-  MessageSquare
+  Rocket
 } from "lucide-react";
 import { signOut } from "next-auth/react";
-import Image from "next/image";
 
 const menuGroups = [
   {
-    title: "Content",
+    title: "Project CMS",
     items: [
-      { name: "Overview", icon: LayoutDashboard, href: "/admin" },
       { name: "Projects", icon: FolderKanban, href: "/admin/projects" },
-      { name: "Showreel", icon: Clapperboard, href: "/admin/showreels" },
-      { name: "Testimonials", icon: MessageSquare, href: "/admin/testimonials" },
-      { name: "Hero", icon: MonitorPlay, href: "/admin/hero" },
     ]
   },
   {
-    title: "Growth",
+    title: "Insights",
     items: [
       { name: "Analytics", icon: BarChart3, href: "/admin/analytics" },
-    ]
-  },
-  {
-    title: "Settings",
-    items: [
-      { name: "Content", icon: Pencil, href: "/admin/content" },
-      { name: "Filters", icon: Layers, href: "/admin/filters" },
     ]
   }
 ];
@@ -57,8 +39,8 @@ export default function AdminSidebar() {
             <Rocket className="text-background" size={20} />
           </div>
           <div>
-            <span className="font-display font-bold uppercase tracking-widest text-xs block">Command</span>
-            <span className="text-[10px] text-accent font-bold uppercase tracking-widest">Center</span>
+            <span className="font-display font-bold uppercase tracking-widest text-xs block">Portfolio</span>
+            <span className="text-[10px] text-accent font-bold uppercase tracking-widest">CMS</span>
           </div>
         </div>
 
@@ -76,7 +58,7 @@ export default function AdminSidebar() {
               <p className="text-[9px] text-foreground/30 uppercase tracking-[0.2em] mb-3 px-3">{group.title}</p>
               <div className="space-y-1">
                 {group.items.map((item) => {
-                  const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
+                  const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
                   return (
                     <Link
                       key={item.name}
