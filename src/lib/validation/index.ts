@@ -10,14 +10,6 @@ export {
 export type { ProjectCreateInput, ProjectUpdateInput } from "./project";
 
 export { 
-  filterCreateSchema, 
-  filterUpdateSchema, 
-  filterDefaultValues,
-  createFilterFormValues,
-} from "./filter";
-export type { FilterCreateInput, FilterUpdateInput } from "./filter";
-
-export { 
   heroCreateSchema, 
   heroUpdateSchema, 
   heroDefaultValues,

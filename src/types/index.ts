@@ -50,14 +50,6 @@ export interface Project {
 
 export type NewProject = Omit<Project, "_id" | "createdAt" | "slug">;
 
-export interface Filter {
-  _id: string;
-  name: string;
-  slug: string;
-  displayOrder: number;
-  isActive: boolean;
-}
-
 export interface HeroSettings {
   _id: string;
   headline: string;

@@ -1,4 +1,4 @@
-import { Project, NewProject, Filter, HeroSettings, SiteContent, Testimonial } from "@/types";
+import { Project, NewProject, HeroSettings, SiteContent, Testimonial } from "@/types";
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -88,30 +88,6 @@ export const ProjectService = {
     }),
 };
 
-
-export const FilterService = {
-  getAll: (isAdmin = false, params?: { page?: number; limit?: number }) => {
-    const query = new URLSearchParams();
-    if (isAdmin) query.set("admin", "true");
-    if (params?.page) query.set("page", String(params.page));
-    if (params?.limit) query.set("limit", String(params.limit));
-    return apiRequest<Filter[]>(`/api/filters?${query.toString()}`);
-  },
-  create: (data: Partial<Filter>) =>
-    apiRequest<Filter>("/api/filters", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    }),
-  update: (id: string, data: Partial<Filter>) =>
-    apiRequest<Filter>(`/api/filters/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    }),
-  delete: (id: string) =>
-    apiRequest<{ success: boolean }>(`/api/filters/${id}`, { method: "DELETE" }),
-};
 
 export const SettingsService = {
   getHero: (isAdmin = false) => {
