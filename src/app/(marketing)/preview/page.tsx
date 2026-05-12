@@ -12,7 +12,6 @@ import { SettingsService } from "@/lib/api-client";
 
 const FilmStripSection = dynamic(() => import("@/components/ui/FilmStripSection"), { ssr: false });
 const ServicesSection = dynamic(() => import("@/components/sections/Services"), { ssr: false });
-const TestimonialsSection = dynamic(() => import("@/components/ui/TestimonialsSection"), { ssr: false });
 const AboutSection = dynamic(() => import("@/components/sections/about"), { ssr: false });
 const ContactSection = dynamic(() => import("@/components/sections/contact"), { ssr: false });
 const Marquee = dynamic(() => import("@/components/ui/Marquee"), { ssr: false });
@@ -45,7 +44,6 @@ function PreviewContent() {
       <Marquee />
       <FilmStripSection />
       <ServicesSection />
-      <TestimonialsSection />
       <AboutSection />
       <ContactSection />
     </>

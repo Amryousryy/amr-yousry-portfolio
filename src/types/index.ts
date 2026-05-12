@@ -88,18 +88,3 @@ export interface SiteContent {
   publishedAt?: Date;
   lastStatusChangeAt?: Date;
 }
-
-export interface Testimonial {
-  _id: string;
-  name: string;
-  role: string;
-  company: string;
-  quote: string;
-  projectSlug?: string;
-  avatar?: string;
-  rating: number;
-  isFeatured: boolean;
-  status: ContentStatus;
-  displayOrder: number;
-  createdAt: Date;
-}
