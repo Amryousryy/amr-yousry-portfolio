@@ -45,7 +45,7 @@ Open [http://localhost:3000](http://localhost:3000)
 | `ADMIN_EMAIL` | Admin login email | `admin@example.com` | ✅ |
 | `ADMIN_PASSWORD` | Admin login password | `your-password` | ✅ |
 | `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | `your-cloud-name` | ✅ |
-| `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` | Unsigned upload preset name | `portfolio_unsigned` | ✅ (required for uploads) |
+| `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` | Unsigned upload preset name (can contain spaces) | `Amr Yousry` or `portfolio_unsigned` | ✅ (required for uploads) |
 | `CLOUDINARY_API_KEY` | Cloudinary API key | `123456789012345` | ✅ |
 | `CLOUDINARY_API_SECRET` | Cloudinary API secret | `xxxxxxxxxxxxxxxx` | ✅ |
 
