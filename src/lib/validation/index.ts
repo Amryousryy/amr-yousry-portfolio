@@ -26,14 +26,6 @@ export {
 export type { HeroCreateInput, HeroUpdateInput } from "./hero";
 
 export { 
-  showreelCreateSchema, 
-  showreelUpdateSchema, 
-  showreelDefaultValues,
-  createShowreelFormValues,
-} from "./showreel";
-export type { ShowreelCreateInput, ShowreelUpdateInput } from "./showreel";
-
-export { 
   settingsCreateSchema, 
   settingsUpdateSchema, 
   siteContentSchema,
