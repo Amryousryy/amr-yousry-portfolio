@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { PixelButton } from "@/components/ui/pixel-button";
 import Image from "next/image";
+import ShowreelTracker from "@/components/analytics/ShowreelTracker";
 
 export default function ShowreelPage() {
   const isYouTube = showreelConfig.type === "youtube";
@@ -11,7 +12,9 @@ export default function ShowreelPage() {
   const isVideo = isLocal || isYouTube || isVimeo;
 
   return (
-    <Section className="min-h-screen py-24 md:py-32 bg-background overflow-hidden">
+    <>
+      <ShowreelTracker />
+      <Section className="min-h-screen py-24 md:py-32 bg-background overflow-hidden">
       <Container>
         <div className="max-w-5xl mx-auto">
           {/* Header */}
@@ -98,5 +101,6 @@ export default function ShowreelPage() {
         </div>
       </Container>
     </Section>
+    </>
   );
 }

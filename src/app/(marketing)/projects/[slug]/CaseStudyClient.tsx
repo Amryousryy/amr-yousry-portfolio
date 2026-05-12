@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { ProjectMedia } from "@/types/project";
+import { trackEvent } from "@/lib/tracker";
 
 interface CaseStudyClientProps {
   project: {
@@ -14,12 +16,18 @@ interface CaseStudyClientProps {
     caseStudyMedia?: ProjectMedia[];
     media?: ProjectMedia[];
     title: string;
+    slug?: string;
   };
 }
 
 export function CaseStudyClient({ project }: CaseStudyClientProps) {
   const detailedResults = project.detailedResults ?? project.metrics ?? [];
   const caseStudyMedia = project.caseStudyMedia ?? project.media ?? [];
+
+  useEffect(() => {
+    const slug = project.slug || window.location.pathname.split("/").pop() || "";
+    trackEvent("project_detail_view", { path: window.location.pathname, projectSlug: slug });
+  }, [project.slug]);
 
   return (
     <>

@@ -5,7 +5,11 @@ export interface IAnalytics extends Document {
   page: string;
   projectId?: string;
   interactionType?: string;
-  // canonical timestamp is createdAt (from timestamps: true)
+  referrer?: string;
+  category?: string;
+  label?: string;
+  userAgent?: string;
+  ipHash?: string;
   metadata?: any;
   createdAt: Date;
   updatedAt: Date;
@@ -16,12 +20,17 @@ const AnalyticsSchema: Schema = new Schema({
   page: { type: String, required: true },
   projectId: { type: Schema.Types.ObjectId, ref: "Project" },
   interactionType: { type: String },
-  // remove legacy timestamp field in favor of createdAt
+  referrer: { type: String },
+  category: { type: String },
+  label: { type: String },
+  userAgent: { type: String },
+  ipHash: { type: String },
   metadata: { type: Schema.Types.Mixed },
 }, { timestamps: true });
 
 AnalyticsSchema.index({ createdAt: -1 });
 AnalyticsSchema.index({ page: 1, createdAt: -1 });
 AnalyticsSchema.index({ type: 1, createdAt: -1 });
+AnalyticsSchema.index({ interactionType: 1, createdAt: -1 });
 
 export default mongoose.models.Analytics || mongoose.model<IAnalytics>("Analytics", AnalyticsSchema);

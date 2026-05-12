@@ -8,6 +8,7 @@ import ContactIconImage from "@/components/ui/contact-icon-image";
 import { contactContent } from "@/content/contact";
 import { CheckCircle2, Zap, ChevronDown } from "lucide-react";
 import { useState, FormEvent } from "react";
+import { trackEvent } from "@/lib/tracker";
 
 export default function ContactSection() {
   const shouldReduceMotion = useReducedMotion();
@@ -49,6 +50,7 @@ export default function ContactSection() {
     
     window.open(whatsappUrl, '_blank');
     setSucceeded(true);
+    trackEvent("contact_cta_click", { path: window.location.pathname, label: formData.service });
   };
 
   if (succeeded) {

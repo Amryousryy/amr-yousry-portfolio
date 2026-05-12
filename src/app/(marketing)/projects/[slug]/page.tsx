@@ -73,7 +73,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
       </div>
 
       <Container>
-        <CaseStudyClient project={project} />
+        <CaseStudyClient project={{ ...project, slug }} />
 
         {/* Back CTA */}
         <div className="mt-20 pt-12 border-t border-slate-800 text-center">
