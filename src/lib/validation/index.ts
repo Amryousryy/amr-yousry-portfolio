@@ -10,14 +10,6 @@ export {
 export type { ProjectCreateInput, ProjectUpdateInput } from "./project";
 
 export { 
-  heroCreateSchema, 
-  heroUpdateSchema, 
-  heroDefaultValues,
-  createHeroFormValues,
-} from "./hero";
-export type { HeroCreateInput, HeroUpdateInput } from "./hero";
-
-export { 
   settingsCreateSchema, 
   settingsUpdateSchema, 
   siteContentSchema,
