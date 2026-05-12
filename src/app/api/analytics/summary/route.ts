@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Analytics from "@/models/Analytics";
 import Project from "@/models/Project";
+import { toPlainText } from "@/lib/text";
 
 export async function GET() {
   try {
@@ -110,7 +111,11 @@ export async function GET() {
       contactCtaClicks,
       showreelClicks,
       recentEventsCount,
-      topProjects,
+      topProjects: topProjects.map((p) => ({
+        ...p,
+        title: toPlainText(p.title),
+        slug: toPlainText(p.slug),
+      })),
       topCategories,
       dailyViews,
     });

@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Project from "@/models/Project";
 import Settings from "@/models/Settings";
+import { toPlainText } from "@/lib/text";
 
 export async function GET() {
   try {
@@ -72,18 +73,18 @@ export async function GET() {
       },
       recentProjects: recentProjects.map((p: any) => ({
         _id: p._id,
-        title: p.title || "Untitled",
+        title: toPlainText(p.title) || "Untitled",
         status: p.status,
         featured: p.featured,
         updatedAt: p.updatedAt,
       })),
       lastPublishedProject: lastUpdatedProject ? {
-        title: lastUpdatedProject.title || "Untitled",
+        title: toPlainText(lastUpdatedProject.title) || "Untitled",
         publishedAt: lastUpdatedProject.publishedAt,
       } : null,
       recentUpdates: recentUpdates.map((p: any) => ({
         _id: p._id,
-        title: p.title || "Untitled",
+        title: toPlainText(p.title) || "Untitled",
         status: p.status,
         updatedAt: p.updatedAt,
       })),

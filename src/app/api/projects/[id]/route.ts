@@ -6,6 +6,30 @@ import Project from "@/models/Project";
 import { projectUpdateSchema } from "@/lib/validation";
 import { deleteCloudinaryResources } from "@/lib/cloudinary";
 import { logActivity } from "@/lib/activity";
+import { toPlainText } from "@/lib/text";
+
+function normalizeProject(doc: Record<string, unknown>): Record<string, unknown> {
+  const normalized = { ...doc };
+  const stringFields = ["title", "slug", "category", "shortDescription", "fullDescription", "image", "video", "client", "clientName", "problem", "strategy", "solution", "execution", "results", "mainResult", "idea", "outcome", "role"];
+  const arrayFields = ["tags", "categories", "services", "gallery"];
+  for (const field of stringFields) {
+    if (field in normalized) {
+      normalized[field] = toPlainText(normalized[field]);
+    }
+  }
+  for (const field of arrayFields) {
+    const arr = normalized[field];
+    if (Array.isArray(arr)) {
+      normalized[field] = arr.map((item: unknown) => toPlainText(item));
+    }
+  }
+  if (normalized.seo && typeof normalized.seo === "object") {
+    const seo = normalized.seo as Record<string, unknown>;
+    if (seo.title) seo.title = toPlainText(seo.title);
+    if (seo.description) seo.description = toPlainText(seo.description);
+  }
+  return normalized;
+}
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -32,7 +56,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     if (!project) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
-    return NextResponse.json({ success: true, data: project });
+    return NextResponse.json({ success: true, data: normalizeProject(project as unknown as Record<string, unknown>) });
   } catch (error) {
     console.error("GET_PROJECT_ERROR:", error);
     return NextResponse.json({ error: "Failed to fetch project" }, { status: 500 });
@@ -71,7 +95,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     const project = await Project.findByIdAndUpdate(
       id, 
       { ...validation.data, ...statusMetadata }, 
-      { new: true }
+      { new: true, lean: true }
     );
     
     if (!project) {
@@ -83,10 +107,10 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       targetType: "project",
       targetName: validation.data.title || "Untitled",
       adminEmail: session.user?.email || "unknown",
-      metadata: { id, status: project.status }
+      metadata: { id, status: (project as any).status }
     });
     
-    return NextResponse.json(project);
+    return NextResponse.json(normalizeProject(project as unknown as Record<string, unknown>));
   } catch (error) {
     console.error("PUT_PROJECT_ERROR:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
