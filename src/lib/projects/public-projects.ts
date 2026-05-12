@@ -1,4 +1,4 @@
-import type { Project } from "@/types/project";
+import type { Project, ProjectMedia } from "@/types/project";
 import type { IProject } from "@/models/Project";
 import dbConnect from "@/lib/db";
 import ProjectModel from "@/models/Project";
@@ -8,28 +8,73 @@ import {
   featuredProjects as staticFeaturedProjects,
 } from "@/data/projects";
 
+function toPlainText(value: unknown, fallback = ""): string {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object") {
+    const localized = value as { en?: unknown; ar?: unknown };
+    if (typeof localized.en === "string") return localized.en;
+    if (typeof localized.ar === "string") return localized.ar;
+  }
+  return fallback;
+}
+
+function normalizeStrings(arr: unknown): string[] {
+  if (!Array.isArray(arr)) return [];
+  return arr.map((item) => toPlainText(item));
+}
+
+function normalizeDetailedResults(arr: unknown): { label: string; value: string }[] {
+  if (!Array.isArray(arr)) return [];
+  return arr.map((item) => {
+    if (item && typeof item === "object") {
+      const obj = item as Record<string, unknown>;
+      return {
+        label: toPlainText(obj.label),
+        value: toPlainText(obj.value),
+      };
+    }
+    return { label: "", value: "" };
+  });
+}
+
+function normalizeCaseStudyMedia(arr: unknown): Project["caseStudyMedia"] {
+  if (!Array.isArray(arr)) return [];
+  return arr.map((item) => {
+    if (item && typeof item === "object") {
+      const obj = item as Record<string, unknown>;
+      return {
+        type: (obj.type as ProjectMedia["type"]) || "image",
+        src: toPlainText(obj.src),
+        alt: toPlainText(obj.alt, undefined),
+        caption: toPlainText(obj.caption, undefined),
+      } as ProjectMedia;
+    }
+    return null;
+  }).filter(Boolean) as Project["caseStudyMedia"];
+}
+
 function toPublicProject(doc: Record<string, unknown>): Project {
-  const clientVal = (doc.client as string) || (doc.clientName as string) || "";
-  const imageUrl = (doc.image as string) || "";
+  const clientVal = toPlainText(doc.client) || toPlainText(doc.clientName) || "";
+  const imageUrl = toPlainText(doc.image) || "";
   return {
     id: (doc._id as { toString(): string }).toString(),
-    slug: doc.slug as string,
-    title: doc.title as string,
+    slug: toPlainText(doc.slug),
+    title: toPlainText(doc.title),
     client: clientVal,
-    category: doc.category as string,
-    categories: (doc.categories as string[]) || [],
-    services: (doc.services as string[]) || [],
-    summary: (doc.shortDescription as string) || "",
+    category: toPlainText(doc.category),
+    categories: normalizeStrings(doc.categories),
+    services: normalizeStrings(doc.services),
+    summary: toPlainText(doc.shortDescription) || "",
     thumbnail: imageUrl,
-    mainResult: (doc.mainResult as string) || "",
+    mainResult: toPlainText(doc.mainResult) || "",
     featured: (doc.featured as boolean) || false,
     bannerImage: imageUrl,
-    problem: (doc.problem as string) || "",
-    idea: (doc.idea as string) || "",
-    execution: (doc.execution as string) || "",
-    detailedResults: (doc.detailedResults as { label: string; value: string }[]) || [],
-    caseStudyMedia: (doc.caseStudyMedia as Project["caseStudyMedia"]) || [],
-    heroVideo: (doc.video as string) || undefined,
+    problem: toPlainText(doc.problem) || "",
+    idea: toPlainText(doc.idea) || "",
+    execution: toPlainText(doc.execution) || "",
+    detailedResults: normalizeDetailedResults(doc.detailedResults),
+    caseStudyMedia: normalizeCaseStudyMedia(doc.caseStudyMedia),
+    heroVideo: toPlainText(doc.video) || undefined,
   };
 }
 
