@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { ProjectMedia } from "@/types/project";
 import { trackEvent } from "@/lib/tracker";
+import { getMediaKind } from "@/lib/media/config";
 
 interface CaseStudyClientProps {
   project: {
@@ -136,35 +137,40 @@ export function CaseStudyClient({ project }: CaseStudyClientProps) {
             Project Media
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            {caseStudyMedia.map((media: ProjectMedia, i: number) => (
-              <div key={i} className="relative overflow-hidden pixel-border bg-slate-900/50">
-                {media.type === "video" ? (
-                  <div className="aspect-video">
-                    <iframe
-                      src={media.src.replace("watch?v=", "embed/")}
-                      className="w-full h-full"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  </div>
-                ) : (
-                  <>
-                    <Image
-                      src={media.src}
-                      alt={media.alt || project.title}
-                      width={600}
-                      height={400}
-                      className="w-full h-56 sm:h-64 object-cover"
-                    />
-                    {media.caption && (
-                      <p className="p-4 text-sm text-text-dim font-modern">
-                        {media.caption}
-                      </p>
-                    )}
-                  </>
-                )}
-              </div>
-            ))}
+            {caseStudyMedia.map((media: ProjectMedia, i: number) => {
+              if (!media.src) return null;
+              const kind = getMediaKind(media.src);
+              return (
+                <div key={i} className="relative overflow-hidden pixel-border bg-slate-900/50">
+                  {media.type === "video" && kind === "embed" ? (
+                    <a href={media.src} target="_blank" rel="noopener noreferrer" className="block aspect-video flex items-center justify-center bg-accent/10 text-accent font-bold uppercase tracking-wider text-sm">
+                      Open external video
+                    </a>
+                  ) : media.type === "video" && kind === "video" ? (
+                    <video src={media.src} controls playsInline className="w-full aspect-video object-cover" />
+                  ) : media.type === "video" && kind === "image" ? (
+                    <div className="aspect-video flex items-center justify-center bg-slate-800 text-text-dim text-sm p-4">
+                      {media.src}
+                    </div>
+                  ) : kind === "image" || kind === "unknown" ? (
+                    <>
+                      <Image
+                        src={media.src}
+                        alt={media.alt || project.title}
+                        width={600}
+                        height={400}
+                        className="w-full h-56 sm:h-64 object-cover"
+                      />
+                      {media.caption && (
+                        <p className="p-4 text-sm text-text-dim font-modern">
+                          {media.caption}
+                        </p>
+                      )}
+                    </>
+                  ) : null}
+                </div>
+              );
+            })}
           </div>
         </motion.div>
       )}

@@ -4,6 +4,7 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { PixelButton } from "@/components/ui/pixel-button";
 import { getProjectBySlug, getPublicProjects } from "@/lib/projects/public-projects";
+import { getMediaKind } from "@/lib/media/config";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { CaseStudyClient } from "./CaseStudyClient";
@@ -41,24 +42,63 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
     <Section className="min-h-screen py-24 md:py-32 bg-background overflow-hidden">
       {/* Hero Media */}
       <div className="relative h-[56vh] min-h-[420px] md:h-[60vh] mb-14 md:mb-20 overflow-hidden">
-        {project.heroVideo ? (
-          <div className="absolute inset-0">
-            <iframe
-              src={project.heroVideo.replace("watch?v=", "embed/")}
-              className="w-full h-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
+        {(() => {
+          const hv = project.heroVideo;
+          if (!hv) {
+            return (
+              <Image
+                src={project.bannerImage}
+                alt={project.title}
+                fill
+                className="object-cover"
+                priority
+              />
+            );
+          }
+          const kind = getMediaKind(hv);
+          if (kind === "embed") {
+            const ytMatch = hv.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+            const vimeoMatch = hv.match(/vimeo\.com\/(\d+)/);
+            const embedSrc = ytMatch
+              ? `https://www.youtube.com/embed/${ytMatch[1]}`
+              : vimeoMatch
+              ? `https://player.vimeo.com/video/${vimeoMatch[1]}`
+              : null;
+            if (embedSrc) {
+              return (
+                <div className="absolute inset-0">
+                  <iframe
+                    src={embedSrc}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              );
+            }
+            return (
+              <a href={hv} target="_blank" rel="noopener noreferrer" className="absolute inset-0 flex items-center justify-center bg-accent/10 text-accent font-bold uppercase tracking-wider">
+                Open video
+              </a>
+            );
+          }
+          if (kind === "video") {
+            return (
+              <div className="absolute inset-0">
+                <video src={hv} controls playsInline className="w-full h-full object-cover" />
+              </div>
+            );
+          }
+          return (
+            <Image
+              src={project.bannerImage}
+              alt={project.title}
+              fill
+              className="object-cover"
+              priority
             />
-          </div>
-        ) : (
-          <Image
-            src={project.bannerImage}
-            alt={project.title}
-            fill
-            className="object-cover"
-            priority
-          />
-        )}
+          );
+        })()}
         <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
         <div className="absolute bottom-0 left-0 w-full p-4 sm:p-8 md:p-16">
           <Container>

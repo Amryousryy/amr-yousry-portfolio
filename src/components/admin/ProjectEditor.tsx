@@ -15,7 +15,7 @@ import {
   generateSlugFromTitle,
   createEmptyProjectSection,
 } from "@/lib/validation";
-import { mediaConfig } from "@/lib/media/config";
+import { mediaConfig, getMediaKind, type MediaKind } from "@/lib/media/config";
 import MediaUploader from "@/components/admin/MediaUploader";
 import { useUnsavedChanges } from "@/lib/hooks";
 import { ErrorSummary, scrollToFirstError } from "@/components/admin/ErrorSummary";
@@ -93,6 +93,7 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
   const watchedSlug = watch("slug");
   const watchedImage = watch("image");
   const watchedGallery = watch("gallery") || [];
+  const watchedCaseStudyMedia = watch("caseStudyMedia") || [];
 
   useEffect(() => {
     if (initialData) {
@@ -625,6 +626,27 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
                       </div>
                     )}
                   </div>
+                  {(() => {
+                    const src = watchedCaseStudyMedia[mIndex]?.src;
+                    const itemType = watchedCaseStudyMedia[mIndex]?.type;
+                    if (!src) return null;
+                    const kind = getMediaKind(src);
+                    return (
+                      <div className="mt-2 aspect-video bg-primary/5 relative overflow-hidden">
+                        {itemType === "video" && kind === "embed" ? (
+                          <a href={src} target="_blank" rel="noopener noreferrer" className="absolute inset-0 flex items-center justify-center bg-accent/10 text-accent text-[9px] font-bold uppercase tracking-wider">
+                            Open external video
+                          </a>
+                        ) : kind === "video" ? (
+                          <video src={src} controls playsInline className="w-full h-full object-cover" />
+                        ) : kind === "image" ? (
+                          <Image src={src} alt="" fill className="object-cover" />
+                        ) : (
+                          <span className="absolute inset-0 flex items-center justify-center text-[8px] text-foreground/30 p-2 break-all">{src}</span>
+                        )}
+                      </div>
+                    );
+                  })()}
                   <div className="grid grid-cols-2 gap-3">
                     <input
                       {...register(`caseStudyMedia.${mIndex}.alt` as const)}
@@ -655,26 +677,37 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
                 render={({ field }) => (
                   <>
                     <div className="grid grid-cols-4 gap-4">
-                      {(field.value || []).map((url: string, index: number) => (
-                        <div key={index} className="relative aspect-video bg-primary/5">
-                          {url && (/\.(mp4|webm|mov)$/i.test(url) || /\/video\//i.test(url)) ? (
-                            <video src={url} className="w-full h-full object-cover" muted />
-                          ) : url ? (
-                            <Image src={url} alt="" fill className="object-cover" />
-                          ) : null}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const newGallery = [...field.value];
-                              newGallery.splice(index, 1);
-                              field.onChange(newGallery);
-                            }}
-                            className="absolute top-1 right-1 p-1 bg-red-500 text-white"
-                          >
-                            <X size={12} />
-                          </button>
-                        </div>
-                      ))}
+                      {(field.value || []).map((url: string, index: number) => {
+                        const kind = url ? getMediaKind(url) : null;
+                        return (
+                          <div key={index} className="relative aspect-video bg-primary/5">
+                            {kind === "video" ? (
+                              <video src={url} className="w-full h-full object-cover" controls playsInline />
+                            ) : kind === "image" ? (
+                              <Image src={url} alt="" fill className="object-cover" />
+                            ) : kind === "embed" ? (
+                              <a href={url} target="_blank" rel="noopener noreferrer" className="absolute inset-0 flex items-center justify-center bg-primary/10 text-accent text-[9px] font-bold uppercase tracking-wider">
+                                External video
+                              </a>
+                            ) : url ? (
+                              <span className="absolute inset-0 flex items-center justify-center text-[8px] text-foreground/30 p-2 break-all">{url}</span>
+                            ) : (
+                              <span className="absolute inset-0 flex items-center justify-center text-[8px] text-foreground/30">Invalid URL</span>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newGallery = [...field.value];
+                                newGallery.splice(index, 1);
+                                field.onChange(newGallery);
+                              }}
+                              className="absolute top-1 right-1 p-1 bg-red-500 text-white"
+                            >
+                              <X size={12} />
+                            </button>
+                          </div>
+                        );
+                      })}
                     </div>
                     <div className="flex flex-wrap gap-3">
                       {mediaConfig.isUploadConfigured ? (

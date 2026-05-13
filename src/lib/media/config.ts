@@ -49,6 +49,31 @@ export function isValidMediaUrl(url: string): boolean {
   }
 }
 
+export type MediaKind = "image" | "video" | "embed" | "unknown";
+
+export function isVideoUrl(url: string): boolean {
+  if (!url) return false;
+  return /\.(mp4|webm|mov)$/i.test(url) || /\/video\/(upload\/)?/i.test(url);
+}
+
+export function isImageUrl(url: string): boolean {
+  if (!url) return false;
+  return /\.(jpg|jpeg|png|webp|gif|avif|svg)$/i.test(url) || /\/image\/(upload\/)?/i.test(url);
+}
+
+export function isEmbedUrl(url: string): boolean {
+  if (!url) return false;
+  return /instagram\.com|youtube\.com|youtu\.be|vimeo\.com|tiktok\.com/i.test(url);
+}
+
+export function getMediaKind(url: string): MediaKind {
+  if (!url) return "unknown";
+  if (isVideoUrl(url)) return "video";
+  if (isImageUrl(url)) return "image";
+  if (isEmbedUrl(url)) return "embed";
+  return "unknown";
+}
+
 export function getMediaType(url: string): 'image' | 'video' | 'youtube' | 'vimeo' | 'unknown' {
   if (!url) return 'unknown';
   
