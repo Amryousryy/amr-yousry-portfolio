@@ -1,8 +1,18 @@
 export interface ProjectMedia {
   type: "image" | "video" | "process" | "before-after" | "result";
-  src: string; // image path, video URL, etc.
+  src: string;
   alt?: string;
   caption?: string;
+}
+
+export interface ProjectMediaItem {
+  kind: "image" | "video" | "embed" | "external" | "unknown";
+  src: string;
+  embedUrl?: string;
+  provider?: string | null;
+  alt?: string;
+  caption?: string;
+  thumbnail?: string;
 }
 
 export interface ProjectResult {
@@ -34,5 +44,6 @@ export interface Project {
   
   // Media support
   caseStudyMedia?: ProjectMedia[];
-  heroVideo?: string; // optional hero video for case study
+  media?: ProjectMediaItem[];
+  heroVideo?: string;
 }

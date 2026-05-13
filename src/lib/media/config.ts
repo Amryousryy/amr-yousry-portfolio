@@ -49,7 +49,7 @@ export function isValidMediaUrl(url: string): boolean {
   }
 }
 
-export type MediaKind = "image" | "video" | "embed" | "unknown";
+export type MediaKind = "image" | "video" | "embed" | "external" | "unknown";
 
 export function isVideoUrl(url: string): boolean {
   if (!url) return false;
@@ -63,14 +63,57 @@ export function isImageUrl(url: string): boolean {
 
 export function isEmbedUrl(url: string): boolean {
   if (!url) return false;
-  return /instagram\.com|youtube\.com|youtu\.be|vimeo\.com|tiktok\.com/i.test(url);
+  return /instagram\.com|youtube\.com|youtu\.be|vimeo\.com|tiktok\.com|drive\.google\.com/i.test(url);
+}
+
+export function isGoogleDriveUrl(url: string): boolean {
+  if (!url) return false;
+  return /drive\.google\.com/i.test(url);
+}
+
+export function getMediaProvider(url: string): string | null {
+  if (!url) return null;
+  if (url.includes("youtube.com") || url.includes("youtu.be")) return "YouTube";
+  if (url.includes("vimeo.com")) return "Vimeo";
+  if (url.includes("instagram.com")) return "Instagram";
+  if (url.includes("tiktok.com")) return "TikTok";
+  if (url.includes("drive.google.com")) return "Google Drive";
+  if (url.includes("cloudinary.com")) return "Cloudinary";
+  return null;
+}
+
+export function getEmbeddableVideoUrl(url: string): string | null {
+  if (!url) return null;
+  const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+  if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
+  const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+  if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+  // Google Drive /file/d/{id}/view or /file/d/{id}/preview
+  const gDriveFile = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
+  if (gDriveFile) return `https://drive.google.com/file/d/${gDriveFile[1]}/preview`;
+  // Google Drive /open?id={id}
+  const gDriveOpen = url.match(/drive\.google\.com\/open\?id=([\w-]+)/);
+  if (gDriveOpen) return `https://drive.google.com/file/d/${gDriveOpen[1]}/preview`;
+  // Google Drive /uc?id={id} (direct download)
+  const gDriveUc = url.match(/drive\.google\.com\/uc\?id=([\w-]+)/);
+  if (gDriveUc) return `https://drive.google.com/file/d/${gDriveUc[1]}/preview`;
+  // Generic ?id= fallback
+  const gDriveId = url.match(/[?&]id=([\w-]+)/);
+  if (gDriveId && url.includes("drive.google.com")) return `https://drive.google.com/file/d/${gDriveId[1]}/preview`;
+  return null;
 }
 
 export function getMediaKind(url: string): MediaKind {
   if (!url) return "unknown";
   if (isVideoUrl(url)) return "video";
   if (isImageUrl(url)) return "image";
-  if (isEmbedUrl(url)) return "embed";
+  if (isEmbedUrl(url)) {
+    if (isGoogleDriveUrl(url)) {
+      return getEmbeddableVideoUrl(url) ? "embed" : "external";
+    }
+    if (/instagram\.com|tiktok\.com/i.test(url)) return "external";
+    return "embed";
+  }
   return "unknown";
 }
 

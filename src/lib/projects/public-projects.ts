@@ -1,7 +1,8 @@
-import type { Project, ProjectMedia } from "@/types/project";
+import type { Project, ProjectMedia, ProjectMediaItem } from "@/types/project";
 import type { IProject } from "@/models/Project";
 import dbConnect from "@/lib/db";
 import ProjectModel from "@/models/Project";
+import { getMediaKind, getEmbeddableVideoUrl, getMediaProvider } from "@/lib/media/config";
 import {
   getAllProjects as getStaticAllProjects,
   getProjectBySlug as getStaticProjectBySlug,
@@ -37,7 +38,7 @@ function normalizeDetailedResults(arr: unknown): { label: string; value: string 
   });
 }
 
-function normalizeCaseStudyMedia(arr: unknown): Project["caseStudyMedia"] {
+function normalizeCaseStudyMedia(arr: unknown): ProjectMedia[] {
   if (!Array.isArray(arr)) return [];
   return arr.map((item) => {
     if (item && typeof item === "object") {
@@ -50,16 +51,66 @@ function normalizeCaseStudyMedia(arr: unknown): Project["caseStudyMedia"] {
       } as ProjectMedia;
     }
     return null;
-  }).filter(Boolean) as Project["caseStudyMedia"];
+  }).filter((m): m is ProjectMedia => m !== null);
+}
+
+function normalizeMediaItems(doc: Record<string, unknown>, title: string): ProjectMediaItem[] {
+  const items: ProjectMediaItem[] = [];
+  const seen = new Set<string>();
+
+  const addItem = (src: string, alt?: string, caption?: string) => {
+    if (!src || seen.has(src)) return;
+    seen.add(src);
+    const kind = getMediaKind(src);
+    const embedUrl = getEmbeddableVideoUrl(src);
+    items.push({ kind, src, embedUrl: embedUrl || undefined, provider: getMediaProvider(src), alt, caption });
+  };
+
+  const caseStudyMedia = normalizeCaseStudyMedia(doc.caseStudyMedia) || [];
+  for (const m of caseStudyMedia) {
+    if (m.src) addItem(m.src, m.alt, m.caption);
+  }
+
+  const gallery = normalizeStrings(doc.gallery);
+  for (const url of gallery) {
+    if (url) addItem(url, title);
+  }
+
+  if (items.length === 0) {
+    const imageUrl = toPlainText(doc.image) || "";
+    const videoUrl = toPlainText(doc.video) || "";
+    if (imageUrl) addItem(imageUrl, title);
+    if (videoUrl) addItem(videoUrl, title);
+  }
+
+  return items;
+}
+
+function withMedia(project: Project): Project {
+  if (project.media && project.media.length > 0) return project;
+  const items: ProjectMediaItem[] = [];
+  const seen = new Set<string>();
+  const addItem = (src: string, alt?: string, caption?: string) => {
+    if (!src || seen.has(src)) return;
+    seen.add(src);
+    const kind = getMediaKind(src);
+    items.push({ kind, src, embedUrl: getEmbeddableVideoUrl(src) || undefined, provider: getMediaProvider(src), alt, caption });
+  };
+  if (project.caseStudyMedia) {
+    for (const m of project.caseStudyMedia) addItem(m.src, m.alt, m.caption);
+  }
+  if (items.length === 0 && project.thumbnail) addItem(project.thumbnail, project.title);
+  return { ...project, media: items };
 }
 
 function toPublicProject(doc: Record<string, unknown>): Project {
   const clientVal = toPlainText(doc.client) || toPlainText(doc.clientName) || "";
   const imageUrl = toPlainText(doc.image) || "";
+  const title = toPlainText(doc.title);
   return {
     id: (doc._id as { toString(): string }).toString(),
     slug: toPlainText(doc.slug),
-    title: toPlainText(doc.title),
+    title,
     client: clientVal,
     category: toPlainText(doc.category),
     categories: normalizeStrings(doc.categories),
@@ -75,6 +126,7 @@ function toPublicProject(doc: Record<string, unknown>): Project {
     detailedResults: normalizeDetailedResults(doc.detailedResults),
     caseStudyMedia: normalizeCaseStudyMedia(doc.caseStudyMedia),
     heroVideo: toPlainText(doc.video) || undefined,
+    media: normalizeMediaItems(doc, title),
   };
 }
 
@@ -99,7 +151,7 @@ export async function getPublicProjects(): Promise<Project[]> {
         .lean();
 
       if (!docs || docs.length === 0) {
-        return getStaticAllProjects();
+        return getStaticAllProjects().map(withMedia);
       }
 
       return docs.map((doc) => toPublicProject(doc as unknown as Record<string, unknown>));
@@ -118,7 +170,7 @@ export async function getFeaturedProjects(limit = 3): Promise<Project[]> {
         .lean();
 
       if (!docs || docs.length === 0) {
-        return staticFeaturedProjects.slice(0, limit);
+        return staticFeaturedProjects.slice(0, limit).map(withMedia);
       }
 
       return docs.map((doc) => toPublicProject(doc as unknown as Record<string, unknown>));
@@ -135,7 +187,8 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
         .lean();
 
       if (!doc) {
-        return getStaticProjectBySlug(slug) || null;
+        const staticProject = getStaticProjectBySlug(slug);
+        return staticProject ? withMedia(staticProject) : null;
       }
 
       return toPublicProject(doc as unknown as Record<string, unknown>);

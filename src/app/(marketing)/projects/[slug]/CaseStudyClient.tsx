@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import Image from "next/image";
-import { ProjectMedia } from "@/types/project";
 import { trackEvent } from "@/lib/tracker";
-import { getMediaKind } from "@/lib/media/config";
+import { ProjectMediaItem } from "@/types/project";
+import ProjectMediaGallery from "@/components/projects/ProjectMediaGallery";
 
 interface CaseStudyClientProps {
   project: {
@@ -14,8 +13,7 @@ interface CaseStudyClientProps {
     execution?: string;
     detailedResults?: { label: string; value: string }[];
     metrics?: { label: string; value: string }[];
-    caseStudyMedia?: ProjectMedia[];
-    media?: ProjectMedia[];
+    media?: ProjectMediaItem[];
     title: string;
     slug?: string;
   };
@@ -23,7 +21,7 @@ interface CaseStudyClientProps {
 
 export function CaseStudyClient({ project }: CaseStudyClientProps) {
   const detailedResults = project.detailedResults ?? project.metrics ?? [];
-  const caseStudyMedia = project.caseStudyMedia ?? project.media ?? [];
+  const galleryItems = project.media ?? [];
 
   useEffect(() => {
     const slug = project.slug || window.location.pathname.split("/").pop() || "";
@@ -41,7 +39,6 @@ export function CaseStudyClient({ project }: CaseStudyClientProps) {
             viewport={{ once: true }}
             className="space-y-12"
           >
-            {/* Problem */}
             {project.problem && (
               <div>
                 <h2 className="font-pixel text-brand-cyan text-xs sm:text-sm tracking-widest uppercase mb-4">
@@ -53,7 +50,6 @@ export function CaseStudyClient({ project }: CaseStudyClientProps) {
               </div>
             )}
 
-            {/* Idea */}
             {project.idea && (
               <div>
                 <h2 className="font-pixel text-brand-cyan text-xs sm:text-sm tracking-widest uppercase mb-4">
@@ -65,7 +61,6 @@ export function CaseStudyClient({ project }: CaseStudyClientProps) {
               </div>
             )}
 
-            {/* Execution */}
             {project.execution && (
               <div>
                 <h2 className="font-pixel text-brand-cyan text-xs sm:text-sm tracking-widest uppercase mb-4">
@@ -77,7 +72,6 @@ export function CaseStudyClient({ project }: CaseStudyClientProps) {
               </div>
             )}
 
-            {/* Result - only render if detailedResults exist */}
             {detailedResults.length > 0 && (
               <div>
                 <h2 className="font-pixel text-brand-cyan text-xs sm:text-sm tracking-widest uppercase mb-4">
@@ -96,7 +90,6 @@ export function CaseStudyClient({ project }: CaseStudyClientProps) {
           </motion.div>
         </div>
 
-        {/* Results Sidebar - only render if detailedResults exist */}
         {detailedResults.length > 0 && (
           <div className="lg:col-span-4">
             <motion.div
@@ -125,8 +118,8 @@ export function CaseStudyClient({ project }: CaseStudyClientProps) {
         )}
       </div>
 
-      {/* Case Study Media - only render if media exists */}
-      {caseStudyMedia.length > 0 && (
+      {/* Project Media Gallery */}
+      {galleryItems.length > 0 && (
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -136,42 +129,7 @@ export function CaseStudyClient({ project }: CaseStudyClientProps) {
           <h2 className="font-pixel text-brand-cyan text-xs sm:text-sm tracking-widest uppercase mb-8">
             Project Media
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            {caseStudyMedia.map((media: ProjectMedia, i: number) => {
-              if (!media.src) return null;
-              const kind = getMediaKind(media.src);
-              return (
-                <div key={i} className="relative overflow-hidden pixel-border bg-slate-900/50">
-                  {media.type === "video" && kind === "embed" ? (
-                    <a href={media.src} target="_blank" rel="noopener noreferrer" className="block aspect-video flex items-center justify-center bg-accent/10 text-accent font-bold uppercase tracking-wider text-sm">
-                      Open external video
-                    </a>
-                  ) : media.type === "video" && kind === "video" ? (
-                    <video src={media.src} controls playsInline className="w-full aspect-video object-cover" />
-                  ) : media.type === "video" && kind === "image" ? (
-                    <div className="aspect-video flex items-center justify-center bg-slate-800 text-text-dim text-sm p-4">
-                      {media.src}
-                    </div>
-                  ) : kind === "image" || kind === "unknown" ? (
-                    <>
-                      <Image
-                        src={media.src}
-                        alt={media.alt || project.title}
-                        width={600}
-                        height={400}
-                        className="w-full h-56 sm:h-64 object-cover"
-                      />
-                      {media.caption && (
-                        <p className="p-4 text-sm text-text-dim font-modern">
-                          {media.caption}
-                        </p>
-                      )}
-                    </>
-                  ) : null}
-                </div>
-              );
-            })}
-          </div>
+          <ProjectMediaGallery items={galleryItems} title={project.title} />
         </motion.div>
       )}
     </>

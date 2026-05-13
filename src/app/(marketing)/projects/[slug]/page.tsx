@@ -4,7 +4,8 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { PixelButton } from "@/components/ui/pixel-button";
 import { getProjectBySlug, getPublicProjects } from "@/lib/projects/public-projects";
-import { getMediaKind } from "@/lib/media/config";
+import { getMediaKind, getEmbeddableVideoUrl, getMediaProvider } from "@/lib/media/config";
+import { ExternalLink } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { CaseStudyClient } from "./CaseStudyClient";
@@ -56,30 +57,18 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
             );
           }
           const kind = getMediaKind(hv);
-          if (kind === "embed") {
-            const ytMatch = hv.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
-            const vimeoMatch = hv.match(/vimeo\.com\/(\d+)/);
-            const embedSrc = ytMatch
-              ? `https://www.youtube.com/embed/${ytMatch[1]}`
-              : vimeoMatch
-              ? `https://player.vimeo.com/video/${vimeoMatch[1]}`
-              : null;
-            if (embedSrc) {
-              return (
-                <div className="absolute inset-0">
-                  <iframe
-                    src={embedSrc}
-                    className="w-full h-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
-              );
-            }
+          const embedUrl = getEmbeddableVideoUrl(hv);
+          const provider = getMediaProvider(hv);
+          if (kind === "embed" && embedUrl) {
             return (
-              <a href={hv} target="_blank" rel="noopener noreferrer" className="absolute inset-0 flex items-center justify-center bg-accent/10 text-accent font-bold uppercase tracking-wider">
-                Open video
-              </a>
+              <div className="absolute inset-0">
+                <iframe
+                  src={embedUrl}
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
             );
           }
           if (kind === "video") {
@@ -87,6 +76,21 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
               <div className="absolute inset-0">
                 <video src={hv} controls playsInline className="w-full h-full object-cover" />
               </div>
+            );
+          }
+          if (kind === "external" || kind === "embed") {
+            return (
+              <a
+                href={hv}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-accent/5 hover:bg-accent/10 transition-colors group"
+              >
+                <ExternalLink size={32} className="text-accent/60 group-hover:text-accent" />
+                <span className="font-bold text-xs uppercase tracking-widest text-accent">
+                  Open {provider || "external video"}
+                </span>
+              </a>
             );
           }
           return (
