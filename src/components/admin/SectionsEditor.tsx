@@ -131,6 +131,29 @@ export default function SectionsEditor({ sections, onChange }: SectionsEditorPro
                            </button>
                          )}
 
+                        {mediaConfig.isUploadConfigured ? (
+                          <CldUploadWidget
+                            uploadPreset={mediaConfig.uploadPreset}
+                            options={{ resourceType: "video" }}
+                            onSuccess={(result) => {
+                              if (typeof result.info === 'object' && 'secure_url' in result.info) {
+                                addMedia(section.id, "video", result.info.secure_url as string);
+                                toast.success("Video added to section!");
+                              }
+                            }}
+                          >
+                            {({ open }) => (
+                              <button
+                                type="button"
+                                onClick={() => open()}
+                                className="flex items-center space-x-2 px-3 py-1 bg-primary/10 text-[9px] font-bold uppercase hover:bg-accent hover:text-background transition-all"
+                              >
+                                <Video size={14} />
+                                <span>Upload Video</span>
+                              </button>
+                            )}
+                          </CldUploadWidget>
+                        ) : null}
                         <button
                           type="button"
                           onClick={() => {

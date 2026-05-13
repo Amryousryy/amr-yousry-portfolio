@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useForm, useFieldArray, Controller, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Upload, Loader2, Save, Plus, X, Clock } from "lucide-react";
+import { Upload, Loader2, Save, Plus, X, Clock, Video, VideoOff } from "lucide-react";
 import { CldUploadWidget } from "next-cloudinary";
 import Image from "next/image";
 import { Project } from "@/types";
@@ -16,6 +16,7 @@ import {
   createEmptyProjectSection,
 } from "@/lib/validation";
 import { mediaConfig } from "@/lib/media/config";
+import MediaUploader from "@/components/admin/MediaUploader";
 import { useUnsavedChanges } from "@/lib/hooks";
 import { ErrorSummary, scrollToFirstError } from "@/components/admin/ErrorSummary";
 
@@ -51,6 +52,7 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
   const isEditMode = !!initialData?._id;
   const [lastSaved, setLastSaved] = useState<string | null>(null);
   const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [enableVideo, setEnableVideo] = useState(false);
   
   const {
     register,
@@ -99,6 +101,8 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
         if (typeof val === "string") return val;
         return val.en || "";
       };
+      const hasVideo = !!initialData.video;
+      setEnableVideo(hasVideo);
       reset({
         title: getString(initialData.title),
         slug: initialData.slug || "",
@@ -107,7 +111,7 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
         category: initialData.category,
         categories: initialData.categories || [],
         image: initialData.image || "",
-        video: initialData.video || "",
+        video: hasVideo ? initialData.video : "",
         problem: getString(initialData.problem),
         strategy: getString(initialData.strategy),
         solution: getString(initialData.solution),
@@ -142,6 +146,9 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
 
   const onSubmit = (data: FormData) => {
     setUnsavedSubmitting(true);
+    if (!enableVideo) {
+      data.video = undefined;
+    }
     onSave(data);
     setLastSaved(new Date().toLocaleTimeString());
   };
@@ -505,31 +512,46 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
               <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70">
                 Main Image / Thumbnail <span className="text-red-500">*</span>
               </label>
-              <input
-                {...register("image")}
-                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-                placeholder="https://res.cloudinary.com/.../image.jpg"
+              <MediaUploader
+                value={watchedImage}
+                onChange={(url) => setValue("image", url)}
+                label=""
+                accept="image"
+                mode="both"
               />
               {getFieldError(errors, "image") && (
                 <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "image")}</p>
               )}
-              {watchedImage && (
-                <div className="relative w-full max-w-xs aspect-video bg-background/30 border border-primary/10 mt-2 overflow-hidden">
-                  <img src={watchedImage} alt="Preview" className="w-full h-full object-cover" />
-                </div>
-              )}
             </div>
 
             <div className="space-y-2">
-              <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70">
-                Video URL
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={enableVideo}
+                  onChange={(e) => {
+                    setEnableVideo(e.target.checked);
+                    if (!e.target.checked) {
+                      setValue("video", undefined);
+                    }
+                  }}
+                  className="w-4 h-4 accent-accent"
+                />
+                <span className="text-xs font-bold uppercase tracking-widest text-foreground/70">
+                  Enable project video
+                </span>
+                {enableVideo ? <Video size={14} className="text-accent" /> : <VideoOff size={14} className="text-foreground/30" />}
               </label>
-              <input
-                {...register("video")}
-                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-                placeholder="https://youtube.com/watch?v=..."
-              />
-              <p className="text-[10px] text-foreground/40">YouTube, Vimeo, Cloudinary, or direct video URL.</p>
+              {enableVideo && (
+                <div className="mt-3 space-y-2">
+                  <input
+                    {...register("video")}
+                    className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
+                    placeholder="https://youtube.com/watch?v=..."
+                  />
+                  <p className="text-[10px] text-foreground/40">YouTube, Vimeo, Cloudinary, or direct video URL.</p>
+                </div>
+              )}
             </div>
 
             <div className="space-y-4 pt-6 border-t border-primary/10">
@@ -565,11 +587,44 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
                     <option value="before-after">Before / After</option>
                     <option value="result">Result</option>
                   </select>
-                  <input
-                    {...register(`caseStudyMedia.${mIndex}.src` as const)}
-                    placeholder="Media URL"
-                    className="w-full bg-background/50 border border-primary/20 p-2 text-sm outline-none focus:border-accent transition-colors"
-                  />
+                  <div className="flex gap-2 items-start">
+                    <input
+                      {...register(`caseStudyMedia.${mIndex}.src` as const)}
+                      placeholder="Media URL"
+                      className="flex-1 bg-background/50 border border-primary/20 p-2 text-sm outline-none focus:border-accent transition-colors"
+                    />
+                    {mediaConfig.isUploadConfigured && (
+                      <div className="flex gap-1 shrink-0">
+                        <CldUploadWidget
+                          uploadPreset={mediaConfig.uploadPreset}
+                          onSuccess={(result: any) => {
+                            const url = result.info?.secure_url || result.secure_url;
+                            if (url) setValue(`caseStudyMedia.${mIndex}.src`, url);
+                          }}
+                        >
+                          {({ open }) => (
+                            <button type="button" onClick={() => open()} className="p-2 bg-accent/10 text-accent hover:bg-accent/20" title="Upload Image">
+                              <Upload size={14} />
+                            </button>
+                          )}
+                        </CldUploadWidget>
+                        <CldUploadWidget
+                          uploadPreset={mediaConfig.uploadPreset}
+                          onSuccess={(result: any) => {
+                            const url = result.info?.secure_url || result.secure_url;
+                            if (url) setValue(`caseStudyMedia.${mIndex}.src`, url);
+                          }}
+                          options={{ resourceType: "video" }}
+                        >
+                          {({ open }) => (
+                            <button type="button" onClick={() => open()} className="p-2 bg-accent/10 text-accent hover:bg-accent/20" title="Upload Video">
+                              <Video size={14} />
+                            </button>
+                          )}
+                        </CldUploadWidget>
+                      </div>
+                    )}
+                  </div>
                   <div className="grid grid-cols-2 gap-3">
                     <input
                       {...register(`caseStudyMedia.${mIndex}.alt` as const)}
@@ -602,7 +657,11 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
                     <div className="grid grid-cols-4 gap-4">
                       {(field.value || []).map((url: string, index: number) => (
                         <div key={index} className="relative aspect-video bg-primary/5">
-                          {url && <Image src={url} alt="" fill className="object-cover" />}
+                          {url && (/\.(mp4|webm|mov)$/i.test(url) || /\/video\//i.test(url)) ? (
+                            <video src={url} className="w-full h-full object-cover" muted />
+                          ) : url ? (
+                            <Image src={url} alt="" fill className="object-cover" />
+                          ) : null}
                           <button
                             type="button"
                             onClick={() => {
@@ -617,35 +676,55 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
                         </div>
                       ))}
                     </div>
-                    {mediaConfig.isUploadConfigured ? (
-                      <CldUploadWidget
-                        uploadPreset={mediaConfig.uploadPreset}
-                        onSuccess={(result: any) => {
-                          field.onChange([...(field.value || []), result.info?.secure_url || result.secure_url]);
-                        }}
-                      >
-                        {({ open }) => (
-                          <button
-                            type="button"
-                            onClick={() => open()}
-                            className="px-4 py-2 bg-accent/10 text-accent text-xs font-bold uppercase"
+                    <div className="flex flex-wrap gap-3">
+                      {mediaConfig.isUploadConfigured ? (
+                        <>
+                          <CldUploadWidget
+                            uploadPreset={mediaConfig.uploadPreset}
+                            onSuccess={(result: any) => {
+                              field.onChange([...(field.value || []), result.info?.secure_url || result.secure_url]);
+                            }}
                           >
-                            <Upload size={14} className="inline mr-2" /> Upload Image
-                          </button>
-                        )}
-                      </CldUploadWidget>
-                    ) : (
+                            {({ open }) => (
+                              <button
+                                type="button"
+                                onClick={() => open()}
+                                className="px-4 py-2 bg-accent/10 text-accent text-xs font-bold uppercase"
+                              >
+                                <Upload size={14} className="inline mr-2" /> Upload Image
+                              </button>
+                            )}
+                          </CldUploadWidget>
+                          <CldUploadWidget
+                            uploadPreset={mediaConfig.uploadPreset}
+                            onSuccess={(result: any) => {
+                              field.onChange([...(field.value || []), result.info?.secure_url || result.secure_url]);
+                            }}
+                            options={{ resourceType: "video" }}
+                          >
+                            {({ open }) => (
+                              <button
+                                type="button"
+                                onClick={() => open()}
+                                className="px-4 py-2 bg-accent/10 text-accent text-xs font-bold uppercase"
+                              >
+                                <Upload size={14} className="inline mr-2" /> Upload Video
+                              </button>
+                            )}
+                          </CldUploadWidget>
+                        </>
+                      ) : null}
                       <button
                         type="button"
                         onClick={() => {
-                          const url = window.prompt("Enter image URL");
+                          const url = window.prompt("Enter media URL (image or video)");
                           if (url) field.onChange([...(field.value || []), url]);
                         }}
                         className="px-4 py-2 bg-accent/10 text-accent text-xs font-bold uppercase"
                       >
-                        <Upload size={14} className="inline mr-2" /> Add Image URL
+                        <Upload size={14} className="inline mr-2" /> Add Media URL
                       </button>
-                    )}
+                    </div>
                   </>
                 )}
               />

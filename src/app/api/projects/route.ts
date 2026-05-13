@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
@@ -132,6 +133,13 @@ export async function POST(req: Request) {
       : { lastStatusChangeAt: new Date() };
 
     const project = await Project.create({ ...validation.data, ...statusMetadata });
+
+    try {
+      revalidatePath("/");
+      revalidatePath("/projects");
+    } catch (revalError) {
+      console.error("REVALIDATE_ERROR:", revalError);
+    }
 
     try {
       await logActivity({

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
@@ -102,6 +103,17 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
+    try {
+      revalidatePath("/");
+      revalidatePath("/projects");
+      if (validation.data.slug) revalidatePath(`/projects/${validation.data.slug}`);
+      if (currentProject?.slug && currentProject.slug !== validation.data.slug) {
+        revalidatePath(`/projects/${currentProject.slug}`);
+      }
+    } catch (revalError) {
+      console.error("REVALIDATE_ERROR:", revalError);
+    }
+
     await logActivity({
       action: "update",
       targetType: "project",
@@ -142,8 +154,17 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     await deleteCloudinaryResources(urlsToDelete);
 
     const projectTitle = project.title;
+    const deletedSlug = project.slug;
 
     await Project.findByIdAndDelete(id);
+
+    try {
+      revalidatePath("/");
+      revalidatePath("/projects");
+      if (deletedSlug) revalidatePath(`/projects/${deletedSlug}`);
+    } catch (revalError) {
+      console.error("REVALIDATE_ERROR:", revalError);
+    }
 
     await logActivity({
       action: "delete",
