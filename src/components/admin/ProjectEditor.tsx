@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useForm, useFieldArray, Controller, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Upload, Loader2, Save, Plus, X, Clock, Video, VideoOff } from "lucide-react";
+import { Upload, Loader2, Save, Plus, X, Clock, Video, VideoOff, ImageIcon, Link, ChevronUp, ChevronDown } from "lucide-react";
 import { CldUploadWidget } from "next-cloudinary";
 import Image from "next/image";
 import { Project } from "@/types";
@@ -106,6 +106,7 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
     control,
     formState: { errors, isSubmitting },
     watch,
+    getValues,
     setValue,
     reset,
   } = useForm<FormData>({
@@ -713,99 +714,163 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
             </div>
 
             <div className="space-y-4 pt-6 border-t border-primary/10">
-              <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
-                Gallery
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
+                  Gallery
+                </label>
+                <span className="text-[9px] text-foreground/40 uppercase tracking-wider">
+                  {watchedGallery.length} item{watchedGallery.length !== 1 ? "s" : ""}
+                </span>
+              </div>
 
               <Controller
                 name="gallery"
                 control={control}
-                render={({ field }) => (
-                  <>
-                    <div className="grid grid-cols-4 gap-4">
-                      {(field.value || []).map((url: string, index: number) => {
-                        const kind = url ? getMediaKind(url) : null;
-                        return (
-                          <div key={index} className="relative aspect-video bg-primary/5">
-                            {kind === "video" ? (
-                              <VideoPreview src={url} />
-                            ) : kind === "image" ? (
-                              <Image src={url} alt="" fill className="object-cover" />
-                            ) : kind === "embed" ? (
-                              <a href={url} target="_blank" rel="noopener noreferrer" className="absolute inset-0 flex items-center justify-center bg-primary/10 text-accent text-[9px] font-bold uppercase tracking-wider">
-                                External video
-                              </a>
-                            ) : url ? (
-                              <span className="absolute inset-0 flex items-center justify-center text-[8px] text-foreground/30 p-2 break-all">{url}</span>
-                            ) : (
-                              <span className="absolute inset-0 flex items-center justify-center text-[8px] text-foreground/30">Invalid URL</span>
-                            )}
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const newGallery = [...field.value];
-                                newGallery.splice(index, 1);
-                                field.onChange(newGallery);
+                render={({ field }) => {
+                  const items: string[] = field.value || [];
+                  const appendUrl = (url: string) => {
+                    const current = getValues("gallery") || [];
+                    setValue("gallery", [...current, url], { shouldDirty: true });
+                  };
+                  const removeAt = (index: number) => {
+                    const current = getValues("gallery") || [];
+                    setValue("gallery", current.filter((_, i) => i !== index), { shouldDirty: true });
+                  };
+                  const moveItem = (from: number, to: number) => {
+                    const current = getValues("gallery") || [];
+                    if (to < 0 || to >= current.length) return;
+                    const next = [...current];
+                    const [moved] = next.splice(from, 1);
+                    next.splice(to, 0, moved);
+                    setValue("gallery", next, { shouldDirty: true });
+                  };
+                  return (
+                    <>
+                      {items.length > 0 ? (
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                          {items.map((url: string, index: number) => {
+                            const kind = url ? getMediaKind(url) : null;
+                            const typeLabel = kind === "video" ? "Video" : kind === "image" ? "Image" : kind === "embed" ? "Embed" : kind === "external" ? "External" : "Unknown";
+                            const typeIcon = kind === "video" ? <Video size={10} /> : kind === "image" ? <ImageIcon size={10} /> : <Link size={10} />;
+                            return (
+                              <div key={index} className="group relative bg-primary/5 border border-primary/10 overflow-hidden">
+                                <div className="aspect-video relative">
+                                  {kind === "video" ? (
+                                    <VideoPreview src={url} />
+                                  ) : kind === "image" ? (
+                                    <Image src={url} alt="" fill className="object-cover" />
+                                  ) : kind === "embed" ? (
+                                    <a href={url} target="_blank" rel="noopener noreferrer" className="absolute inset-0 flex items-center justify-center bg-primary/10 text-accent text-[9px] font-bold uppercase tracking-wider">
+                                      External video
+                                    </a>
+                                  ) : url ? (
+                                    <span className="absolute inset-0 flex items-center justify-center text-[7px] text-foreground/30 p-2 break-all">{url}</span>
+                                  ) : (
+                                    <span className="absolute inset-0 flex items-center justify-center text-[7px] text-foreground/30">Invalid URL</span>
+                                  )}
+                                </div>
+                                <div className="flex items-center justify-between gap-1 px-1.5 py-1 bg-background/80 border-t border-primary/10">
+                                  <span className="flex items-center gap-1 text-[7px] text-foreground/40 uppercase tracking-wider">
+                                    {typeIcon}
+                                    {typeLabel}
+                                  </span>
+                                  <span className="text-[7px] text-foreground/30">#{index + 1}</span>
+                                </div>
+                                <div className="absolute top-1 right-1 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  {items.length > 1 && (
+                                    <>
+                                      <button
+                                        type="button"
+                                        onClick={() => moveItem(index, index - 1)}
+                                        disabled={index === 0}
+                                        className="p-1 bg-background/80 border border-primary/20 text-foreground/50 hover:text-accent disabled:opacity-30"
+                                      >
+                                        <ChevronUp size={10} />
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => moveItem(index, index + 1)}
+                                        disabled={index === items.length - 1}
+                                        className="p-1 bg-background/80 border border-primary/20 text-foreground/50 hover:text-accent disabled:opacity-30"
+                                      >
+                                        <ChevronDown size={10} />
+                                      </button>
+                                    </>
+                                  )}
+                                  <button
+                                    type="button"
+                                    onClick={() => removeAt(index)}
+                                    className="p-1 bg-red-500/80 text-white hover:bg-red-600"
+                                  >
+                                    <X size={10} />
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="border-2 border-dashed border-primary/10 p-8 text-center">
+                          <p className="text-[10px] text-foreground/30 uppercase tracking-wider">
+                            No gallery media added yet.
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="flex flex-wrap gap-3">
+                        {mediaConfig.isUploadConfigured ? (
+                          <>
+                            <CldUploadWidget
+                              uploadPreset={mediaConfig.uploadPreset}
+                              onSuccess={(result: any) => {
+                                const url = result.info?.secure_url || result.secure_url;
+                                if (url) appendUrl(url);
                               }}
-                              className="absolute top-1 right-1 p-1 bg-red-500 text-white"
                             >
-                              <X size={12} />
-                            </button>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <div className="flex flex-wrap gap-3">
-                      {mediaConfig.isUploadConfigured ? (
-                        <>
-                          <CldUploadWidget
-                            uploadPreset={mediaConfig.uploadPreset}
-                            onSuccess={(result: any) => {
-                              field.onChange([...(field.value || []), result.info?.secure_url || result.secure_url]);
-                            }}
-                          >
-                            {({ open }) => (
-                              <button
-                                type="button"
-                                onClick={() => open()}
-                                className="px-4 py-2 bg-accent/10 text-accent text-xs font-bold uppercase"
-                              >
-                                <Upload size={14} className="inline mr-2" /> Upload Image
-                              </button>
-                            )}
-                          </CldUploadWidget>
-                          <CldUploadWidget
-                            uploadPreset={mediaConfig.uploadPreset}
-                            onSuccess={(result: any) => {
-                              field.onChange([...(field.value || []), result.info?.secure_url || result.secure_url]);
-                            }}
-                            options={{ resourceType: "video" }}
-                          >
-                            {({ open }) => (
-                              <button
-                                type="button"
-                                onClick={() => open()}
-                                className="px-4 py-2 bg-accent/10 text-accent text-xs font-bold uppercase"
-                              >
-                                <Upload size={14} className="inline mr-2" /> Upload Video
-                              </button>
-                            )}
-                          </CldUploadWidget>
-                        </>
-                      ) : null}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const url = window.prompt("Enter media URL (image or video)");
-                          if (url) field.onChange([...(field.value || []), url]);
-                        }}
-                        className="px-4 py-2 bg-accent/10 text-accent text-xs font-bold uppercase"
-                      >
-                        <Upload size={14} className="inline mr-2" /> Add Media URL
-                      </button>
-                    </div>
-                  </>
-                )}
+                              {({ open }) => (
+                                <button
+                                  type="button"
+                                  onClick={() => open()}
+                                  className="px-4 py-2 bg-accent/10 text-accent text-xs font-bold uppercase"
+                                >
+                                  <Upload size={14} className="inline mr-2" /> Upload Image
+                                </button>
+                              )}
+                            </CldUploadWidget>
+                            <CldUploadWidget
+                              uploadPreset={mediaConfig.uploadPreset}
+                              onSuccess={(result: any) => {
+                                const url = result.info?.secure_url || result.secure_url;
+                                if (url) appendUrl(url);
+                              }}
+                              options={{ resourceType: "video" }}
+                            >
+                              {({ open }) => (
+                                <button
+                                  type="button"
+                                  onClick={() => open()}
+                                  className="px-4 py-2 bg-accent/10 text-accent text-xs font-bold uppercase"
+                                >
+                                  <Upload size={14} className="inline mr-2" /> Upload Video
+                                </button>
+                              )}
+                            </CldUploadWidget>
+                          </>
+                        ) : null}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const url = window.prompt("Enter media URL (image or video)");
+                            if (url?.trim()) appendUrl(url.trim());
+                          }}
+                          className="px-4 py-2 bg-accent/10 text-accent text-xs font-bold uppercase"
+                        >
+                          <Upload size={14} className="inline mr-2" /> Add Media URL
+                        </button>
+                      </div>
+                    </>
+                  );
+                }}
               />
             </div>
           </div>
