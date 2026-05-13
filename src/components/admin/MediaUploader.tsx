@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
-import { Upload, X, Link, Loader2, AlertCircle, Check, ExternalLink } from "lucide-react";
+import { Upload, X, Link, Loader2, AlertCircle, Check, ExternalLink, VideoOff } from "lucide-react";
 import { CldUploadWidget } from "next-cloudinary";
 import { toast } from "sonner";
 import Image from "next/image";
@@ -13,6 +13,41 @@ interface MediaUploaderProps {
   label: string;
   accept?: "image" | "video" | "any";
   mode?: "upload" | "url" | "both";
+}
+
+function VideoPreviewWithError({ src }: { src: string }) {
+  const [hasError, setHasError] = useState(false);
+
+  if (hasError) {
+    return (
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-primary/5 p-3">
+        <VideoOff size={24} className="text-foreground/30" />
+        <span className="text-[8px] text-foreground/40 uppercase tracking-wider text-center">
+          Video preview unavailable
+        </span>
+        <a
+          href={src}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[9px] text-accent hover:text-accent/80 underline"
+        >
+          Open video
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <video
+      src={src}
+      className="w-full h-full object-cover"
+      muted
+      controls
+      playsInline
+      preload="metadata"
+      onError={() => setHasError(true)}
+    />
+  );
 }
 
 export default function MediaUploader({
@@ -75,7 +110,7 @@ export default function MediaUploader({
       return (
         <div className="relative aspect-video bg-primary/5 border-2 border-primary/10 overflow-hidden group">
           {accept === "video" ? (
-            <video src={value} className="w-full h-full object-cover" muted controls />
+            <VideoPreviewWithError src={value} />
           ) : (
             <Image src={value} alt="Preview" fill className="object-cover" />
           )}
