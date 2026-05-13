@@ -142,6 +142,14 @@ async function tryDb<T>(
   }
 }
 
+function mergeWithStatic(cmsProjects: Project[]): Project[] {
+  const staticProjects = getStaticAllProjects().map(withMedia);
+  const bySlug = new Map<string, Project>();
+  for (const p of staticProjects) bySlug.set(p.slug, p);
+  for (const p of cmsProjects) bySlug.set(p.slug, p);
+  return Array.from(bySlug.values());
+}
+
 export async function getPublicProjects(): Promise<Project[]> {
   return tryDb(
     async () => {
@@ -150,13 +158,11 @@ export async function getPublicProjects(): Promise<Project[]> {
         .sort({ displayOrder: 1, createdAt: -1 })
         .lean();
 
-      if (!docs || docs.length === 0) {
-        return getStaticAllProjects().map(withMedia);
-      }
+      const cmsProjects = docs.map((doc) => toPublicProject(doc as unknown as Record<string, unknown>));
 
-      return docs.map((doc) => toPublicProject(doc as unknown as Record<string, unknown>));
+      return mergeWithStatic(cmsProjects);
     },
-    () => getStaticAllProjects(),
+    () => getStaticAllProjects().map(withMedia),
   );
 }
 
@@ -166,16 +172,17 @@ export async function getFeaturedProjects(limit = 3): Promise<Project[]> {
       const docs = await ProjectModel
         .find({ status: "published", featured: true })
         .sort({ featuredOrder: 1, createdAt: -1 })
-        .limit(limit)
         .lean();
 
-      if (!docs || docs.length === 0) {
-        return staticFeaturedProjects.slice(0, limit).map(withMedia);
-      }
+      const cmsFeatured = docs.map((doc) => toPublicProject(doc as unknown as Record<string, unknown>));
 
-      return docs.map((doc) => toPublicProject(doc as unknown as Record<string, unknown>));
+      const merged = mergeWithStatic(cmsFeatured);
+
+      const featured = merged.filter((p) => p.featured);
+
+      return featured.slice(0, limit);
     },
-    () => staticFeaturedProjects.slice(0, limit),
+    () => staticFeaturedProjects.slice(0, limit).map(withMedia),
   );
 }
 

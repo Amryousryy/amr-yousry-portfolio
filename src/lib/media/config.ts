@@ -58,7 +58,20 @@ export function isVideoUrl(url: string): boolean {
 
 export function isImageUrl(url: string): boolean {
   if (!url) return false;
-  return /\.(jpg|jpeg|png|webp|gif|avif|svg)$/i.test(url) || /\/image\/(upload\/)?/i.test(url);
+  try {
+    const parsed = new URL(url);
+    const { hostname, pathname } = parsed;
+
+    if (hostname === "images.unsplash.com") return true;
+
+    if (hostname.includes("cloudinary.com") && /\/image\/upload\//i.test(pathname)) return true;
+
+    if (/\.(jpg|jpeg|png|webp|gif|avif|svg)$/i.test(pathname)) return true;
+
+    return false;
+  } catch {
+    return /\.(jpg|jpeg|png|webp|gif|avif|svg)(\?|#|$)/i.test(url) || /\/image\/(upload\/)?/i.test(url);
+  }
 }
 
 export function isEmbedUrl(url: string): boolean {
