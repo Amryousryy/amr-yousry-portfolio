@@ -8,6 +8,17 @@ import {
   getProjectBySlug as getStaticProjectBySlug,
   featuredProjects as staticFeaturedProjects,
 } from "@/data/projects";
+import { formatCategory } from "@/lib/projects/categories";
+
+const EXCLUDED_SLUGS = new Set([
+  "a",
+  "3",
+  "dertherth",
+  "test-project",
+  "qa-user-flow-stress-test",
+  "qa-draft-visibility-test",
+  "qa-full-flow-project",
+]);
 
 function toPlainText(value: unknown, fallback = ""): string {
   if (typeof value === "string") return value;
@@ -112,7 +123,7 @@ function toPublicProject(doc: Record<string, unknown>): Project {
     slug: toPlainText(doc.slug),
     title,
     client: clientVal,
-    category: toPlainText(doc.category),
+    category: formatCategory(toPlainText(doc.category)),
     categories: normalizeStrings(doc.categories),
     services: normalizeStrings(doc.services),
     summary: toPlainText(doc.shortDescription) || "",
@@ -158,7 +169,9 @@ export async function getPublicProjects(): Promise<Project[]> {
         .sort({ displayOrder: 1, createdAt: -1 })
         .lean();
 
-      const cmsProjects = docs.map((doc) => toPublicProject(doc as unknown as Record<string, unknown>));
+      const cmsProjects = docs
+        .map((doc) => toPublicProject(doc as unknown as Record<string, unknown>))
+        .filter((p) => !EXCLUDED_SLUGS.has(p.slug));
 
       return mergeWithStatic(cmsProjects);
     },
@@ -174,7 +187,9 @@ export async function getFeaturedProjects(limit = 3): Promise<Project[]> {
         .sort({ featuredOrder: 1, createdAt: -1 })
         .lean();
 
-      const cmsFeatured = docs.map((doc) => toPublicProject(doc as unknown as Record<string, unknown>));
+      const cmsFeatured = docs
+        .map((doc) => toPublicProject(doc as unknown as Record<string, unknown>))
+        .filter((p) => !EXCLUDED_SLUGS.has(p.slug));
 
       const merged = mergeWithStatic(cmsFeatured);
 
@@ -187,6 +202,8 @@ export async function getFeaturedProjects(limit = 3): Promise<Project[]> {
 }
 
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
+  if (EXCLUDED_SLUGS.has(slug)) return null;
+
   return tryDb(
     async () => {
       const doc = await ProjectModel

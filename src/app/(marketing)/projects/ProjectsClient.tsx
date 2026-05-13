@@ -6,15 +6,7 @@ import Link from "next/link";
 import { PixelButton } from "@/components/ui/pixel-button";
 import Image from "next/image";
 import { trackEvent } from "@/lib/tracker";
-
-const PROJECT_CATEGORIES = [
-  { value: "all", label: "All" },
-  { value: "filmmaking", label: "Filmmaking" },
-  { value: "graphic-design", label: "Graphic Design" },
-  { value: "motion-graphic", label: "Motion Graphic" },
-  { value: "video-editing", label: "Video Editing" },
-  { value: "ai", label: "AI" },
-] as const;
+import { PROJECT_CATEGORIES, formatCategory } from "@/lib/projects/categories";
 
 interface Project {
   id: string;
@@ -116,7 +108,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
                 </div>
                 <div className="space-y-2">
                   <span className="font-pixel text-[10px] text-brand-cyan tracking-widest uppercase">
-                    {project.category}
+                    {formatCategory(project.category)}
                   </span>
                   <h3 className="font-display text-xl font-bold uppercase tracking-tighter group-hover:text-brand-cyan transition-colors break-words leading-tight">
                     {project.title}

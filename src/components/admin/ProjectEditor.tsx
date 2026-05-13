@@ -34,6 +34,7 @@ interface ProjectEditorProps {
   initialData?: Project;
   onSave: (data: Partial<ProjectCreateInput>, options?: { isAutoSave?: boolean }) => void;
   isSaving: boolean;
+  lastSaved?: string | null;
 }
 
 type FormData = ProjectCreateInput;
@@ -127,9 +128,8 @@ function VideoPosterCard({ src }: { src: string }) {
   );
 }
 
-export default function ProjectEditor({ initialData, onSave, isSaving }: ProjectEditorProps) {
+export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved }: ProjectEditorProps) {
   const isEditMode = !!initialData?._id;
-  const [lastSaved, setLastSaved] = useState<string | null>(null);
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [enableVideo, setEnableVideo] = useState(false);
   
@@ -231,15 +231,16 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
       data.video = undefined;
     }
     onSave(data);
-    setLastSaved(new Date().toLocaleTimeString());
   };
 
   const handleSubmitClick = () => {
     setSubmitAttempted(true);
     handleSubmit(onSubmit)();
-    if (Object.keys(errors).length > 0) {
-      scrollToFirstError(errors as unknown as Record<string, unknown>);
-    }
+    setTimeout(() => {
+      if (Object.keys(errors).length > 0) {
+        scrollToFirstError(errors as unknown as Record<string, unknown>);
+      }
+    }, 0);
   };
 
   return (

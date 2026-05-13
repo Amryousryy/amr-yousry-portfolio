@@ -75,10 +75,16 @@ export default function ShowreelPage() {
             )}
 
             {!isVideo && !showreelConfig.thumbnail && (
-              <div className="flex items-center justify-center h-full">
-                <p className="font-pixel text-text-dim text-sm">
-                  Configure showreel in /src/data/showreel.ts
+              <div className="flex flex-col items-center justify-center h-full gap-6 px-6">
+                <p className="font-pixel text-text-dim text-sm text-center max-w-md leading-relaxed">
+                  Showreel is being curated. For selected work, explore the projects archive.
                 </p>
+                <a
+                  href="/projects"
+                  className="font-pixel text-brand-cyan text-[10px] tracking-widest uppercase border-2 border-brand-cyan px-6 py-3 hover:bg-brand-cyan hover:text-brand-blue transition-colors"
+                >
+                  Browse Projects
+                </a>
               </div>
             )}
           </div>

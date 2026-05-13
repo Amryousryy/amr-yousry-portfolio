@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -14,11 +14,12 @@ export default function EditProjectPage() {
   const router = useRouter();
   const { id } = useParams();
   const queryClient = useQueryClient();
+  const [lastSaved, setLastSaved] = useState<string | null>(null);
 
-  const { data: project, isLoading } = useQuery({
+  const { data: project, isLoading, isError, error } = useQuery({
     queryKey: ["project", id],
     queryFn: async () => {
-      const { data, error } = await ProjectService.getById(id as string);
+      const { data, error } = await ProjectService.getById(id as string, true);
       if (error) throw new Error(error);
       return data as Project;
     },
@@ -31,6 +32,7 @@ export default function EditProjectPage() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       queryClient.invalidateQueries({ queryKey: ["project", id] });
+      setLastSaved(new Date().toLocaleTimeString());
       
       if (!variables.isAutoSave) {
         toast.success("Project updated successfully!");
@@ -54,6 +56,32 @@ export default function EditProjectPage() {
     );
   }
 
+  if (isError || !project) {
+    return (
+      <div className="space-y-6">
+        <header className="mb-12">
+          <Link href="/admin" className="flex items-center space-x-2 text-accent group mb-4">
+            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            <span className="pixel-text text-[10px] uppercase">Back to Dashboard</span>
+          </Link>
+          <h1 className="text-4xl font-display font-bold uppercase tracking-tighter">Edit Project</h1>
+        </header>
+        <div className="border border-red-500/30 bg-red-500/10 p-8 text-center space-y-3">
+          <p className="text-lg font-bold text-red-400 uppercase tracking-wider">Project Not Found</p>
+          <p className="text-sm text-foreground/60">
+            {(error as Error)?.message || "The project could not be loaded. It may have been deleted or you may not have permission to view it."}
+          </p>
+          <Link
+            href="/admin/projects"
+            className="inline-block px-6 py-3 bg-accent text-background text-xs font-bold uppercase tracking-widest mt-4"
+          >
+            Back to Projects
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-12">
       <header className="flex justify-between items-center mb-12">
@@ -70,6 +98,7 @@ export default function EditProjectPage() {
         initialData={project}
         onSave={(data, options) => mutation.mutate({ data: data as Partial<Project>, isAutoSave: options?.isAutoSave })} 
         isSaving={mutation.isPending}
+        lastSaved={lastSaved}
       />
     </div>
   );

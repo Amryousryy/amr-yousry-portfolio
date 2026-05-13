@@ -112,7 +112,7 @@
   }
 
   /* Hover: upright star, hotspot at top spike center (12 2 for 24x24 SVG) */
-  a, button, [role="button"], [role="link"], input, select, textarea, nav a {
+  a, button, [role="button"], [role="link"], [role="menuitem"], [role="option"], [role="tab"], [role="switch"], label, input, select, textarea, nav a, summary {
     cursor: url('/images/cursor/cursor-hover.svg') 12 2, pointer;
   }
 }

@@ -8,6 +8,7 @@ import { getMediaKind, getEmbeddableVideoUrl, getMediaProvider } from "@/lib/med
 import { ExternalLink } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import { formatCategory } from "@/lib/projects/categories";
 import { CaseStudyClient } from "./CaseStudyClient";
 
 export const revalidate = 60;
@@ -19,12 +20,32 @@ interface CaseStudyPageProps {
 export async function generateMetadata({ params }: CaseStudyPageProps): Promise<Metadata> {
   const { slug } = await params;
   const project = await getProjectBySlug(slug);
-  
+
   if (!project) return {};
-  
+
+  const title = `${project.title} | Amr Yousry Portfolio`;
+  const description = project.summary || `${project.title} — A project by Amr Yousry.`;
+  const url = `https://amr-yousry-portfolio.vercel.app/projects/${slug}`;
+  const imageUrl = project.bannerImage || project.thumbnail || "https://amr-yousry-portfolio.vercel.app/images/meta/og-preview-v6.jpg";
+
   return {
-    title: `${project.title} | Amr Yousry Portfolio`,
-    description: project.summary,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: "Amr Yousry Portfolio",
+      images: [{ url: imageUrl, width: 1200, height: 630, alt: title }],
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [imageUrl],
+    },
   };
 }
 
@@ -107,7 +128,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
         <div className="absolute bottom-0 left-0 w-full p-4 sm:p-8 md:p-16">
           <Container>
             <span className="font-pixel text-brand-cyan text-[10px] sm:text-sm tracking-widest uppercase mb-4 block">
-              {project.category}
+              {formatCategory(project.category)}
             </span>
             <h1 className="text-[clamp(1.75rem,8vw,4rem)] md:text-6xl lg:text-7xl font-display font-bold uppercase tracking-tighter break-words leading-tight">
               {project.title}

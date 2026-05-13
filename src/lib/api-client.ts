@@ -58,7 +58,10 @@ export const ProjectService = {
       return { data: [], error: String(err) };
     }
   },
-  getById: async (id: string) => apiRequest<Project>(`/api/projects/${id}`),
+  getById: async (id: string, isAdmin = false) => {
+    const url = isAdmin ? `/api/projects/${id}?admin=true` : `/api/projects/${id}`;
+    return apiRequest<Project>(url);
+  },
   getBySlug: async (slug: string) => apiRequest<Project>(`/api/projects/${slug}`),
   create: async (data: NewProject) => {
     const { data: result, error } = await apiRequest<Project>("/api/projects", {

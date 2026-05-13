@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Project } from "@/types/project";
 import { PixelButton } from "@/components/ui/pixel-button";
+import { formatCategory } from "@/lib/projects/categories";
 
 interface ProjectCardProps {
   project: Project;
@@ -42,7 +43,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
 
         {/* Category Tag - Floating Pixel UI */}
         <div className="absolute top-4 left-4 sm:top-6 sm:left-6 max-w-[calc(100%-2rem)] bg-brand-cyan text-brand-blue font-pixel text-[8px] sm:text-[9px] px-2.5 sm:px-3 py-1 uppercase tracking-wider border border-brand-blue z-30 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] leading-tight">
-          {project.category}
+          {formatCategory(project.category)}
         </div>
       </div>
 
