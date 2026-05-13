@@ -32,7 +32,6 @@ const PROJECT_CATEGORIES = [
 interface ProjectEditorProps {
   initialData?: Project;
   onSave: (data: Partial<ProjectCreateInput>, options?: { isAutoSave?: boolean }) => void;
-  onSaveSuccess?: () => void;
   isSaving: boolean;
 }
 
@@ -48,7 +47,7 @@ function getFieldError(errors: FieldErrors<FormData>, path: string): string | un
   return current?.message as string | undefined;
 }
 
-export default function ProjectEditor({ initialData, onSave, onSaveSuccess, isSaving }: ProjectEditorProps) {
+export default function ProjectEditor({ initialData, onSave, isSaving }: ProjectEditorProps) {
   const isEditMode = !!initialData?._id;
   const [lastSaved, setLastSaved] = useState<string | null>(null);
   const [submitAttempted, setSubmitAttempted] = useState(false);
@@ -145,9 +144,6 @@ export default function ProjectEditor({ initialData, onSave, onSaveSuccess, isSa
     setUnsavedSubmitting(true);
     onSave(data);
     setLastSaved(new Date().toLocaleTimeString());
-    if (!isEditMode && onSaveSuccess) {
-      onSaveSuccess();
-    }
   };
 
   const handleSubmitClick = () => {

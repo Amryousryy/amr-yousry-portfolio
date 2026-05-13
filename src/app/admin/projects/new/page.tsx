@@ -40,7 +40,6 @@ export default function NewProjectPage() {
 
       <ProjectEditor 
         onSave={(data) => mutation.mutate(data as NewProject)} 
-        onSaveSuccess={() => router.push("/admin")}
         isSaving={mutation.isPending} 
       />
     </div>

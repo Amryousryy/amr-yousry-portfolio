@@ -60,18 +60,24 @@ export const ProjectService = {
   },
   getById: async (id: string) => apiRequest<Project>(`/api/projects/${id}`),
   getBySlug: async (slug: string) => apiRequest<Project>(`/api/projects/${slug}`),
-  create: (data: NewProject) =>
-    apiRequest<Project>("/api/projects", {
+  create: async (data: NewProject) => {
+    const { data: result, error } = await apiRequest<Project>("/api/projects", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
-    }),
-  update: (id: string, data: Partial<Project>) =>
-    apiRequest<Project>(`/api/projects/${id}`, {
+    });
+    if (error) throw new Error(typeof error === "string" ? error : "Failed to save project");
+    return result as Project;
+  },
+  update: async (id: string, data: Partial<Project>) => {
+    const { data: result, error } = await apiRequest<Project>(`/api/projects/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
-    }),
+    });
+    if (error) throw new Error(typeof error === "string" ? error : "Failed to update project");
+    return result as Project;
+  },
   delete: (id: string) =>
     apiRequest<{ success: boolean }>(`/api/projects/${id}`, { method: "DELETE" }),
   publish: (id: string) =>
