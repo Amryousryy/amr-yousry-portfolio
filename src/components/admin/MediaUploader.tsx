@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
-import { Upload, X, Link, Loader2, AlertCircle, Check, ExternalLink, VideoOff } from "lucide-react";
+import { Upload, X, Link, Loader2, AlertCircle, Check, ExternalLink, VideoOff, Play } from "lucide-react";
 import { CldUploadWidget } from "next-cloudinary";
 import { toast } from "sonner";
 import Image from "next/image";
-import { mediaConfig, isValidMediaUrl } from "@/lib/media/config";
+import { mediaConfig, isValidMediaUrl, getVideoThumbnailUrl } from "@/lib/media/config";
 
 interface MediaUploaderProps {
   value?: string;
@@ -16,9 +16,10 @@ interface MediaUploaderProps {
 }
 
 function VideoPreviewWithError({ src }: { src: string }) {
-  const [hasError, setHasError] = useState(false);
+  const thumbUrl = getVideoThumbnailUrl(src);
+  const [showFallback, setShowFallback] = useState(false);
 
-  if (hasError) {
+  if (showFallback) {
     return (
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-primary/5 p-3">
         <VideoOff size={24} className="text-foreground/30" />
@@ -37,6 +38,31 @@ function VideoPreviewWithError({ src }: { src: string }) {
     );
   }
 
+  if (thumbUrl) {
+    return (
+      <div className="relative w-full h-full bg-primary/5">
+        <Image
+          src={thumbUrl}
+          alt=""
+          fill
+          className="object-contain"
+          onError={() => setShowFallback(true)}
+        />
+        <span className="absolute inset-0 flex items-center justify-center bg-background/10">
+          <Play size={32} className="text-accent" />
+        </span>
+        <a
+          href={src}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="absolute bottom-2 right-2 text-[8px] text-accent hover:text-accent/80 underline bg-background/60 px-1.5 py-0.5"
+        >
+          Open video
+        </a>
+      </div>
+    );
+  }
+
   return (
     <video
       src={src}
@@ -45,7 +71,7 @@ function VideoPreviewWithError({ src }: { src: string }) {
       controls
       playsInline
       preload="metadata"
-      onError={() => setHasError(true)}
+      onError={() => setShowFallback(true)}
     />
   );
 }

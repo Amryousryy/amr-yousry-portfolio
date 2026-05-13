@@ -117,6 +117,22 @@ export function getMediaKind(url: string): MediaKind {
   return "unknown";
 }
 
+export function getVideoThumbnailUrl(url: string): string | null {
+  if (!url) return null;
+  if (!url.includes("cloudinary.com") || !url.includes("/video/upload/")) return null;
+
+  const uploadMarker = "/video/upload/";
+  const idx = url.indexOf(uploadMarker);
+  if (idx === -1) return null;
+
+  const base = url.slice(0, idx + uploadMarker.length);
+  const path = url.slice(idx + uploadMarker.length);
+  if (!path) return null;
+
+  const cleanPath = path.replace(/\.[a-zA-Z0-9]+$/, "");
+  return `${base}so_0,w_400,h_225,c_fill,q_auto,f_jpg/${cleanPath}.jpg`;
+}
+
 export function getMediaType(url: string): 'image' | 'video' | 'youtube' | 'vimeo' | 'unknown' {
   if (!url) return 'unknown';
   

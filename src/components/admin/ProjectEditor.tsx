@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useForm, useFieldArray, Controller, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Upload, Loader2, Save, Plus, X, Clock, Video, VideoOff, ImageIcon, Link, ChevronUp, ChevronDown } from "lucide-react";
+import { Upload, Loader2, Save, Plus, X, Clock, Video, VideoOff, ImageIcon, Link, ChevronUp, ChevronDown, Play } from "lucide-react";
 import { CldUploadWidget } from "next-cloudinary";
 import Image from "next/image";
 import { Project } from "@/types";
@@ -15,7 +15,7 @@ import {
   generateSlugFromTitle,
   createEmptyProjectSection,
 } from "@/lib/validation";
-import { mediaConfig, getMediaKind, type MediaKind } from "@/lib/media/config";
+import { mediaConfig, getMediaKind, getVideoThumbnailUrl, type MediaKind } from "@/lib/media/config";
 import MediaUploader from "@/components/admin/MediaUploader";
 import { useUnsavedChanges } from "@/lib/hooks";
 import { ErrorSummary, scrollToFirstError } from "@/components/admin/ErrorSummary";
@@ -91,6 +91,39 @@ function VideoPreview({ src }: { src: string }) {
         onCanPlay={() => setState("loaded")}
       />
     </>
+  );
+}
+
+function VideoPosterCard({ src }: { src: string }) {
+  const thumbUrl = getVideoThumbnailUrl(src);
+  const [fallback, setFallback] = useState(false);
+
+  if (!thumbUrl || fallback) {
+    return (
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-primary/5 p-3">
+        <VideoOff size={24} className="text-foreground/30" />
+        <span className="text-[8px] text-foreground/40 uppercase tracking-wider text-center">
+          Video preview unavailable
+        </span>
+        <a
+          href={src}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[9px] text-accent hover:text-accent/80 underline"
+        >
+          Open video
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div className="absolute inset-0 bg-primary/5">
+      <Image src={thumbUrl} alt="" fill className="object-cover" onError={() => setFallback(true)} />
+      <span className="absolute inset-0 flex items-center justify-center bg-background/10">
+        <Play size={24} className="text-accent" />
+      </span>
+    </div>
   );
 }
 
@@ -756,7 +789,7 @@ export default function ProjectEditor({ initialData, onSave, isSaving }: Project
                               <div key={index} className="group relative bg-primary/5 border border-primary/10 overflow-hidden">
                                 <div className="aspect-video relative">
                                   {kind === "video" ? (
-                                    <VideoPreview src={url} />
+                                    <VideoPosterCard src={url} />
                                   ) : kind === "image" ? (
                                     <Image src={url} alt="" fill className="object-cover" />
                                   ) : kind === "embed" ? (

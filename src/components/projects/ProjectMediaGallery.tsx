@@ -14,6 +14,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import type { ProjectMediaItem } from "@/types/project";
+import { getVideoThumbnailUrl } from "@/lib/media/config";
 
 interface ProjectMediaGalleryProps {
   items: ProjectMediaItem[];
@@ -177,7 +178,7 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
           <Image src={item.src} alt="" fill className="object-cover" sizes="96px" />
         ) : item.kind === "video" && item.src ? (
           <>
-            <video src={item.src} className="w-full h-full object-cover" muted preload="metadata" />
+            <VideoThumbnailImage src={item.src} />
             <span className="absolute inset-0 flex items-center justify-center bg-background/40">
               <Play size={16} className="text-accent" />
             </span>
@@ -300,6 +301,14 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
       )}
     </div>
   );
+}
+
+function VideoThumbnailImage({ src }: { src: string }) {
+  const thumbUrl = getVideoThumbnailUrl(src);
+  if (thumbUrl) {
+    return <Image src={thumbUrl} alt="" fill className="object-cover" sizes="96px" />;
+  }
+  return <video src={src} className="w-full h-full object-cover" muted preload="metadata" />;
 }
 
 function ExternalVideoCard({ item }: { item: ProjectMediaItem }) {
