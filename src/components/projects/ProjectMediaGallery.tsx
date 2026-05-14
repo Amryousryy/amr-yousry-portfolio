@@ -14,7 +14,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import type { ProjectMediaItem } from "@/types/project";
-import { getVideoThumbnailUrl, getPlayableVideoUrl } from "@/lib/media/config";
+import { getVideoThumbnailUrl, getPlayableVideoSources } from "@/lib/media/config";
 
 interface ProjectMediaGalleryProps {
   items: ProjectMediaItem[];
@@ -61,7 +61,7 @@ function MediaErrorFallback({ item }: { item: ProjectMediaItem }) {
       <div className="relative z-10 flex flex-col items-center gap-3">
         <AlertTriangle size={28} className="text-foreground/30" />
         <span className="text-[10px] text-foreground/30 uppercase tracking-wider text-center">
-          {isVideo ? "Video preview unavailable" : "Media unavailable"}
+          {isVideo ? "Video is still processing or cannot be previewed." : "Media unavailable"}
         </span>
         {item.provider && (
           <a
@@ -71,7 +71,7 @@ function MediaErrorFallback({ item }: { item: ProjectMediaItem }) {
             className="inline-flex items-center gap-1.5 text-[9px] text-accent hover:text-accent/80 uppercase tracking-wider underline"
           >
             <ExternalLink size={10} />
-            Open in {item.provider}
+            Open video
           </a>
         )}
       </div>
@@ -125,7 +125,8 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
     if (mediaError) return <MediaErrorFallback item={item} />;
 
     switch (item.kind) {
-      case "video":
+      case "video": {
+        const playableSources = getPlayableVideoSources(item.src);
         return (
           <video
             key={item.src}
@@ -134,15 +135,20 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
             preload="metadata"
             poster={getVideoThumbnailUrl(item.src) || undefined}
             className="w-full h-full object-contain"
-            onError={() => setMediaError(true)}
+            onError={() => {
+              setMediaError(true);
+            }}
             onLoadedData={() => setMediaError(false)}
           >
-            <source src={getPlayableVideoUrl(item.src)} type="video/mp4" />
+            {playableSources.map((src, i) => (
+              <source key={i} src={src} type={src.endsWith(".mp4") ? "video/mp4" : undefined} />
+            ))}
             <p className="text-foreground/40 text-xs p-4">
               Your browser does not support the video tag.{item.provider ? ` Open in ${item.provider} instead.` : ""}
             </p>
           </video>
         );
+      }
       case "embed":
         return item.embedUrl ? (
           <iframe

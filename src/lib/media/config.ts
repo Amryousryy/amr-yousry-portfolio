@@ -148,19 +148,44 @@ export function getVideoThumbnailUrl(url: string): string | null {
 
 export function getPlayableVideoUrl(url: string): string {
   if (!url) return url;
-  if (!url.includes("cloudinary.com") || !url.includes("/video/upload/")) return url;
+
+  const sources = getPlayableVideoSources(url);
+  return sources[0] || url;
+}
+
+export function getPlayableVideoSources(url: string): string[] {
+  if (!url) return [url];
+  if (!url.includes("cloudinary.com") || !url.includes("/video/upload/")) return [url];
+
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return [url];
+  }
 
   const uploadMarker = "/video/upload/";
-  const idx = url.indexOf(uploadMarker);
-  if (idx === -1) return url;
+  const idx = parsed.pathname.indexOf(uploadMarker);
+  if (idx === -1) return [url];
 
-  const base = url.slice(0, idx + uploadMarker.length);
-  const path = url.slice(idx + uploadMarker.length);
-  if (!path) return url;
+  const base = parsed.origin + parsed.pathname.slice(0, idx + uploadMarker.length);
+  const path = parsed.pathname.slice(idx + uploadMarker.length);
+  if (!path) return [url];
 
   const cleanPath = path.replace(/\.[a-zA-Z0-9]+$/, "");
 
-  return `${base}f_mp4,q_auto/${cleanPath}.mp4`;
+  const strong = `${base}f_mp4,vc_h264,ac_aac,q_auto/${cleanPath}.mp4`;
+  const simple = `${base}f_mp4,q_auto/${cleanPath}.mp4`;
+
+  const seen = new Set<string>();
+  const sources: string[] = [];
+  for (const src of [strong, simple, url]) {
+    if (!seen.has(src)) {
+      sources.push(src);
+      seen.add(src);
+    }
+  }
+  return sources;
 }
 
 export function getMediaType(url: string): 'image' | 'video' | 'youtube' | 'vimeo' | 'unknown' {
