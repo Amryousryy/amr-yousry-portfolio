@@ -1,0 +1,61 @@
+# Manual workflow: Repair al-ghazal-exhibition CMS data
+#
+# WARNING: This workflow targets a SINGLE document by slug. It will NEVER
+# create or delete records. Default mode is dry-run (safe, no writes).
+# Write mode must be manually selected to apply changes.
+#
+# Only run this if you have confirmed:
+#   1. The corrupted document has slug == "al-ghazal-exhibition"
+#   2. No other project needs repair
+#   3. You understand the exact fields that will change (see script output)
+
+name: Repair al-ghazal-exhibition
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Repair mode'
+        required: true
+        default: 'dry-run'
+        type: choice
+        options:
+          - dry-run
+          - write
+
+env:
+  MONGODB_URI: ${{ secrets.MONGODB_URI }}
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Dry run — show current vs intended values (default)
+        if: github.event.inputs.mode == 'dry-run'
+        run: npm run repair:al-ghazal
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+
+      - name: Write mode — apply targeted repair to al-ghazal-exhibition only
+        if: github.event.inputs.mode == 'write'
+        run: |
+          echo "⚠ WRITE MODE SELECTED — This will modify ONLY the document with slug='al-ghazal-exhibition'."
+          echo "  No other projects will be touched."
+          echo "  No records will be created or deleted."
+          echo ""
+          npm run repair:al-ghazal -- --write
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}

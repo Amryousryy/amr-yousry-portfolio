@@ -9,7 +9,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed": "npx tsx scripts/seed-projects.ts"
+    "seed": "npx tsx scripts/seed-projects.ts",
+    "repair:al-ghazal": "npx tsx scripts/repair-al-ghazal.ts"
   },
     "dependencies": {
         "@dnd-kit/core": "^6.3.1",
