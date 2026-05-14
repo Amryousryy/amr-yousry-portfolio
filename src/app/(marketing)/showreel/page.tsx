@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { PixelButton } from "@/components/ui/pixel-button";
 import Image from "next/image";
+import Link from "next/link";
 import ShowreelTracker from "@/components/analytics/ShowreelTracker";
 
 export default function ShowreelPage() {
@@ -79,12 +80,12 @@ export default function ShowreelPage() {
                 <p className="font-pixel text-text-dim text-sm text-center max-w-md leading-relaxed">
                   Showreel is being curated. For selected work, explore the projects archive.
                 </p>
-                <a
+                <Link
                   href="/projects"
                   className="font-pixel text-brand-cyan text-[10px] tracking-widest uppercase border-2 border-brand-cyan px-6 py-3 hover:bg-brand-cyan hover:text-brand-blue transition-colors"
                 >
                   Browse Projects
-                </a>
+                </Link>
               </div>
             )}
           </div>

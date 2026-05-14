@@ -35,7 +35,7 @@ export default function CTA() {
                 whileInView={{ opacity: 1 }}
                 className="text-lg text-foreground/50 uppercase tracking-widest leading-relaxed max-w-md"
               >
-                Stop posting content that doesn't convert. Let's build a cinematic strategy that turns views into high-ticket clients.
+                Stop posting content that doesn&apos;t convert. Let&apos;s build a cinematic strategy that turns views into high-ticket clients.
               </motion.p>
             </div>
 

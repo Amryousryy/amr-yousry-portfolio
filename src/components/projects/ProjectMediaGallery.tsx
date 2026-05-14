@@ -85,26 +85,7 @@ function MediaErrorFallback({ item }: { item: ProjectMediaItem }) {
 }
 
 function FeaturedMedia({ item, title }: { item: ProjectMediaItem; title?: string }) {
-  // Trusted Cloudinary MP4: render directly, no fallback state, no event handlers that replace the player.
-  if (item.kind === "video" && isTrustedCloudinaryMp4(item.src)) {
-    return (
-      <video
-        key={item.src}
-        src={item.src}
-        controls
-        playsInline
-        preload="auto"
-        poster={getVideoThumbnailUrl(item.src) || undefined}
-        className="w-full h-full object-contain"
-      >
-        <p className="text-foreground/40 text-xs p-4">
-          Your browser does not support the video tag.{item.provider ? ` Open in ${item.provider} instead.` : ""}
-        </p>
-      </video>
-    );
-  }
-
-  // State for non-trusted videos (.mov, external URLs, or after trusted MP4 exhaustion)
+  // Hooks must be declared unconditionally — before any early return.
   const [mediaError, setMediaError] = useState(false);
   const [videoSourceIndex, setVideoSourceIndex] = useState(0);
   const currentKeyRef = useRef<string | null>(null);
@@ -129,6 +110,26 @@ function FeaturedMedia({ item, title }: { item: ProjectMediaItem; title?: string
       return next;
     });
   }, [clearLoadTimer]);
+
+  // Trusted Cloudinary MP4: render directly, bypass all fallback state.
+  // Hooks above are safe — they are declared but simply unused on this branch.
+  if (item.kind === "video" && isTrustedCloudinaryMp4(item.src)) {
+    return (
+      <video
+        key={item.src}
+        src={item.src}
+        controls
+        playsInline
+        preload="auto"
+        poster={getVideoThumbnailUrl(item.src) || undefined}
+        className="w-full h-full object-contain"
+      >
+        <p className="text-foreground/40 text-xs p-4">
+          Your browser does not support the video tag.{item.provider ? ` Open in ${item.provider} instead.` : ""}
+        </p>
+      </video>
+    );
+  }
 
   if (mediaError) return <MediaErrorFallback item={item} />;
 
@@ -217,10 +218,7 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
   const railRef = useRef<HTMLDivElement>(null);
 
   const goTo = useCallback((index: number) => {
-    setActiveIndex((prev) => {
-      const next = Math.max(0, Math.min(index, items.length - 1));
-      return next;
-    });
+    setActiveIndex(Math.max(0, Math.min(index, items.length - 1)));
   }, [items.length]);
 
   const goNext = useCallback(() => goTo(activeIndex + 1), [goTo, activeIndex]);

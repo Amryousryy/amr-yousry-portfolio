@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo, useEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Float } from "@react-three/drei";
 import * as THREE from "three";
@@ -10,7 +10,7 @@ function FilmParticles() {
   const meshRef = useRef<THREE.Points>(null);
   const mouse = useRef({ x: 0, y: 0 });
   
-  const geometry = useMemo(() => {
+  const [geometry] = useState(() => {
     const geo = new THREE.BufferGeometry();
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
@@ -33,7 +33,7 @@ function FilmParticles() {
     geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
     
     return geo;
-  }, []);
+  });
 
   useEffect(() => {
     const handleMouse = (e: MouseEvent) => {
