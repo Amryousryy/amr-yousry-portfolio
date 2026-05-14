@@ -14,7 +14,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import type { ProjectMediaItem } from "@/types/project";
-import { getVideoThumbnailUrl } from "@/lib/media/config";
+import { getVideoThumbnailUrl, getPlayableVideoUrl } from "@/lib/media/config";
 
 interface ProjectMediaGalleryProps {
   items: ProjectMediaItem[];
@@ -129,7 +129,6 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
         return (
           <video
             key={item.src}
-            src={item.src}
             controls
             playsInline
             preload="metadata"
@@ -138,6 +137,7 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
             onError={() => setMediaError(true)}
             onLoadedData={() => setMediaError(false)}
           >
+            <source src={getPlayableVideoUrl(item.src)} type="video/mp4" />
             <p className="text-foreground/40 text-xs p-4">
               Your browser does not support the video tag.{item.provider ? ` Open in ${item.provider} instead.` : ""}
             </p>
