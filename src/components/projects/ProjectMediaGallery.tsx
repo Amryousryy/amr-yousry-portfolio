@@ -61,8 +61,13 @@ function MediaErrorFallback({ item }: { item: ProjectMediaItem }) {
       <div className="relative z-10 flex flex-col items-center gap-3">
         <AlertTriangle size={28} className="text-foreground/30" />
         <span className="text-[10px] text-foreground/30 uppercase tracking-wider text-center">
-          {isVideo ? "Video is still processing or cannot be previewed." : "Media unavailable"}
+          {isVideo ? "Video cannot be previewed right now." : "Media unavailable"}
         </span>
+        {isVideo && (
+          <span className="text-[8px] text-foreground/20 uppercase tracking-wider text-center">
+            Try again shortly or open the video directly.
+          </span>
+        )}
         {item.provider && (
           <a
             href={item.src}
@@ -171,13 +176,17 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
                 if (currentKeyRef.current === currentSrc) {
                   tryNextVideoSource(playableSources.length, currentSrc);
                 }
-              }, 15000);
+              }, 20000);
             }}
-            onLoadedMetadata={(e) => {
-              const key = e.currentTarget.currentSrc || currentSrc;
+            onLoadedMetadata={() => {
+              // Do NOT advance on metadata alone. Some browsers initially
+              // report duration=0 then fire durationchange with actual value.
+            }}
+            onDurationChange={(e) => {
               const dur = e.currentTarget.duration;
-              if (!dur || !Number.isFinite(dur)) {
-                tryNextVideoSource(playableSources.length, key);
+              if (dur && Number.isFinite(dur) && dur > 0) {
+                clearLoadTimer();
+                setMediaError(false);
               }
             }}
             onCanPlay={(e) => {
