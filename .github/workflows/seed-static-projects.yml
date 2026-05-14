@@ -1,0 +1,54 @@
+# Manual workflow: Seed static projects into MongoDB
+#
+# This workflow is manually triggered via GitHub UI only — never runs on push.
+# It runs scripts/seed-projects.ts which inserts the 3 real static portfolio
+# projects (al-ghazal-exhibition, nextgen-fitness-app, retro-arcade-concept)
+# into MongoDB as CMS-managed projects.
+#
+# Default mode is dry-run (safe, no database writes).
+# Write mode must be manually selected to actually insert projects.
+# The seed script is designed to skip existing slugs and never overwrite.
+
+name: Seed Static Projects
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Seed mode'
+        required: true
+        default: 'dry-run'
+        type: choice
+        options:
+          - dry-run
+          - write
+
+env:
+  MONGODB_URI: ${{ secrets.MONGODB_URI }}
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Dry run — check what would be created (default)
+        if: github.event.inputs.mode == 'dry-run'
+        run: npm run seed
+
+      - name: Write mode — insert missing static projects only
+        if: github.event.inputs.mode == 'write'
+        run: |
+          echo "WRITE MODE SELECTED — this will insert missing static projects only. Existing slugs will be skipped."
+          npm run seed -- --write
