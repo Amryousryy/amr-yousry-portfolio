@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { trackEvent } from "@/lib/tracker";
 import { ProjectMediaItem } from "@/types/project";

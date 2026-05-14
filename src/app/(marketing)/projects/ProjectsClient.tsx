@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { PixelButton } from "@/components/ui/pixel-button";
 import Image from "next/image";
 import { trackEvent } from "@/lib/tracker";
 import { PROJECT_CATEGORIES, formatCategory } from "@/lib/projects/categories";

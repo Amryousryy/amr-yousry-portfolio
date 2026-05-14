@@ -1,15 +1,13 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { aboutContent } from "@/content/about";
-import Image from "next/image";
 import Link from "next/link";
 import CharacterSelector from "./CharacterSelector";
 
 export default function AboutSection() {
-  const shouldReduceMotion = useReducedMotion();
 
   return (
     <Section id="about" className="bg-brand-blue/98 relative py-14 md:py-20">
