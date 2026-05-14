@@ -180,7 +180,11 @@ export function getPlayableVideoSources(url: string): string[] {
 
   const seen = new Set<string>();
   const sources: string[] = [];
-  for (const src of [codecs, optimized, simple, url]) {
+  // If original is already MP4, try it first (pre-cached by Cloudinary, proper Content-Length).
+  // Otherwise transformations first (transcode unsupported browser formats like .mov → .mp4).
+  const isNativeMp4 = /\.mp4$/i.test(url);
+  const ordered = isNativeMp4 ? [url, codecs, optimized, simple] : [codecs, optimized, simple, url];
+  for (const src of ordered) {
     if (!seen.has(src)) {
       sources.push(src);
       seen.add(src);
