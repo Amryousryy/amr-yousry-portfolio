@@ -17,7 +17,7 @@ export default function HeroSection() {
           {/* Headline Group - Premium retro title */}
           <div className="mb-8">
             <h1 
-              className="font-black text-white tracking-tighter leading-[0.98] sm:leading-[0.95] text-center text-[clamp(2.15rem,10vw,3.35rem)] md:text-[clamp(3rem,7vw,6rem)]"
+              className="font-black text-white tracking-tighter leading-[1.05] sm:leading-[0.95] text-center text-[clamp(2.15rem,10vw,3.35rem)] md:text-[clamp(3rem,7vw,6rem)]"
             >
               <span className="level-title block">MAKE IDEAS</span>
               <span className="level-title block">MATTER</span>
@@ -30,9 +30,9 @@ export default function HeroSection() {
             
             {/* Subtitle - Business focused, readable, neutral color */}
             <p 
-              className="text-slate-300 font-normal px-1"
+              className="text-slate-300 font-normal px-2 sm:px-1"
               style={{ 
-                fontSize: 'clamp(1rem, 4vw, 1.35rem)',
+                fontSize: 'clamp(0.95rem, 4vw, 1.35rem)',
                 lineHeight: '1.55',
                 maxWidth: '700px',
                 margin: '1rem auto 0'

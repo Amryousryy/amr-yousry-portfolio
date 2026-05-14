@@ -340,7 +340,7 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
               onClick={goPrev}
               disabled={safeIndex === 0}
               aria-label="Previous media"
-              className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-background/80 border border-primary/20 text-foreground/60 hover:text-accent hover:border-accent transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="absolute left-2 top-1/2 -translate-y-1/2 p-2 sm:p-3 bg-background/80 border border-primary/20 text-foreground/60 hover:text-accent hover:border-accent transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-accent min-w-[44px] min-h-[44px] flex items-center justify-center"
             >
               <ChevronLeft size={20} />
             </button>
@@ -349,7 +349,7 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
               onClick={goNext}
               disabled={safeIndex === items.length - 1}
               aria-label="Next media"
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-background/80 border border-primary/20 text-foreground/60 hover:text-accent hover:border-accent transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 sm:p-3 bg-background/80 border border-primary/20 text-foreground/60 hover:text-accent hover:border-accent transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-accent min-w-[44px] min-h-[44px] flex items-center justify-center"
             >
               <ChevronRight size={20} />
             </button>

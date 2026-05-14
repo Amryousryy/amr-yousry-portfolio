@@ -96,7 +96,7 @@ export default function ContactSection() {
   }
 
   return (
-    <Section id="contact" className="bg-brand-blue/95 relative pb-24 sm:pb-36 pt-20 md:pt-32 overflow-hidden">
+    <Section id="contact" className="bg-brand-blue/95 relative pb-16 sm:pb-36 pt-14 sm:pt-20 md:pt-32 overflow-hidden">
       {/* Atmospheric overlay - action-oriented lighting */}
       <div className="absolute inset-0 bg-gradient-to-b from-brand-blue/95 via-brand-cyan/2 to-brand-blue/95 pointer-events-none" />
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-cyan/25 to-transparent pointer-events-none" />

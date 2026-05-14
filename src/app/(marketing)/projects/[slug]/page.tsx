@@ -63,7 +63,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
   return (
     <Section className="min-h-screen py-24 md:py-32 bg-background overflow-hidden">
       {/* Hero Media */}
-      <div className="relative h-[56vh] min-h-[420px] md:h-[60vh] mb-14 md:mb-20 overflow-hidden">
+      <div className="relative h-[40vh] sm:h-[56vh] min-h-[280px] sm:min-h-[420px] md:h-[60vh] mb-14 md:mb-20 overflow-hidden">
         {(() => {
           const hv = project.heroVideo;
           if (!hv) {

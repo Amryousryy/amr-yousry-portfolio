@@ -27,7 +27,7 @@ export default function ShowreelPage() {
               {showreelConfig.title}
             </h1>
             {showreelConfig.description && (
-              <p className="font-modern text-text-dim text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
+              <p className="font-modern text-text-dim text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed px-2">
                 {showreelConfig.description}
               </p>
             )}
@@ -59,7 +59,8 @@ export default function ShowreelPage() {
               <video
                 src={showreelConfig.src}
                 controls
-                className="w-full h-full object-cover"
+                playsInline
+                className="w-full h-full object-contain"
                 poster={showreelConfig.thumbnail}
               >
                 Your browser does not support video playback.

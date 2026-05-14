@@ -37,7 +37,7 @@ export function CaseStudyClient({ project }: CaseStudyClientProps) {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="space-y-12"
+            className="space-y-6 sm:space-y-12"
           >
             {project.problem && (
               <div>
