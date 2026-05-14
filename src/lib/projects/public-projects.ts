@@ -1,5 +1,4 @@
 import type { Project, ProjectMedia, ProjectMediaItem } from "@/types/project";
-import type { IProject } from "@/models/Project";
 import dbConnect from "@/lib/db";
 import ProjectModel from "@/models/Project";
 import { getMediaKind, getEmbeddableVideoUrl, getMediaProvider } from "@/lib/media/config";
@@ -9,16 +8,6 @@ import {
   featuredProjects as staticFeaturedProjects,
 } from "@/data/projects";
 import { formatCategory } from "@/lib/projects/categories";
-
-const EXCLUDED_SLUGS = new Set([
-  "a",
-  "3",
-  "dertherth",
-  "test-project",
-  "qa-user-flow-stress-test",
-  "qa-draft-visibility-test",
-  "qa-full-flow-project",
-]);
 
 function toPlainText(value: unknown, fallback = ""): string {
   if (typeof value === "string") return value;
@@ -162,8 +151,7 @@ export async function getPublicProjects(): Promise<Project[]> {
         .lean();
 
       return docs
-        .map((doc) => toPublicProject(doc as unknown as Record<string, unknown>))
-        .filter((p) => !EXCLUDED_SLUGS.has(p.slug));
+        .map((doc) => toPublicProject(doc as unknown as Record<string, unknown>));
     },
     () => getStaticAllProjects().map(withMedia),
   );
@@ -178,8 +166,7 @@ export async function getFeaturedProjects(limit = 3): Promise<Project[]> {
         .lean();
 
       const cmsFeatured = docs
-        .map((doc) => toPublicProject(doc as unknown as Record<string, unknown>))
-        .filter((p) => !EXCLUDED_SLUGS.has(p.slug));
+        .map((doc) => toPublicProject(doc as unknown as Record<string, unknown>));
 
       return cmsFeatured.slice(0, limit);
     },
@@ -188,8 +175,6 @@ export async function getFeaturedProjects(limit = 3): Promise<Project[]> {
 }
 
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
-  if (EXCLUDED_SLUGS.has(slug)) return null;
-
   return tryDb(
     async () => {
       const doc = await ProjectModel
