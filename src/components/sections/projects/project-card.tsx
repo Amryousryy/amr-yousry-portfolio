@@ -42,7 +42,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%)] bg-[length:100%_4px] pointer-events-none" />
 
         {/* Category Tag - Floating Pixel UI */}
-        <div className="absolute top-4 left-4 sm:top-6 sm:left-6 max-w-[calc(100%-2rem)] bg-brand-cyan text-brand-blue font-pixel text-[8px] sm:text-[9px] px-2.5 sm:px-3 py-1 uppercase tracking-wider border border-brand-blue z-30 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] leading-tight truncate">
+        <div className="absolute top-4 left-4 sm:top-6 sm:left-6 max-w-[calc(100%-2rem)] bg-brand-cyan text-brand-blue font-pixel text-[8px] sm:text-[9px] px-2.5 sm:px-3 py-1 uppercase tracking-wider border border-brand-blue z-30 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] leading-tight truncate shadow-[0_0_12px_-2px_rgba(34,211,238,0.3)]">
           {formatCategory(project.category)}
         </div>
       </div>
@@ -70,7 +70,8 @@ export function ProjectCard({ project }: ProjectCardProps) {
                 size="sm" 
                 className="w-full sm:w-auto text-[10px] py-4 group-hover:bg-brand-cyan group-hover:text-brand-blue transition-all"
               >
-                View Project
+                <span>View Project</span>
+                <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
               </PixelButton>
             </Link>
           </div>

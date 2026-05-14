@@ -77,16 +77,31 @@ export default function ShowreelPage() {
             )}
 
             {!isVideo && !showreelConfig.thumbnail && (
-              <div className="flex flex-col items-center justify-center h-full gap-6 px-6">
-                <p className="font-pixel text-text-dim text-sm text-center max-w-md leading-relaxed">
-                  Showreel is being curated. For selected work, explore the projects archive.
-                </p>
-                <Link
-                  href="/projects"
-                  className="font-pixel text-brand-cyan text-[10px] tracking-widest uppercase border-2 border-brand-cyan px-6 py-3 hover:bg-brand-cyan hover:text-brand-blue transition-colors"
-                >
-                  Browse Projects
-                </Link>
+              <div className="relative w-full h-full flex flex-col items-center justify-center gap-6 px-6 bg-gradient-to-b from-slate-900/80 via-slate-900/50 to-slate-900/80">
+                {/* Game grid background */}
+                <div className="absolute inset-0 game-grid-bg opacity-20 pointer-events-none" />
+                {/* Cinematic corner accents */}
+                <div className="absolute top-6 left-6 w-8 h-8 border-l-2 border-t-2 border-brand-cyan/40 shadow-[0_0_12px_-2px_rgba(34,211,238,0.15)]" />
+                <div className="absolute top-6 right-6 w-8 h-8 border-r-2 border-t-2 border-brand-cyan/40 shadow-[0_0_12px_-2px_rgba(34,211,238,0.15)]" />
+                <div className="absolute bottom-6 left-6 w-8 h-8 border-l-2 border-b-2 border-brand-cyan/40 shadow-[0_0_12px_-2px_rgba(34,211,238,0.15)]" />
+                <div className="absolute bottom-6 right-6 w-8 h-8 border-r-2 border-b-2 border-brand-cyan/40 shadow-[0_0_12px_-2px_rgba(34,211,238,0.15)]" />
+                {/* Scanline overlay */}
+                <div className="absolute inset-0 opacity-[0.04] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%)] bg-[length:100%_4px] pointer-events-none" />
+                {/* Content */}
+                <div className="relative z-10 flex flex-col items-center gap-6">
+                  <div className="w-16 h-16 border-2 border-brand-cyan/30 rounded-full flex items-center justify-center">
+                    <div className="w-3 h-3 bg-brand-cyan/60 rounded-full animate-pulse" />
+                  </div>
+                  <p className="font-pixel text-text-dim text-sm text-center max-w-md leading-relaxed">
+                    Showreel is being curated. For selected work, explore the projects archive.
+                  </p>
+                  <Link
+                    href="/projects"
+                    className="font-pixel text-brand-cyan text-[10px] tracking-widest uppercase border-2 border-brand-cyan px-6 py-3 hover:bg-brand-cyan hover:text-brand-blue transition-colors"
+                  >
+                    Browse Projects
+                  </Link>
+                </div>
               </div>
             )}
           </div>

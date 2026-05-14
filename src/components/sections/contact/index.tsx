@@ -150,8 +150,8 @@ export default function ContactSection() {
             </motion.p>
 
             {/* Communication Channels */}
-            <div className="pt-8 border-t border-slate-800/60">
-              <h3 className="font-pixel text-[9px] text-brand-cyan/70 mb-8 tracking-[0.3em] uppercase">Communication Channels</h3>
+            <div className="pt-6 border-t border-slate-800/60">
+              <h3 className="font-pixel text-[9px] text-brand-cyan/70 mb-6 tracking-[0.3em] uppercase">Communication Channels</h3>
               
               {/* WhatsApp - Primary */}
               <motion.a 
@@ -160,7 +160,7 @@ export default function ContactSection() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp - Fastest response"
-                className="flex min-h-[56px] items-center gap-4 text-white font-pixel text-xs group transition-colors mb-8"
+                className="flex min-h-[56px] items-center gap-4 text-white font-pixel text-xs group transition-colors mb-6"
               >
                 <ContactIconImage 
                   src="/images/social/whatsapp-pixel-v2.png" 
@@ -179,7 +179,7 @@ export default function ContactSection() {
                 whileHover={shouldReduceMotion ? {} : { x: 8 }}
                 href="mailto:amryousryy@gmail.com"
                 aria-label="Email - Business inquiries"
-                className="flex min-h-[56px] items-center gap-4 text-white font-pixel text-xs group transition-colors mb-8"
+                className="flex min-h-[56px] items-center gap-4 text-white font-pixel text-xs group transition-colors mb-6"
               >
                 <ContactIconImage 
                   src="/images/social/email-pixel-v2.png" 
@@ -194,7 +194,7 @@ export default function ContactSection() {
               </motion.a>
 
               {/* Pixel Icon Buttons for Socials */}
-              <div className="flex flex-wrap gap-4 pt-4 border-t border-slate-800/40">
+              <div className="flex flex-wrap gap-4 pt-4">
                 {contactContent.socials.map((social) => {
                   const iconPaths: Record<string, { src: string; scale: number }> = {
                     ig: { src: "/images/social/instagram-pixel-v2.png", scale: 1.25 },
