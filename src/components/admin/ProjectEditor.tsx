@@ -205,11 +205,15 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
         displayOrder: initialData.displayOrder || 0,
         year: initialData.year || new Date().getFullYear().toString(),
         clientName: initialData.clientName || "",
-        seo: { title: "", description: "", keywords: [] },
+        seo: initialData.seo || { title: "", description: "", keywords: [] },
         gallery: initialData.gallery || [],
         tags: initialData.tags || [],
         detailedResults: initialData.detailedResults || [],
         caseStudyMedia: initialData.caseStudyMedia || [],
+        services: initialData.services || [],
+        idea: getString(initialData.idea),
+        mainResult: getString(initialData.mainResult),
+        client: initialData.client || "",
         sections: initialData.sections?.map(s => ({
           ...s,
           title: typeof s.title === "string" ? s.title : (s.title as any)?.en || "",
@@ -327,15 +331,17 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
               <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
                 Category <span className="text-red-500">*</span>
               </label>
-              <select
+              <input
+                list="category-suggestions"
                 {...register("category")}
-                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors appearance-none"
-              >
-                <option value="">Select category</option>
+                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
+                placeholder="Select or type a category"
+              />
+              <datalist id="category-suggestions">
                 {categories.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
+                  <option key={cat} value={cat} />
                 ))}
-              </select>
+              </datalist>
               {getFieldError(errors, "category") && (
                 <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "category")}</p>
               )}

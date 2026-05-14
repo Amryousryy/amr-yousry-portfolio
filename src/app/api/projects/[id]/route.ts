@@ -93,9 +93,39 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       statusMetadata.publishedAt = new Date();
     }
     
+    const existing = currentProject as Record<string, unknown> | null;
+    const guardedArrayFields = new Set(["services", "detailedResults", "caseStudyMedia", "gallery", "tags", "sections", "categories"]);
+    const guardedTextField = new Set(["solution", "results", "category"]);
+
+    const safeUpdate: Record<string, unknown> = {};
+
+    for (const [key, value] of Object.entries(validation.data)) {
+      if (key.startsWith("_") || key === "createdAt" || key === "updatedAt" || key === "__v") continue;
+
+      if (guardedArrayFields.has(key)) {
+        if (Array.isArray(value) && value.length > 0) {
+          safeUpdate[key] = value;
+        }
+      } else if (guardedTextField.has(key)) {
+        if (typeof value === "string" && value.trim().length > 0) {
+          safeUpdate[key] = value.trim();
+        }
+      } else if (key === "seo") {
+        const incoming = (value && typeof value === "object") ? value as Record<string, unknown> : {};
+        const existingSeo = (existing?.seo && typeof existing.seo === "object") ? existing.seo as Record<string, unknown> : {};
+        safeUpdate.seo = {
+          title: (typeof incoming.title === "string" && incoming.title.length > 0) ? incoming.title : (existingSeo.title || ""),
+          description: (typeof incoming.description === "string" && incoming.description.length > 0) ? incoming.description : (existingSeo.description || ""),
+          keywords: (Array.isArray(incoming.keywords) && incoming.keywords.length > 0) ? incoming.keywords : (Array.isArray(existingSeo.keywords) ? existingSeo.keywords : []),
+        };
+      } else {
+        safeUpdate[key] = value;
+      }
+    }
+
     const project = await Project.findByIdAndUpdate(
       id, 
-      { ...validation.data, ...statusMetadata }, 
+      { ...safeUpdate, ...statusMetadata }, 
       { new: true, lean: true }
     );
     
