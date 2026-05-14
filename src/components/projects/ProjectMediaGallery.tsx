@@ -84,10 +84,6 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
   const [mediaError, setMediaError] = useState(false);
   const railRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    setMediaError(false);
-  }, [activeIndex]);
-
   const goTo = useCallback((index: number) => {
     setActiveIndex((prev) => {
       const next = Math.max(0, Math.min(index, items.length - 1));
@@ -121,28 +117,81 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
   const active = items[safeIndex];
   const hasMultiple = items.length > 1;
 
+  const [videoSourceIndex, setVideoSourceIndex] = useState(0);
+  const currentKeyRef = useRef<string | null>(null);
+  const loadedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearLoadTimer = useCallback(() => {
+    if (loadedTimerRef.current !== null) {
+      clearTimeout(loadedTimerRef.current);
+      loadedTimerRef.current = null;
+    }
+  }, []);
+
+  const tryNextVideoSource = useCallback((maxSources: number, fromKey: string) => {
+    if (currentKeyRef.current !== fromKey) return;
+    clearLoadTimer();
+    setVideoSourceIndex((prev) => {
+      const next = prev + 1;
+      if (next >= maxSources) {
+        setMediaError(true);
+        return prev;
+      }
+      return next;
+    });
+  }, [clearLoadTimer]);
+
+  useEffect(() => {
+    setMediaError(false);
+    setVideoSourceIndex(0);
+    currentKeyRef.current = null;
+    clearLoadTimer();
+  }, [activeIndex, clearLoadTimer]);
+
   const renderFeatured = (item: ProjectMediaItem) => {
     if (mediaError) return <MediaErrorFallback item={item} />;
 
     switch (item.kind) {
       case "video": {
         const playableSources = getPlayableVideoSources(item.src);
+        const currentSrc = playableSources[Math.min(videoSourceIndex, playableSources.length - 1)];
         return (
           <video
-            key={item.src}
+            key={currentSrc}
+            src={currentSrc}
             controls
             playsInline
             preload="metadata"
             poster={getVideoThumbnailUrl(item.src) || undefined}
             className="w-full h-full object-contain"
-            onError={() => {
-              setMediaError(true);
+            onLoadStart={() => {
+              currentKeyRef.current = currentSrc;
+              clearLoadTimer();
+              loadedTimerRef.current = setTimeout(() => {
+                if (currentKeyRef.current === currentSrc) {
+                  tryNextVideoSource(playableSources.length, currentSrc);
+                }
+              }, 15000);
             }}
-            onLoadedData={() => setMediaError(false)}
+            onLoadedMetadata={(e) => {
+              const key = e.currentTarget.currentSrc || currentSrc;
+              const dur = e.currentTarget.duration;
+              if (!dur || !Number.isFinite(dur)) {
+                tryNextVideoSource(playableSources.length, key);
+              }
+            }}
+            onCanPlay={(e) => {
+              const dur = e.currentTarget.duration;
+              if (dur && Number.isFinite(dur) && dur > 0) {
+                clearLoadTimer();
+                setMediaError(false);
+              }
+            }}
+            onError={(e) => {
+              const key = e.currentTarget.currentSrc || currentSrc;
+              tryNextVideoSource(playableSources.length, key);
+            }}
           >
-            {playableSources.map((src, i) => (
-              <source key={i} src={src} type={src.endsWith(".mp4") ? "video/mp4" : undefined} />
-            ))}
             <p className="text-foreground/40 text-xs p-4">
               Your browser does not support the video tag.{item.provider ? ` Open in ${item.provider} instead.` : ""}
             </p>

@@ -174,12 +174,13 @@ export function getPlayableVideoSources(url: string): string[] {
 
   const cleanPath = path.replace(/\.[a-zA-Z0-9]+$/, "");
 
-  const strong = `${base}f_mp4,vc_h264,ac_aac,q_auto/${cleanPath}.mp4`;
+  const codecs = `${base}f_mp4,vc_h264,ac_aac/${cleanPath}.mp4`;
+  const optimized = `${base}f_mp4,vc_h264,ac_aac,q_auto/${cleanPath}.mp4`;
   const simple = `${base}f_mp4,q_auto/${cleanPath}.mp4`;
 
   const seen = new Set<string>();
   const sources: string[] = [];
-  for (const src of [strong, simple, url]) {
+  for (const src of [codecs, optimized, simple, url]) {
     if (!seen.has(src)) {
       sources.push(src);
       seen.add(src);
