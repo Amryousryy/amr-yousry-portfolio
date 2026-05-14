@@ -44,23 +44,37 @@ function MediaTypeBadge({ kind, provider }: { kind: string; provider?: string | 
 }
 
 function MediaErrorFallback({ item }: { item: ProjectMediaItem }) {
+  const thumbUrl = getVideoThumbnailUrl(item.src);
+  const isVideo = item.kind === "video";
+
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full gap-3 p-6 bg-primary/5">
-      <AlertTriangle size={28} className="text-foreground/30" />
-      <span className="text-[10px] text-foreground/30 uppercase tracking-wider text-center">
-        Media unavailable
-      </span>
-      {item.provider && (
-        <a
-          href={item.src}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-[9px] text-accent hover:text-accent/80 uppercase tracking-wider"
-        >
-          <ExternalLink size={10} />
-          Open in {item.provider}
-        </a>
+    <div className="relative flex flex-col items-center justify-center w-full h-full gap-3 p-6 bg-primary/5 overflow-hidden">
+      {thumbUrl && (
+        <Image
+          src={thumbUrl}
+          alt=""
+          fill
+          className="object-contain opacity-20"
+          sizes="(max-width: 768px) 100vw, 900px"
+        />
       )}
+      <div className="relative z-10 flex flex-col items-center gap-3">
+        <AlertTriangle size={28} className="text-foreground/30" />
+        <span className="text-[10px] text-foreground/30 uppercase tracking-wider text-center">
+          {isVideo ? "Video preview unavailable" : "Media unavailable"}
+        </span>
+        {item.provider && (
+          <a
+            href={item.src}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-[9px] text-accent hover:text-accent/80 uppercase tracking-wider underline"
+          >
+            <ExternalLink size={10} />
+            Open in {item.provider}
+          </a>
+        )}
+      </div>
     </div>
   );
 }
@@ -119,8 +133,10 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
             controls
             playsInline
             preload="metadata"
+            poster={getVideoThumbnailUrl(item.src) || undefined}
             className="w-full h-full object-contain"
             onError={() => setMediaError(true)}
+            onLoadedData={() => setMediaError(false)}
           >
             <p className="text-foreground/40 text-xs p-4">
               Your browser does not support the video tag.{item.provider ? ` Open in ${item.provider} instead.` : ""}
