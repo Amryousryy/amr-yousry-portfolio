@@ -137,6 +137,7 @@ export async function POST(req: Request) {
     try {
       revalidatePath("/");
       revalidatePath("/projects");
+      if (validation.data.slug) revalidatePath(`/projects/${validation.data.slug}`);
     } catch (revalError) {
       console.error("REVALIDATE_ERROR:", revalError);
     }
