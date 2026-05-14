@@ -172,6 +172,7 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
   const watchedTitle = watch("title");
   const watchedSlug = watch("slug");
   const watchedImage = watch("image");
+  const watchedFeatured = watch("featured");
   const watchedGallery = watch("gallery") || [];
   const watchedCaseStudyMedia = watch("caseStudyMedia") || [];
 
@@ -913,50 +914,81 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
         {/* Section 6: Publishing & Homepage */}
         <div className="space-y-4">
           <h2 className="text-sm font-display font-bold uppercase tracking-wider text-accent border-b border-primary/10 pb-2">Publishing &amp; Homepage</h2>
-          <p className="text-[10px] text-foreground/40">Control visibility and homepage featured placement.</p>
+          <p className="text-xs text-foreground/40">
+            Control where this project appears and whether it is publicly visible.
+          </p>
 
-          <div className="flex items-center gap-6">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" {...register("featured")} className="w-4 h-4 accent-accent" />
-              <span className="text-xs font-bold uppercase">Featured</span>
-            </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+            {/* Featured */}
+            <div className="border border-primary/10 p-4 bg-primary/5 space-y-3">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" {...register("featured")} className="w-4 h-4 accent-accent" />
+                <span className="text-xs font-bold uppercase tracking-widest text-foreground/70">
+                  Featured
+                </span>
+              </label>
+              <p className="text-[10px] text-foreground/40 leading-relaxed">
+                Show on homepage selected works.
+              </p>
+            </div>
 
-            <div className="flex items-center gap-2">
-              <label className="text-xs font-bold uppercase">Featured Order</label>
+            {/* Featured Order */}
+            <div className="border border-primary/10 p-4 bg-primary/5 space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
+                Featured Order
+              </label>
               <input
                 type="number"
                 {...register("featuredOrder", { valueAsNumber: true })}
-                className="w-16 bg-background/50 border border-primary/20 p-2 outline-none focus:border-accent transition-colors"
+                disabled={!watchedFeatured}
+                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                 placeholder="0"
               />
-              <span className="text-[10px] text-foreground/40">
-                (Lower = first on homepage)
-              </span>
+              <p className="text-[10px] text-foreground/40 leading-relaxed">
+                {watchedFeatured
+                  ? "Lower = first on homepage."
+                  : "Enable Featured to use homepage order."}
+              </p>
             </div>
 
-            <Controller
-              name="status"
-              control={control}
-              render={({ field }) => (
-                <select {...field} className="bg-primary/5 border border-primary/20 p-2 text-xs font-bold">
-                  <option value="draft">Draft</option>
-                  <option value="published">Published</option>
-                </select>
-              )}
-            />
-          </div>
+            {/* Status */}
+            <div className="border border-primary/10 p-4 bg-primary/5 space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
+                Status
+              </label>
+              <Controller
+                name="status"
+                control={control}
+                render={({ field }) => (
+                  <select
+                    {...field}
+                    className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors appearance-none text-sm"
+                  >
+                    <option value="draft">Draft</option>
+                    <option value="published">Published</option>
+                  </select>
+                )}
+              />
+              <p className="text-[10px] text-foreground/40 leading-relaxed">
+                Controls public visibility.
+              </p>
+            </div>
 
-          <div className="flex items-center gap-2">
-            <label className="text-xs font-bold uppercase">Display Order</label>
-            <input
-              type="number"
-              {...register("displayOrder", { valueAsNumber: true })}
-              className="w-20 bg-background/50 border border-primary/20 p-2 outline-none focus:border-accent transition-colors"
-              placeholder="0"
-            />
-            <span className="text-[10px] text-foreground/40">
-              (Sorting order within lists)
-            </span>
+            {/* Display Order */}
+            <div className="border border-primary/10 p-4 bg-primary/5 space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
+                Display Order
+              </label>
+              <input
+                type="number"
+                {...register("displayOrder", { valueAsNumber: true })}
+                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
+                placeholder="0"
+              />
+              <p className="text-[10px] text-foreground/40 leading-relaxed">
+                Sorting order within lists.
+              </p>
+            </div>
           </div>
         </div>
       </div>
