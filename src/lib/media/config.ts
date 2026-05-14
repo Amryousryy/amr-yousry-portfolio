@@ -210,6 +210,20 @@ export function normalizeMediaUrl(url: string, type: 'image' | 'video' = 'image'
   return url;
 }
 
+export function isTrustedCloudinaryMp4(url: string): boolean {
+  if (!url) return false;
+  try {
+    const parsed = new URL(url);
+    return (
+      parsed.hostname.includes("cloudinary.com") &&
+      parsed.pathname.includes("/video/upload/") &&
+      parsed.pathname.endsWith(".mp4")
+    );
+  } catch {
+    return false;
+  }
+}
+
 export const FALLBACK_MEDIA = {
   image: 'https://images.unsplash.com/photo-1536240478700-b869070f9279?w=800',
   video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',

@@ -14,7 +14,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import type { ProjectMediaItem } from "@/types/project";
-import { getVideoThumbnailUrl, getPlayableVideoSources } from "@/lib/media/config";
+import { getVideoThumbnailUrl, getPlayableVideoSources, isTrustedCloudinaryMp4 } from "@/lib/media/config";
 
 interface ProjectMediaGalleryProps {
   items: ProjectMediaItem[];
@@ -84,9 +84,145 @@ function MediaErrorFallback({ item }: { item: ProjectMediaItem }) {
   );
 }
 
+function FeaturedMedia({ item, title }: { item: ProjectMediaItem; title?: string }) {
+  const [mediaError, setMediaError] = useState(false);
+  const [videoSourceIndex, setVideoSourceIndex] = useState(0);
+  const [trustedMp4HardError, setTrustedMp4HardError] = useState(false);
+  const currentKeyRef = useRef<string | null>(null);
+  const loadedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearLoadTimer = useCallback(() => {
+    if (loadedTimerRef.current !== null) {
+      clearTimeout(loadedTimerRef.current);
+      loadedTimerRef.current = null;
+    }
+  }, []);
+
+  const tryNextVideoSource = useCallback((maxSources: number, fromKey: string) => {
+    if (currentKeyRef.current !== fromKey) return;
+    clearLoadTimer();
+    setVideoSourceIndex((prev) => {
+      const next = prev + 1;
+      if (next >= maxSources) {
+        setMediaError(true);
+        return prev;
+      }
+      return next;
+    });
+  }, [clearLoadTimer]);
+
+  if (mediaError) return <MediaErrorFallback item={item} />;
+
+  switch (item.kind) {
+    case "video": {
+      const isTrusted = isTrustedCloudinaryMp4(item.src);
+
+      if (isTrusted && !trustedMp4HardError) {
+        return (
+          <video
+            key={item.src}
+            src={item.src}
+            controls
+            playsInline
+            preload="auto"
+            poster={getVideoThumbnailUrl(item.src) || undefined}
+            className="w-full h-full object-contain"
+            onLoadedMetadata={() => { setMediaError(false); }}
+            onDurationChange={() => { setMediaError(false); }}
+            onCanPlay={() => { setMediaError(false); }}
+            onPlaying={() => { setMediaError(false); }}
+            onError={() => {
+              setTrustedMp4HardError(true);
+              setVideoSourceIndex(1);
+            }}
+          >
+            <p className="text-foreground/40 text-xs p-4">
+              Your browser does not support the video tag.{item.provider ? ` Open in ${item.provider} instead.` : ""}
+            </p>
+          </video>
+        );
+      }
+
+      const playableSources = getPlayableVideoSources(item.src);
+      const currentSrc = playableSources[Math.min(videoSourceIndex, playableSources.length - 1)];
+
+      return (
+        <video
+          key={currentSrc}
+          src={currentSrc}
+          controls
+          playsInline
+          preload="metadata"
+          poster={getVideoThumbnailUrl(item.src) || undefined}
+          className="w-full h-full object-contain"
+          onLoadStart={() => {
+            currentKeyRef.current = currentSrc;
+            clearLoadTimer();
+            loadedTimerRef.current = setTimeout(() => {
+              if (currentKeyRef.current === currentSrc) {
+                tryNextVideoSource(playableSources.length, currentSrc);
+              }
+            }, 20000);
+          }}
+          onLoadedMetadata={() => { clearLoadTimer(); setMediaError(false); }}
+          onDurationChange={(e) => {
+            const dur = e.currentTarget.duration;
+            if (dur && Number.isFinite(dur) && dur > 0) {
+              clearLoadTimer();
+              setMediaError(false);
+            }
+          }}
+          onCanPlay={(e) => {
+            const dur = e.currentTarget.duration;
+            if (dur && Number.isFinite(dur) && dur > 0) {
+              clearLoadTimer();
+              setMediaError(false);
+            }
+          }}
+          onError={(e) => {
+            tryNextVideoSource(playableSources.length, e.currentTarget.currentSrc || currentSrc);
+          }}
+        >
+          <p className="text-foreground/40 text-xs p-4">
+            Your browser does not support the video tag.{item.provider ? ` Open in ${item.provider} instead.` : ""}
+          </p>
+        </video>
+      );
+    }
+    case "embed":
+      return item.embedUrl ? (
+        <iframe
+          key={item.embedUrl}
+          src={item.embedUrl}
+          className="w-full h-full"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          title={item.alt || title || "Embedded media"}
+        />
+      ) : (
+        <ExternalVideoCard item={item} />
+      );
+    case "external":
+      return <ExternalVideoCard item={item} />;
+    case "image":
+      return (
+        <Image
+          key={item.src}
+          src={item.src}
+          alt={item.alt || title || "Project media"}
+          fill
+          className="object-contain"
+          sizes="(max-width: 768px) 100vw, 900px"
+          onError={() => setMediaError(true)}
+        />
+      );
+    default:
+      return <MediaErrorFallback item={item} />;
+  }
+}
+
 export default function ProjectMediaGallery({ items, title }: ProjectMediaGalleryProps) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [mediaError, setMediaError] = useState(false);
   const railRef = useRef<HTMLDivElement>(null);
 
   const goTo = useCallback((index: number) => {
@@ -121,123 +257,6 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
   const safeIndex = Math.min(activeIndex, items.length - 1);
   const active = items[safeIndex];
   const hasMultiple = items.length > 1;
-
-  const [videoSourceIndex, setVideoSourceIndex] = useState(0);
-  const currentKeyRef = useRef<string | null>(null);
-  const loadedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const clearLoadTimer = useCallback(() => {
-    if (loadedTimerRef.current !== null) {
-      clearTimeout(loadedTimerRef.current);
-      loadedTimerRef.current = null;
-    }
-  }, []);
-
-  const tryNextVideoSource = useCallback((maxSources: number, fromKey: string) => {
-    if (currentKeyRef.current !== fromKey) return;
-    clearLoadTimer();
-    setVideoSourceIndex((prev) => {
-      const next = prev + 1;
-      if (next >= maxSources) {
-        setMediaError(true);
-        return prev;
-      }
-      return next;
-    });
-  }, [clearLoadTimer]);
-
-  useEffect(() => {
-    setMediaError(false);
-    setVideoSourceIndex(0);
-    currentKeyRef.current = null;
-    clearLoadTimer();
-  }, [activeIndex, clearLoadTimer]);
-
-  const renderFeatured = (item: ProjectMediaItem) => {
-    if (mediaError) return <MediaErrorFallback item={item} />;
-
-    switch (item.kind) {
-      case "video": {
-        const playableSources = getPlayableVideoSources(item.src);
-        const currentSrc = playableSources[Math.min(videoSourceIndex, playableSources.length - 1)];
-        return (
-          <video
-            key={currentSrc}
-            src={currentSrc}
-            controls
-            playsInline
-            preload="metadata"
-            poster={getVideoThumbnailUrl(item.src) || undefined}
-            className="w-full h-full object-contain"
-            onLoadStart={() => {
-              currentKeyRef.current = currentSrc;
-              clearLoadTimer();
-              loadedTimerRef.current = setTimeout(() => {
-                if (currentKeyRef.current === currentSrc) {
-                  tryNextVideoSource(playableSources.length, currentSrc);
-                }
-              }, 20000);
-            }}
-            onLoadedMetadata={() => {
-              // Do NOT advance on metadata alone. Some browsers initially
-              // report duration=0 then fire durationchange with actual value.
-            }}
-            onDurationChange={(e) => {
-              const dur = e.currentTarget.duration;
-              if (dur && Number.isFinite(dur) && dur > 0) {
-                clearLoadTimer();
-                setMediaError(false);
-              }
-            }}
-            onCanPlay={(e) => {
-              const dur = e.currentTarget.duration;
-              if (dur && Number.isFinite(dur) && dur > 0) {
-                clearLoadTimer();
-                setMediaError(false);
-              }
-            }}
-            onError={(e) => {
-              const key = e.currentTarget.currentSrc || currentSrc;
-              tryNextVideoSource(playableSources.length, key);
-            }}
-          >
-            <p className="text-foreground/40 text-xs p-4">
-              Your browser does not support the video tag.{item.provider ? ` Open in ${item.provider} instead.` : ""}
-            </p>
-          </video>
-        );
-      }
-      case "embed":
-        return item.embedUrl ? (
-          <iframe
-            key={item.embedUrl}
-            src={item.embedUrl}
-            className="w-full h-full"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            title={item.alt || title || "Embedded media"}
-          />
-        ) : (
-          <ExternalVideoCard item={item} />
-        );
-      case "external":
-        return <ExternalVideoCard item={item} />;
-      case "image":
-        return (
-          <Image
-            key={item.src}
-            src={item.src}
-            alt={item.alt || title || "Project media"}
-            fill
-            className="object-contain"
-            sizes="(max-width: 768px) 100vw, 900px"
-            onError={() => setMediaError(true)}
-          />
-        );
-      default:
-        return <MediaErrorFallback item={item} />;
-    }
-  };
 
   const renderThumbnail = (item: ProjectMediaItem, index: number) => {
     const isActive = index === safeIndex;
@@ -319,7 +338,7 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
               transition={{ duration: 0.2 }}
               className="absolute inset-0"
             >
-              {renderFeatured(active)}
+              <FeaturedMedia item={active} title={title} />
             </motion.div>
           </AnimatePresence>
         </div>
