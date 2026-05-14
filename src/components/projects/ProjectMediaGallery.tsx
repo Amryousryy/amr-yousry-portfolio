@@ -358,10 +358,10 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
           </>
         )}
 
-        {/* Caption overlay */}
+        {/* Caption overlay — pointer-events-none so video controls are clickable */}
         {active.caption && (
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/90 to-transparent p-3 sm:p-4">
-            <p className="text-[10px] sm:text-xs text-foreground/70 font-modern leading-relaxed max-w-[80%]">
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/90 to-transparent p-3 sm:p-4 pointer-events-none">
+            <p className="text-[10px] sm:text-xs text-foreground/70 font-modern leading-relaxed max-w-[80%] pointer-events-auto">
               {active.caption}
             </p>
           </div>
