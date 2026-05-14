@@ -85,9 +85,28 @@ function MediaErrorFallback({ item }: { item: ProjectMediaItem }) {
 }
 
 function FeaturedMedia({ item, title }: { item: ProjectMediaItem; title?: string }) {
+  // Trusted Cloudinary MP4: render directly, no fallback state, no event handlers that replace the player.
+  if (item.kind === "video" && isTrustedCloudinaryMp4(item.src)) {
+    return (
+      <video
+        key={item.src}
+        src={item.src}
+        controls
+        playsInline
+        preload="auto"
+        poster={getVideoThumbnailUrl(item.src) || undefined}
+        className="w-full h-full object-contain"
+      >
+        <p className="text-foreground/40 text-xs p-4">
+          Your browser does not support the video tag.{item.provider ? ` Open in ${item.provider} instead.` : ""}
+        </p>
+      </video>
+    );
+  }
+
+  // State for non-trusted videos (.mov, external URLs, or after trusted MP4 exhaustion)
   const [mediaError, setMediaError] = useState(false);
   const [videoSourceIndex, setVideoSourceIndex] = useState(0);
-  const [trustedMp4HardError, setTrustedMp4HardError] = useState(false);
   const currentKeyRef = useRef<string | null>(null);
   const loadedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -115,34 +134,6 @@ function FeaturedMedia({ item, title }: { item: ProjectMediaItem; title?: string
 
   switch (item.kind) {
     case "video": {
-      const isTrusted = isTrustedCloudinaryMp4(item.src);
-
-      if (isTrusted && !trustedMp4HardError) {
-        return (
-          <video
-            key={item.src}
-            src={item.src}
-            controls
-            playsInline
-            preload="auto"
-            poster={getVideoThumbnailUrl(item.src) || undefined}
-            className="w-full h-full object-contain"
-            onLoadedMetadata={() => { setMediaError(false); }}
-            onDurationChange={() => { setMediaError(false); }}
-            onCanPlay={() => { setMediaError(false); }}
-            onPlaying={() => { setMediaError(false); }}
-            onError={() => {
-              setTrustedMp4HardError(true);
-              setVideoSourceIndex(1);
-            }}
-          >
-            <p className="text-foreground/40 text-xs p-4">
-              Your browser does not support the video tag.{item.provider ? ` Open in ${item.provider} instead.` : ""}
-            </p>
-          </video>
-        );
-      }
-
       const playableSources = getPlayableVideoSources(item.src);
       const currentSrc = playableSources[Math.min(videoSourceIndex, playableSources.length - 1)];
 
