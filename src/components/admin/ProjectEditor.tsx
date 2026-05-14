@@ -15,7 +15,7 @@ import {
   generateSlugFromTitle,
   createEmptyProjectSection,
 } from "@/lib/validation";
-import { mediaConfig, getMediaKind, getVideoThumbnailUrl, type MediaKind } from "@/lib/media/config";
+import { mediaConfig, getMediaKind, getVideoThumbnailUrl, isValidMediaUrl, type MediaKind } from "@/lib/media/config";
 import MediaUploader from "@/components/admin/MediaUploader";
 import { useUnsavedChanges } from "@/lib/hooks";
 import { ErrorSummary, scrollToFirstError } from "@/components/admin/ErrorSummary";
@@ -172,6 +172,7 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
   const watchedTitle = watch("title");
   const watchedSlug = watch("slug");
   const watchedImage = watch("image");
+  const watchedVideo = watch("video");
   const watchedFeatured = watch("featured");
   const watchedGallery = watch("gallery") || [];
   const watchedCaseStudyMedia = watch("caseStudyMedia") || [];
@@ -234,6 +235,14 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
     setUnsavedSubmitting(true);
     if (!enableVideo) {
       data.video = undefined;
+    }
+    if (data.caseStudyMedia) {
+      data.caseStudyMedia = data.caseStudyMedia.filter(
+        item => item.src && item.src.trim().length > 0
+      );
+    }
+    if (data.gallery) {
+      data.gallery = data.gallery.filter(url => url && url.trim().length > 0);
     }
     onSave(data);
   };
@@ -639,6 +648,11 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
                     placeholder="https://youtube.com/watch?v=..."
                   />
                   <p className="text-[10px] text-foreground/40">YouTube, Vimeo, Cloudinary, or direct video URL.</p>
+                  {watchedVideo && isValidMediaUrl(watchedVideo) && (
+                    <div className="mt-2 aspect-video bg-primary/5 relative overflow-hidden rounded">
+                      <VideoPreview src={watchedVideo} />
+                    </div>
+                  )}
                 </div>
               )}
             </div>
