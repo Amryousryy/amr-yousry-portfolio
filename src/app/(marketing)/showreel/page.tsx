@@ -8,6 +8,7 @@ import Link from "next/link";
 import ShowreelTracker from "@/components/analytics/ShowreelTracker";
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: false },
   title: "Showreel",
   description:
     "A curated selection of cinematic video work and creative direction. New showreel in progress — browse project case studies in the meantime.",
