@@ -104,6 +104,29 @@
   }
 }
 
+/* Loading bar animation for boot sequence */
+@keyframes loadingBarFill {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+@keyframes glitchReveal {
+  0% { clip-path: inset(0 0 100% 0); opacity: 0; transform: translateY(8px) scale(0.98); }
+  20% { clip-path: inset(0 0 0 0); opacity: 1; transform: translateY(0) scale(1); filter: blur(1px); }
+  35% { clip-path: inset(10% 0 80% 0); transform: translate(-1px, 0); filter: blur(0); }
+  50% { clip-path: inset(70% 0 15% 0); transform: translate(1px, 0); }
+  70% { clip-path: inset(30% 0 50% 0); transform: translate(-1px, 0); }
+  100% { clip-path: inset(0 0 0 0); opacity: 1; transform: translate(0, 0); }
+}
+
+@keyframes flickerIn {
+  0%, 100% { opacity: 1; }
+  10% { opacity: 0.9; }
+  12% { opacity: 1; }
+  40% { opacity: 0.95; }
+  42% { opacity: 1; }
+}
+
 /* Custom pixel star cursor - desktop/mouse only */
 @media (hover: hover) and (pointer: fine) {
   body {
