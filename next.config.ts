@@ -39,6 +39,8 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || '',
   },
   images: {
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 86400,
     remotePatterns: [
       {
         protocol: "https",
@@ -51,7 +53,7 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    optimizePackageImports: ['three', '@react-three/fiber', '@react-three/drei', 'gsap', 'lenis'],
+    optimizePackageImports: ['gsap'],
   },
   async headers() {
     return [

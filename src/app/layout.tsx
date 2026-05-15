@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Press_Start_2P, Inter } from "next/font/google";
 import "@/styles/globals.css";
+import "@/styles/pixel-system.css";
 
 const pressStart2P = Press_Start_2P({
   subsets: ["latin"],
