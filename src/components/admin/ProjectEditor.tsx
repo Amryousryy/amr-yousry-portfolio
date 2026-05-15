@@ -24,14 +24,8 @@ import BasicInfoFields from "@/components/admin/BasicInfoFields";
 import ProjectStatusFields from "@/components/admin/ProjectStatusFields";
 import VideoPreview from "@/components/admin/VideoPreview";
 import VideoPosterCard from "@/components/admin/VideoPosterCard";
-
-const PROJECT_CATEGORIES = [
-  { value: "filmmaking", label: "Filmmaking" },
-  { value: "graphic-design", label: "Graphic Design" },
-  { value: "motion-graphic", label: "Motion Graphic" },
-  { value: "video-editing", label: "Video Editing" },
-  { value: "ai", label: "AI" },
-] as const;
+import CategoriesFields from "@/components/admin/CategoriesFields";
+import SummaryFields from "@/components/admin/SummaryFields";
 
 interface ProjectEditorProps {
   initialData?: Project;
@@ -197,107 +191,9 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
       <div className="space-y-12">
         <BasicInfoFields register={register} errors={errors} />
 
-        {/* Section 2: Categories & Filters */}
-        <div className="space-y-4">
-          <h2 className="text-sm font-display font-bold uppercase tracking-wider text-accent border-b border-primary/10 pb-2">Categories &amp; Filters</h2>
-          <p className="text-[10px] text-foreground/40">These control which filter groups the project appears under on the public /projects page.</p>
-          <div className="space-y-3 p-6 bg-primary/5 border border-primary/10">
-            <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
-              Project Categories
-            </label>
-            <p className="text-[10px] text-foreground/40">
-              Select one or more categories.
-            </p>
-            <Controller
-              name="categories"
-              control={control}
-              render={({ field }) => (
-                <div className="flex flex-wrap gap-4">
-                  {PROJECT_CATEGORIES.map((cat) => {
-                    const checked = (field.value || []).includes(cat.value);
-                    return (
-                      <label
-                        key={cat.value}
-                        className="flex items-center gap-2 cursor-pointer group"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={() => {
-                            const current = field.value || [];
-                            const updated = checked
-                              ? current.filter((v) => v !== cat.value)
-                              : [...current, cat.value];
-                            field.onChange(updated);
-                          }}
-                          className="w-4 h-4 accent-accent"
-                        />
-                        <span
-                          className={`text-xs font-bold uppercase tracking-wider transition-colors ${
-                            checked
-                              ? "text-accent"
-                              : "text-foreground/60 group-hover:text-foreground/80"
-                          }`}
-                        >
-                          {cat.label}
-                        </span>
-                      </label>
-                    );
-                  })}
-                </div>
-              )}
-            />
-          </div>
-        </div>
+        <CategoriesFields control={control} />
 
-        {/* Section 3: Project Summary */}
-        <div className="space-y-4">
-          <h2 className="text-sm font-display font-bold uppercase tracking-wider text-accent border-b border-primary/10 pb-2">Project Summary</h2>
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-              Short Description
-            </label>
-            <textarea
-              {...register("shortDescription")}
-              rows={3}
-              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors resize-none"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-              Full Description
-            </label>
-            <textarea
-              {...register("fullDescription")}
-              rows={6}
-              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors resize-none"
-            />
-          </div>
-
-          <div className="space-y-4 p-6 bg-primary/5 border border-primary/10">
-            <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
-              Tags (comma-separated)
-            </label>
-
-            <Controller
-              name="tags"
-              control={control}
-              render={({ field }) => (
-                <input
-                  {...field}
-                  value={field.value?.join(", ") || ""}
-                  onChange={(e) => {
-                    const tags = e.target.value.split(",").map(t => t.trim()).filter(Boolean);
-                    field.onChange(tags);
-                  }}
-                  className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-                  placeholder="tag1, tag2, tag3"
-                />
-              )}
-            />
-          </div>
-        </div>
+        <SummaryFields register={register} control={control} errors={errors} />
 
         {/* Section 4: Case Study Story */}
         <div className="space-y-4">
