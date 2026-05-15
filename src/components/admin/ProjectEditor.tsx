@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useForm, useFieldArray, Controller, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Upload, Loader2, Save, Plus, X, Clock, Video, VideoOff, ImageIcon, Link, ChevronUp, ChevronDown, Play } from "lucide-react";
+import { Upload, Plus, X, Video, VideoOff, ImageIcon, Link, ChevronUp, ChevronDown } from "lucide-react";
 import { CldUploadWidget } from "next-cloudinary";
 import Image from "next/image";
 import { Project } from "@/types";
@@ -15,12 +15,15 @@ import {
   generateSlugFromTitle,
   createEmptyProjectSection,
 } from "@/lib/validation";
-import { mediaConfig, getMediaKind, getVideoThumbnailUrl, isValidMediaUrl, type MediaKind } from "@/lib/media/config";
+import { mediaConfig, getMediaKind, isValidMediaUrl, type MediaKind } from "@/lib/media/config";
 import MediaUploader from "@/components/admin/MediaUploader";
 import { useUnsavedChanges } from "@/lib/hooks";
 import { ErrorSummary, scrollToFirstError } from "@/components/admin/ErrorSummary";
-
-const categories = ["Real Estate", "UGC / Ads", "Social Media", "Corporate", "Brand Film"];
+import ProjectFormActions from "@/components/admin/ProjectFormActions";
+import BasicInfoFields from "@/components/admin/BasicInfoFields";
+import ProjectStatusFields from "@/components/admin/ProjectStatusFields";
+import VideoPreview from "@/components/admin/VideoPreview";
+import VideoPosterCard from "@/components/admin/VideoPosterCard";
 
 const PROJECT_CATEGORIES = [
   { value: "filmmaking", label: "Filmmaking" },
@@ -47,85 +50,6 @@ function getFieldError(errors: FieldErrors<FormData>, path: string): string | un
     current = current[part];
   }
   return current?.message as string | undefined;
-}
-
-function VideoPreview({ src }: { src: string }) {
-  const [state, setState] = useState<"loading" | "loaded" | "error">("loading");
-
-  if (state === "error") {
-    return (
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-primary/5 p-3">
-        <VideoOff size={24} className="text-foreground/30" />
-        <span className="text-[8px] text-foreground/40 uppercase tracking-wider text-center">
-          Video preview unavailable
-        </span>
-        <a
-          href={src}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[9px] text-accent hover:text-accent/80 underline"
-        >
-          Open video
-        </a>
-      </div>
-    );
-  }
-
-  return (
-    <>
-      {state === "loading" && (
-        <div className="absolute inset-0 flex items-center justify-center bg-primary/5 z-10">
-          <Loader2 size={20} className="animate-spin text-accent" />
-        </div>
-      )}
-      <video
-        src={src}
-        controls
-        playsInline
-        preload="metadata"
-        className="w-full h-full object-cover"
-        onError={() => setState("error")}
-        onLoadedMetadata={(e) => {
-          const vid = e.target as HTMLVideoElement;
-          setState(!vid.duration || isNaN(vid.duration) ? "error" : "loaded");
-        }}
-        onCanPlay={() => setState("loaded")}
-      />
-    </>
-  );
-}
-
-function VideoPosterCard({ src }: { src: string }) {
-  const thumbUrl = getVideoThumbnailUrl(src);
-  const [fallback, setFallback] = useState(false);
-
-  if (!thumbUrl || fallback) {
-    return (
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-primary/5 p-3">
-        <VideoOff size={24} className="text-foreground/30" />
-        <span className="text-[8px] text-foreground/40 uppercase tracking-wider text-center">
-          Video preview unavailable
-        </span>
-        <a
-          href={src}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[9px] text-accent hover:text-accent/80 underline"
-        >
-          Open video
-        </a>
-      </div>
-    );
-  }
-
-  return (
-    <div className="absolute inset-0 bg-primary/5">
-      <Image src={thumbUrl} alt="" fill className="object-cover" onError={() => setFallback(true)} />
-      <span className="absolute inset-0 flex items-center justify-center bg-background/10">
-        <Play size={24} className="text-accent" />
-      </span>
-    </div>
-  );
 }
 
 export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved }: ProjectEditorProps) {
@@ -259,104 +183,19 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
 
   return (
     <div className="space-y-8">
-      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b border-primary/20 p-4 -mx-6 px-6 -mt-6 mb-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            {lastSaved && (
-              <span className="text-xs text-foreground/40 flex items-center gap-1">
-                <Clock size={12} />
-                Saved at {lastSaved}
-              </span>
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={handleSubmitClick}
-            disabled={isSaving || isSubmitting}
-            className="flex items-center space-x-3 px-8 py-3 bg-accent text-background font-bold uppercase tracking-widest text-xs pixel-border hover:scale-105 transition-transform disabled:opacity-50"
-          >
-            {isSaving || isSubmitting ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
-            <span>{isSaving || isSubmitting ? "Saving..." : "Save Project"}</span>
-          </button>
-        </div>
-      </div>
+      <ProjectFormActions
+        isSaving={isSaving}
+        isSubmitting={isSubmitting}
+        lastSaved={lastSaved}
+        onSave={handleSubmitClick}
+      />
 
       {submitAttempted && Object.keys(errors).length > 0 && (
         <ErrorSummary errors={errors as unknown as Record<string, unknown>} />
       )}
 
       <div className="space-y-12">
-        {/* Section 1: Basic Information */}
-        <div className="space-y-4">
-          <h2 className="text-sm font-display font-bold uppercase tracking-wider text-accent border-b border-primary/10 pb-2">Basic Information</h2>
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-              Title <span className="text-red-500">*</span>
-            </label>
-            <input
-              {...register("title")}
-              className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-              placeholder="Project title"
-            />
-            {getFieldError(errors, "title") && (
-              <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "title")}</p>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-                Slug <span className="text-red-500">*</span>
-              </label>
-              <input
-                {...register("slug")}
-                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-                placeholder="project-slug"
-              />
-              {getFieldError(errors, "slug") && (
-                <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "slug")}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">Client Name</label>
-              <input
-                {...register("clientName")}
-                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-                placeholder="Client Name"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">Year</label>
-              <input
-                {...register("year")}
-                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-                placeholder="2024"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-                Category <span className="text-red-500">*</span>
-              </label>
-              <input
-                list="category-suggestions"
-                {...register("category")}
-                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-                placeholder="Select or type a category"
-              />
-              <datalist id="category-suggestions">
-                {categories.map((cat) => (
-                  <option key={cat} value={cat} />
-                ))}
-              </datalist>
-              {getFieldError(errors, "category") && (
-                <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "category")}</p>
-              )}
-            </div>
-          </div>
-        </div>
+        <BasicInfoFields register={register} errors={errors} />
 
         {/* Section 2: Categories & Filters */}
         <div className="space-y-4">
@@ -931,86 +770,7 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
           </div>
         </div>
 
-        {/* Section 6: Publishing & Homepage */}
-        <div className="space-y-4">
-          <h2 className="text-sm font-display font-bold uppercase tracking-wider text-accent border-b border-primary/10 pb-2">Publishing &amp; Homepage</h2>
-          <p className="text-xs text-foreground/40">
-            Control where this project appears and whether it is publicly visible.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-            {/* Featured */}
-            <div className="border border-primary/10 p-4 bg-primary/5 space-y-3">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input type="checkbox" {...register("featured")} className="w-4 h-4 accent-accent" />
-                <span className="text-xs font-bold uppercase tracking-widest text-foreground/70">
-                  Featured
-                </span>
-              </label>
-              <p className="text-[10px] text-foreground/40 leading-relaxed">
-                Show on homepage selected works.
-              </p>
-            </div>
-
-            {/* Featured Order */}
-            <div className="border border-primary/10 p-4 bg-primary/5 space-y-2">
-              <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
-                Featured Order
-              </label>
-              <input
-                type="number"
-                {...register("featuredOrder", { valueAsNumber: true })}
-                disabled={!watchedFeatured}
-                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                placeholder="0"
-              />
-              <p className="text-[10px] text-foreground/40 leading-relaxed">
-                {watchedFeatured
-                  ? "Lower = first on homepage."
-                  : "Enable Featured to use homepage order."}
-              </p>
-            </div>
-
-            {/* Status */}
-            <div className="border border-primary/10 p-4 bg-primary/5 space-y-2">
-              <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
-                Status
-              </label>
-              <Controller
-                name="status"
-                control={control}
-                render={({ field }) => (
-                  <select
-                    {...field}
-                    className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors appearance-none text-sm"
-                  >
-                    <option value="draft">Draft</option>
-                    <option value="published">Published</option>
-                  </select>
-                )}
-              />
-              <p className="text-[10px] text-foreground/40 leading-relaxed">
-                Controls public visibility.
-              </p>
-            </div>
-
-            {/* Display Order */}
-            <div className="border border-primary/10 p-4 bg-primary/5 space-y-2">
-              <label className="text-xs font-bold uppercase tracking-widest text-foreground/70">
-                Display Order
-              </label>
-              <input
-                type="number"
-                {...register("displayOrder", { valueAsNumber: true })}
-                className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-                placeholder="0"
-              />
-              <p className="text-[10px] text-foreground/40 leading-relaxed">
-                Sorting order within lists.
-              </p>
-            </div>
-          </div>
-        </div>
+        <ProjectStatusFields register={register} control={control} featured={watchedFeatured} />
       </div>
     </div>
   );
