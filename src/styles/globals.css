@@ -102,6 +102,12 @@
     overflow-wrap: normal;
     text-wrap: balance;
   }
+
+  .pixel-text {
+    font-family: var(--font-pixel);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
 }
 
 /* Loading bar animation for boot sequence */

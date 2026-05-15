@@ -156,3 +156,29 @@
   0%, 100% { border-color: var(--pixel-teal); }
   50% { border-color: transparent; }
 }
+
+.pixel-border {
+  border: 2px solid var(--pixel-teal);
+  box-shadow: 4px 4px 0px 0px var(--pixel-dark);
+}
+
+.pixel-separator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 0;
+}
+
+.pixel-separator::before,
+.pixel-separator::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 204, 0.3), transparent);
+}
+
+.pixel-separator-dot {
+  width: 4px;
+  height: 4px;
+  background: var(--pixel-teal);
+}
