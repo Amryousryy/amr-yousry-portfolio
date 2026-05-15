@@ -107,6 +107,14 @@ function toPublicProject(doc: Record<string, unknown>): Project {
   const clientVal = toPlainText(doc.client) || toPlainText(doc.clientName) || "";
   const imageUrl = toPlainText(doc.image) || "";
   const title = toPlainText(doc.title);
+  const rawSeo = doc.seo as Record<string, unknown> | undefined;
+  const seo = rawSeo
+    ? {
+        title: toPlainText(rawSeo.title, undefined),
+        description: toPlainText(rawSeo.description, undefined),
+        keywords: normalizeStrings(rawSeo.keywords),
+      }
+    : undefined;
   return {
     id: (doc._id as { toString(): string }).toString(),
     slug: toPlainText(doc.slug),
@@ -127,6 +135,9 @@ function toPublicProject(doc: Record<string, unknown>): Project {
     caseStudyMedia: normalizeCaseStudyMedia(doc.caseStudyMedia),
     heroVideo: toPlainText(doc.video) || undefined,
     media: normalizeMediaItems(doc, title),
+    seo: seo && (seo.title !== undefined || seo.description !== undefined)
+      ? seo as { title?: string; description?: string; keywords?: string[] }
+      : undefined,
   };
 }
 

@@ -23,28 +23,33 @@ export async function generateMetadata({ params }: CaseStudyPageProps): Promise<
 
   if (!project) return {};
 
-  const title = `${project.title} | Amr Yousry Portfolio`;
-  const description = project.summary || `${project.title} — A project by Amr Yousry.`;
+  const seoTitle = project.seo?.title || project.title;
+  const seoDescription = project.seo?.description || project.summary || `${project.title} — A project by Amr Yousry.`;
+  const title = seoTitle;
+  const ogTitle = `${seoTitle} | Amr Yousry Portfolio`;
   const url = `https://amr-yousry-portfolio.vercel.app/projects/${slug}`;
-  const imageUrl = project.bannerImage || project.thumbnail || "https://amr-yousry-portfolio.vercel.app/images/meta/og-preview-v6.jpg";
+  const imageUrl = project.bannerImage || project.thumbnail || "/images/meta/og-preview-v6.jpg";
+  const absoluteImageUrl = imageUrl.startsWith("http")
+    ? imageUrl
+    : `https://amr-yousry-portfolio.vercel.app${imageUrl}`;
 
   return {
     title,
-    description,
+    description: seoDescription,
     alternates: { canonical: url },
     openGraph: {
-      title,
-      description,
+      title: ogTitle,
+      description: seoDescription,
       url,
       siteName: "Amr Yousry Portfolio",
-      images: [{ url: imageUrl, width: 1200, height: 630, alt: title }],
+      images: [{ url: absoluteImageUrl, width: 1200, height: 630, alt: ogTitle }],
       type: "article",
     },
     twitter: {
       card: "summary_large_image",
       title,
-      description,
-      images: [imageUrl],
+      description: seoDescription,
+      images: [absoluteImageUrl],
     },
   };
 }

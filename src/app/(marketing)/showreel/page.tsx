@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { showreelConfig } from "@/data/showreel";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
@@ -5,6 +6,34 @@ import { PixelButton } from "@/components/ui/pixel-button";
 import Image from "next/image";
 import Link from "next/link";
 import ShowreelTracker from "@/components/analytics/ShowreelTracker";
+
+export const metadata: Metadata = {
+  title: "Showreel",
+  description:
+    "A curated selection of cinematic video work and creative direction. New showreel in progress — browse project case studies in the meantime.",
+  openGraph: {
+    title: "Showreel | Amr Yousry",
+    description:
+      "A curated selection of cinematic video work and creative direction. New showreel in progress — browse project case studies in the meantime.",
+    url: "https://amr-yousry-portfolio.vercel.app/showreel",
+    siteName: "Amr Yousry Portfolio",
+    images: [
+      {
+        url: "/images/meta/og-preview-v6.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Showreel | Amr Yousry",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Showreel | Amr Yousry",
+    description:
+      "A curated selection of cinematic video work and creative direction. New showreel in progress — browse project case studies in the meantime.",
+    images: ["/images/meta/og-preview-v6.jpg"],
+  },
+};
 
 export default function ShowreelPage() {
   const isYouTube = showreelConfig.type === "youtube";

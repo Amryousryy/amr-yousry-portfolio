@@ -20,6 +20,12 @@ export interface ProjectResult {
   value: string;
 }
 
+export interface ProjectSeo {
+  title?: string;
+  description?: string;
+  keywords?: string[];
+}
+
 export interface Project {
   id: string;
   slug: string;
@@ -46,4 +52,7 @@ export interface Project {
   caseStudyMedia?: ProjectMedia[];
   media?: ProjectMediaItem[];
   heroVideo?: string;
+
+  // SEO
+  seo?: ProjectSeo;
 }

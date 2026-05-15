@@ -45,7 +45,13 @@ export const metadata: Metadata = {
     description:
       "Cinematic visuals, brand systems, and digital experiences built for attention, trust, and conversion.",
     images: ["/images/meta/og-preview-v6.jpg"],
+    site: "@amryousryy",
+    creator: "@amryousryy",
   },
+};
+
+export const viewport = {
+  themeColor: "#240e68",
 };
 
 export default function RootLayout({
