@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import HeroSection from "@/components/sections/hero";
 import BrandMarquee from "@/components/ui/BrandMarquee";
 import ClientDynamicSections from "./ClientDynamicSections";
 import { Section } from "@/components/ui/section";
 import { getFeaturedProjects } from "@/lib/projects/public-projects";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "https://amr-yousry-portfolio.vercel.app",
+  },
+};
 
 export const revalidate = 60;
 

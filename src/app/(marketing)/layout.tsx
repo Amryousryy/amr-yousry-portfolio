@@ -2,6 +2,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import PageViewTracker from "@/components/analytics/PageViewTracker";
 import { CreativeEngineLoader } from "@/components/ui/CreativeEngineLoader";
+import JsonLd from "@/components/seo/JsonLd";
 
 export default function MarketingLayout({
   children,
@@ -10,6 +11,7 @@ export default function MarketingLayout({
 }) {
   return (
     <CreativeEngineLoader>
+      <JsonLd />
       <PageViewTracker />
       <Navbar />
       <main className="pt-20 flex-grow">{children}</main>

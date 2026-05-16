@@ -26,6 +26,10 @@ export const metadata: Metadata = {
   },
   description:
     "Cinematic visuals, brand systems, and digital experiences built for attention, trust, and conversion.",
+  robots: {
+    index: true,
+    follow: true,
+  },
   openGraph: {
     type: "website",
     url: "https://amr-yousry-portfolio.vercel.app",

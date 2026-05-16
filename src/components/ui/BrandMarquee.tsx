@@ -1,4 +1,26 @@
 import { BRAND_LOGOS } from "@/data/brands";
+import type { ReactNode } from "react";
+
+function BrandLogoWrapper({ brand, children }: { brand: typeof BRAND_LOGOS[number]; children: ReactNode }) {
+  if (brand.website) {
+    return (
+      <a
+        href={brand.website}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center justify-center h-full w-full"
+        style={{ filter: "brightness(1.8) contrast(1.05)" }}
+      >
+        {children}
+      </a>
+    );
+  }
+  return (
+    <div className="flex items-center justify-center h-full w-full" style={{ filter: "brightness(1.8) contrast(1.05)" }}>
+      {children}
+    </div>
+  );
+}
 
 export default function BrandMarquee() {
   // Hide marquee entirely if no real client logos are configured
@@ -24,15 +46,7 @@ export default function BrandMarquee() {
               style={{ width: 'clamp(112px, 34vw, 160px)', height: '60px', padding: '0 8px' }}
             >
               {brand.logoPath ? (
-                <a
-                  href={brand.website || undefined}
-                  target={brand.website ? "_blank" : undefined}
-                  rel={brand.website ? "noopener noreferrer" : undefined}
-                  className="flex items-center justify-center h-full w-full"
-                  style={{ 
-                    filter: 'brightness(1.8) contrast(1.05)',
-                  }}
-                >
+                <BrandLogoWrapper brand={brand}>
                   <img
                     src={brand.logoPath}
                     alt={`${brand.name} logo`}
@@ -41,7 +55,7 @@ export default function BrandMarquee() {
                     className="max-h-full w-auto object-contain hover:brightness-125 transition-all duration-300"
                     style={{ maxHeight: '56px', maxWidth: '100%' }}
                   />
-                </a>
+                </BrandLogoWrapper>
               ) : (
                 <span className="font-pixel text-white/70 text-sm whitespace-nowrap">
                   {brand.name}
@@ -57,15 +71,7 @@ export default function BrandMarquee() {
               style={{ width: 'clamp(112px, 34vw, 160px)', height: '60px', padding: '0 8px' }}
             >
               {brand.logoPath ? (
-                <a
-                  href={brand.website || undefined}
-                  target={brand.website ? "_blank" : undefined}
-                  rel={brand.website ? "noopener noreferrer" : undefined}
-                  className="flex items-center justify-center h-full w-full"
-                  style={{ 
-                    filter: 'brightness(1.8) contrast(1.05)',
-                  }}
-                >
+                <BrandLogoWrapper brand={brand}>
                   <img
                     src={brand.logoPath}
                     alt={`${brand.name} logo`}
@@ -74,7 +80,7 @@ export default function BrandMarquee() {
                     className="max-h-full w-auto object-contain hover:brightness-125 transition-all duration-300"
                     style={{ maxHeight: '56px', maxWidth: '100%' }}
                   />
-                </a>
+                </BrandLogoWrapper>
               ) : (
                 <span className="font-pixel text-white/70 text-sm whitespace-nowrap">
                   {brand.name}

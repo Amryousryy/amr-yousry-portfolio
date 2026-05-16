@@ -8,6 +8,9 @@ export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Projects",
+  alternates: {
+    canonical: "https://amr-yousry-portfolio.vercel.app/projects",
+  },
   description:
     "A selection of cinematic case studies in creative direction, video production, motion design, and brand storytelling.",
   openGraph: {
