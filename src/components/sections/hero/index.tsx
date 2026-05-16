@@ -23,7 +23,7 @@ export default function HeroSection() {
             
             {/* Pixel separator */}
             <div className="pixel-separator mt-4 mb-4">
-              <div className="pixel-separator-dot" style={{ background: "var(--color-brand-yellow)" }} />
+              <div className="pixel-separator-dot" />
             </div>
             
             {/* Subtitle - Business focused, readable, neutral color */}
