@@ -45,8 +45,8 @@ export default function HeroSection() {
               <PixelButton 
                 variant="primary" 
                 href={heroContent.ctas.primary.href}
-                className="w-full sm:w-auto px-6 sm:px-10 py-4 text-xs sm:text-sm tracking-widest group"
-                style={{ minHeight: '56px', minWidth: 'min(100%, 180px)' }}
+                className="w-full sm:w-auto px-6 sm:px-10 py-4 sm:py-5 text-xs sm:text-sm tracking-widest group"
+                style={{ minHeight: '60px', minWidth: 'min(100%, 220px)' }}
               >
                 <span>{heroContent.ctas.primary.text}</span>
                 <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>

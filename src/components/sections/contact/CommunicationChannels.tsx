@@ -18,7 +18,7 @@ export default function CommunicationChannels() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="WhatsApp - Fastest response"
-        className="flex min-h-[56px] items-center gap-4 text-white font-pixel text-xs group transition-colors mb-6"
+        className="flex min-h-[56px] items-center gap-4 text-white font-pixel text-xs group transition-colors mb-5 md:mb-6"
       >
         <ContactIconImage 
           src="/images/social/whatsapp-pixel-v2.png" 
@@ -37,7 +37,7 @@ export default function CommunicationChannels() {
         whileHover={shouldReduceMotion ? {} : { x: 8 }}
         href="mailto:amryousryy@gmail.com"
         aria-label="Email - Business inquiries"
-        className="flex min-h-[56px] items-center gap-4 text-white font-pixel text-xs group transition-colors mb-6"
+        className="flex min-h-[56px] items-center gap-4 text-white font-pixel text-xs group transition-colors mb-5 md:mb-6"
       >
         <ContactIconImage 
           src="/images/social/email-pixel-v2.png" 

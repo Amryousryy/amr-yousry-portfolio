@@ -140,11 +140,11 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
               </p>
             )}
 
-            <div className="mt-8">
+            <div className="mt-10">
               <PixelButton 
                 type="submit" 
                 variant="primary" 
-                className="w-full py-5 text-xs tracking-[0.22em] sm:tracking-[0.3em] font-bold"
+                className="w-full py-6 text-xs tracking-[0.22em] sm:tracking-[0.3em] font-bold"
               >
                 {contactContent.form.labels.submit.toUpperCase()}
               </PixelButton>

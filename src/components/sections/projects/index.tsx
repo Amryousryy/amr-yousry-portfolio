@@ -86,7 +86,7 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
         </div>
 
         {/* Mobile View All CTA */}
-        <div className="mt-12 flex justify-center md:hidden">
+        <div className="mt-10 flex justify-center md:hidden">
           <Link href="/projects" className="w-full">
             <PixelButton variant="outline" className="w-full py-5 tracking-widest text-xs">
               View All Projects

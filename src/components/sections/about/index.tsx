@@ -63,7 +63,7 @@ export default function AboutSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.3 }}
-                className="mt-6"
+                className="mt-8"
               >
                 <p className="text-sm text-foreground/60 mb-3">
                   Need a creative partner who can connect design, video, and digital experience?
@@ -124,7 +124,7 @@ export default function AboutSection() {
           {/* Right Column - Stats + Character */}
           <aside className="lg:col-span-5 flex flex-col space-y-6 h-full">
             {/* Experience Stats */}
-            <div className="space-y-3">
+            <div className="space-y-4">
               {aboutContent.stats.map((stat, index) => (
                 <motion.div 
                   key={stat.label}
