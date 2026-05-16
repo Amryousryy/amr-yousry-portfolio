@@ -7,13 +7,15 @@ const pressStart2P = Press_Start_2P({
   subsets: ["latin"],
   weight: "400",
   variable: "--font-press-start",
-  display: "swap",
+  display: "fallback",
+  preload: true,
 });
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-modern",
-  display: "swap",
+  display: "optional",
+  preload: true,
 });
 
 export const metadata: Metadata = {

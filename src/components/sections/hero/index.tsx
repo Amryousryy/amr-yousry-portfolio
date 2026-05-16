@@ -1,5 +1,3 @@
-"use client";
-
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { PixelButton } from "@/components/ui/pixel-button";

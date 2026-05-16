@@ -59,10 +59,11 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="font-pixel text-[9px] text-brand-cyan/60 tracking-[0.2em] uppercase block px-1">
+                <label htmlFor="contact-name" className="font-pixel text-[9px] text-brand-cyan/60 tracking-[0.2em] uppercase block px-1">
                   {contactContent.form.labels.name}
                 </label>
                 <input 
+                  id="contact-name"
                   type="text" 
                   name="name"
                   value={formData.name}
@@ -75,10 +76,11 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
                 />
               </div>
               <div className="space-y-2">
-                <label className="font-pixel text-[9px] text-brand-cyan/60 tracking-[0.2em] uppercase block px-1">
+                <label htmlFor="contact-email" className="font-pixel text-[9px] text-brand-cyan/60 tracking-[0.2em] uppercase block px-1">
                   {contactContent.form.labels.email}
                 </label>
                 <input 
+                  id="contact-email"
                   type="email" 
                   name="email"
                   value={formData.email}
@@ -93,11 +95,12 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
             </div>
 
             <div className="space-y-2 mt-6">
-              <label className="font-pixel text-[9px] text-brand-cyan/60 tracking-[0.2em] uppercase block px-1">
+              <label htmlFor="contact-service" className="font-pixel text-[9px] text-brand-cyan/60 tracking-[0.2em] uppercase block px-1">
                 {contactContent.form.labels.service}
               </label>
               <div className="relative">
                 <select 
+                  id="contact-service"
                   name="service"
                   value={formData.service}
                   onChange={onChange}
@@ -114,10 +117,11 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
             </div>
 
             <div className="space-y-2 mt-6">
-              <label className="font-pixel text-[9px] text-brand-cyan/60 tracking-[0.2em] uppercase block px-1">
+              <label htmlFor="contact-message" className="font-pixel text-[9px] text-brand-cyan/60 tracking-[0.2em] uppercase block px-1">
                 {contactContent.form.labels.message}
               </label>
               <textarea 
+                id="contact-message"
                 name="message"
                 value={formData.message}
                 onChange={onChange}

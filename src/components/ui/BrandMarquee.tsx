@@ -1,5 +1,3 @@
-"use client";
-
 import { BRAND_LOGOS } from "@/data/brands";
 
 export default function BrandMarquee() {
@@ -16,8 +14,8 @@ export default function BrandMarquee() {
         </p>
       </div>
       
-      <div className="relative group">
-        <div className="flex items-center gap-8 md:gap-16 animate-marquee hover:[animation-play-state:paused]">
+        <div className="relative group">
+        <div className="flex items-center gap-8 md:gap-16 animate-marquee hover:[animation-play-state:paused]" style={{"--marquee-duration": "60s"} as React.CSSProperties}>
           {/* First set of logos */}
           {BRAND_LOGOS.map((brand, i) => (
             <div
@@ -38,6 +36,8 @@ export default function BrandMarquee() {
                   <img
                     src={brand.logoPath}
                     alt={`${brand.name} logo`}
+                    width={160}
+                    height={56}
                     className="max-h-full w-auto object-contain hover:brightness-125 transition-all duration-300"
                     style={{ maxHeight: '56px', maxWidth: '100%' }}
                   />
@@ -69,6 +69,8 @@ export default function BrandMarquee() {
                   <img
                     src={brand.logoPath}
                     alt={`${brand.name} logo`}
+                    width={160}
+                    height={56}
                     className="max-h-full w-auto object-contain hover:brightness-125 transition-all duration-300"
                     style={{ maxHeight: '56px', maxWidth: '100%' }}
                   />
@@ -87,27 +89,7 @@ export default function BrandMarquee() {
         <div className="absolute top-0 right-0 w-8 sm:w-16 h-full bg-gradient-to-l from-brand-blue/95 to-transparent z-10 pointer-events-none" />
       </div>
       
-      <style jsx>{`
-        @keyframes marquee {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-        
-        .animate-marquee {
-          animation: marquee 60s linear infinite;
-          will-change: transform;
-        }
-        
-        @media (prefers-reduced-motion: reduce) {
-          .animate-marquee {
-            animation: none;
-          }
-        }
-      `}</style>
+
     </div>
   );
 }

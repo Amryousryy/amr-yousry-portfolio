@@ -133,6 +133,22 @@
   42% { opacity: 1; }
 }
 
+/* Marquee animation */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee var(--marquee-duration, 60s) linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+}
+
 /* Custom pixel star cursor - desktop/mouse only */
 @media (hover: hover) and (pointer: fine) {
   body {

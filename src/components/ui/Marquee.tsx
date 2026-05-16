@@ -70,24 +70,7 @@ export default function Marquee() {
         <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-[#050508] to-transparent z-10" />
       </div>
 
-      <style jsx global>{`
-        @keyframes marquee {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
 
-        .animate-marquee {
-          animation: marquee 30s linear infinite;
-        }
-
-        .animate-marquee:hover {
-          animation-play-state: paused;
-        }
-      `}</style>
     </section>
   );
 }

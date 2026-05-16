@@ -218,8 +218,8 @@ export function CreativeEngineLoader({
         </div>
       </div>
 
-      {/* Content is rendered underneath but hidden by loader */}
-      <div className={phase !== "done" ? "sr-only" : ""}>{children}</div>
+      {/* Content is rendered underneath but hidden by loader — visibility preserves layout to prevent CLS */}
+      <div style={{ visibility: phase !== "done" ? "hidden" : "visible" }}>{children}</div>
     </>
   );
 }

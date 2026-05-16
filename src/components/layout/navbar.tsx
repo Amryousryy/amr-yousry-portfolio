@@ -37,7 +37,7 @@ export function Navbar() {
       )}
     >
       <Container>
-        <nav className="flex min-w-0 items-center justify-between gap-3">
+        <nav aria-label="Main navigation" className="flex min-w-0 items-center justify-between gap-3">
           {/* Logo */}
           <Link href="/" className="group flex min-w-0 items-center gap-3">
             <img src="/images/logo.svg" alt="AMR YOUSRY" className="w-9 h-9 md:w-10 md:h-10 transition-transform group-hover:scale-105" />

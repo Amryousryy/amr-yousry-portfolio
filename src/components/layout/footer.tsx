@@ -12,7 +12,7 @@ export function Footer() {
           {/* Brand & Tagline */}
           <div className="lg:col-span-6">
             <Link href="/" className="group block mb-6">
-              <img src="/images/footer-logo.svg" alt="AMR YOUSRY" className="w-30 h-auto md:w-36 transition-transform group-hover:scale-105" />
+              <img src="/images/footer-logo.svg" alt="AMR YOUSRY" width={120} height={28} className="w-30 md:w-36 h-auto transition-transform group-hover:scale-105" />
             </Link>
             <p className="font-modern text-text-dim text-sm sm:text-base max-w-[520px] leading-relaxed antialiased">
               {footerContent.tagline}
@@ -21,7 +21,7 @@ export function Footer() {
 
           {/* Navigation Links */}
           <div className="lg:col-span-3">
-            <h4 className="font-pixel text-[10px] text-brand-cyan tracking-widest mb-6 uppercase">Navigation</h4>
+            <h2 className="font-pixel text-[10px] text-brand-cyan tracking-widest mb-6 uppercase">Navigation</h2>
             <ul className="space-y-3">
               {footerContent.links.map((link) => (
                 <li key={link.label}>
@@ -38,7 +38,7 @@ export function Footer() {
 
           {/* Social Links */}
           <div className="lg:col-span-3">
-            <h4 className="font-pixel text-[10px] text-brand-cyan tracking-widest mb-6 uppercase">Connect</h4>
+            <h2 className="font-pixel text-[10px] text-brand-cyan tracking-widest mb-6 uppercase">Connect</h2>
             <ul className="space-y-3">
               {socialLinksArray.map((social) => (
                 <li key={social.label}>
