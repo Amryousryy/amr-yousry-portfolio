@@ -62,6 +62,14 @@ export function Footer() {
           <p className="font-pixel text-[8px] text-text-dim tracking-widest uppercase leading-relaxed break-words">
             {footerContent.copyright}
           </p>
+          <div className="flex items-center gap-3">
+            <span className="font-pixel text-[7px] text-text-dim/50 tracking-[0.2em] uppercase">System Palette</span>
+            <div className="flex gap-3">
+              <div className="w-2 h-2 bg-brand-cyan" />
+              <div className="w-2 h-2 bg-brand-purple" />
+              <div className="w-2 h-2 bg-brand-pink" />
+            </div>
+          </div>
         </div>
       </Container>
     </footer>
