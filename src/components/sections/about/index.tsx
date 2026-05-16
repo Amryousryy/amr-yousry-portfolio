@@ -10,7 +10,7 @@ import CharacterSelector from "./CharacterSelector";
 export default function AboutSection() {
 
   return (
-    <Section id="about" className="bg-brand-blue/98 relative py-14 md:py-20">
+    <Section id="about" className="bg-brand-blue/95 relative py-14 md:py-20">
       {/* Atmospheric overlay - warm personal tone */}
       <div className="absolute inset-0 bg-gradient-to-br from-brand-pink/3 via-transparent to-brand-blue/98 pointer-events-none" />
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-pink/15 to-transparent pointer-events-none" />

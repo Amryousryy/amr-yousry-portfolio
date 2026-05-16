@@ -6,9 +6,8 @@ import { heroContent } from "@/content/hero";
 export default function HeroSection() {
   return (
     <Section className="min-h-[82svh] flex items-center justify-center relative overflow-hidden px-0 py-14 sm:py-20 md:py-28">
-      {/* Background - performance safe CSS only */}
-      <div className="absolute inset-0 game-grid-bg pointer-events-none z-0" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(10,10,15,0.8)_100%)]" />
+      {/* Background - single subtle grid + cinematic vignette */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(10,10,15,0.55)_100%)] pointer-events-none z-0" />
 
       <Container className="relative z-10">
         <div className="text-center w-full max-w-[820px] min-w-0 mx-auto">
