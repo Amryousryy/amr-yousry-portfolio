@@ -73,11 +73,11 @@ export function CreativeEngineLoader({
       return () => clearTimeout(t);
     }
 
-    const t1 = setTimeout(() => setPhase("booting"), 80);
-    const t2 = setTimeout(() => setPhase("missions"), 480);
-    const t3 = setTimeout(() => setPhase("pixels"), 920);
-    const t4 = setTimeout(() => setPhase("reveal"), 1280);
-    const t5 = setTimeout(complete, 2000);
+    const t1 = setTimeout(() => setPhase("booting"), 50);
+    const t2 = setTimeout(() => setPhase("missions"), 250);
+    const t3 = setTimeout(() => setPhase("pixels"), 500);
+    const t4 = setTimeout(() => setPhase("reveal"), 750);
+    const t5 = setTimeout(complete, 1200);
 
     return () => {
       clearTimeout(t1);
