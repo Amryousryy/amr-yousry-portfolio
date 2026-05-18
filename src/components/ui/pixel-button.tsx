@@ -30,7 +30,7 @@ export function PixelButton({
   };
 
   const classes = cn(
-    "font-pixel uppercase transition-all duration-75 relative inline-flex min-h-[44px] max-w-full items-center justify-center text-center leading-tight whitespace-normal break-words",
+    "font-pixel uppercase transition-all duration-75 relative inline-flex min-h-[44px] max-w-full items-center justify-center text-center leading-tight whitespace-normal break-words focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue",
     variants[variant],
     sizes[size],
     className

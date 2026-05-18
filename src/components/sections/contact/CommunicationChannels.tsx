@@ -9,7 +9,7 @@ export default function CommunicationChannels() {
 
   return (
     <div className="pt-6 border-t border-slate-800/60">
-      <h3 className="font-pixel text-[9px] text-brand-cyan/70 mb-6 tracking-[0.3em] uppercase">Communication Channels</h3>
+      <h3 className="font-pixel text-[9px] text-brand-cyan/85 mb-6 tracking-[0.3em] uppercase">Communication Channels</h3>
       
       {/* WhatsApp - Primary */}
       <motion.a 

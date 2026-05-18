@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,6 +17,8 @@ const navLinks = [
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const menuToggleRef = useRef<HTMLButtonElement>(null);
+  const firstLinkRef = useRef<HTMLAnchorElement>(null);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -24,6 +26,13 @@ export function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Focus management for mobile menu
+  useEffect(() => {
+    if (isOpen) {
+      requestAnimationFrame(() => firstLinkRef.current?.focus());
+    }
+  }, [isOpen]);
 
   // Close mobile menu on route change
   // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -39,7 +48,7 @@ export function Navbar() {
       <Container>
         <nav aria-label="Main navigation" className="flex min-w-0 items-center justify-between gap-3">
           {/* Logo */}
-          <Link href="/" className="group flex min-w-0 items-center gap-3">
+          <Link href="/" className="group flex min-w-0 items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue">
             <img src="/images/logo.svg" alt="AMR YOUSRY" className="w-9 h-9 md:w-10 md:h-10 transition-transform group-hover:scale-105" />
             <span className="font-pixel text-sm text-brand-cyan tracking-[0.2em] hidden sm:inline-block">AMR YOUSRY</span>
           </Link>
@@ -51,7 +60,7 @@ export function Navbar() {
                 key={link.label} 
                 href={link.href}
                 className={cn(
-                  "font-pixel text-[10px] tracking-[0.2em] transition-all duration-200 relative group",
+                  "font-pixel text-[10px] tracking-[0.2em] transition-all duration-200 relative group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue",
                   link.isCTA 
                     ? "bg-brand-cyan text-brand-blue px-5 py-2 border-2 border-brand-cyan shadow-[2px_2px_0px_0px_rgba(0,0,0,0.8)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,0.8)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none" 
                     : "text-text-dim hover:text-brand-cyan"
@@ -67,8 +76,10 @@ export function Navbar() {
 
           {/* Mobile Menu Toggle */}
           <button 
-            className="md:hidden text-white p-3 hover:text-brand-cyan transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+            ref={menuToggleRef}
+            className="md:hidden text-white p-3 hover:text-brand-cyan transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
             onClick={() => setIsOpen(!isOpen)}
+            onKeyDown={(e) => { if (e.key === "Escape" && isOpen) { setIsOpen(false); menuToggleRef.current?.focus(); } }}
             aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={isOpen}
           >
@@ -88,12 +99,13 @@ export function Navbar() {
             className="absolute top-full left-0 w-full bg-brand-blue/95 backdrop-blur-sm border-b border-slate-800/50 md:hidden"
           >
             <div className="flex flex-col p-5 gap-4 items-center text-center">
-              {navLinks.map((link) => (
+              {navLinks.map((link, i) => (
                 <Link 
                   key={link.label} 
+                  ref={i === 0 ? firstLinkRef : undefined}
                   href={link.href}
                   className={cn(
-                    "font-pixel text-sm tracking-widest py-3 min-h-[44px] flex items-center justify-center w-full",
+                    "font-pixel text-sm tracking-widest py-3 min-h-[44px] flex items-center justify-center w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue",
                     link.isCTA ? "text-brand-cyan" : "text-text-dim hover:text-brand-cyan transition-colors"
                   )}
                 >

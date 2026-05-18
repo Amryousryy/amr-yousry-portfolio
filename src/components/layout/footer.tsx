@@ -11,7 +11,7 @@ export function Footer() {
             
           {/* Brand & Tagline */}
           <div className="lg:col-span-6">
-            <Link href="/" className="group block mb-6">
+            <Link href="/" className="group block mb-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue">
               <img src="/images/footer-logo.svg" alt="AMR YOUSRY" width={120} height={28} className="w-30 md:w-36 h-auto transition-transform group-hover:scale-105" />
             </Link>
             <p className="font-modern text-text-dim text-sm sm:text-base max-w-[520px] leading-relaxed antialiased">
@@ -27,7 +27,7 @@ export function Footer() {
                 <li key={link.label}>
                   <Link 
                     href={link.href}
-                    className="font-modern text-text-dim hover:text-brand-cyan transition-all duration-200 text-sm uppercase tracking-wider inline-block hover:translate-x-0.5"
+                    className="font-modern text-text-dim hover:text-brand-cyan transition-all duration-200 text-sm uppercase tracking-wider inline-block hover:translate-x-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
                   >
                     {link.label}
                   </Link>
@@ -46,7 +46,7 @@ export function Footer() {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-modern text-text-dim hover:text-brand-cyan transition-all duration-200 text-sm uppercase tracking-wider inline-flex flex-wrap items-center gap-2 group hover:translate-x-0.5"
+                    className="font-modern text-text-dim hover:text-brand-cyan transition-all duration-200 text-sm uppercase tracking-wider inline-flex flex-wrap items-center gap-2 group hover:translate-x-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
                   >
                     <span>{social.label}</span>
                     <span className="font-pixel text-[8px] opacity-0 group-hover:opacity-100 transition-opacity">LVL. UP</span>

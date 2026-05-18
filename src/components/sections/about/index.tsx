@@ -90,7 +90,7 @@ export default function AboutSection() {
                     {cluster.skills.map((skill) => (
                       <span
                         key={skill}
-                        className="border border-slate-700 bg-slate-800/50 px-2 py-1 text-[10px] sm:text-[11px] font-modern text-slate-300/70 uppercase tracking-wider hover:border-brand-cyan hover:text-white transition-colors"
+                        className="border border-slate-700 bg-slate-800/50 px-2 py-1 text-[10px] sm:text-[11px] font-modern text-slate-300/85 uppercase tracking-wider hover:border-brand-cyan hover:text-white transition-colors"
                       >
                         {skill}
                       </span>
@@ -111,7 +111,7 @@ export default function AboutSection() {
                   {aboutContent.industries.map((industry) => (
                     <span
                       key={industry}
-                      className="border border-slate-700 bg-slate-800/50 px-2 py-1 text-[10px] sm:text-[11px] font-modern text-slate-300/70 uppercase tracking-wider"
+                      className="border border-slate-700 bg-slate-800/50 px-2 py-1 text-[10px] sm:text-[11px] font-modern text-slate-300/85 uppercase tracking-wider"
                     >
                       {industry}
                     </span>

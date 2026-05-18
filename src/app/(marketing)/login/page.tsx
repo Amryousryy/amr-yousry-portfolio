@@ -4,7 +4,6 @@ import React, { useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
 function LoginForm() {

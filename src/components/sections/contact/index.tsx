@@ -112,7 +112,7 @@ export default function ContactSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.15 }}
-              className="font-pixel text-[8px] text-brand-cyan/60 tracking-[0.15em] mt-4 mb-10"
+              className="font-pixel text-[8px] text-brand-cyan/80 tracking-[0.15em] mt-4 mb-10"
             >
               Usually replies within 24 hours — WhatsApp is the fastest route.
             </motion.p>

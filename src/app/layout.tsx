@@ -69,6 +69,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${pressStart2P.variable} ${inter.variable}`}>
       <body className="pixel-grid min-h-screen flex flex-col">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[99999] focus:px-4 focus:py-2 focus:bg-brand-cyan focus:text-brand-blue focus:font-pixel focus:text-[10px] focus:tracking-wider focus:uppercase focus:outline-none focus:ring-2 focus:ring-brand-cyan focus:ring-offset-2 focus:ring-offset-brand-blue"
+        >
+          Skip to main content
+        </a>
         {children}
       </body>
     </html>

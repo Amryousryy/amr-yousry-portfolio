@@ -37,7 +37,7 @@ export default function BrandMarquee() {
       </div>
       
         <div className="relative group">
-        <div className="flex items-center gap-8 md:gap-16 animate-marquee hover:[animation-play-state:paused]" style={{"--marquee-duration": "60s"} as React.CSSProperties}>
+        <div className="flex items-center gap-8 md:gap-16 animate-marquee hover:[animation-play-state:paused] focus-within:[animation-play-state:paused]" style={{"--marquee-duration": "60s"} as React.CSSProperties}>
           {/* First set of logos */}
           {BRAND_LOGOS.map((brand, i) => (
             <div

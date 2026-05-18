@@ -14,7 +14,7 @@ export default function MarketingLayout({
       <JsonLd />
       <PageViewTracker />
       <Navbar />
-      <main className="pt-20 flex-grow">{children}</main>
+      <main id="main-content" className="pt-20 flex-grow">{children}</main>
       <Footer />
     </CreativeEngineLoader>
   );
