@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useCallback, useEffect } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 
 const characters = [
@@ -27,13 +27,47 @@ const characters = [
   }
 ];
 
+const slideVariants = {
+  enter: (dir: number) => ({
+    x: dir * 60,
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+    transition: {
+      x: { duration: 0.25, ease: [0.23, 1, 0.32, 1] as const },
+      opacity: { duration: 0.2, ease: "linear" as const },
+    }
+  },
+  exit: (dir: number) => ({
+    x: dir * -60,
+    opacity: 0,
+    transition: {
+      x: { duration: 0.2, ease: [0.23, 1, 0.32, 1] as const },
+      opacity: { duration: 0.15, ease: "linear" as const },
+    }
+  }),
+};
+
 export default function CharacterSelector() {
   const [currentIndex, setCurrentIndex] = useState(0);
-
+  const [direction, setDirection] = useState(1);
+  const shouldReduceMotion = useReducedMotion();
   const total = characters.length;
   const showArrows = total > 1;
 
+  useEffect(() => {
+    // Preload all character images immediately for instant switching
+    characters.forEach(({ src }) => {
+      const img = new window.Image();
+      img.src = src;
+    });
+  }, []);
+
   const handleTransition = useCallback((newDirection: 'next' | 'prev') => {
+    const dir = newDirection === 'next' ? 1 : -1;
+    setDirection(dir);
     setCurrentIndex((prev) => {
       return newDirection === 'next' ? (prev + 1) % total : (prev - 1 + total) % total;
     });
@@ -41,29 +75,31 @@ export default function CharacterSelector() {
 
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">
-      {/* Character Image Area */}
       <div className="relative flex-1 w-full min-h-0 overflow-hidden">
-        <AnimatePresence>
+        <AnimatePresence initial={false} custom={direction} mode="popLayout">
           <motion.div
             key={currentIndex}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="absolute inset-0 w-full h-full"
+            custom={direction}
+            variants={shouldReduceMotion ? {} : slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            className="absolute inset-0 w-full h-full flex items-center justify-center"
           >
-            <Image
-              src={characters[currentIndex].src}
-              alt={characters[currentIndex].alt}
-              fill
-              className="object-contain image-pixel"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 40vw, 33vw"
-              priority
-            />
+            <div className="relative w-full h-full">
+              <Image
+                src={characters[currentIndex].src}
+                alt={characters[currentIndex].alt}
+                fill
+                className="object-contain image-pixel"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 40vw, 33vw"
+                priority
+                unoptimized
+              />
+            </div>
           </motion.div>
         </AnimatePresence>
 
-        {/* Left Arrow */}
         {showArrows && (
           <button
             onClick={() => handleTransition('prev')}
@@ -74,7 +110,6 @@ export default function CharacterSelector() {
           </button>
         )}
 
-        {/* Right Arrow */}
         {showArrows && (
           <button
             onClick={() => handleTransition('next')}
@@ -86,7 +121,6 @@ export default function CharacterSelector() {
         )}
       </div>
 
-      {/* Character Indicator */}
       {showArrows && (
         <div className="shrink-0 flex items-center justify-center pt-2 pb-1.5">
           <span className="font-pixel text-[10px] text-brand-cyan/70 tracking-wider leading-none">
