@@ -38,8 +38,8 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
         {/* Form Status HUD */}
         <div className="absolute -top-3 left-0 right-0 flex flex-wrap justify-end gap-1.5 z-10">
           <div className="flex items-center gap-1.5 px-2.5 py-1 bg-brand-blue/90 border border-slate-700/60">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-pixel text-[7px] text-emerald-400/80 tracking-[0.25em] uppercase">System Ready</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-brand-cyan animate-pulse" />
+            <span className="font-pixel text-[7px] text-brand-cyan/80 tracking-[0.25em] uppercase">System Ready</span>
           </div>
           <div className="flex items-center gap-1.5 px-2.5 py-1 bg-brand-blue/90 border border-slate-700/60">
             <Zap size={9} className="text-brand-cyan/70" />

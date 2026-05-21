@@ -20,11 +20,6 @@ export default function HeroSection() {
               <span className="level-title block">MATTER</span>
             </h1>
             
-            {/* Pixel separator */}
-            <div className="pixel-separator mt-4 mb-4">
-              <div className="pixel-separator-dot" />
-            </div>
-            
             {/* Subtitle - Business focused, readable, neutral color */}
             <p 
               className="text-slate-300 font-normal px-2 sm:px-1"
