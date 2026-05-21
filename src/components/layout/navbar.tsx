@@ -96,6 +96,7 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
+            onKeyDown={(e) => { if (e.key === "Escape") { setIsOpen(false); menuToggleRef.current?.focus(); } }}
             className="absolute top-full left-0 w-full bg-brand-blue/95 backdrop-blur-sm border-b border-slate-800/50 md:hidden"
           >
             <div className="flex flex-col p-5 gap-4 items-center text-center">
