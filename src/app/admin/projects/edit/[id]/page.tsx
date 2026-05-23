@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -10,11 +10,30 @@ import { toast } from "sonner";
 import { Project } from "@/types";
 import ProjectEditor from "@/components/admin/ProjectEditor";
 
+const SAVE_TIMEOUT_MS = 30_000;
+
 export default function EditProjectPage() {
   const router = useRouter();
   const { id } = useParams();
   const queryClient = useQueryClient();
   const [lastSaved, setLastSaved] = useState<string | null>(null);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mountedRef = useRef(true);
+
+  const clearSaveTimeout = useCallback(() => {
+    if (saveTimeoutRef.current !== null) {
+      clearTimeout(saveTimeoutRef.current);
+      saveTimeoutRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      clearSaveTimeout();
+    };
+  }, [clearSaveTimeout]);
 
   const { data: project, isLoading, isError, error } = useQuery({
     queryKey: ["project", id],
@@ -26,10 +45,22 @@ export default function EditProjectPage() {
     enabled: !!id,
   });
 
+  const resetMutationRef = useRef<() => void>(() => {});
+
   const mutation = useMutation({
     mutationFn: ({ data, isAutoSave }: { data: Partial<Project>; isAutoSave?: boolean }) => 
       ProjectService.update(id as string, data),
+    onMutate: () => {
+      clearSaveTimeout();
+      saveTimeoutRef.current = setTimeout(() => {
+        if (!mountedRef.current) return;
+        saveTimeoutRef.current = null;
+        resetMutationRef.current();
+        toast.error("Save timed out. Please try again.");
+      }, SAVE_TIMEOUT_MS);
+    },
     onSuccess: (_, variables) => {
+      clearSaveTimeout();
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       queryClient.invalidateQueries({ queryKey: ["project", id] });
       setLastSaved(new Date().toLocaleTimeString());
@@ -40,6 +71,7 @@ export default function EditProjectPage() {
       }
     },
     onError: (error: Error, variables) => {
+      clearSaveTimeout();
       if (!variables.isAutoSave) {
         toast.error(error.message || "Failed to update project");
       } else {
@@ -47,6 +79,8 @@ export default function EditProjectPage() {
       }
     }
   });
+
+  resetMutationRef.current = () => mutation.reset();
 
   if (isLoading) {
     return (

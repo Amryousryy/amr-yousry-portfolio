@@ -103,8 +103,14 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       if (key.startsWith("_") || key === "createdAt" || key === "updatedAt" || key === "__v") continue;
 
       if (guardedArrayFields.has(key)) {
-        if (Array.isArray(value) && value.length > 0) {
-          safeUpdate[key] = value;
+        if (Array.isArray(value)) {
+          safeUpdate[key] = value.filter((item: unknown) => {
+            if (typeof item === "string") return item.trim().length > 0;
+            if (item && typeof item === "object" && "src" in (item as Record<string, unknown>)) {
+              return typeof (item as Record<string, unknown>).src === "string" && ((item as Record<string, unknown>).src as string).trim().length > 0;
+            }
+            return true;
+          });
         }
       } else if (guardedTextField.has(key)) {
         if (typeof value === "string" && value.trim().length > 0) {

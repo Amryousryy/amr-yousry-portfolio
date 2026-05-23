@@ -54,7 +54,7 @@ export const projectCreateSchema = z.object({
   year: z.string().optional(),
   clientName: z.string().optional(),
   seo: seoSchema.optional(),
-  gallery: z.array(z.string().url()).default([]),
+  gallery: z.array(z.string().min(1)).default([]),
   tags: z.array(z.string()).default([]),
   sections: z.array(z.object({
     id: z.string(),
