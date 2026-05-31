@@ -41,6 +41,16 @@ export async function GET(req: Request) {
     const isAdmin = searchParams.get("admin") === "true";
     const isPreview = searchParams.get("preview") === "true";
 
+    if (isAdmin || isPreview) {
+      const session = await getServerSession(authOptions);
+      if (!session) {
+        return NextResponse.json({
+          success: true,
+          data: { ...DEFAULT_CONTENT, status: "published", _preview: false }
+        }, responseConfig);
+      }
+    }
+
     await dbConnect();
     const settings = await Settings.findOne({}).lean() as any;
     

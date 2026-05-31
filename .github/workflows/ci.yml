@@ -1,0 +1,45 @@
+# CI Quality Gate
+#
+# Build is blocking — the workflow fails if the build fails.
+# Lint is report-only temporarily due to existing lint debt.
+# After lint debt cleanup (Phase 4), remove "|| true" to make lint blocking.
+#
+# Does not require production environment variables.
+# Does not expose secrets.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (blocking)
+        run: npm run build
+
+      - name: Whitespace check (blocking)
+        run: git diff --check
+
+      - name: Lint (report-only — non-blocking until lint debt cleanup)
+        run: npm run lint || true

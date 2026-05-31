@@ -34,6 +34,16 @@ export async function GET(req: Request) {
     const isAdmin = searchParams.get("admin") === "true";
     const isPreview = searchParams.get("preview") === "true";
 
+    if (isAdmin || isPreview) {
+      const session = await getServerSession(authOptions);
+      if (!session) {
+        return NextResponse.json({
+          success: true,
+          data: { ...DEFAULT_HERO, status: "published", _preview: false }
+        }, responseConfig);
+      }
+    }
+
     if (!process.env.MONGODB_URI) {
       return NextResponse.json({ success: true, data: { ...DEFAULT_HERO, _preview: isPreview } }, responseConfig);
     }

@@ -55,6 +55,15 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['gsap'],
   },
+  async redirects() {
+    return [
+      {
+        source: '/projects/al-ghazal-exhibition',
+        destination: '/projects/al-ghazal-egc',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

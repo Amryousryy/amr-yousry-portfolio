@@ -48,7 +48,7 @@ export default function EditProjectPage() {
   const resetMutationRef = useRef<() => void>(() => {});
 
   const mutation = useMutation({
-    mutationFn: ({ data, isAutoSave }: { data: Partial<Project>; isAutoSave?: boolean }) => 
+    mutationFn: ({ data }: { data: Partial<Project>; isAutoSave?: boolean }) =>
       ProjectService.update(id as string, data),
     onMutate: () => {
       clearSaveTimeout();
@@ -80,7 +80,9 @@ export default function EditProjectPage() {
     }
   });
 
-  resetMutationRef.current = () => mutation.reset();
+  useEffect(() => {
+    resetMutationRef.current = () => mutation.reset();
+  }, [mutation]);
 
   if (isLoading) {
     return (

@@ -57,7 +57,9 @@ export default function NewProjectPage() {
     }
   });
 
-  resetMutationRef.current = () => mutation.reset();
+  useEffect(() => {
+    resetMutationRef.current = () => mutation.reset();
+  }, [mutation]);
 
   return (
     <div className="space-y-12">
