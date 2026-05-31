@@ -64,6 +64,13 @@ export async function GET(req: Request) {
     const category = searchParams.get("category");
     const search = searchParams.get("search");
     
+    if (isAdmin) {
+      const session = await getServerSession(authOptions);
+      if (!session) {
+        return successResponse([]);
+      }
+    }
+
     const query: Record<string, unknown> = isAdmin ? {} : { status: "published" };
     
     if (featured === "true") query.featured = true;

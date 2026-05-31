@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "crypto";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -16,19 +17,34 @@ export const authOptions: NextAuthOptions = {
 
         const adminEmail = (process.env.ADMIN_EMAIL || "").trim();
         const adminPass = (process.env.ADMIN_PASSWORD || "").trim();
+        const inputEmail = credentials.email.trim();
+        const inputPassword = credentials.password;
 
-        const inputEmail = credentials.email?.trim();
-        const inputPassword = credentials.password?.trim();
-
-        if (inputEmail === adminEmail && inputPassword === adminPass) {
-          return {
-            id: "1",
-            name: "Admin",
-            email: adminEmail,
-          };
+        if (!adminEmail || !adminPass) {
+          return null;
         }
 
-        return null;
+        if (inputEmail !== adminEmail) {
+          return null;
+        }
+
+        const passBuf = Buffer.from(inputPassword);
+        const adminPassBuf = Buffer.from(adminPass);
+
+        if (passBuf.length !== adminPassBuf.length) {
+          return null;
+        }
+
+        const isMatch = timingSafeEqual(passBuf, adminPassBuf);
+        if (!isMatch) {
+          return null;
+        }
+
+        return {
+          id: "1",
+          name: "Admin",
+          email: adminEmail,
+        };
       },
     }),
   ],

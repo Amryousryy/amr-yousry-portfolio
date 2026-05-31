@@ -37,6 +37,14 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     const { id } = await params;
     const { searchParams } = new URL(req.url);
     const isAdmin = searchParams.get("admin") === "true";
+
+    if (isAdmin) {
+      const session = await getServerSession(authOptions);
+      if (!session) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+    }
+
     await dbConnect();
     
     let project;
