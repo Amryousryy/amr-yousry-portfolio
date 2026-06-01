@@ -7,6 +7,7 @@ import Project from "@/models/Project";
 import { projectUpdateSchema } from "@/lib/validation";
 import { deleteCloudinaryResources } from "@/lib/cloudinary";
 import { logActivity } from "@/lib/activity";
+import { checkReadiness, detectExpectedMediaType } from "@/lib/validation/project-readiness";
 import { toPlainText } from "@/lib/text";
 
 function normalizeProject(doc: Record<string, unknown>): Record<string, unknown> {
@@ -81,6 +82,19 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     }
 
     const body = await req.json();
+
+    if (Array.isArray(body.caseStudyMedia)) {
+      body.caseStudyMedia = body.caseStudyMedia.map((item: Record<string, unknown>) => {
+        const src = typeof item.src === "string" ? item.src : "";
+        const type = typeof item.type === "string" ? item.type : "";
+        if (!type) {
+          const detected = detectExpectedMediaType(src);
+          if (detected) item.type = detected;
+        }
+        return item;
+      });
+    }
+
     const validation = projectUpdateSchema.safeParse(body);
     
     if (!validation.success) {
@@ -88,8 +102,23 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     }
 
     await dbConnect();
-    
+
     const currentProject = await Project.findById(id).lean() as any;
+    if (!currentProject) {
+      return NextResponse.json({ error: "Project not found" }, { status: 404 });
+    }
+
+    if (validation.data.status === "published") {
+      const mergedData = { ...currentProject, ...validation.data };
+      const readiness = checkReadiness(mergedData as unknown as Record<string, unknown>);
+      if (!readiness.isPublishReady) {
+        return NextResponse.json({
+          error: "Project is not ready for publishing",
+          issues: readiness.issues.filter(i => i.severity === "blocking").map(i => i.message)
+        }, { status: 422 });
+      }
+    }
+
     const currentStatus = currentProject?.status || "draft";
     const newStatus = validation.data.status || "draft";
     
@@ -160,17 +189,31 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       console.error("REVALIDATE_ERROR:", revalError);
     }
 
-    await logActivity({
-      action: "update",
-      targetType: "project",
-      targetName: validation.data.title || "Untitled",
-      adminEmail: session.user?.email || "unknown",
-      metadata: { id, status: (project as any).status }
-    });
+    if (newStatus === "published" && currentStatus !== "published") {
+      await logActivity({
+        action: "publish",
+        targetType: "project",
+        targetName: validation.data.title || currentProject.title || "Untitled",
+        adminEmail: session.user?.email || "unknown",
+        metadata: { id, status: "published" }
+      });
+    } else {
+      await logActivity({
+        action: "update",
+        targetType: "project",
+        targetName: validation.data.title || currentProject.title || "Untitled",
+        adminEmail: session.user?.email || "unknown",
+        metadata: { id, status: (project as any).status }
+      });
+    }
     
-    return NextResponse.json(normalizeProject(project as unknown as Record<string, unknown>));
-  } catch (error) {
+    return NextResponse.json({ data: normalizeProject(project as unknown as Record<string, unknown>) });
+  } catch (error: unknown) {
     console.error("PUT_PROJECT_ERROR:", error);
+    const mongoErr = error as { code?: number; keyPattern?: Record<string, unknown> };
+    if (mongoErr?.code === 11000 && mongoErr?.keyPattern?.slug) {
+      return NextResponse.json({ error: "A project with this slug already exists" }, { status: 409 });
+    }
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

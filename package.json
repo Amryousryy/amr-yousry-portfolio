@@ -10,7 +10,8 @@
         "start": "next start",
         "lint": "eslint",
         "seed": "npx tsx scripts/seed-projects.ts",
-        "repair:al-ghazal": "npx tsx scripts/repair-al-ghazal.ts"
+        "repair:al-ghazal": "npx tsx scripts/repair-al-ghazal.ts",
+        "qa:admin-guardrails": "node --env-file=.env.local scripts/qa/phase18-admin-guardrails.mjs"
     },
     "dependencies": {
         "@hookform/resolvers": "^3.10.0",

@@ -13,7 +13,7 @@ import {
 
 const caseStudyMediaItemSchema = z.object({
   type: z.enum(["image", "video", "process", "before-after", "result"]),
-  src: z.string().min(1, "Media source is required"),
+  src: z.string().trim().default(""),
   alt: z.string().optional(),
   caption: z.string().optional(),
 });
@@ -27,14 +27,16 @@ const detailedResultSchema = z.object({
 
 const detailedResultArraySchema = z.array(detailedResultSchema).default([]);
 
+const draftSafeString = z.string().trim().default("");
+
 export const projectCreateSchema = z.object({
   slug: z.string().min(1, "Slug is required").transform(normalizeSlug),
-  title: stringSchema,
-  shortDescription: stringSchema,
-  fullDescription: stringSchema,
-  category: z.string().min(1, "Category is required"),
+  title: draftSafeString,
+  shortDescription: draftSafeString,
+  fullDescription: draftSafeString,
+  category: draftSafeString,
   categories: z.array(z.string()).default([]),
-  image: z.string().url("Valid cover image URL is required"),
+  image: z.string().url().or(z.literal("")).default(""),
   video: optionalUrlSchema,
   problem: stringSchema.optional(),
   strategy: stringSchema.optional(),
@@ -54,12 +56,12 @@ export const projectCreateSchema = z.object({
   year: z.string().optional(),
   clientName: z.string().optional(),
   seo: seoSchema.optional(),
-  gallery: z.array(z.string().min(1)).default([]),
+  gallery: z.array(z.string()).default([]),
   tags: z.array(z.string()).default([]),
   sections: z.array(z.object({
     id: z.string(),
-    title: stringSchema,
-    content: stringSchema,
+    title: draftSafeString,
+    content: draftSafeString,
     media: mediaArraySchema,
   })).default([]),
 });

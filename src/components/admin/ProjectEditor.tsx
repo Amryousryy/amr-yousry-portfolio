@@ -20,6 +20,8 @@ import CategoriesFields from "@/components/admin/CategoriesFields";
 import SummaryFields from "@/components/admin/SummaryFields";
 import CaseStudyFields from "@/components/admin/CaseStudyFields";
 import MediaFields from "@/components/admin/MediaFields";
+import ProjectReadinessPanel from "@/components/admin/ProjectReadinessPanel";
+import { checkReadiness, type ReadinessResult } from "@/lib/validation/project-readiness";
 
 interface ProjectEditorProps {
   initialData?: Project;
@@ -44,6 +46,7 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
   const isEditMode = !!initialData?._id;
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [enableVideo, setEnableVideo] = useState(false);
+  const [readinessResult, setReadinessResult] = useState<ReadinessResult | null>(null);
   
   const {
     register,
@@ -156,6 +159,14 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
     if (data.gallery) {
       data.gallery = data.gallery.filter(url => url && url.trim().length > 0);
     }
+    const isPublishing = data.status === "published";
+    const result = checkReadiness(data as unknown as Record<string, unknown>);
+    setReadinessResult(result);
+    if (isPublishing && !result.isPublishReady) {
+      setSubmitAttempted(true);
+      setUnsavedSubmitting(false);
+      return;
+    }
     onSave(data);
   };
 
@@ -180,6 +191,10 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
 
       {submitAttempted && Object.keys(errors).length > 0 && (
         <ErrorSummary errors={errors as unknown as Record<string, unknown>} />
+      )}
+
+      {readinessResult && readinessResult.issues.length > 0 && (
+        <ProjectReadinessPanel result={readinessResult} onClose={() => setReadinessResult(null)} />
       )}
 
       <div className="space-y-12">

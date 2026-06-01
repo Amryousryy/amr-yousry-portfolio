@@ -1,11 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Controller, UseFormRegister, Control, FieldErrors, UseFormSetValue, UseFormGetValues } from "react-hook-form";
 import { Upload, Plus, X, Video, VideoOff, ImageIcon, Link, ChevronUp, ChevronDown } from "lucide-react";
 import { CldUploadWidget } from "next-cloudinary";
 import Image from "next/image";
 import { mediaConfig, getMediaKind, isValidMediaUrl } from "@/lib/media/config";
+import { detectExpectedMediaType } from "@/lib/validation/project-readiness";
 import MediaUploader from "@/components/admin/MediaUploader";
 import VideoPreview from "@/components/admin/VideoPreview";
 import VideoPosterCard from "@/components/admin/VideoPosterCard";
@@ -65,6 +66,20 @@ export default function MediaFields({
   enableVideo,
   setEnableVideo,
 }: MediaFieldsProps) {
+  useEffect(() => {
+    const items = watchedCaseStudyMedia;
+    items.forEach((item, idx) => {
+      const src = item.src || "";
+      const selectedType = item.type || "";
+      if (!selectedType) {
+        const detected = detectExpectedMediaType(src);
+        if (detected) {
+          setValue(`caseStudyMedia.${idx}.type` as const, detected);
+        }
+      }
+    });
+  }, [watchedCaseStudyMedia, setValue]);
+
   return (
     <div className="space-y-4">
       <h2 className="text-sm font-display font-bold uppercase tracking-wider text-accent border-b border-primary/10 pb-2">Media &amp; Gallery</h2>

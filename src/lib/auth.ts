@@ -2,6 +2,18 @@ import { timingSafeEqual } from "crypto";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+function logFailedLogin(email: string): void {
+  import("@/lib/activity").then(({ logActivity }) => {
+    logActivity({
+      action: "login",
+      targetType: "auth",
+      targetName: email,
+      adminEmail: "unknown",
+      metadata: { success: false, timestamp: new Date().toISOString() }
+    }).catch(() => {});
+  }).catch(() => {});
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -12,6 +24,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
+          logFailedLogin(credentials?.email || "no-email");
           return null;
         }
 
@@ -21,10 +34,12 @@ export const authOptions: NextAuthOptions = {
         const inputPassword = credentials.password;
 
         if (!adminEmail || !adminPass) {
+          logFailedLogin(inputEmail);
           return null;
         }
 
         if (inputEmail !== adminEmail) {
+          logFailedLogin(inputEmail);
           return null;
         }
 
@@ -32,11 +47,13 @@ export const authOptions: NextAuthOptions = {
         const adminPassBuf = Buffer.from(adminPass);
 
         if (passBuf.length !== adminPassBuf.length) {
+          logFailedLogin(inputEmail);
           return null;
         }
 
         const isMatch = timingSafeEqual(passBuf, adminPassBuf);
         if (!isMatch) {
+          logFailedLogin(inputEmail);
           return null;
         }
 

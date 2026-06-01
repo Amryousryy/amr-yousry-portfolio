@@ -6,6 +6,7 @@ import dbConnect from "@/lib/db";
 import Project from "@/models/Project";
 import { projectCreateSchema } from "@/lib/validation";
 import { logActivity } from "@/lib/activity";
+import { checkReadiness, detectExpectedMediaType } from "@/lib/validation/project-readiness";
 import { paginationSchema, getPagination } from "@/lib/pagination";
 import { toPlainText } from "@/lib/text";
 
@@ -122,6 +123,18 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
+  if (Array.isArray(body.caseStudyMedia)) {
+    body.caseStudyMedia = body.caseStudyMedia.map((item: Record<string, unknown>) => {
+      const src = typeof item.src === "string" ? item.src : "";
+      const type = typeof item.type === "string" ? item.type : "";
+      if (!type) {
+        const detected = detectExpectedMediaType(src);
+        if (detected) item.type = detected;
+      }
+      return item;
+    });
+  }
+
   const validation = projectCreateSchema.safeParse(body);
   if (!validation.success) {
     return NextResponse.json({ error: validation.error.format() }, { status: 400 });
@@ -132,6 +145,16 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("DB_CONNECT_ERROR:", error);
     return NextResponse.json({ error: "Database error" }, { status: 500 });
+  }
+
+  if (validation.data.status === "published") {
+    const readiness = checkReadiness(validation.data as unknown as Record<string, unknown>);
+    if (!readiness.isPublishReady) {
+      return NextResponse.json({
+        error: "Project is not ready for publishing",
+        issues: readiness.issues.filter(i => i.severity === "blocking").map(i => i.message)
+      }, { status: 422 });
+    }
   }
 
   try {
@@ -162,8 +185,12 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ data: project }, { status: 201 });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("POST_PROJECT_ERROR:", error);
+    const mongoErr = error as { code?: number; keyPattern?: Record<string, unknown> };
+    if (mongoErr?.code === 11000 && mongoErr?.keyPattern?.slug) {
+      return NextResponse.json({ error: "A project with this slug already exists" }, { status: 409 });
+    }
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

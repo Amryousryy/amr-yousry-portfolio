@@ -2,8 +2,8 @@ import mongoose, { Schema, Document } from "mongoose";
 
 const ProjectSectionSchema = new Schema({
   id: { type: String, required: true },
-  title: { type: String, required: true },
-  content: { type: String, required: true },
+  title: { type: String, default: "" },
+  content: { type: String, default: "" },
   media: [{
     type: { type: String, enum: ["image", "video"], required: true },
     url: { type: String, required: true }
@@ -12,9 +12,9 @@ const ProjectSectionSchema = new Schema({
 
 const CaseStudyMediaSchema = new Schema({
   type: { type: String, enum: ["image", "video", "process", "before-after", "result"], required: true },
-  src: { type: String, required: true },
-  alt: { type: String },
-  caption: { type: String },
+  src: { type: String, default: "" },
+  alt: { type: String, default: "" },
+  caption: { type: String, default: "" },
 }, { _id: false });
 
 const DetailedResultSchema = new Schema({
@@ -23,12 +23,12 @@ const DetailedResultSchema = new Schema({
 }, { _id: false });
 
 const ProjectSchema: Schema = new Schema({
-  title: { type: String, required: true },
+  title: { type: String, default: "" },
   slug: { type: String, required: true, unique: true },
-  shortDescription: { type: String, required: true },
-  fullDescription: { type: String, required: true },
-  category: { type: String, required: true },
-  image: { type: String, required: true },
+  shortDescription: { type: String, default: "" },
+  fullDescription: { type: String, default: "" },
+  category: { type: String, default: "" },
+  image: { type: String, default: "" },
   video: { type: String },
   problem: { type: String },
   strategy: { type: String },
