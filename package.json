@@ -11,7 +11,9 @@
         "lint": "eslint",
         "seed": "npx tsx scripts/seed-projects.ts",
         "repair:al-ghazal": "npx tsx scripts/repair-al-ghazal.ts",
-        "qa:admin-guardrails": "node --env-file=.env.local scripts/qa/phase18-admin-guardrails.mjs"
+        "qa:admin-guardrails": "node --env-file=.env.local scripts/qa/phase18-admin-guardrails.mjs",
+        "qa:readiness-unit": "jiti scripts/qa/project-readiness-unit.ts",
+        "qa:public-contract": "node scripts/qa/run-with-server.mjs scripts/qa/public-contract-smoke.mjs"
     },
     "dependencies": {
         "@hookform/resolvers": "^3.10.0",
@@ -45,6 +47,7 @@
         "@types/react-dom": "^19",
         "eslint": "^9",
         "eslint-config-next": "16.2.4",
+        "jiti": "2.6.1",
         "tailwindcss": "^4",
         "typescript": "^5"
     },

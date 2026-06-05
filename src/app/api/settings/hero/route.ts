@@ -35,7 +35,8 @@ export async function GET(req: Request) {
     const isPreview = searchParams.get("preview") === "true";
 
     if (isAdmin || isPreview) {
-      const session = await getServerSession(authOptions);
+      let session = null;
+      try { session = await getServerSession(authOptions); } catch {}
       if (!session) {
         return NextResponse.json({
           success: true,

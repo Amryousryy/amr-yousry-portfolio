@@ -1,11 +1,15 @@
 # CI Quality Gate
 #
 # Build is blocking — the workflow fails if the build fails.
+# Readiness unit tests block — pure function tests with no dependencies.
+# Public contract tests block — verify public endpoints and security headers.
 # Lint is report-only temporarily due to existing lint debt.
 # After lint debt cleanup (Phase 4), remove "|| true" to make lint blocking.
 #
 # Does not require production environment variables.
 # Does not expose secrets.
+# Does not require .env.local.
+# Does not mutate production data.
 
 name: CI
 
@@ -21,6 +25,7 @@ permissions:
 jobs:
   quality:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout repository
@@ -40,6 +45,17 @@ jobs:
 
       - name: Whitespace check (blocking)
         run: git diff --check
+
+      - name: Readiness unit tests (blocking)
+        run: npm run qa:readiness-unit
+
+      - name: Public contract smoke tests (blocking)
+        run: npm run qa:public-contract
+        env:
+          PORT: 3001
+          HOSTNAME: localhost
+          SERVER_TIMEOUT: 30000
+          QA_TIMEOUT: 60000
 
       - name: Lint (report-only — non-blocking until lint debt cleanup)
         run: npm run lint || true

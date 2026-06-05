@@ -19,17 +19,13 @@ const STALE_PLACEHOLDERS = [
   "new project",
   "sample project",
   "test project",
+  "untitled project",
   "lorem ipsum",
 ];
 
 function isPlaceholder(val: string): boolean {
   const lower = val.toLowerCase().trim();
-  return STALE_PLACEHOLDERS.some(p => {
-    const pattern = p.toLowerCase();
-    if (lower === pattern) return true;
-    if (lower.startsWith(pattern + " ")) return true;
-    return false;
-  });
+  return STALE_PLACEHOLDERS.some(p => lower === p.toLowerCase());
 }
 
 const VIDEO_EXT = /\.(mp4|webm|mov)$/i;
