@@ -2,7 +2,6 @@
 
 import React from "react";
 import { AlertCircle } from "lucide-react";
-import { FieldErrors } from "react-hook-form";
 
 interface ErrorSummaryProps {
   errors: Record<string, unknown>;

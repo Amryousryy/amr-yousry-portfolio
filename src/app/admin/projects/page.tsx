@@ -10,23 +10,13 @@ import {
   Edit2, 
   Trash2, 
   ExternalLink, 
-  Eye, 
   EyeOff, 
   Star,
   ArrowLeft,
-  MoreHorizontal,
   Send
 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 interface ProjectRow {
   _id: string;
@@ -69,7 +59,7 @@ export default function ProjectsPage() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  const { data: projects, isLoading, refetch } = useQuery({
+  const { data: projects, isLoading } = useQuery({
     queryKey: ["projects", "admin", page, limit, debouncedSearch],
     queryFn: () => ProjectService.getAll(true, { page, limit, search: debouncedSearch || undefined }),
   });

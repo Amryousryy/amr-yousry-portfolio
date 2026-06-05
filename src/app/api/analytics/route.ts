@@ -4,7 +4,7 @@ import Analytics from "@/models/Analytics";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
-export async function GET(req: Request) {
+export async function GET() {
   let session = null;
   try {
     session = await getServerSession(authOptions);

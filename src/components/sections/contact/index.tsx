@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { contactContent } from "@/content/contact";
@@ -11,7 +11,6 @@ import CommunicationChannels from "@/components/sections/contact/CommunicationCh
 import ContactForm from "@/components/sections/contact/ContactForm";
 
 export default function ContactSection() {
-  const shouldReduceMotion = useReducedMotion();
   const [succeeded, setSucceeded] = useState(false);
   const [errors, setErrors] = useState<{name?: boolean; email?: boolean; message?: boolean}>({});
   const [formData, setFormData] = useState({

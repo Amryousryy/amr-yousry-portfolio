@@ -1,13 +1,10 @@
 import { z } from "zod";
 import {
-  mediaItemSchema,
   mediaArraySchema,
   normalizeSlug,
   seoSchema,
   optionalUrlSchema,
   contentStatusSchema,
-  createEmptyMediaItem,
-  createEmptyProjectSection,
   stringSchema,
 } from "./shared";
 

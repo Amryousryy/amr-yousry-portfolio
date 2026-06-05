@@ -19,7 +19,7 @@ export function getPublicIdFromUrl(url: string) {
     if (uploadIndex === -1) return null;
     
     // The part after 'upload' could be 'v12345678' or the start of the public ID
-    let remainingParts = parts.slice(uploadIndex + 1);
+    const remainingParts = parts.slice(uploadIndex + 1);
     
     // Remove version if present (e.g., v1, v12345678)
     if (remainingParts[0].match(/^v\d+$/)) {

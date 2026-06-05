@@ -1,7 +1,7 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
-function proxy(req: any) {
+function proxy() {
   return NextResponse.next();
 }
 

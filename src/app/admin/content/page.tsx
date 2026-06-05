@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { useForm, useFieldArray, Controller, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save, Loader2, Info, Target, Mail, Clock, Plus, Trash2, GripVertical, Eye } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SettingsService } from "@/lib/api-client";
-import { contentCreateSchema, ContentCreateInput, contentDefaultValues, createContentFormValues } from "@/lib/validation";
+import { contentCreateSchema, ContentCreateInput, contentDefaultValues } from "@/lib/validation";
 import { toast } from "sonner";
 import StringInput from "@/components/admin/BilingualInput";
 import { ErrorSummary, scrollToFirstError } from "@/components/admin/ErrorSummary";
@@ -102,7 +102,6 @@ export default function SiteContentManagerPage() {
 
   const { setSubmitting: setUnsavedSubmitting, markAsSaved } = useUnsavedChanges<FormData>({
     watch,
-    reset,
     defaultValues: contentDefaultValues,
     enabled: true,
   });

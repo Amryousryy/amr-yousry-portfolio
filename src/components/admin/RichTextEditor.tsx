@@ -109,7 +109,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
   );
 };
 
-export default function RichTextEditor({ content, onChange, placeholder }: RichTextEditorProps) {
+export default function RichTextEditor({ content, onChange }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
       StarterKit,

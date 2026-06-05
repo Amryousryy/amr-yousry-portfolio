@@ -98,18 +98,6 @@ const STRAY_CLEANUP: Record<string, { oldValue: string; newValue: string }> = {
   results: { oldValue: "rdytnhrtyn", newValue: "" },
 };
 
-// ── Fields to exclude from update ───────────────────────────────────────────
-const NEVER_TOUCH = new Set([
-  "_id",
-  "slug",
-  "title",
-  "client",
-  "clientName",
-  "createdAt",
-  "updatedAt",
-  "__v",
-]);
-
 // ── Helper: pretty-print a value for console ────────────────────────────────
 function describe(value: unknown, maxLen = 120): string {
   if (Array.isArray(value)) {
@@ -197,7 +185,7 @@ async function repairAlGhazal() {
   console.log(`  seo:                ${describe(doc.seo)}`);
 
   // ── Print stray fields ───────────────────────────────────────────────────
-  for (const [field, config] of Object.entries(STRAY_CLEANUP)) {
+  for (const [field] of Object.entries(STRAY_CLEANUP)) {
     const currentValue = doc[field];
     const valStr =
       currentValue === undefined

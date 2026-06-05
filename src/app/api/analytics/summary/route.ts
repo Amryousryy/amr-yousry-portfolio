@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Analytics from "@/models/Analytics";
-import Project from "@/models/Project";
 import { toPlainText } from "@/lib/text";
 
 export async function GET() {

@@ -1,4 +1,4 @@
-import { socialLinks, socialLinksArray } from "@/data/social-links";
+import { socialLinksArray } from "@/data/social-links";
 
 export const contactContent = {
   heading: "START YOUR\nPROJECT.",

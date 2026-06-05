@@ -204,7 +204,7 @@ export function getMediaType(url: string): 'image' | 'video' | 'youtube' | 'vime
   return 'unknown';
 }
 
-export function normalizeMediaUrl(url: string, type: 'image' | 'video' = 'image'): string {
+export function normalizeMediaUrl(url: string): string {
   if (!url) return '';
   if (!isValidMediaUrl(url)) return '';
   return url;

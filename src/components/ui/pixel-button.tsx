@@ -38,7 +38,6 @@ export function PixelButton({
 
   if (href) {
     const isAnchor = href.startsWith("#");
-    const isInternal = href.startsWith("/") && !isAnchor;
 
     if (isAnchor) {
       return (

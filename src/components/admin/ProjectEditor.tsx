@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useForm, useFieldArray, FieldErrors } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Project } from "@/types";
 import { 
@@ -32,16 +32,6 @@ interface ProjectEditorProps {
 
 type FormData = ProjectCreateInput;
 
-function getFieldError(errors: FieldErrors<FormData>, path: string): string | undefined {
-  const parts = path.split(".");
-  let current: any = errors;
-  for (const part of parts) {
-    if (current === undefined) return undefined;
-    current = current[part];
-  }
-  return current?.message as string | undefined;
-}
-
 export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved }: ProjectEditorProps) {
   const isEditMode = !!initialData?._id;
   const [submitAttempted, setSubmitAttempted] = useState(false);
@@ -62,9 +52,8 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
     defaultValues: projectDefaultValues,
   });
 
-  const { setSubmitting: setUnsavedSubmitting, markAsSaved } = useUnsavedChanges<FormData>({
+  const { setSubmitting: setUnsavedSubmitting } = useUnsavedChanges<FormData>({
     watch,
-    reset,
     defaultValues: projectDefaultValues,
     enabled: true,
   });

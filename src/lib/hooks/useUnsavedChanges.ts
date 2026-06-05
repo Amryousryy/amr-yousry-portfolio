@@ -1,18 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
-import { UseFormWatch, UseFormReset, FieldValues } from "react-hook-form";
+import { UseFormWatch, FieldValues } from "react-hook-form";
 
 interface UseUnsavedChangesOptions<T extends FieldValues> {
   watch: UseFormWatch<T>;
-  reset: UseFormReset<T>;
   defaultValues: T;
   enabled?: boolean;
 }
 
 export function useUnsavedChanges<T extends FieldValues>({
   watch,
-  reset,
   defaultValues,
   enabled = true,
 }: UseUnsavedChangesOptions<T>) {

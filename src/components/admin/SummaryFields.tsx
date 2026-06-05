@@ -11,7 +11,7 @@ interface SummaryFieldsProps {
   errors: FieldErrors<FormData>;
 }
 
-export default function SummaryFields({ register, control, errors }: SummaryFieldsProps) {
+export default function SummaryFields({ register, control }: SummaryFieldsProps) {
   return (
     <div className="space-y-4">
       <h2 className="text-sm font-display font-bold uppercase tracking-wider text-accent border-b border-primary/10 pb-2">Project Summary</h2>
