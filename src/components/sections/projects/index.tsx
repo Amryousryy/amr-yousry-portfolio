@@ -5,7 +5,7 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { PixelButton } from "@/components/ui/pixel-button";
 import { ProjectCard } from "./project-card";
-import type { Project } from "@/types/project";
+import type { Project } from "@/types/project-static";
 import Link from "next/link";
 
 interface ProjectsSectionProps {

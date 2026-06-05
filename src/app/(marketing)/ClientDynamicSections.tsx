@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import type { Project } from "@/types/project";
+import type { Project } from "@/types/project-static";
 
 const ProjectsSection = dynamic(() => import("@/components/sections/projects"), { ssr: false });
 const AboutSection = dynamic(() => import("@/components/sections/about"), { ssr: false });

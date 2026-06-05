@@ -13,7 +13,7 @@ import {
   Link,
   AlertTriangle,
 } from "lucide-react";
-import type { ProjectMediaItem } from "@/types/project";
+import type { ProjectMediaItem } from "@/types/project-static";
 import { getVideoThumbnailUrl, getPlayableVideoSources, isTrustedCloudinaryMp4 } from "@/lib/media/config";
 
 interface ProjectMediaGalleryProps {

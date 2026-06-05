@@ -1,4 +1,4 @@
-import type { Project, ProjectMedia, ProjectMediaItem } from "@/types/project";
+import type { Project, ProjectMedia, ProjectMediaItem } from "@/types/project-static";
 import dbConnect from "@/lib/db";
 import ProjectModel from "@/models/Project";
 import { getMediaKind, getEmbeddableVideoUrl, getMediaProvider } from "@/lib/media/config";

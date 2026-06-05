@@ -121,8 +121,8 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
         client: initialData.client || "",
         sections: initialData.sections?.map(s => ({
           ...s,
-          title: typeof s.title === "string" ? s.title : (s.title as any)?.en || "",
-          content: typeof s.content === "string" ? s.content : (s.content as any)?.en || ""
+          title: typeof s.title === "string" ? s.title : (s.title as { en?: string })?.en || "",
+          content: typeof s.content === "string" ? s.content : (s.content as { en?: string })?.en || ""
         })) || [],
       });
     }

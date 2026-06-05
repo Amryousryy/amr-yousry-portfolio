@@ -1,58 +1,65 @@
-export interface ProjectMedia {
+export type ContentStatus = "draft" | "published";
+
+export interface ProjectSection {
+  id: string;
+  title: string;
+  content: string;
+  media: { type: "image" | "video"; url: string }[];
+}
+
+export interface CaseStudyMediaItem {
   type: "image" | "video" | "process" | "before-after" | "result";
   src: string;
   alt?: string;
   caption?: string;
 }
 
-export interface ProjectMediaItem {
-  kind: "image" | "video" | "embed" | "external" | "unknown";
-  src: string;
-  embedUrl?: string;
-  provider?: string | null;
-  alt?: string;
-  caption?: string;
-  thumbnail?: string;
-}
-
-export interface ProjectResult {
+export interface DetailedResult {
   label: string;
   value: string;
 }
 
-export interface ProjectSeo {
+export interface ProjectSEO {
   title?: string;
   description?: string;
   keywords?: string[];
 }
 
 export interface Project {
-  id: string;
-  slug: string;
+  _id: string;
   title: string;
-  client: string;
+  slug: string;
+  shortDescription: string;
+  fullDescription: string;
   category: string;
+  image: string;
+  video?: string;
+  problem?: string;
+  strategy?: string;
+  solution?: string;
+  execution?: string;
+  results?: string;
+  idea?: string;
+  mainResult?: string;
+  client?: string;
+  clientName?: string;
+  gallery: string[];
+  tags: string[];
+  sections: ProjectSection[];
+  featured: boolean;
+  status: ContentStatus;
+  displayOrder: number;
+  year?: string;
   categories: string[];
   services: string[];
-  summary: string;
-  
-  // Home/Projects list
-  thumbnail: string;
-  mainResult: string;
-  featured?: boolean;
-  
-  // Case study page
-  bannerImage: string;
-  problem: string;
-  idea: string;
-  execution: string;
-  detailedResults: ProjectResult[];
-  
-  // Media support
-  caseStudyMedia?: ProjectMedia[];
-  media?: ProjectMediaItem[];
-  heroVideo?: string;
-
-  // SEO
-  seo?: ProjectSeo;
+  detailedResults: DetailedResult[];
+  caseStudyMedia: CaseStudyMediaItem[];
+  featuredOrder: number;
+  seo?: ProjectSEO;
+  publishedAt?: Date;
+  lastStatusChangeAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
+
+export type NewProject = Omit<Project, "_id" | "createdAt" | "updatedAt">;

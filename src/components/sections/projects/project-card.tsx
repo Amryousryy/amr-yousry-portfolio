@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { Project } from "@/types/project";
+import { Project } from "@/types/project-static";
 import { PixelButton } from "@/components/ui/pixel-button";
 import { formatCategory } from "@/lib/projects/categories";
 

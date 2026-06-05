@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { trackEvent } from "@/lib/tracker";
-import { ProjectMediaItem } from "@/types/project";
+import { ProjectMediaItem } from "@/types/project-static";
 import ProjectMediaGallery from "@/components/projects/ProjectMediaGallery";
 
 interface CaseStudyClientProps {

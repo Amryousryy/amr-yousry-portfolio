@@ -15,8 +15,9 @@ function getAllErrors(errors: Record<string, unknown>, prefix = ""): string[] {
     const path = prefix ? `${prefix}.${key}` : key;
     
     if (value && typeof value === "object") {
-      if ("message" in value && typeof (value as any).message === "string" && (value as any).message) {
-        messages.push((value as any).message);
+      const val = value as Record<string, unknown>;
+      if ("message" in val && typeof val.message === "string" && val.message) {
+        messages.push(val.message);
       } else {
         messages.push(...getAllErrors(value as Record<string, unknown>, path));
       }

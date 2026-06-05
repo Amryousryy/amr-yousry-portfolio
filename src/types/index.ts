@@ -1,54 +1,10 @@
-export type ContentStatus = "draft" | "published";
+import type { ContentStatus } from "./project";
 
-export interface ProjectSection {
-  id: string;
-  title: string;
-  content: string;
-  media: { type: "image" | "video"; url: string }[];
-}
+export type { ContentStatus, Project, ProjectSection, CaseStudyMediaItem, DetailedResult, ProjectSEO, NewProject } from "./project";
 
-export interface Project {
-  _id: string;
-  title: string;
-  slug: string;
-  shortDescription: string;
-  fullDescription: string;
-  category: string;
-  image: string;
-  video?: string;
-  problem?: string;
-  strategy?: string;
-  solution?: string;
-  execution?: string;
-  results?: string;
-  outcome?: string;
-  gallery: string[];
-  tags: string[];
-  sections: ProjectSection[];
-  featured: boolean;
-  status: ContentStatus;
-  displayOrder: number;
-  year?: string;
-  clientName?: string;
-  client?: string;
-  role?: string;
-  tools?: string[];
-  categories?: string[];
-  services?: string[];
-  mainResult?: string;
-  idea?: string;
-  detailedResults?: { label: string; value: string }[];
-  caseStudyMedia?: { type: "image" | "video" | "process" | "before-after" | "result"; src: string; alt?: string; caption?: string }[];
-  featuredOrder?: number;
-  seo: {
-    title?: string;
-    description?: string;
-    keywords?: string[];
-  };
-  createdAt: Date;
-}
+export type { ApiSuccess, ApiError, ApiResponse, PaginationMeta } from "./api";
 
-export type NewProject = Omit<Project, "_id" | "createdAt" | "slug">;
+export type { ActivityAction, ActivityTargetType, ActivityMetadata, ActivityEntry } from "./activity";
 
 export interface HeroSettings {
   _id: string;

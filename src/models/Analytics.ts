@@ -10,7 +10,7 @@ export interface IAnalytics extends Document {
   label?: string;
   userAgent?: string;
   ipHash?: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
 }

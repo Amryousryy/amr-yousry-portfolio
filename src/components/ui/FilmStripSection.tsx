@@ -120,7 +120,7 @@ export default function FilmStripSection() {
               contentVisibility: 'auto', 
               containIntrinsicSize: 'auto 600px',
               willChange: 'transform'
-            } as any}
+            } as React.CSSProperties}
           >
             <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
               <img

@@ -1,11 +1,12 @@
 import mongoose, { Schema, Document } from "mongoose";
+import type { ActivityAction, ActivityTargetType } from "@/types/activity";
 
 export interface IActivityLog extends Document {
-  action: "create" | "update" | "delete" | "login" | "publish";
-  targetType: "project" | "settings" | "auth";
+  action: ActivityAction;
+  targetType: ActivityTargetType;
   targetName: string;
   adminEmail: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
 }

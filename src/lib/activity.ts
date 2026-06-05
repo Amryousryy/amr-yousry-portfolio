@@ -1,12 +1,13 @@
+import type { ActivityAction, ActivityTargetType } from "@/types/activity";
 import dbConnect from "./db";
 import ActivityLog from "@/models/ActivityLog";
 
 interface LogParams {
-  action: "create" | "update" | "delete" | "login" | "publish";
-  targetType: "project" | "settings" | "auth" | "showreel" | "filter";
+  action: ActivityAction;
+  targetType: ActivityTargetType;
   targetName: string;
   adminEmail: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 }
 
 export async function logActivity({
