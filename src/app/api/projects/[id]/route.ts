@@ -9,6 +9,7 @@ import { deleteCloudinaryResources } from "@/lib/cloudinary";
 import { logActivity } from "@/lib/activity";
 import { checkReadiness, detectExpectedMediaType } from "@/lib/validation/project-readiness";
 import { toPlainText } from "@/lib/text";
+import type { Project as ProjectType } from "@/types/project";
 
 function normalizeProject(doc: Record<string, unknown>): Record<string, unknown> {
   const normalized = { ...doc };
@@ -103,7 +104,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
     await dbConnect();
 
-    const currentProject = await Project.findById(id).lean() as any;
+    const currentProject = await Project.findById(id).lean() as unknown as ProjectType | null;
     if (!currentProject) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
@@ -130,7 +131,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       statusMetadata.publishedAt = new Date();
     }
     
-    const existing = currentProject as Record<string, unknown> | null;
+    const existing = currentProject as unknown as Record<string, unknown> | null;
     const guardedArrayFields = new Set(["services", "detailedResults", "caseStudyMedia", "gallery", "tags", "sections", "categories"]);
     const guardedTextField = new Set(["solution", "results", "category"]);
 
@@ -203,7 +204,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         targetType: "project",
         targetName: validation.data.title || currentProject.title || "Untitled",
         adminEmail: session.user?.email || "unknown",
-        metadata: { id, status: (project as any).status }
+        metadata: { id, status: (project as unknown as ProjectType).status }
       });
     }
     
@@ -237,7 +238,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
       project.image,
       project.video,
       ...(project.gallery || []),
-      ...(project.sections || []).flatMap((s: any) => (s.media || []).map((m: any) => m.url))
+      ...(project.sections || []).flatMap((s: { media?: Array<{ url: string }> }) => (s.media || []).map((m: { url: string }) => m.url))
     ].filter((url): url is string => !!url);
 
     await deleteCloudinaryResources(urlsToDelete);

@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Project from "@/models/Project";
-import Settings from "@/models/Settings";
+import Settings, { type LeanSettings } from "@/models/Settings";
 import { toPlainText } from "@/lib/text";
 
 export async function GET() {
@@ -31,14 +31,14 @@ export async function GET() {
         .sort({ updatedAt: -1 })
         .limit(5)
         .select("title status featured updatedAt")
-        .lean() as any,
+        .lean() as unknown as Array<{ _id: unknown; title: string; status: string; featured: boolean; updatedAt: Date }>,
       Project.findOne({ status: "published" })
         .sort({ publishedAt: -1 })
         .select("title publishedAt")
-        .lean() as any,
+        .lean() as unknown as { _id: unknown; title: string; publishedAt: Date } | null,
     ]);
 
-    const settings = await Settings.findOne({}).lean() as any;
+    const settings = await Settings.findOne({}).lean() as unknown as LeanSettings | null;
     const heroStatus = settings?.hero?.status || "draft";
     const contentStatus = settings?.siteContent?.status || "draft";
     const lastPublishedContent = settings?.siteContent?.publishedAt 
@@ -52,7 +52,7 @@ export async function GET() {
       .sort({ updatedAt: -1 })
       .limit(3)
       .select("title status updatedAt")
-      .lean() as any;
+      .lean() as unknown as Array<{ _id: unknown; title: string; status: string; updatedAt: Date }>;
 
     return NextResponse.json({
       projects: {
@@ -71,7 +71,7 @@ export async function GET() {
           lastPublished: lastPublishedContent,
         },
       },
-      recentProjects: recentProjects.map((p: any) => ({
+      recentProjects: recentProjects.map((p: { _id: unknown; title: string; status: string; featured: boolean; updatedAt: Date }) => ({
         _id: p._id,
         title: toPlainText(p.title) || "Untitled",
         status: p.status,
@@ -82,7 +82,7 @@ export async function GET() {
         title: toPlainText(lastUpdatedProject.title) || "Untitled",
         publishedAt: lastUpdatedProject.publishedAt,
       } : null,
-      recentUpdates: recentUpdates.map((p: any) => ({
+      recentUpdates: recentUpdates.map((p: { _id: unknown; title: string; status: string; updatedAt: Date }) => ({
         _id: p._id,
         title: toPlainText(p.title) || "Untitled",
         status: p.status,

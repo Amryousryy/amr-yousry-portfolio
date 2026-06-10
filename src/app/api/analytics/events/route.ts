@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     console.error("ANALYTICS_DB_CONNECT_ERROR", {
       name: error instanceof Error ? error.name : "UnknownError",
       message: error instanceof Error ? error.message : String(error),
-      code: typeof error === "object" && error !== null && "code" in error ? (error as any).code : undefined,
+      code: typeof error === "object" && error !== null && "code" in error ? (error as { code?: number }).code : undefined,
     });
     return NextResponse.json({ success: false, error: "Database connection failed" }, { status: 500 });
   }
@@ -66,9 +66,9 @@ export async function POST(req: Request) {
     console.error("ANALYTICS_CREATE_ERROR", {
       name: error instanceof Error ? error.name : "UnknownError",
       message: error instanceof Error ? error.message : String(error),
-      code: typeof error === "object" && error !== null && "code" in error ? (error as any).code : undefined,
+      code: typeof error === "object" && error !== null && "code" in error ? (error as { code?: number }).code : undefined,
       validationErrors: typeof error === "object" && error !== null && "errors" in error
-        ? Object.keys((error as any).errors || {})
+        ? Object.keys((error as { errors?: Record<string, unknown> }).errors || {})
         : undefined,
     });
     return NextResponse.json({ success: false, error: "Failed to save event" }, { status: 500 });

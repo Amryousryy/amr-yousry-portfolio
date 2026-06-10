@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
-import Settings from "@/models/Settings";
+import Settings, { type LeanSettings } from "@/models/Settings";
 
 const DEFAULT_CONTENT = {
   about: "",
@@ -53,7 +53,7 @@ export async function GET(req: Request) {
     }
 
     await dbConnect();
-    const settings = await Settings.findOne({}).lean() as any;
+    const settings = await Settings.findOne({}).lean() as unknown as LeanSettings | null;
     
     if (!settings?.siteContent) {
       return NextResponse.json({ 
@@ -133,7 +133,7 @@ export async function PUT(req: Request) {
 
     await dbConnect();
     
-    const currentSettings = await Settings.findOne({}).lean() as any;
+    const currentSettings = await Settings.findOne({}).lean() as unknown as LeanSettings | null;
     const currentStatus = currentSettings?.siteContent?.status || "draft";
     const newStatus = body.status || "draft";
     

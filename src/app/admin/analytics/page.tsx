@@ -134,7 +134,7 @@ export default function AnalyticsPage() {
                 <span className="text-[9px] font-bold uppercase text-foreground/40">{label}</span>
               </div>
               <p className="text-2xl font-display font-bold" style={{ color }}>
-                {String((s as any)[key] ?? 0)}
+                {String(s[key as keyof SummaryData] ?? 0)}
               </p>
             </div>
           ))}
@@ -355,7 +355,7 @@ export default function AnalyticsPage() {
             Business Insights
           </h2>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {insights.map((insight: any, i: number) => (
+            {insights.map((insight: { type: string; title: string; description: string; action: string }, i: number) => (
               <div key={i} className={`p-6 border-l-4 ${
                 insight.type === 'positive' ? 'bg-green-500/5 border-green-500' :
                 insight.type === 'negative' ? 'bg-red-500/5 border-red-500' :

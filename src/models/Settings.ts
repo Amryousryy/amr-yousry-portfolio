@@ -37,27 +37,35 @@ export interface IAboutSection {
   }>;
 }
 
+export interface ISiteContent {
+  about: string;
+  servicesTitle: string;
+  servicesSubtitle?: string;
+  servicesDescription: string;
+  contactEmail: string;
+  whatsappNumber: string;
+  socialLinks: {
+    instagram: string;
+    twitter: string;
+    youtube: string;
+    linkedin: string;
+  };
+  status: ContentStatus;
+  servicesCards: IServiceCard[];
+  publishedAt?: Date;
+  lastStatusChangeAt?: Date;
+}
+
+export interface LeanSettings {
+  hero?: IHeroSettings;
+  siteContent?: ISiteContent;
+}
+
 export interface ISettings extends Document {
   hero: IHeroSettings;
   about: IAboutSection;
   services: IServiceItem[];
-  siteContent?: {
-    about: string;
-    servicesTitle: string;
-    servicesDescription: string;
-    contactEmail: string;
-    whatsappNumber: string;
-    socialLinks: {
-      instagram: string;
-      twitter: string;
-      youtube: string;
-      linkedin: string;
-    };
-    status: ContentStatus;
-    servicesCards: IServiceCard[];
-    publishedAt?: Date;
-    lastStatusChangeAt?: Date;
-  };
+  siteContent?: ISiteContent;
   createdAt: Date;
   updatedAt: Date;
 }
