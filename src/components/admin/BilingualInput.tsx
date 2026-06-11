@@ -33,7 +33,7 @@ export default function StringInput({
       <InputComponent
         required={required}
         value={value}
-        onChange={(e: any) => onChange(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => onChange(e.target.value)}
         rows={rows}
         className="w-full bg-primary/5 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm"
         placeholder={placeholder || `Enter ${label}...`}

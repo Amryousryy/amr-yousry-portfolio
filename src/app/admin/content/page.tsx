@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useForm, useFieldArray, Controller, FieldErrors } from "react-hook-form";
+import { useForm, useFieldArray, Controller, FieldErrors, FieldPath } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save, Loader2, Info, Target, Mail, Clock, Plus, Trash2, GripVertical, Eye } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -12,15 +12,16 @@ import StringInput from "@/components/admin/BilingualInput";
 import { ErrorSummary, scrollToFirstError } from "@/components/admin/ErrorSummary";
 import { useUnsavedChanges } from "@/lib/hooks";
 import { socialLinks } from "@/data/social-links";
+import type { SiteContent } from "@/types";
 
 type FormData = ContentCreateInput;
 
 function getFieldError(errors: FieldErrors<FormData>, path: string): string | undefined {
   const parts = path.split(".");
-  let current: any = errors;
+  let current: Record<string, unknown> = errors;
   for (const part of parts) {
     if (current === undefined) return undefined;
-    current = current[part];
+    current = current[part] as Record<string, unknown>;
   }
   return current?.message as string | undefined;
 }
@@ -31,7 +32,7 @@ function getString(value: string | { en: string; ar: string } | undefined): stri
   return value.en || "";
 }
 
-function convertToStringForm(content: any): FormData {
+function convertToStringForm(content: SiteContent): FormData {
   if (!content) return contentDefaultValues;
   return {
     about: getString(content.about),
@@ -40,9 +41,14 @@ function convertToStringForm(content: any): FormData {
     servicesDescription: getString(content.servicesDescription),
     contactEmail: content.contactEmail || "",
     whatsappNumber: content.whatsappNumber || "",
-    socialLinks: content.socialLinks || { instagram: "", twitter: "", youtube: "", linkedin: "" },
+    socialLinks: {
+      instagram: content.socialLinks?.instagram ?? "",
+      twitter: content.socialLinks?.twitter ?? "",
+      youtube: content.socialLinks?.youtube ?? "",
+      linkedin: content.socialLinks?.linkedin ?? "",
+    },
     status: content.status || "draft",
-    servicesCards: content.servicesCards?.map((card: any) => ({
+    servicesCards: content.servicesCards?.map((card: SiteContent["servicesCards"][number]) => ({
       title: getString(card.title),
       description: getString(card.description),
       icon: card.icon
@@ -214,7 +220,7 @@ export default function SiteContentManagerPage() {
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
+            onClick={() => setActiveTab(tab.id as "about" | "services" | "contact")}
             className={`flex items-center space-x-3 px-6 py-3 text-[10px] font-bold uppercase transition-all ${activeTab === tab.id ? 'bg-accent text-background' : 'text-foreground/40 hover:text-foreground'}`}
           >
             <tab.icon size={14} />
@@ -407,7 +413,7 @@ export default function SiteContentManagerPage() {
                       <label className="pixel-text text-[10px] text-foreground/40 block uppercase">{platform}</label>
                       <input 
                         type="url" 
-                        {...register(`socialLinks.${platform}` as keyof FormData["socialLinks"] as any)}
+                        {...register(`socialLinks.${platform}` as unknown as FieldPath<FormData>)}
                         className="w-full bg-background border border-primary/20 p-4 outline-none focus:border-accent text-sm"
                         placeholder={url}
                         defaultValue={url}

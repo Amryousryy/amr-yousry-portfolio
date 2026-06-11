@@ -10,16 +10,17 @@ import { detectExpectedMediaType } from "@/lib/validation/project-readiness";
 import MediaUploader from "@/components/admin/MediaUploader";
 import VideoPreview from "@/components/admin/VideoPreview";
 import VideoPosterCard from "@/components/admin/VideoPosterCard";
+import type { CloudinaryUploadWidgetResults } from "next-cloudinary";
 import { ProjectCreateInput } from "@/lib/validation";
 
 type FormData = ProjectCreateInput;
 
 function getFieldError(errors: FieldErrors<FormData>, path: string): string | undefined {
   const parts = path.split(".");
-  let current: any = errors;
+  let current: Record<string, unknown> = errors;
   for (const part of parts) {
     if (current === undefined) return undefined;
-    current = current[part];
+    current = current[part] as Record<string, unknown>;
   }
   return current?.message as string | undefined;
 }
@@ -180,8 +181,9 @@ export default function MediaFields({
                   <div className="flex gap-1 shrink-0">
                     <CldUploadWidget
                       uploadPreset={mediaConfig.uploadPreset}
-                      onSuccess={(result: any) => {
-                        const url = result.info?.secure_url || result.secure_url;
+                      onSuccess={(result: CloudinaryUploadWidgetResults) => {
+                        const info = typeof result.info === "object" ? result.info : undefined;
+                        const url = info?.secure_url || "";
                         if (url) setValue(`caseStudyMedia.${mIndex}.src`, url);
                       }}
                     >
@@ -193,8 +195,9 @@ export default function MediaFields({
                     </CldUploadWidget>
                     <CldUploadWidget
                       uploadPreset={mediaConfig.uploadPreset}
-                      onSuccess={(result: any) => {
-                        const url = result.info?.secure_url || result.secure_url;
+                      onSuccess={(result: CloudinaryUploadWidgetResults) => {
+                        const info = typeof result.info === "object" ? result.info : undefined;
+                        const url = info?.secure_url || "";
                         if (url) setValue(`caseStudyMedia.${mIndex}.src`, url);
                       }}
                       options={{ resourceType: "video" }}
@@ -357,8 +360,9 @@ export default function MediaFields({
                       <>
                         <CldUploadWidget
                           uploadPreset={mediaConfig.uploadPreset}
-                          onSuccess={(result: any) => {
-                            const url = result.info?.secure_url || result.secure_url;
+                          onSuccess={(result: CloudinaryUploadWidgetResults) => {
+                            const info = typeof result.info === "object" ? result.info : undefined;
+                            const url = info?.secure_url || "";
                             if (url) appendUrl(url);
                           }}
                         >
@@ -374,8 +378,9 @@ export default function MediaFields({
                         </CldUploadWidget>
                         <CldUploadWidget
                           uploadPreset={mediaConfig.uploadPreset}
-                          onSuccess={(result: any) => {
-                            const url = result.info?.secure_url || result.secure_url;
+                          onSuccess={(result: CloudinaryUploadWidgetResults) => {
+                            const info = typeof result.info === "object" ? result.info : undefined;
+                            const url = info?.secure_url || "";
                             if (url) appendUrl(url);
                           }}
                           options={{ resourceType: "video" }}

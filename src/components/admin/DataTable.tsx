@@ -3,6 +3,7 @@
 import React from "react";
 import {
   ColumnDef,
+  Column,
   flexRender,
   getCoreRowModel,
   useReactTable,
@@ -205,7 +206,7 @@ export function DataTable<TData, TValue>({
   );
 }
 
-export function SortableHeader({ column, children }: { column: any; children: React.ReactNode }) {
+export function SortableHeader<TData, TValue>({ column, children }: { column: Column<TData, TValue>; children: React.ReactNode }) {
   const sorted = column.getIsSorted();
   
   return (
