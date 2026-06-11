@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
+import Image from "next/image";
 
 type BootPhase =
   | "init"
@@ -42,7 +43,8 @@ export function CreativeEngineLoader({
 }) {
   const [phase, setPhase] = useState<BootPhase>("init");
   const [visible, setVisible] = useState(true);
-  const [reduced, setReduced] = useState(false);
+  const [reduced, setReduced] = useState(prefersReducedMotion);
+  const bootedRef = useRef(false);
 
   const complete = useCallback(() => {
     setPhase("done");
@@ -56,19 +58,36 @@ export function CreativeEngineLoader({
     });
   }, []);
 
+  // Init effect: corrects SSR-borne state before first paint.
+  // Microtask avoids React Compiler warning about synchronous setState.
   useEffect(() => {
-    setReduced(prefersReducedMotion());
-
     try {
       if (sessionStorage.getItem(SESSION_KEY)) {
-        setVisible(false);
-        setPhase("done");
-        return;
+        bootedRef.current = true;
+        queueMicrotask(() => {
+          setPhase("done");
+          setVisible(false);
+        });
       }
     } catch {}
 
     if (prefersReducedMotion()) {
-      setPhase("reveal");
+      queueMicrotask(() => {
+        setReduced(true);
+      });
+    }
+  }, []);
+
+  // Animation sequence — fires once on mount (no phase dependency), so the
+  // timer cascade runs to completion without being destroyed/recreated on
+  // each phase transition.
+  useEffect(() => {
+    if (bootedRef.current) return;
+
+    if (prefersReducedMotion()) {
+      queueMicrotask(() => {
+        setPhase("reveal");
+      });
       const t = setTimeout(complete, 600);
       return () => clearTimeout(t);
     }
@@ -116,10 +135,13 @@ export function CreativeEngineLoader({
         <div className="relative z-20 flex flex-col items-center gap-8 px-4 w-full max-w-sm">
           {/* Logo */}
           <div className="relative">
-            <img
+            <Image
               src="/images/logo.svg"
               alt="AMR YOUSRY"
+              width={48}
+              height={48}
               className="w-12 h-12 md:w-14 md:h-14 opacity-60"
+              unoptimized
             />
             <div className="absolute -top-1 -left-1 w-1.5 h-1.5 bg-brand-cyan/60" />
             <div className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-brand-cyan/60" />

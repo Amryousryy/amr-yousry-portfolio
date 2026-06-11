@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { BRAND_LOGOS } from "@/data/brands";
 import type { ReactNode } from "react";
 
@@ -47,13 +48,14 @@ export default function BrandMarquee() {
             >
               {brand.logoPath ? (
                 <BrandLogoWrapper brand={brand}>
-                  <img
+                  <Image
                     src={brand.logoPath}
                     alt={`${brand.name} logo`}
                     width={160}
                     height={56}
                     className="max-h-full w-auto object-contain hover:brightness-125 transition-all duration-300"
                     style={{ maxHeight: '56px', maxWidth: '100%' }}
+                    unoptimized
                   />
                 </BrandLogoWrapper>
               ) : (
@@ -72,13 +74,14 @@ export default function BrandMarquee() {
             >
               {brand.logoPath ? (
                 <BrandLogoWrapper brand={brand}>
-                  <img
+                  <Image
                     src={brand.logoPath}
                     alt={`${brand.name} logo`}
                     width={160}
                     height={56}
                     className="max-h-full w-auto object-contain hover:brightness-125 transition-all duration-300"
                     style={{ maxHeight: '56px', maxWidth: '100%' }}
+                    unoptimized
                   />
                 </BrandLogoWrapper>
               ) : (

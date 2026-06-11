@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Container } from "@/components/ui/container";
 import { footerContent } from "@/content/footer";
 import { socialLinksArray } from "@/data/social-links";
@@ -12,7 +13,7 @@ export function Footer() {
           {/* Brand & Tagline */}
           <div className="lg:col-span-6">
             <Link href="/" className="group block mb-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue">
-              <img src="/images/footer-logo.svg" alt="AMR YOUSRY" width={120} height={28} className="w-30 md:w-36 h-auto transition-transform group-hover:scale-105" />
+              <Image src="/images/footer-logo.svg" alt="AMR YOUSRY" width={120} height={28} className="w-30 md:w-36 h-auto transition-transform group-hover:scale-105" unoptimized />
             </Link>
             <p className="font-modern text-text-dim text-sm sm:text-base max-w-[520px] leading-relaxed antialiased">
               {footerContent.tagline}

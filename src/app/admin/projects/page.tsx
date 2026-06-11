@@ -16,6 +16,7 @@ import {
   Send
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { toast } from "sonner";
 
 interface ProjectRow {
@@ -122,12 +123,14 @@ export default function ProjectsPage() {
       accessorKey: "image",
       header: "Image",
       cell: ({ row }) => (
-        <div className="w-16 h-10 bg-primary/20 overflow-hidden rounded-sm">
+        <div className="w-16 h-10 bg-primary/20 overflow-hidden rounded-sm relative">
           {row.original.image && (
-            <img 
-              src={row.original.image} 
-              alt="" 
-              className="w-full h-full object-cover" 
+            <Image
+              src={row.original.image}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="64px"
             />
           )}
         </div>

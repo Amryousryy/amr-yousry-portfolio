@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 interface ContactIconImageProps {
   src: string;
   alt?: string;
@@ -22,16 +24,17 @@ export default function ContactIconImage({
       className={`overflow-hidden flex items-center justify-center shrink-0 ${className}`}
       style={{ width: wrapperSize, height: wrapperSize }}
     >
-      <img
+      <Image
         src={src}
         alt={alt}
+        width={inner}
+        height={inner}
         className={`block image-pixel ${imgClassName}`}
         style={{
-          width: inner,
-          height: inner,
           maxWidth: "none",
           imageRendering: "pixelated",
         }}
+        unoptimized
       />
     </div>
   );
