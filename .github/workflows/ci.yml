@@ -57,5 +57,5 @@ jobs:
           SERVER_TIMEOUT: 30000
           QA_TIMEOUT: 60000
 
-      - name: Lint (report-only — non-blocking until lint debt cleanup)
-        run: npm run lint || true
+      - name: Lint (blocking)
+        run: npm run lint
