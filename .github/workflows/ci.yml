@@ -3,8 +3,7 @@
 # Build is blocking — the workflow fails if the build fails.
 # Readiness unit tests block — pure function tests with no dependencies.
 # Public contract tests block — verify public endpoints and security headers.
-# Lint is report-only temporarily due to existing lint debt.
-# After lint debt cleanup (Phase 4), remove "|| true" to make lint blocking.
+# Lint is blocking — ESLint errors fail CI.
 #
 # Does not require production environment variables.
 # Does not expose secrets.

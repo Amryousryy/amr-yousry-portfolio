@@ -5,7 +5,7 @@
 | Layer | Location | CI-safe? | Description |
 |-------|----------|----------|-------------|
 | A. Unit Tests | `scripts/qa/project-readiness-unit.ts` (runs via jiti) | ✅ Yes | Pure function tests for `detectExpectedMediaType()` and `checkReadiness()`. Imports production logic directly. Uses `jiti` (transitive dependency via tailwindcss/eslint, locked in package-lock.json). No MongoDB, no network, no credentials. |
-| B. Static Quality | `npm run build`, `npm run lint`, `git diff --check` | ✅ Yes | TypeScript compilation, ESLint (report-only), whitespace checks. |
+| B. Static Quality | `npm run build`, `npm run lint`, `git diff --check` | ✅ Yes | TypeScript compilation, ESLint (errors are blocking, warnings are visible but non-blocking), whitespace checks. |
 | C. API Contract | `scripts/qa/public-contract-smoke.mjs` | ✅ Yes | Public endpoint status codes, redirects, security headers. Requires ephemeral server. |
 | D. Local Auth Integration | `scripts/qa/phase18-admin-guardrails.mjs` | ❌ No | Requires `.env.local`, local MongoDB, auth session. Creates and cleans up temp records. |
 | E. Browser E2E | Not implemented | ❌ No | Future layer — would require Playwright. |
@@ -47,7 +47,7 @@ npm run qa:admin-guardrails
 3. `git diff --check` — whitespace violation check (blocking)
 4. `npm run qa:readiness-unit` — pure function unit tests (blocking)
 5. `npm run qa:public-contract` — public endpoint + header smoke tests (blocking)
-6. `npm run lint || true` — lint (report-only, non-blocking)
+6. `npm run lint` — lint (blocking — ESLint errors fail CI)
 
 ## What Remains Manual
 
@@ -79,7 +79,7 @@ npm run qa:admin-guardrails
 | Command | Purpose | Needs Server? | Needs Env? | Mutates Local DB? | Safe for CI? |
 |---------|---------|---------------|------------|-------------------|--------------|
 | `npm run build` | Production build | No | No | No | ✅ Yes |
-| `npm run lint` | ESLint checks | No | No | No | ✅ Yes (report-only) |
+| `npm run lint` | ESLint checks | No | No | No | ✅ Yes (errors blocking, warnings visible) |
 | `git diff --check` | Whitespace check | No | No | No | ✅ Yes |
 | `npm run qa:readiness-unit` | Pure function unit tests (imports production logic) | No | No | No | ✅ Yes |
 | `npm run qa:public-contract` | Public endpoint contract tests | Yes (auto) | No | No | ✅ Yes |
