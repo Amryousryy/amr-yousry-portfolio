@@ -1,6 +1,19 @@
 import { timingSafeEqual } from "crypto";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { checkRateLimit, recordFailedAttempt, clearFailedAttempts } from "@/lib/auth-rate-limit";
+
+function resolveIp(req?: { headers?: Record<string, string | string[]> }): string {
+  if (!req?.headers) return "unknown";
+  const forwarded = req.headers["x-forwarded-for"];
+  if (forwarded) {
+    const ip = (Array.isArray(forwarded) ? forwarded[0] : forwarded.split(",")[0]).trim();
+    if (ip) return ip;
+  }
+  const realIp = req.headers["x-real-ip"];
+  if (realIp) return Array.isArray(realIp) ? realIp[0] : realIp;
+  return "unknown";
+}
 
 function logFailedLogin(email: string): void {
   import("@/lib/activity").then(({ logActivity }) => {
@@ -22,24 +35,35 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email", placeholder: "admin@example.com" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) {
           logFailedLogin(credentials?.email || "no-email");
           return null;
         }
 
-        const adminEmail = (process.env.ADMIN_EMAIL || "").trim();
-        const adminPass = (process.env.ADMIN_PASSWORD || "").trim();
-        const inputEmail = credentials.email.trim();
+        const ip = resolveIp(req);
+        const normalizedEmail = credentials.email.trim();
         const inputPassword = credentials.password;
 
-        if (!adminEmail || !adminPass) {
-          logFailedLogin(inputEmail);
+        const { allowed } = checkRateLimit(normalizedEmail, ip);
+        if (!allowed) {
+          logFailedLogin(normalizedEmail);
           return null;
         }
 
-        if (inputEmail !== adminEmail) {
-          logFailedLogin(inputEmail);
+        const adminEmail = (process.env.ADMIN_EMAIL || "").trim();
+        const adminPass = (process.env.ADMIN_PASSWORD || "").trim();
+
+        if (!adminEmail || !adminPass) {
+          logFailedLogin(normalizedEmail);
+          return null;
+        }
+
+        const isWrongEmail = normalizedEmail !== adminEmail;
+
+        if (isWrongEmail) {
+          recordFailedAttempt(normalizedEmail, ip);
+          logFailedLogin(normalizedEmail);
           return null;
         }
 
@@ -47,15 +71,19 @@ export const authOptions: NextAuthOptions = {
         const adminPassBuf = Buffer.from(adminPass);
 
         if (passBuf.length !== adminPassBuf.length) {
-          logFailedLogin(inputEmail);
+          recordFailedAttempt(normalizedEmail, ip);
+          logFailedLogin(normalizedEmail);
           return null;
         }
 
         const isMatch = timingSafeEqual(passBuf, adminPassBuf);
         if (!isMatch) {
-          logFailedLogin(inputEmail);
+          recordFailedAttempt(normalizedEmail, ip);
+          logFailedLogin(normalizedEmail);
           return null;
         }
+
+        clearFailedAttempts(normalizedEmail, ip);
 
         return {
           id: "1",

@@ -29,7 +29,7 @@ function LoginForm() {
       });
 
       if (res?.error) {
-        setError("Invalid credentials. Please check your email and passcode.");
+        setError("Invalid credentials or too many attempts. Please try again later.");
         setLoading(false);
       } else if (res?.ok) {
         router.push(callbackUrl);

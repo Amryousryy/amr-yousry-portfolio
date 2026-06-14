@@ -13,6 +13,7 @@
         "repair:al-ghazal": "jiti scripts/repair-al-ghazal.ts",
         "qa:admin-guardrails": "node --env-file=.env.local scripts/qa/phase18-admin-guardrails.mjs",
         "qa:readiness-unit": "jiti scripts/qa/project-readiness-unit.ts",
+        "qa:auth-rate-limit-unit": "jiti scripts/qa/auth-rate-limit-unit.ts",
         "qa:public-contract": "node scripts/qa/run-with-server.mjs scripts/qa/public-contract-smoke.mjs"
     },
     "dependencies": {
