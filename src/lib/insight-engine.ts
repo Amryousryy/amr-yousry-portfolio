@@ -1,6 +1,7 @@
 import dbConnect from "./db";
 import Analytics from "@/models/Analytics";
 import Project from "@/models/Project";
+import { safeProjectTitle } from "./safe-project-title";
 
 export interface Insight {
   type: "positive" | "negative" | "opportunity";
@@ -60,10 +61,12 @@ export async function generateBusinessInsights() {
   for (const p of projectViews) {
     if (p.views > 50) {
         const project = await Project.findById(p._id);
+        if (!project) continue;
+        const title = safeProjectTitle(project);
         insights.push({
             type: "opportunity",
             title: "Popular Project",
-            description: `'${project?.title?.en}' is attracting significant views.`,
+            description: `'${title}' is attracting significant views.`,
             impact: "This project is your best converting asset — leverage it.",
             action: "Add a clear CTA or link to your services at the end of this project page."
         });
