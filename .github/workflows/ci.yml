@@ -1,7 +1,7 @@
 # CI Quality Gate
 #
 # Build is blocking — the workflow fails if the build fails.
-# Readiness, auth rate-limit, and insight engine unit tests block — pure function tests with no dependencies.
+# Readiness, auth rate-limit, insight engine, and settings validation unit tests block — pure function tests with no dependencies.
 # Public contract tests block — verify public endpoints and security headers.
 # Lint is blocking — ESLint errors fail CI.
 #
@@ -53,6 +53,9 @@ jobs:
 
       - name: Insight engine unit tests (blocking)
         run: npm run qa:insight-engine-unit
+
+      - name: Settings validation unit tests (blocking)
+        run: npm run qa:settings-validation-unit
 
       - name: Public contract smoke tests (blocking)
         run: npm run qa:public-contract
