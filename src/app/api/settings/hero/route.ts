@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Settings, { type LeanSettings } from "@/models/Settings";
+import { heroCreateSchema } from "@/lib/validation";
 
 const DEFAULT_HERO = {
   headline: "Creative Strategist & Video Editor",
@@ -107,22 +108,23 @@ export async function PUT(req: Request) {
 
     const body = await req.json();
     
-    if (!body.headline) {
-      return NextResponse.json({ success: false, error: "Headline is required" }, { status: 400 });
+    const parsed = heroCreateSchema.safeParse(body);
+    if (!parsed.success) {
+      const firstError = parsed.error.issues[0]?.message || "Validation failed";
+      return NextResponse.json({ success: false, error: firstError }, { status: 400 });
     }
 
+    const validated = parsed.data;
+
     if (!process.env.MONGODB_URI) {
-      return NextResponse.json({ success: true, data: body });
+      return NextResponse.json({ success: true, data: validated });
     }
 
     await dbConnect();
     
     const currentSettings = await Settings.findOne({}).lean() as unknown as LeanSettings | null;
     const currentStatus = currentSettings?.hero?.status || "draft";
-    const newStatus = body.status || "draft";
-    
-    const heroData = { ...body };
-    delete heroData.status;
+    const newStatus = validated.status || "draft";
     
     const statusMetadata: Record<string, Date> = {
       lastStatusChangeAt: new Date(),
@@ -136,14 +138,14 @@ export async function PUT(req: Request) {
       {}, 
       { $set: { 
         hero: { 
-          headline: heroData.headline,
-          subheadline: heroData.subheadline,
-          primaryCTA: heroData.primaryCTA,
-          primaryCTALink: heroData.primaryCTALink || "/contact",
-          secondaryCTA: heroData.secondaryCTA,
-          secondaryCTALink: heroData.secondaryCTALink || "/projects",
-          posterImage: heroData.posterImage || "",
-          showreelVideo: heroData.showreelVideo || "",
+          headline: validated.headline,
+          subheadline: validated.subheadline,
+          primaryCTA: validated.primaryCTA,
+          primaryCTALink: validated.primaryCTALink,
+          secondaryCTA: validated.secondaryCTA,
+          secondaryCTALink: validated.secondaryCTALink,
+          posterImage: validated.posterImage || "",
+          showreelVideo: validated.showreelVideo || "",
           status: newStatus,
           ...statusMetadata,
         }, 

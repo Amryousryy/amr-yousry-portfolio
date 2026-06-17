@@ -9,11 +9,20 @@ import {
   LogOut,
   ExternalLink,
   Plus,
-  Rocket
+  Rocket,
+  FileText,
+  LayoutDashboard
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 const menuGroups = [
+  {
+    title: "Site Content",
+    items: [
+      { name: "Content", icon: FileText, href: "/admin/content" },
+      { name: "Hero", icon: LayoutDashboard, href: "/admin/content/hero" },
+    ]
+  },
   {
     title: "Project CMS",
     items: [

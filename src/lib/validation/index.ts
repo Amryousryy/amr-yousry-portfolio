@@ -21,6 +21,13 @@ export {
 export type { SettingsCreateInput, SettingsUpdateInput, ContentCreateInput, ContentUpdateInput } from "./settings";
 
 export { 
+  heroCreateSchema,
+  heroUpdateSchema,
+  heroDefaultValues,
+} from "./hero-settings";
+export type { HeroCreateInput, HeroUpdateInput } from "./hero-settings";
+
+export {
   contentStatusSchema,
   stringSchema,
   mediaItemSchema,
