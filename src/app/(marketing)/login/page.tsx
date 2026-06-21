@@ -2,7 +2,7 @@
 
 import React, { useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 
@@ -12,9 +12,10 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/admin";
+
+  const clearError = () => { if (error) setError(""); };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,8 +34,7 @@ function LoginForm() {
         setError("Invalid credentials. Please check your email and passcode, then try again.");
         setLoading(false);
       } else if (res?.ok) {
-        router.push(callbackUrl);
-        router.refresh();
+        window.location.href = callbackUrl;
       }
     } catch {
       setError("An error occurred. Please try again.");
@@ -66,7 +66,7 @@ function LoginForm() {
           <input
             type="text"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => { setEmail(e.target.value); clearError(); }}
             className="w-full bg-background border border-primary/20 p-4 outline-none focus:border-accent transition-colors font-mono text-sm"
             placeholder="admin@example.com"
             autoComplete="email"
@@ -78,7 +78,7 @@ function LoginForm() {
             <input
               type={showPassword ? "text" : "password"}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => { setPassword(e.target.value); clearError(); }}
               className="w-full bg-background border border-primary/20 p-4 pr-12 outline-none focus:border-accent transition-colors font-mono text-sm"
               placeholder="••••••••"
               autoComplete="current-password"
@@ -101,7 +101,7 @@ function LoginForm() {
           className="w-full py-4 bg-accent text-background font-bold uppercase tracking-widest pixel-border hover:bg-white transition-colors flex items-center justify-center gap-4"
         >
           {loading && <Loader2 className="animate-spin" size={18} />}
-          <span>{loading ? "Verifying..." : "Authenticate"}</span>
+          <span>{loading ? "AUTHENTICATING..." : "Authenticate"}</span>
         </button>
       </form>
     </motion.div>

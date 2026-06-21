@@ -53,7 +53,6 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        // Validate credentials before rate limit check
         const isWrongEmail = normalizedEmail !== adminEmail;
 
         let passwordValid = false;
@@ -65,7 +64,6 @@ export const authOptions: NextAuthOptions = {
           }
         }
 
-        // Correct credentials always bypass rate limit
         if (!isWrongEmail && passwordValid) {
           clearFailedAttempts(normalizedEmail, ip);
           return {
@@ -75,7 +73,6 @@ export const authOptions: NextAuthOptions = {
           };
         }
 
-        // Invalid credentials — apply rate limiting
         const { allowed } = checkRateLimit(normalizedEmail, ip);
         if (!allowed) {
           logFailedLogin(normalizedEmail);
