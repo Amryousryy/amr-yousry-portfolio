@@ -3,15 +3,27 @@
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
-import { contactContent } from "@/content/contact";
+import { contactContent as staticContactContent } from "@/content/contact";
 import { useState, FormEvent } from "react";
 import { trackEvent } from "@/lib/tracker";
 import SuccessState from "@/components/sections/contact/SuccessState";
 import CommunicationChannels from "@/components/sections/contact/CommunicationChannels";
 import ContactForm from "@/components/sections/contact/ContactForm";
+import type { PublicContactContent } from "@/lib/contact-content-normalizer";
 
-export default function ContactSection() {
+interface ContactSectionProps {
+  contactData?: PublicContactContent;
+}
+
+export default function ContactSection({ contactData }: ContactSectionProps) {
   const [succeeded, setSucceeded] = useState(false);
+  const contactContent = contactData
+    ? {
+        ...staticContactContent,
+        socials: contactData.socials,
+        whatsapp: { ...staticContactContent.whatsapp, number: contactData.whatsappNumber },
+      }
+    : staticContactContent;
   const [errors, setErrors] = useState<{name?: boolean; email?: boolean; message?: boolean}>({});
   const [formData, setFormData] = useState({
     name: "",
@@ -116,7 +128,11 @@ export default function ContactSection() {
               Usually replies within 24 hours — WhatsApp is the fastest route.
             </motion.p>
 
-            <CommunicationChannels />
+            <CommunicationChannels
+              email={contactData?.email}
+              whatsappNumber={contactData?.whatsappNumber}
+              socials={contactData?.socials}
+            />
           </div>
 
           <ContactForm

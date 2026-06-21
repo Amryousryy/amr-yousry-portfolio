@@ -2,9 +2,22 @@ import Link from "next/link";
 import Image from "next/image";
 import { Container } from "@/components/ui/container";
 import { footerContent } from "@/content/footer";
-import { socialLinksArray } from "@/data/social-links";
+import { getPublishedContactContent } from "@/lib/public-contact-content";
+import type { SocialLinkItem } from "@/lib/contact-content-normalizer";
 
-export function Footer() {
+async function getFooterSocials(): Promise<SocialLinkItem[]> {
+  try {
+    const contactData = await getPublishedContactContent();
+    return contactData.socials;
+  } catch {
+    const { socialLinksArray: fallback } = await import("@/data/social-links");
+    return fallback;
+  }
+}
+
+export async function Footer() {
+  const socialLinks = await getFooterSocials();
+
   return (
     <footer className="bg-brand-blue border-t border-slate-800 py-14 md:py-24 overflow-hidden">
       <Container>
@@ -41,7 +54,7 @@ export function Footer() {
           <div className="lg:col-span-3">
             <h2 className="font-pixel text-[10px] text-brand-cyan tracking-widest mb-6 uppercase">Connect</h2>
             <ul className="space-y-3">
-              {socialLinksArray.map((social) => (
+              {socialLinks.map((social) => (
                 <li key={social.label}>
                   <a 
                     href={social.href}

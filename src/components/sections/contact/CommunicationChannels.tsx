@@ -2,10 +2,24 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import ContactIconImage from "@/components/ui/contact-icon-image";
-import { contactContent } from "@/content/contact";
+import { contactContent as staticContactContent } from "@/content/contact";
+import { SocialLinkItem } from "@/lib/contact-content-normalizer";
 
-export default function CommunicationChannels() {
+interface CommunicationChannelsProps {
+  email?: string;
+  whatsappNumber?: string;
+  socials?: SocialLinkItem[];
+}
+
+export default function CommunicationChannels({
+  email,
+  whatsappNumber,
+  socials,
+}: CommunicationChannelsProps) {
   const shouldReduceMotion = useReducedMotion();
+  const whatsapp = whatsappNumber || staticContactContent.whatsapp.number;
+  const contactEmail = email || "amryousryy@gmail.com";
+  const socialLinks = socials || staticContactContent.socials;
 
   return (
     <div className="pt-6 border-t border-slate-800/60">
@@ -14,7 +28,7 @@ export default function CommunicationChannels() {
       {/* WhatsApp - Primary */}
       <motion.a 
         whileHover={shouldReduceMotion ? {} : { x: 8 }}
-        href={`https://wa.me/${contactContent.whatsapp.number}`}
+        href={`https://wa.me/${whatsapp}`}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="WhatsApp - Fastest response"
@@ -35,7 +49,7 @@ export default function CommunicationChannels() {
       {/* Email */}
       <motion.a 
         whileHover={shouldReduceMotion ? {} : { x: 8 }}
-        href="mailto:amryousryy@gmail.com"
+        href={`mailto:${contactEmail}`}
         aria-label="Email - Business inquiries"
         className="flex min-h-[56px] items-center gap-4 text-white font-pixel text-xs group transition-colors mb-5 md:mb-6"
       >
@@ -53,7 +67,7 @@ export default function CommunicationChannels() {
 
       {/* Pixel Icon Buttons for Socials */}
       <div className="flex flex-wrap gap-4 pt-4">
-        {contactContent.socials.map((social) => {
+        {socialLinks.map((social) => {
           const iconPaths: Record<string, { src: string; scale: number }> = {
             ig: { src: "/images/social/instagram-pixel-v2.png", scale: 1.25 },
             be: { src: "/images/social/behance-pixel-v2.png", scale: 1.28 },

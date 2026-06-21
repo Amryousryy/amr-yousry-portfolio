@@ -17,7 +17,8 @@
         "qa:insight-engine-unit": "jiti scripts/qa/insight-engine-unit.ts",
         "qa:settings-validation-unit": "jiti scripts/qa/settings-validation-unit.ts",
         "qa:public-contract": "node scripts/qa/run-with-server.mjs scripts/qa/public-contract-smoke.mjs",
-"qa:public-homepage-content-unit": "jiti scripts/qa/public-homepage-content-unit.ts"
+        "qa:public-homepage-content-unit": "jiti scripts/qa/public-homepage-content-unit.ts",
+        "qa:public-contact-content-unit": "jiti scripts/qa/public-contact-content-unit.ts"
     },
     "dependencies": {
         "@hookform/resolvers": "^3.10.0",
