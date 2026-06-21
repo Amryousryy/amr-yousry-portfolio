@@ -78,6 +78,7 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
   const watchedImage = watch("image");
   const watchedVideo = watch("video");
   const watchedFeatured = watch("featured");
+  const watchedStatus = watch("status");
   const watchedGallery = watch("gallery") || [];
   const watchedCaseStudyMedia = watch("caseStudyMedia") || [];
 
@@ -220,7 +221,7 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
           setEnableVideo={setEnableVideo}
         />
 
-        <ProjectStatusFields register={register} control={control} featured={watchedFeatured} />
+        <ProjectStatusFields register={register} control={control} featured={watchedFeatured} status={watchedStatus} />
       </div>
     </div>
   );

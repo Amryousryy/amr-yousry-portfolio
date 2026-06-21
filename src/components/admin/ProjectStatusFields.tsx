@@ -9,11 +9,20 @@ interface ProjectStatusFieldsProps {
   register: UseFormRegister<FormData>;
   control: Control<FormData>;
   featured: boolean;
+  status: string;
 }
 
-export default function ProjectStatusFields({ register, control, featured }: ProjectStatusFieldsProps) {
+export default function ProjectStatusFields({ register, control, featured, status }: ProjectStatusFieldsProps) {
+  const isDraft = status === "draft";
+  const showDraftFeaturedWarning = featured && isDraft;
+
   return (
     <div className="space-y-4">
+      {showDraftFeaturedWarning && (
+        <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 text-[10px] uppercase font-bold tracking-widest">
+            Warning: Featured draft projects will not appear on the homepage until published.
+        </div>
+      )}
       <h2 className="text-sm font-display font-bold uppercase tracking-wider text-accent border-b border-primary/10 pb-2">Publishing &amp; Homepage</h2>
       <p className="text-xs text-foreground/40">
         Control where this project appears and whether it is publicly visible.

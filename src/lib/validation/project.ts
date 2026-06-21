@@ -24,11 +24,14 @@ const detailedResultSchema = z.object({
 
 const detailedResultArraySchema = z.array(detailedResultSchema).default([]);
 
-const draftSafeString = z.string().trim().default("");
+const draftSafeStringBase = z.string().trim();
+const draftSafeString = draftSafeStringBase.default("");
 
 export const projectCreateSchema = z.object({
-  slug: z.string().min(1, "Slug is required").transform(normalizeSlug),
-  title: draftSafeString,
+  slug: z.string().min(1, "Slug is required")
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must only contain lowercase letters, numbers, and single hyphens between segments")
+    .transform(normalizeSlug),
+  title: draftSafeStringBase.min(1, "Title is required"),
   shortDescription: draftSafeString,
   fullDescription: draftSafeString,
   category: draftSafeString,

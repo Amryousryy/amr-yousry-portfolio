@@ -142,6 +142,10 @@ export async function POST(req: Request) {
 
   try {
     await dbConnect();
+    const existing = await Project.findOne({ slug: validation.data.slug });
+    if (existing) {
+        return NextResponse.json({ error: "A project with this slug already exists" }, { status: 409 });
+    }
   } catch (error) {
     console.error("DB_CONNECT_ERROR:", error);
     return NextResponse.json({ error: "Database error" }, { status: 500 });
@@ -167,7 +171,7 @@ export async function POST(req: Request) {
     try {
       revalidatePath("/");
       revalidatePath("/projects");
-      if (validation.data.slug) revalidatePath(`/projects/${validation.data.slug}`);
+      revalidatePath(`/projects/${project.slug}`);
     } catch (revalError) {
       console.error("REVALIDATE_ERROR:", revalError);
     }

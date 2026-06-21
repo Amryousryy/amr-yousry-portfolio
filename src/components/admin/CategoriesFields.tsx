@@ -47,10 +47,12 @@ export default function CategoriesFields({ control }: CategoriesFieldsProps) {
                       onChange={() => {
                         const current = field.value || [];
                         const updated = checked
-                          ? current.filter((v) => v !== cat.value)
+                          ? current.filter((v: string) => v !== cat.value)
                           : [...current, cat.value];
                         field.onChange(updated);
                       }}
+
+
                       className="w-4 h-4 accent-accent"
                     />
                     <span
