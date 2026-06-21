@@ -45,12 +45,6 @@ export const authOptions: NextAuthOptions = {
         const normalizedEmail = credentials.email.trim();
         const inputPassword = credentials.password;
 
-        const { allowed } = checkRateLimit(normalizedEmail, ip);
-        if (!allowed) {
-          logFailedLogin(normalizedEmail);
-          return null;
-        }
-
         const adminEmail = (process.env.ADMIN_EMAIL || "").trim();
         const adminPass = (process.env.ADMIN_PASSWORD || "").trim();
 
@@ -59,37 +53,38 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
+        // Validate credentials before rate limit check
         const isWrongEmail = normalizedEmail !== adminEmail;
 
-        if (isWrongEmail) {
-          recordFailedAttempt(normalizedEmail, ip);
+        let passwordValid = false;
+        if (!isWrongEmail) {
+          const passBuf = Buffer.from(inputPassword);
+          const adminPassBuf = Buffer.from(adminPass);
+          if (passBuf.length === adminPassBuf.length) {
+            passwordValid = timingSafeEqual(passBuf, adminPassBuf);
+          }
+        }
+
+        // Correct credentials always bypass rate limit
+        if (!isWrongEmail && passwordValid) {
+          clearFailedAttempts(normalizedEmail, ip);
+          return {
+            id: "1",
+            name: "Admin",
+            email: adminEmail,
+          };
+        }
+
+        // Invalid credentials — apply rate limiting
+        const { allowed } = checkRateLimit(normalizedEmail, ip);
+        if (!allowed) {
           logFailedLogin(normalizedEmail);
           return null;
         }
 
-        const passBuf = Buffer.from(inputPassword);
-        const adminPassBuf = Buffer.from(adminPass);
-
-        if (passBuf.length !== adminPassBuf.length) {
-          recordFailedAttempt(normalizedEmail, ip);
-          logFailedLogin(normalizedEmail);
-          return null;
-        }
-
-        const isMatch = timingSafeEqual(passBuf, adminPassBuf);
-        if (!isMatch) {
-          recordFailedAttempt(normalizedEmail, ip);
-          logFailedLogin(normalizedEmail);
-          return null;
-        }
-
-        clearFailedAttempts(normalizedEmail, ip);
-
-        return {
-          id: "1",
-          name: "Admin",
-          email: adminEmail,
-        };
+        recordFailedAttempt(normalizedEmail, ip);
+        logFailedLogin(normalizedEmail);
+        return null;
       },
     }),
   ],

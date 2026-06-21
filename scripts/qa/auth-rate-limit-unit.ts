@@ -72,6 +72,21 @@ for (let i = 0; i < 5; i++) {
 }
 assert(!checkRateLimit(email, ip).allowed, "re-blocked after reset");
 
+// 10. Bypass pattern — clearFailedAttempts on a blocked key restores access
+clearFailedAttempts(email, ip);
+assert(checkRateLimit(email, ip).allowed, "clear on blocked key restores access");
+
+// 11. Re-block to confirm bypass requires explicit clear
+for (let i = 0; i < 5; i++) {
+  recordFailedAttempt(email, ip);
+}
+assert(!checkRateLimit(email, ip).allowed, "re-blocked after bypass test");
+// Auth layer bypass: the utility does not know about credentials, but
+// when authorize() validates correct credentials, it calls
+// clearFailedAttempts() *before* checkRateLimit() is ever consulted.
+// This allows correct credentials to always bypass a blocked key.
+_resetStore();
+
 // ── Summary ─────────────────────────────────────────────────────────
 console.log(`\nPassed: ${passed} / ${passed + failed}`);
 console.log(`Failed: ${failed} / ${passed + failed}`);
