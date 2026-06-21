@@ -22,10 +22,31 @@ const DEFAULT_CONTENT = {
   status: "draft"
 };
 
+const ALLOWED_PROTOCOLS = ["http:", "https:"];
+
 function getString(value: string | { en: string; ar: string } | undefined): string {
   if (!value) return "";
   if (typeof value === "string") return value;
   return value.en || "";
+}
+
+function isValidEmail(value: string): boolean {
+  const trimmed = value.trim();
+  if (!trimmed) return true;
+  if (trimmed.length > 254) return false;
+  if (/^javascript:/i.test(trimmed) || /^data:/i.test(trimmed)) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
+}
+
+function isValidSocialUrl(value: string): boolean {
+  if (!value) return true;
+  if (/^javascript:/i.test(value) || /^data:/i.test(value)) return false;
+  try {
+    const url = new URL(value);
+    return ALLOWED_PROTOCOLS.includes(url.protocol);
+  } catch {
+    return false;
+  }
 }
 
 export async function GET(req: Request) {
@@ -123,20 +144,31 @@ export async function PUT(req: Request) {
     }
 
     const body = await req.json();
-    
-    if (!body.about) {
-      return NextResponse.json({ success: false, error: "About content is required" }, { status: 400 });
+
+    const errors: Record<string, string> = {};
+
+    if (body.contactEmail !== undefined && !isValidEmail(body.contactEmail)) {
+      errors.contactEmail = "Invalid email format";
     }
 
-    if (!body.contactEmail) {
-      return NextResponse.json({ success: false, error: "Contact email is required" }, { status: 400 });
+    if (body.socialLinks && typeof body.socialLinks === "object") {
+      for (const [platform, url] of Object.entries(body.socialLinks)) {
+        if (typeof url === "string" && url && !isValidSocialUrl(url)) {
+          errors[`socialLinks.${platform}`] = `Invalid URL for ${platform}`;
+        }
+      }
+    }
+
+    if (Object.keys(errors).length > 0) {
+      return NextResponse.json({ success: false, errors, error: "Validation failed" }, { status: 400 });
     }
 
     await dbConnect();
     
     const currentSettings = await Settings.findOne({}).lean() as unknown as LeanSettings | null;
+    const currentContent = (currentSettings?.siteContent || {}) as Record<string, unknown>;
     const currentStatus = currentSettings?.siteContent?.status || "draft";
-    const newStatus = body.status || "draft";
+    const newStatus = body.status || currentStatus;
     
     const statusMetadata: Record<string, Date> = {
       lastStatusChangeAt: new Date(),
@@ -145,27 +177,29 @@ export async function PUT(req: Request) {
     if (newStatus === "published" && currentStatus !== "published") {
       statusMetadata.publishedAt = new Date();
     }
+
+    const mergedSocialLinks = {
+      ...(currentContent.socialLinks || {}),
+      ...(body.socialLinks || {}),
+    };
     
+    const merged: Record<string, unknown> = {
+      about: body.about !== undefined ? body.about : (currentContent.about || ""),
+      servicesTitle: body.servicesTitle !== undefined ? body.servicesTitle : (currentContent.servicesTitle || "Services"),
+      servicesDescription: body.servicesDescription !== undefined ? body.servicesDescription : (currentContent.servicesDescription || ""),
+      contactEmail: body.contactEmail !== undefined ? body.contactEmail : (currentContent.contactEmail || ""),
+      whatsappNumber: body.whatsappNumber !== undefined ? body.whatsappNumber : (currentContent.whatsappNumber || ""),
+      socialLinks: mergedSocialLinks,
+      servicesCards: body.servicesCards !== undefined ? body.servicesCards : (currentContent.servicesCards || []),
+      status: newStatus,
+      ...statusMetadata,
+    };
+
     const settings = await Settings.findOneAndUpdate(
       {}, 
       { 
         $set: { 
-          siteContent: {
-            about: body.about,
-            servicesTitle: body.servicesTitle || "Services",
-            servicesDescription: body.servicesDescription,
-            contactEmail: body.contactEmail,
-            whatsappNumber: body.whatsappNumber || "",
-            socialLinks: body.socialLinks || {
-              instagram: "",
-              twitter: "",
-              youtube: "",
-              linkedin: "",
-            },
-            servicesCards: body.servicesCards || [],
-            status: newStatus,
-            ...statusMetadata,
-          },
+          siteContent: merged,
           updatedAt: new Date()
         } 
       }, 

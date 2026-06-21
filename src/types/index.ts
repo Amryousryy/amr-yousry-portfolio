@@ -31,6 +31,8 @@ export interface SiteContent {
   whatsappNumber: string;
   socialLinks: {
     instagram?: string;
+    facebook?: string;
+    behance?: string;
     twitter?: string;
     youtube?: string;
     linkedin?: string;

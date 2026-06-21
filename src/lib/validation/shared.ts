@@ -59,7 +59,34 @@ export const seoSchema = z.object({
 // URL HELPERS
 // ============================================================================
 
+export const optionalStringSchema = z.string().optional().default("");
+
 export const optionalUrlSchema = z.string().url().optional().or(z.literal(""));
+
+export const safeUrlSchema = z.string().optional().default("").refine(
+  (val) => {
+    if (!val) return true;
+    if (/^javascript:/i.test(val) || /^data:/i.test(val)) return false;
+    try {
+      const url = new URL(val);
+      return ["http:", "https:"].includes(url.protocol);
+    } catch {
+      return false;
+    }
+  },
+  "Must be a valid http or https URL"
+);
+
+export const optionalEmailSchema = z.string().optional().default("").refine(
+  (val) => {
+    if (!val) return true;
+    const trimmed = val.trim();
+    if (trimmed.length > 254) return false;
+    if (/^javascript:/i.test(trimmed) || /^data:/i.test(trimmed)) return false;
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
+  },
+  "Invalid email format"
+);
 
 // ============================================================================
 // SLUG UTILITIES

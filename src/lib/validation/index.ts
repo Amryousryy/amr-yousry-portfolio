@@ -30,10 +30,13 @@ export type { HeroCreateInput, HeroUpdateInput } from "./hero-settings";
 export {
   contentStatusSchema,
   stringSchema,
+  optionalStringSchema,
   mediaItemSchema,
   mediaArraySchema,
   seoSchema,
   optionalUrlSchema,
+  safeUrlSchema,
+  optionalEmailSchema,
   normalizeSlug,
   slugSchema,
   createEmptyMediaItem,

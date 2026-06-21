@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { stringSchema, optionalUrlSchema, contentStatusSchema } from "./shared";
+import { stringSchema, optionalUrlSchema, contentStatusSchema, optionalStringSchema, optionalEmailSchema, safeUrlSchema } from "./shared";
 
 const socialLinksSchema = z.object({
   instagram: optionalUrlSchema,
@@ -54,10 +54,12 @@ export type SettingsUpdateInput = z.infer<typeof settingsUpdateSchema>;
 // ============================================================================
 
 const socialLinksFormSchema = z.object({
-  instagram: z.string().optional().default(""),
-  twitter: z.string().optional().default(""),
-  youtube: z.string().optional().default(""),
-  linkedin: z.string().optional().default(""),
+  instagram: safeUrlSchema,
+  facebook: safeUrlSchema.optional().default(""),
+  behance: safeUrlSchema.optional().default(""),
+  twitter: safeUrlSchema,
+  youtube: safeUrlSchema,
+  linkedin: safeUrlSchema,
 });
 
 const serviceCardSchema = z.object({
@@ -69,14 +71,16 @@ const serviceCardSchema = z.object({
 export type IServiceCard = z.infer<typeof serviceCardSchema>;
 
 export const contentCreateSchema = z.object({
-  about: stringSchema,
+  about: optionalStringSchema,
   servicesTitle: stringSchema,
   servicesSubtitle: stringSchema,
   servicesDescription: stringSchema,
-  contactEmail: z.string().email("Valid email is required"),
+  contactEmail: optionalEmailSchema,
   whatsappNumber: z.string().optional().default(""),
   socialLinks: socialLinksFormSchema.optional().default({
     instagram: "",
+    facebook: "",
+    behance: "",
     twitter: "",
     youtube: "",
     linkedin: "",
@@ -99,9 +103,11 @@ export const contentDefaultValues: ContentCreateInput = {
   whatsappNumber: "",
   socialLinks: {
     instagram: socialLinks.instagram,
+    facebook: socialLinks.facebook,
+    behance: socialLinks.behance,
     twitter: "",
     youtube: "",
-    linkedin: "",
+    linkedin: socialLinks.linkedin,
   },
   status: "draft",
   servicesCards: [
@@ -112,7 +118,7 @@ export const contentDefaultValues: ContentCreateInput = {
   ],
 };
 
-import { socialLinks } from "@/data/social-links";
+import { socialLinks } from "../../data/social-links";
 
 export function createContentFormValues(existing?: Partial<ContentCreateInput>): ContentCreateInput {
   return {
@@ -124,9 +130,11 @@ export function createContentFormValues(existing?: Partial<ContentCreateInput>):
     whatsappNumber: existing?.whatsappNumber || "",
     socialLinks: existing?.socialLinks || {
       instagram: socialLinks.instagram,
+      facebook: socialLinks.facebook,
+      behance: socialLinks.behance,
       twitter: "",
       youtube: "",
-      linkedin: "",
+      linkedin: socialLinks.linkedin,
     },
     status: existing?.status || "draft",
     servicesCards: existing?.servicesCards || [

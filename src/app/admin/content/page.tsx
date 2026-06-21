@@ -39,10 +39,12 @@ function convertToStringForm(content: SiteContent): FormData {
     servicesTitle: getString(content.servicesTitle),
     servicesSubtitle: getString(content.servicesSubtitle),
     servicesDescription: getString(content.servicesDescription),
-    contactEmail: content.contactEmail || "",
-    whatsappNumber: content.whatsappNumber || "",
+    contactEmail: content.contactEmail ?? "",
+    whatsappNumber: content.whatsappNumber ?? "",
     socialLinks: {
       instagram: content.socialLinks?.instagram ?? "",
+      facebook: content.socialLinks?.facebook ?? "",
+      behance: content.socialLinks?.behance ?? "",
       twitter: content.socialLinks?.twitter ?? "",
       youtube: content.socialLinks?.youtube ?? "",
       linkedin: content.socialLinks?.linkedin ?? "",
@@ -397,7 +399,7 @@ export default function SiteContentManagerPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-2">
                     <label className="pixel-text text-[10px] text-foreground/40 block uppercase">
-                      Public Contact Email <span className="text-red-500">*</span>
+                      Public Contact Email
                     </label>
                     <input 
                       type="email" 
@@ -428,18 +430,27 @@ export default function SiteContentManagerPage() {
                     { platform: "instagram", url: socialLinks.instagram },
                     { platform: "facebook", url: socialLinks.facebook },
                     { platform: "behance", url: socialLinks.behance },
-                  ].map(({ platform, url }) => (
-                    <div key={platform} className="space-y-2">
-                      <label className="pixel-text text-[10px] text-foreground/40 block uppercase">{platform}</label>
-                      <input 
-                        type="url" 
-                        {...register(`socialLinks.${platform}` as unknown as FieldPath<FormData>)}
-                        className="w-full bg-background border border-primary/20 p-4 outline-none focus:border-accent text-sm"
-                        placeholder={url}
-                        defaultValue={url}
-                      />
-                    </div>
-                  ))}
+                    { platform: "twitter", url: "" },
+                    { platform: "youtube", url: "" },
+                    { platform: "linkedin", url: socialLinks.linkedin },
+                  ].map(({ platform, url }) => {
+                    const errorKey = `socialLinks.${platform}` as unknown as FieldPath<FormData>;
+                    return (
+                      <div key={platform} className="space-y-2">
+                        <label className="pixel-text text-[10px] text-foreground/40 block uppercase">{platform}</label>
+                        <input
+                          type="url"
+                          {...register(errorKey)}
+                          className="w-full bg-background border border-primary/20 p-4 outline-none focus:border-accent text-sm"
+                          placeholder={url}
+                          defaultValue={url}
+                        />
+                        {getFieldError(errors, `socialLinks.${platform}`) && (
+                          <p className="text-[10px] text-red-500">{getFieldError(errors, `socialLinks.${platform}`)}</p>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
