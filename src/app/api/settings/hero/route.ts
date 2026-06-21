@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
@@ -154,6 +155,7 @@ export async function PUT(req: Request) {
       { upsert: true, new: true }
     );
     
+    revalidatePath("/");
     return NextResponse.json({ success: true, data: settings.hero });
   } catch (error) {
     console.error("PUT_HERO_SETTINGS_ERROR:", error);
