@@ -87,7 +87,8 @@ const missingLink = normalizeHeroContent({
   secondaryCTALink: "/valid-sec",
   status: "published",
 }, FALLBACK_HERO);
-assert(missingLink === FALLBACK_HERO, "empty primaryCTALink — uses fallback");
+assert(missingLink.primaryCTALink === "/projects", "empty primaryCTALink — uses fallback link");
+assert(missingLink.headline === "VALID HEADLINE", "empty primaryCTALink — preserves other fields");
 
 // 6. Partial CMS data safely merges with fallback
 const partial = normalizeHeroContent({
@@ -150,6 +151,31 @@ const unknownStatus = normalizeHeroContent({
   status: "archived",
 }, FALLBACK_HERO);
 assert(unknownStatus === FALLBACK_HERO, "unknown status — uses fallback");
+
+// 11. CTA Link Normalization
+const ctaTests = [
+  { pLink: "/projects", sLink: "#contact", expectedP: "/projects", expectedS: "#contact", label: "preserved valid" },
+  { pLink: "projects", sLink: "contact", expectedP: "/projects", expectedS: "#contact", label: "normalized alias" },
+  { pLink: "show projects", sLink: "contact me", expectedP: "/projects", expectedS: "#contact", label: "normalized alias phrase" },
+  { pLink: "", sLink: "", expectedP: "/projects", expectedS: "#contact", label: "empty links fallback" },
+  { pLink: "javascript:alert(1)", sLink: "javascript:alert(1)", expectedP: "/projects", expectedS: "#contact", label: "unsafe links fallback" },
+  { pLink: "/contact", sLink: "/contact", expectedP: "/projects", expectedS: "#contact", label: "normalized slash contact" },
+  { pLink: "https://example.com", sLink: "https://example.com", expectedP: "https://example.com", expectedS: "https://example.com", label: "external links preserved" },
+];
+
+ctaTests.forEach(({ pLink, sLink, expectedP, expectedS, label }) => {
+  const result = normalizeHeroContent({
+    headline: "H",
+    subheadline: "S",
+    primaryCTA: "P",
+    primaryCTALink: pLink,
+    secondaryCTA: "S",
+    secondaryCTALink: sLink,
+    status: "published",
+  }, FALLBACK_HERO);
+  assert(result.primaryCTALink === expectedP, `CTA normalization: ${label} (primary)`);
+  assert(result.secondaryCTALink === expectedS, `CTA normalization: ${label} (secondary)`);
+});
 
 // ── Summary ─────────────────────────────────────────────────────────
 console.log(`\nPassed: ${passed} / ${passed + failed}`);
