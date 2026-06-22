@@ -32,6 +32,13 @@ assert(!invalidStatus.success, "invalid status rejected");
 const missingTitle = projectCreateSchema.safeParse({ slug: "p", title: "", status: "draft" });
 assert(!missingTitle.success, "missing title rejected");
 
+// 4. Media URL validation
+const validImage = projectCreateSchema.safeParse({ slug: "p", title: "T", status: "draft", image: "https://example.com/img.jpg" });
+assert(validImage.success, "valid image URL accepted");
+
+const invalidImage = projectCreateSchema.safeParse({ slug: "p", title: "T", status: "draft", image: "javascript:alert(1)" });
+assert(!invalidImage.success, "unsafe image URL rejected");
+
 console.log(`\nPassed: ${passed} / ${passed + failed}`);
 console.log(`Failed: ${failed} / ${passed + failed}`);
 if (failed > 0) process.exit(1);

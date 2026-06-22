@@ -89,8 +89,9 @@ export default function MediaFields({
       <div className="space-y-6 p-6 bg-primary/5 border border-primary/10">
         <div className="space-y-2">
           <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70">
-            Main Image / Thumbnail <span className="text-red-500">*</span>
+            Main Image / Thumbnail
           </label>
+          <p className="text-[10px] text-foreground/40">Use https:// image URLs or /public-file paths. Unsafe protocols are rejected.</p>
           <MediaUploader
             value={watchedImage}
             onChange={(url) => setValue("image", url)}
