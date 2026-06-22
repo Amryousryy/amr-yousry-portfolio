@@ -57,6 +57,15 @@ jobs:
       - name: Settings validation unit tests (blocking)
         run: npm run qa:settings-validation-unit
 
+      - name: Homepage content unit tests (blocking)
+        run: npm run qa:public-homepage-content-unit
+
+      - name: Contact content unit tests (blocking)
+        run: npm run qa:public-contact-content-unit
+
+      - name: Project validation unit tests (blocking)
+        run: npm run qa:project-validation-unit
+
       - name: Public contract smoke tests (blocking)
         run: npm run qa:public-contract
         env:

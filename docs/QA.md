@@ -8,6 +8,9 @@
 | A1. Auth Rate Limit | `scripts/qa/auth-rate-limit-unit.ts` (runs via jiti) | ✅ Yes | Pure function tests for the in-memory login rate limiter. No MongoDB, no network, no credentials. |
 | A2. Insight Engine | `scripts/qa/insight-engine-unit.ts` (runs via jiti) | ✅ Yes | Pure function tests for `safeProjectTitle()`. No MongoDB, no network, no credentials. |
 | A3. Settings Validation | `scripts/qa/settings-validation-unit.ts` (runs via jiti) | ✅ Yes | Pure function tests for `heroCreateSchema()`. No MongoDB, no network, no credentials. |
+| A4. Homepage Content | `scripts/qa/public-homepage-content-unit.ts` (runs via jiti) | ✅ Yes | Pure function tests for `normalizeHeroContent()` and `normalizeAboutContent()`. No MongoDB, no network, no credentials. |
+| A5. Contact Content | `scripts/qa/public-contact-content-unit.ts` (runs via jiti) | ✅ Yes | Pure function tests for `normalizeContactContent()` and social link normalizers. No MongoDB, no network, no credentials. |
+| A6. Project Validation | `scripts/qa/project-validation-unit.ts` (runs via jiti) | ✅ Yes | Pure function tests for `projectCreateSchema()`. No MongoDB, no network, no credentials. |
 | B. Static Quality | `npm run build`, `npm run lint`, `git diff --check` | ✅ Yes | TypeScript compilation, ESLint (errors are blocking, warnings are visible but non-blocking), whitespace checks. |
 | C. API Contract | `scripts/qa/public-contract-smoke.mjs` | ✅ Yes | Public endpoint status codes, redirects, security headers. Requires ephemeral server. |
 | D. Local Auth Integration | `scripts/qa/phase18-admin-guardrails.mjs` | ❌ No | Requires `.env.local`, local MongoDB, auth session. Creates and cleans up temp records. |
@@ -24,6 +27,9 @@ npm run qa:readiness-unit
 npm run qa:auth-rate-limit-unit
 npm run qa:insight-engine-unit
 npm run qa:settings-validation-unit
+npm run qa:public-homepage-content-unit
+npm run qa:public-contact-content-unit
+npm run qa:project-validation-unit
 
 # Public contract smoke tests (starts ephemeral server)
 npm run qa:public-contract
@@ -55,8 +61,11 @@ npm run qa:admin-guardrails
 5. `npm run qa:auth-rate-limit-unit` — rate limiter pure function tests (blocking)
 6. `npm run qa:insight-engine-unit` — insight engine pure function tests (blocking)
 7. `npm run qa:settings-validation-unit` — settings validation pure function tests (blocking)
-8. `npm run qa:public-contract` — public endpoint + header smoke tests (blocking)
-9. `npm run lint` — lint (blocking — ESLint errors fail CI)
+8. `npm run qa:public-homepage-content-unit` — homepage content normalizer unit tests (blocking)
+9. `npm run qa:public-contact-content-unit` — contact content normalizer unit tests (blocking)
+10. `npm run qa:project-validation-unit` — project schema validation unit tests (blocking)
+11. `npm run qa:public-contract` — public endpoint + header smoke tests (blocking)
+12. `npm run lint` — lint (blocking — ESLint errors fail CI)
 
 ## What Remains Manual
 
@@ -94,5 +103,8 @@ npm run qa:admin-guardrails
 | `npm run qa:auth-rate-limit-unit` | Rate limiter pure function tests | No | No | No | ✅ Yes |
 | `npm run qa:insight-engine-unit` | Insight engine pure function tests | No | No | No | ✅ Yes |
 | `npm run qa:settings-validation-unit` | Settings validation pure function tests | No | No | No | ✅ Yes |
+| `npm run qa:public-homepage-content-unit` | Homepage content normalizer tests | No | No | No | ✅ Yes |
+| `npm run qa:public-contact-content-unit` | Contact content normalizer tests | No | No | No | ✅ Yes |
+| `npm run qa:project-validation-unit` | Project schema validation tests | No | No | No | ✅ Yes |
 | `npm run qa:public-contract` | Public endpoint contract tests | Yes (auto) | No | No | ✅ Yes |
 | `npm run qa:admin-guardrails` | Authenticated integration tests | Yes (manual) | Yes | Yes (temp, cleaned) | ❌ No |
