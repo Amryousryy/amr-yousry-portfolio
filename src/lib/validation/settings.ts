@@ -70,13 +70,45 @@ const serviceCardSchema = z.object({
 
 export type IServiceCard = z.infer<typeof serviceCardSchema>;
 
+const aboutStatsSchema = z.object({
+  label: z.string().optional().default(""),
+  value: z.string().optional().default(""),
+});
+
+const ctaLinkSchema = z.string().optional().default("").refine(
+  (val) => {
+    if (!val) return true;
+    if (/^javascript:/i.test(val) || /^data:/i.test(val) || /^ftp:/i.test(val) || /^mailto:/i.test(val)) return false;
+    if (val.startsWith("/") || val.startsWith("#")) return true;
+    try {
+      const url = new URL(val);
+      return ["http:", "https:"].includes(url.protocol);
+    } catch {
+      return false;
+    }
+  },
+  "Must be a valid URL, internal path, or hash link"
+);
+
+const trimmedStringArraySchema = z.array(z.string().optional().default("")).default([]);
+
 export const contentCreateSchema = z.object({
   about: optionalStringSchema,
+  aboutTitle: optionalStringSchema,
+  aboutBadge: optionalStringSchema,
+  aboutCtaLabel: optionalStringSchema,
+  aboutCtaLink: ctaLinkSchema,
+  aboutStats: z.array(aboutStatsSchema).default([]),
+  aboutSkills: trimmedStringArraySchema,
+  aboutIndustries: trimmedStringArraySchema,
   servicesTitle: stringSchema,
   servicesSubtitle: stringSchema,
   servicesDescription: stringSchema,
   contactEmail: optionalEmailSchema,
   whatsappNumber: z.string().optional().default(""),
+  contactHeading: optionalStringSchema,
+  contactSubheading: optionalStringSchema,
+  contactAvailability: optionalStringSchema,
   socialLinks: socialLinksFormSchema.optional().default({
     instagram: "",
     facebook: "",
@@ -96,11 +128,21 @@ export type ContentUpdateInput = z.infer<typeof contentUpdateSchema>;
 
 export const contentDefaultValues: ContentCreateInput = {
   about: "",
+  aboutTitle: "",
+  aboutBadge: "",
+  aboutCtaLabel: "",
+  aboutCtaLink: "",
+  aboutStats: [],
+  aboutSkills: [],
+  aboutIndustries: [],
   servicesTitle: "What I Deliver",
   servicesSubtitle: "Premium video content that drives real business results.",
   servicesDescription: "",
   contactEmail: "",
   whatsappNumber: "",
+  contactHeading: "",
+  contactSubheading: "",
+  contactAvailability: "",
   socialLinks: {
     instagram: socialLinks.instagram,
     facebook: socialLinks.facebook,
@@ -123,11 +165,21 @@ import { socialLinks } from "../../data/social-links";
 export function createContentFormValues(existing?: Partial<ContentCreateInput>): ContentCreateInput {
   return {
     about: existing?.about || "",
+    aboutTitle: existing?.aboutTitle || "",
+    aboutBadge: existing?.aboutBadge || "",
+    aboutCtaLabel: existing?.aboutCtaLabel || "",
+    aboutCtaLink: existing?.aboutCtaLink || "",
+    aboutStats: existing?.aboutStats || [],
+    aboutSkills: existing?.aboutSkills || [],
+    aboutIndustries: existing?.aboutIndustries || [],
     servicesTitle: existing?.servicesTitle || "What I Deliver",
     servicesSubtitle: existing?.servicesSubtitle || "Premium video content that drives real business results.",
     servicesDescription: existing?.servicesDescription || "",
     contactEmail: existing?.contactEmail || "",
     whatsappNumber: existing?.whatsappNumber || "",
+    contactHeading: existing?.contactHeading || "",
+    contactSubheading: existing?.contactSubheading || "",
+    contactAvailability: existing?.contactAvailability || "",
     socialLinks: existing?.socialLinks || {
       instagram: socialLinks.instagram,
       facebook: socialLinks.facebook,

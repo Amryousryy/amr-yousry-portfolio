@@ -24,11 +24,21 @@ export interface HeroSettings {
 export interface SiteContent {
   _id: string;
   about: string;
+  aboutTitle?: string;
+  aboutBadge?: string;
+  aboutCtaLabel?: string;
+  aboutCtaLink?: string;
+  aboutStats?: Array<{ label: string; value: string }>;
+  aboutSkills?: string[];
+  aboutIndustries?: string[];
   servicesTitle: string;
   servicesSubtitle?: string;
   servicesDescription: string;
   contactEmail: string;
   whatsappNumber: string;
+  contactHeading?: string;
+  contactSubheading?: string;
+  contactAvailability?: string;
   socialLinks: {
     instagram?: string;
     facebook?: string;

@@ -39,11 +39,21 @@ export interface IAboutSection {
 
 export interface ISiteContent {
   about: string;
+  aboutTitle?: string;
+  aboutBadge?: string;
+  aboutCtaLabel?: string;
+  aboutCtaLink?: string;
+  aboutStats?: Array<{ label: string; value: string }>;
+  aboutSkills?: string[];
+  aboutIndustries?: string[];
   servicesTitle: string;
   servicesSubtitle?: string;
   servicesDescription: string;
   contactEmail: string;
   whatsappNumber: string;
+  contactHeading?: string;
+  contactSubheading?: string;
+  contactAvailability?: string;
   socialLinks: {
     instagram: string;
     twitter: string;
@@ -58,6 +68,7 @@ export interface ISiteContent {
 
 export interface LeanSettings {
   hero?: IHeroSettings;
+  about?: IAboutSection;
   siteContent?: ISiteContent;
 }
 
@@ -113,11 +124,21 @@ const SocialLinksSchema = new Schema({
 
 const SiteContentSchema = new Schema({
   about: { type: String, required: true },
+  aboutTitle: { type: String },
+  aboutBadge: { type: String },
+  aboutCtaLabel: { type: String },
+  aboutCtaLink: { type: String },
+  aboutStats: [{ label: { type: String }, value: { type: String } }],
+  aboutSkills: [String],
+  aboutIndustries: [String],
   servicesTitle: { type: String, required: true },
   servicesSubtitle: { type: String },
   servicesDescription: { type: String },
   contactEmail: { type: String, required: true },
   whatsappNumber: { type: String },
+  contactHeading: { type: String },
+  contactSubheading: { type: String },
+  contactAvailability: { type: String },
   socialLinks: { type: SocialLinksSchema },
   status: { type: String, enum: ["draft", "published"], default: "draft" },
   servicesCards: { type: [ServiceCardSchema], default: [] },

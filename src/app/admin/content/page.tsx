@@ -36,11 +36,21 @@ function convertToStringForm(content: SiteContent): FormData {
   if (!content) return contentDefaultValues;
   return {
     about: getString(content.about),
+    aboutTitle: getString(content.aboutTitle),
+    aboutBadge: getString(content.aboutBadge),
+    aboutCtaLabel: getString(content.aboutCtaLabel),
+    aboutCtaLink: getString(content.aboutCtaLink),
+    aboutStats: content.aboutStats?.map(s => ({ label: s.label || "", value: s.value || "" })) || [],
+    aboutSkills: content.aboutSkills?.map(s => s) || [],
+    aboutIndustries: content.aboutIndustries?.map(s => s) || [],
     servicesTitle: getString(content.servicesTitle),
     servicesSubtitle: getString(content.servicesSubtitle),
     servicesDescription: getString(content.servicesDescription),
     contactEmail: content.contactEmail ?? "",
     whatsappNumber: content.whatsappNumber ?? "",
+    contactHeading: getString(content.contactHeading),
+    contactSubheading: getString(content.contactSubheading),
+    contactAvailability: getString(content.contactAvailability),
     socialLinks: {
       instagram: content.socialLinks?.instagram ?? "",
       facebook: content.socialLinks?.facebook ?? "",
@@ -80,6 +90,23 @@ export default function SiteContentManagerPage() {
     control,
     name: "servicesCards",
   });
+
+  const { fields: aboutStatsFields, append: appendAboutStat, remove: removeAboutStat } = useFieldArray({
+    control,
+    name: "aboutStats",
+  });
+
+  const { fields: aboutSkillsFields, append: appendAboutSkill, remove: removeAboutSkill } = useFieldArray({
+    control,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    name: "aboutSkills" as any,
+  }) as unknown as { fields: { id: string }[]; append: (val: string) => void; remove: (index: number) => void };
+
+  const { fields: aboutIndustriesFields, append: appendAboutIndustry, remove: removeAboutIndustry } = useFieldArray({
+    control,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    name: "aboutIndustries" as any,
+  }) as unknown as { fields: { id: string }[]; append: (val: string) => void; remove: (index: number) => void };
 
   const { data: contentResponse, isLoading, isError, error } = useQuery({
     queryKey: ["site-content", "admin"],
@@ -259,14 +286,40 @@ export default function SiteContentManagerPage() {
           
           {activeTab === "about" && (
             <div className="space-y-8 animate-in fade-in duration-500">
-              <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-accent border-b border-primary/10 pb-4 mb-4">About Story</h3>
+              <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-accent border-b border-primary/10 pb-4 mb-4">About / Player Profile</h3>
+
+              <Controller
+                name="aboutBadge"
+                control={control}
+                render={({ field }) => (
+                  <StringInput
+                    label="Badge / Eyebrow"
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="MISSION LOG: PLAYER PROFILE"
+                  />
+                )}
+              />
               
+              <Controller
+                name="aboutTitle"
+                control={control}
+                render={({ field }) => (
+                  <StringInput
+                    label="Professional Title"
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="SENIOR\nMULTIMEDIA DESIGNER."
+                  />
+                )}
+              />
+
               <Controller
                 name="about"
                 control={control}
                 render={({ field }) => (
                   <StringInput 
-                    label="About Description" 
+                    label="About Story / Body"
                     value={field.value} 
                     onChange={field.onChange}
                     type="textarea"
@@ -274,6 +327,143 @@ export default function SiteContentManagerPage() {
                   />
                 )}
               />
+
+              <div className="border-t border-primary/10 pt-6">
+                <h4 className="text-xs font-bold uppercase tracking-widest text-foreground/70 mb-4">CTA Button</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Controller
+                    name="aboutCtaLabel"
+                    control={control}
+                    render={({ field }) => (
+                      <StringInput
+                        label="CTA Label"
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Start a Project"
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="aboutCtaLink"
+                    control={control}
+                    render={({ field }) => (
+                      <StringInput
+                        label="CTA Link"
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="/#contact"
+                      />
+                    )}
+                  />
+                </div>
+              </div>
+
+              <div className="border-t border-primary/10 pt-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-foreground/70">Stats</h4>
+                  <button
+                    type="button"
+                    onClick={() => appendAboutStat({ label: "", value: "" })}
+                    className="flex items-center gap-2 px-4 py-2 bg-accent/20 text-accent text-xs font-bold uppercase hover:bg-accent/30 transition-colors"
+                  >
+                    <Plus size={14} />
+                    Add Stat
+                  </button>
+                </div>
+                <div className="space-y-4">
+                  {aboutStatsFields.map((stat, index) => (
+                    <div key={stat.id} className="flex items-start gap-3 p-4 bg-background/50 border border-primary/10">
+                      <div className="flex-1 space-y-2">
+                        <label className="text-[10px] font-bold uppercase text-foreground/40">Label</label>
+                        <input
+                          {...register(`aboutStats.${index}.label`)}
+                          className="w-full bg-background border border-primary/20 p-2 text-sm"
+                          placeholder="EXPERIENCE"
+                        />
+                      </div>
+                      <div className="flex-1 space-y-2">
+                        <label className="text-[10px] font-bold uppercase text-foreground/40">Value</label>
+                        <input
+                          {...register(`aboutStats.${index}.value`)}
+                          className="w-full bg-background border border-primary/20 p-2 text-sm"
+                          placeholder="8+ YEARS"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeAboutStat(index)}
+                        className="mt-6 p-2 text-foreground/30 hover:text-red-500 transition-colors"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border-t border-primary/10 pt-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-foreground/70">Creative Loadout (Skills)</h4>
+                  <button
+                    type="button"
+                    onClick={() => appendAboutSkill("")}
+                    className="flex items-center gap-2 px-4 py-2 bg-accent/20 text-accent text-xs font-bold uppercase hover:bg-accent/30 transition-colors"
+                  >
+                    <Plus size={14} />
+                    Add Skill
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {aboutSkillsFields.map((field, index) => (
+                    <div key={field.id} className="flex items-center gap-2">
+                      <input
+                        {...register(`aboutSkills.${index}`)}
+                        className="flex-1 bg-background border border-primary/20 p-2 text-sm"
+                        placeholder="After Effects"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeAboutSkill(index)}
+                        className="p-2 text-foreground/30 hover:text-red-500 transition-colors"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border-t border-primary/10 pt-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-foreground/70">Mission Sectors (Industries)</h4>
+                  <button
+                    type="button"
+                    onClick={() => appendAboutIndustry("")}
+                    className="flex items-center gap-2 px-4 py-2 bg-accent/20 text-accent text-xs font-bold uppercase hover:bg-accent/30 transition-colors"
+                  >
+                    <Plus size={14} />
+                    Add Sector
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {aboutIndustriesFields.map((field, index) => (
+                    <div key={field.id} className="flex items-center gap-2">
+                      <input
+                        {...register(`aboutIndustries.${index}`)}
+                        className="flex-1 bg-background border border-primary/20 p-2 text-sm"
+                        placeholder="Medical Sector"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeAboutIndustry(index)}
+                        className="p-2 text-foreground/30 hover:text-red-500 transition-colors"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
 
@@ -394,6 +584,48 @@ export default function SiteContentManagerPage() {
 
           {activeTab === "contact" && (
             <div className="space-y-12 animate-in fade-in duration-500">
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-accent border-b border-primary/10 pb-4 mb-8">Section Intro</h3>
+                <div className="grid grid-cols-1 gap-6 mb-8">
+                  <Controller
+                    name="contactHeading"
+                    control={control}
+                    render={({ field }) => (
+                      <StringInput
+                        label="Contact Heading"
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="START YOUR\nPROJECT."
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="contactSubheading"
+                    control={control}
+                    render={({ field }) => (
+                      <StringInput
+                        label="Contact Subheading"
+                        value={field.value}
+                        onChange={field.onChange}
+                        type="textarea"
+                        rows={3}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="contactAvailability"
+                    control={control}
+                    render={({ field }) => (
+                      <StringInput
+                        label="Availability Text"
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Usually replies within 24 hours..."
+                      />
+                    )}
+                  />
+                </div>
+              </div>
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-accent border-b border-primary/10 pb-4 mb-8">Direct Contact</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

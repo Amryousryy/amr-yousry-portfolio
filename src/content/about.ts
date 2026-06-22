@@ -25,4 +25,6 @@ export const aboutContent = {
     "Education",
     "Restaurants",
   ],
+  ctaLabel: "Start a Project",
+  ctaLink: "/#contact",
 };

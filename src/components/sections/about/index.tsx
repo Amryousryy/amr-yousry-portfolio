@@ -1,13 +1,19 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
-import { aboutContent } from "@/content/about";
-import Link from "next/link";
+import { aboutContent as staticAboutContent } from "@/content/about";
+import { normalizeAboutContent, type PublicAboutContent } from "@/lib/about-content-normalizer";
 import CharacterSelector from "./CharacterSelector";
 
-export default function AboutSection() {
+interface AboutSectionProps {
+  aboutData?: PublicAboutContent;
+}
+
+export default function AboutSection({ aboutData }: AboutSectionProps) {
+  const aboutContent = normalizeAboutContent(aboutData, staticAboutContent);
 
   return (
     <Section id="about" className="bg-brand-blue/95 relative py-14 md:py-20">
@@ -37,13 +43,19 @@ export default function AboutSection() {
                 className="font-display font-bold tracking-tighter text-white break-words"
                 style={{ fontSize: 'clamp(1.75rem, 8.6vw, 4.25rem)', lineHeight: '0.96' }}
               >
-                <span className="text-white">SENIOR</span>
-                <br />
-                <span className="text-brand-cyan">MULTIMEDIA DESIGNER.</span>
+                {(() => {
+                  const parts = aboutContent.heading.split("\n");
+                  return parts.map((part, i) => (
+                    <span key={i}>
+                      {i > 0 && <br />}
+                      <span className={i === 0 ? "text-white" : "text-brand-cyan"}>{part}</span>
+                    </span>
+                  ));
+                })()}
               </motion.h2>
               
               <div className="space-y-4 mt-6">
-                {aboutContent.story.slice(0, 3).map((paragraph, index) => (
+                {aboutContent.story.map((paragraph, index) => (
                   <motion.p 
                     key={index}
                     initial={{ opacity: 0, y: 20 }}
@@ -68,8 +80,8 @@ export default function AboutSection() {
                 <p className="text-sm text-foreground/60 mb-3">
                   Need a creative partner who can connect design, video, and digital experience?
                 </p>
-                <Link href="/#contact" className="group inline-flex min-h-[44px] max-w-full items-center gap-3 sm:gap-4 text-sm font-bold uppercase tracking-[0.16em] sm:tracking-[0.2em] border-b border-brand-cyan pb-2">
-                  <span>Start a Project</span>
+                <Link href={aboutContent.ctaLink} className="group inline-flex min-h-[44px] max-w-full items-center gap-3 sm:gap-4 text-sm font-bold uppercase tracking-[0.16em] sm:tracking-[0.2em] border-b border-brand-cyan pb-2">
+                  <span>{aboutContent.ctaLabel}</span>
                   <div className="w-8 h-[1px] bg-brand-cyan transition-all group-hover:w-16" />
                 </Link>
               </motion.div>
@@ -153,7 +165,7 @@ export default function AboutSection() {
                    style={{ backgroundImage: 'radial-gradient(var(--color-brand-cyan) 1px, transparent 1px)', backgroundSize: '24px 24px' }} 
                  />
                  
-                 <CharacterSelector />
+                  <CharacterSelector />
                </div>
              </motion.div>
           </aside>

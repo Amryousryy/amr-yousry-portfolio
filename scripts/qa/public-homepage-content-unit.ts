@@ -1,9 +1,11 @@
 /**
  * Unit tests for public homepage content helpers.
  *
- * Tests the pure normalizeHeroContent() function without DB or network.
+ * Tests normalizer functions without DB or network.
  */
 import { normalizeHeroContent, FALLBACK_HERO } from "../../src/lib/hero-content-normalizer";
+import { normalizeAboutContent } from "../../src/lib/about-content-normalizer";
+import { aboutContent } from "../../src/content/about";
 
 let passed = 0;
 let failed = 0;
@@ -176,6 +178,279 @@ ctaTests.forEach(({ pLink, sLink, expectedP, expectedS, label }) => {
   assert(result.primaryCTALink === expectedP, `CTA normalization: ${label} (primary)`);
   assert(result.secondaryCTALink === expectedS, `CTA normalization: ${label} (secondary)`);
 });
+
+// ────────────────────────────────────────────────────────────────────
+console.log("\n## About Content — normalizeAboutContent\n");
+
+// 1. null/undefined CMS returns fallback
+const nullResult = normalizeAboutContent(null, aboutContent);
+assert(nullResult === aboutContent, "null CMS — returns fallback identity");
+
+const undefResult = normalizeAboutContent(undefined, aboutContent);
+assert(undefResult === aboutContent, "undefined CMS — returns fallback identity");
+
+// 2. CMS story overrides fallback
+const storyOverride = normalizeAboutContent({
+  story: ["CMS paragraph 1", "CMS paragraph 2"],
+  stats: [],
+}, aboutContent);
+assert(storyOverride.story.length === 2, "CMS story array — overrides fallback");
+assert(storyOverride.story[0] === "CMS paragraph 1", "CMS story array — first paragraph correct");
+assert(storyOverride.story[1] === "CMS paragraph 2", "CMS story array — second paragraph correct");
+assert(storyOverride.badge === aboutContent.badge, "CMS story array — badge preserved from fallback");
+assert(storyOverride.skillClusters === aboutContent.skillClusters, "CMS story array — skillClusters preserved from fallback");
+assert(storyOverride.industries === aboutContent.industries, "CMS story array — industries preserved from fallback");
+
+// 3. CMS story as string (multiline) overrides and splits
+const multilineStory = normalizeAboutContent({
+  story: "Line one\n\nLine two\nLine three",
+  stats: [],
+}, aboutContent);
+assert(multilineStory.story.length === 3, "CMS story multiline — splits into 3 paragraphs");
+assert(multilineStory.story[0] === "Line one", "CMS story multiline — first line correct");
+assert(multilineStory.story[2] === "Line three", "CMS story multiline — third line correct");
+
+// 4. CMS stats override fallback when valid
+const statsOverride = normalizeAboutContent({
+  story: [],
+  stats: [
+    { label: "CMS LABEL 1", value: "100+" },
+    { label: "CMS LABEL 2", value: "50+" },
+  ],
+}, aboutContent);
+assert(statsOverride.stats.length === 2, "CMS stats — overrides fallback");
+assert(statsOverride.stats[0].label === "CMS LABEL 1", "CMS stats — first label correct");
+assert(statsOverride.stats[0].value === "100+", "CMS stats — first value correct");
+
+// 5. CMS stats with invalid entries (missing label or value) filtered out
+const partialStats = normalizeAboutContent({
+  story: [],
+  stats: [
+    { label: "VALID", value: "YES" },
+    { label: "", value: "NO" },
+    { label: "NO", value: "" },
+  ],
+}, aboutContent);
+assert(partialStats.stats.length >= 1, "partial stats — at least one valid stat");
+assert(partialStats.stats[0].label === "VALID", "partial stats — valid entry kept");
+assert(partialStats.stats[0].value === "YES", "partial stats — valid entry value correct");
+
+// 6. Empty CMS stats fall back safely
+const emptyStats = normalizeAboutContent({
+  story: [],
+  stats: [],
+}, aboutContent);
+assert(emptyStats.stats === aboutContent.stats, "empty CMS stats — falls back to static stats");
+
+// 7. Empty CMS story falls back safely
+const emptyStory = normalizeAboutContent({
+  story: [],
+  stats: [],
+}, aboutContent);
+assert(emptyStory.story === aboutContent.story, "empty CMS story — falls back to static story");
+
+// 8. CMS content field (from settings.about.content) treated as story fallback
+const contentField = normalizeAboutContent({
+  content: "Single paragraph from content field",
+  stats: [],
+}, aboutContent);
+assert(contentField.story.length === 1, "content field — single paragraph");
+assert(contentField.story[0] === "Single paragraph from content field", "content field — text matches");
+
+// 9. Both content and story provided — story takes precedence
+const contentVsStory = normalizeAboutContent({
+  content: "Content field text",
+  story: "Story field text",
+  stats: [],
+}, aboutContent);
+assert(contentVsStory.story.length === 1, "content+story — story wins");
+assert(contentVsStory.story[0] === "Story field text", "content+story — story text correct");
+
+// 10. CMS with only story preserves all complex fallback fields
+const complexPreserved = normalizeAboutContent({
+  story: ["New story"],
+  stats: [],
+}, aboutContent);
+assert(complexPreserved.badge === aboutContent.badge, "complex fields — badge preserved");
+assert(complexPreserved.heading === aboutContent.heading, "complex fields — heading preserved");
+assert(complexPreserved.skillClusters === aboutContent.skillClusters, "complex fields — skillClusters preserved");
+assert(complexPreserved.industries === aboutContent.industries, "complex fields — industries preserved");
+
+// 11. CMS heading overrides fallback
+const headingOverride = normalizeAboutContent({
+  story: ["New story"],
+  heading: "SENIOR\nMULTIMEDIA DESIGNER.",
+  stats: [],
+}, aboutContent);
+assert(headingOverride.heading === "SENIOR\nMULTIMEDIA DESIGNER.", "heading override — CMS heading used");
+assert(headingOverride.badge === aboutContent.badge, "heading override — badge preserved");
+
+// 12. CMS empty heading falls back
+const emptyHeading = normalizeAboutContent({
+  story: ["New story"],
+  heading: "",
+  stats: [],
+}, aboutContent);
+assert(emptyHeading.heading === aboutContent.heading, "empty CMS heading — falls back to static");
+
+// 13. CMS whitespace-only heading falls back
+const whitespaceHeading = normalizeAboutContent({
+  story: ["New story"],
+  heading: "   ",
+  stats: [],
+}, aboutContent);
+assert(whitespaceHeading.heading === aboutContent.heading, "whitespace CMS heading — falls back to static");
+
+// 14. CMS badge overrides fallback
+const badgeOverride = normalizeAboutContent({
+  story: [],
+  badge: "CMS BADGE TEXT",
+  stats: [],
+}, aboutContent);
+assert(badgeOverride.badge === "CMS BADGE TEXT", "badge override — CMS badge used");
+assert(badgeOverride.heading === aboutContent.heading, "badge override — heading preserved from fallback");
+
+// 15. CMS empty badge falls back
+const emptyBadge = normalizeAboutContent({
+  story: [],
+  badge: "",
+  stats: [],
+}, aboutContent);
+assert(emptyBadge.badge === aboutContent.badge, "empty CMS badge — falls back to static");
+
+// 16. CMS whitespace-only badge falls back
+const whitespaceBadge = normalizeAboutContent({
+  story: [],
+  badge: "   ",
+  stats: [],
+}, aboutContent);
+assert(whitespaceBadge.badge === aboutContent.badge, "whitespace CMS badge — falls back to static");
+
+// 17. CMS CTA label/link override fallback
+const ctaOverride = normalizeAboutContent({
+  story: [],
+  ctaLabel: "Custom CTA",
+  ctaLink: "/custom-path",
+  stats: [],
+}, aboutContent);
+assert(ctaOverride.ctaLabel === "Custom CTA", "CTA label override — CMS label used");
+assert(ctaOverride.ctaLink === "/custom-path", "CTA link override — CMS link used");
+
+// 18. unsafe CTA link falls back safely
+const unsafeCta = normalizeAboutContent({
+  story: [],
+  ctaLabel: "Bad CTA",
+  ctaLink: "javascript:alert(1)",
+  stats: [],
+}, aboutContent);
+assert(unsafeCta.ctaLink === aboutContent.ctaLink, "unsafe CTA link — falls back to static");
+assert(unsafeCta.ctaLabel === "Bad CTA", "unsafe CTA link — label still overrides");
+
+// 19. valid #contact CTA link is preserved
+const hashCta = normalizeAboutContent({
+  story: [],
+  ctaLink: "#contact",
+  stats: [],
+}, aboutContent);
+assert(hashCta.ctaLink === "#contact", "hash CTA link — preserved");
+
+// 20. valid https:// CTA link is preserved
+const httpsCta = normalizeAboutContent({
+  story: [],
+  ctaLink: "https://example.com/contact",
+  stats: [],
+}, aboutContent);
+assert(httpsCta.ctaLink === "https://example.com/contact", "https CTA link — preserved");
+
+// 21. empty CTA label falls back
+const emptyCtaLabel = normalizeAboutContent({
+  story: [],
+  ctaLabel: "",
+  ctaLink: "",
+  stats: [],
+}, aboutContent);
+assert(emptyCtaLabel.ctaLabel === aboutContent.ctaLabel, "empty CTA label — falls back to static");
+assert(emptyCtaLabel.ctaLink === aboutContent.ctaLink, "empty CTA link — falls back to static");
+
+// 22. CMS skills override Creative Loadout items
+const skillsOverride = normalizeAboutContent({
+  story: [],
+  skills: ["Skill A", "Skill B", "Skill C"],
+  stats: [],
+}, aboutContent);
+assert(skillsOverride.skillClusters.length === 1, "skills override — one cluster");
+assert(skillsOverride.skillClusters[0].title === aboutContent.skillClusters[0].title, "skills override — cluster title preserved");
+assert(skillsOverride.skillClusters[0].skills.length === 3, "skills override — 3 skills");
+assert(skillsOverride.skillClusters[0].skills[0] === "Skill A", "skills override — first skill correct");
+
+// 23. empty skills fallback safely
+const emptySkills = normalizeAboutContent({
+  story: [],
+  skills: [],
+  stats: [],
+}, aboutContent);
+assert(emptySkills.skillClusters === aboutContent.skillClusters, "empty skills — falls back to static clusters");
+
+// 24. CMS industries override Mission Sectors
+const industriesOverride = normalizeAboutContent({
+  story: [],
+  industries: ["Industry X", "Industry Y"],
+  stats: [],
+}, aboutContent);
+assert(industriesOverride.industries.length === 2, "industries override — 2 industries");
+assert(industriesOverride.industries[0] === "Industry X", "industries override — first correct");
+assert(industriesOverride.industries[1] === "Industry Y", "industries override — second correct");
+
+// 25. empty industries fallback safely
+const emptyIndustries = normalizeAboutContent({
+  story: [],
+  industries: [],
+  stats: [],
+}, aboutContent);
+assert(emptyIndustries.industries === aboutContent.industries, "empty industries — falls back to static");
+
+// 26. data: CTA link falls back safely
+const dataCta = normalizeAboutContent({
+  story: [],
+  ctaLink: "data:text/html,test",
+  stats: [],
+}, aboutContent);
+assert(dataCta.ctaLink === aboutContent.ctaLink, "data: CTA link — falls back to static");
+
+// 27. ftp: CTA link falls back safely
+const ftpCta = normalizeAboutContent({
+  story: [],
+  ctaLink: "ftp://files.example.com/file",
+  stats: [],
+}, aboutContent);
+assert(ftpCta.ctaLink === aboutContent.ctaLink, "ftp: CTA link — falls back to static");
+
+// 28. mailto: CTA link falls back safely
+const mailtoCta = normalizeAboutContent({
+  story: [],
+  ctaLink: "mailto:test@example.com",
+  stats: [],
+}, aboutContent);
+assert(mailtoCta.ctaLink === aboutContent.ctaLink, "mailto: CTA link — falls back to static");
+
+// 29. CMS skills with whitespace-only entries filtered
+const whitespaceSkills = normalizeAboutContent({
+  story: [],
+  skills: ["Valid", "", "  ", "Also Valid"],
+  stats: [],
+}, aboutContent);
+assert(whitespaceSkills.skillClusters[0].skills.length === 2, "whitespace skills — filtered to 2 valid entries");
+assert(whitespaceSkills.skillClusters[0].skills[0] === "Valid", "whitespace skills — first entry correct");
+assert(whitespaceSkills.skillClusters[0].skills[1] === "Also Valid", "whitespace skills — second entry correct");
+
+// 30. CMS industries with whitespace-only entries filtered
+const whitespaceIndustries = normalizeAboutContent({
+  story: [],
+  industries: ["Valid", "", "  "],
+  stats: [],
+}, aboutContent);
+assert(whitespaceIndustries.industries.length === 1, "whitespace industries — filtered to 1 valid entry");
+assert(whitespaceIndustries.industries[0] === "Valid", "whitespace industries — entry correct");
 
 // ── Summary ─────────────────────────────────────────────────────────
 console.log(`\nPassed: ${passed} / ${passed + failed}`);
