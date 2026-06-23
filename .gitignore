@@ -43,6 +43,7 @@ next-env.d.ts
 notepad
 start-dev.bat
 qa-*
+backups/
 
 # npx cache (unpinned runtime download artifacts)
 .npx-cache/
