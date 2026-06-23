@@ -20,6 +20,9 @@ export default function ContactSection({ contactData }: ContactSectionProps) {
   const contactContent = contactData
     ? {
         ...staticContactContent,
+        heading: contactData.heading || staticContactContent.heading,
+        subheading: contactData.subheading || staticContactContent.subheading,
+        availability: contactData.availability || staticContactContent.availability,
         socials: contactData.socials,
         whatsapp: { ...staticContactContent.whatsapp, number: contactData.whatsappNumber },
       }
@@ -105,7 +108,12 @@ export default function ContactSection({ contactData }: ContactSectionProps) {
               className="font-display font-bold tracking-tighter text-white mb-6 break-words"
               style={{ fontSize: 'clamp(1.85rem, 8.5vw, 3.4rem)', lineHeight: '0.98' }}
             >
-              START YOUR<br/>PROJECT.
+              {contactContent.heading.split("\n").map((line, i) => (
+                <span key={i}>
+                  {i > 0 && <br />}
+                  {line}
+                </span>
+              ))}
             </motion.h2>
 
             <motion.p 
@@ -125,7 +133,7 @@ export default function ContactSection({ contactData }: ContactSectionProps) {
               transition={{ delay: 0.15 }}
               className="font-pixel text-[8px] text-brand-cyan/80 tracking-[0.15em] mt-4 mb-10"
             >
-              Usually replies within 24 hours — WhatsApp is the fastest route.
+              {contactContent.availability}
             </motion.p>
 
             <CommunicationChannels

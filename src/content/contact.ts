@@ -3,6 +3,7 @@ import { socialLinksArray } from "@/data/social-links";
 export const contactContent = {
   heading: "START YOUR\nPROJECT.",
   subheading: "Have a project, campaign, brand, video, or digital product in mind? Send the mission brief and I'll help you shape the right creative direction.",
+  availability: "Usually replies within 24 hours — WhatsApp is the fastest route.",
   form: {
     labels: {
       name: "Full Name",

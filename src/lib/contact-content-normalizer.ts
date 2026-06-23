@@ -8,6 +8,9 @@ export interface PublicContactContent {
   email: string;
   whatsappNumber: string;
   socials: SocialLinkItem[];
+  heading: string;
+  subheading: string;
+  availability: string;
 }
 
 const ICON_MAP: Record<string, string> = {
@@ -91,6 +94,9 @@ export const FALLBACK_CONTACT: PublicContactContent = {
   email: FALLBACK_EMAIL,
   whatsappNumber: FALLBACK_WHATSAPP,
   socials: FALLBACK_SOCIALS,
+  heading: "START YOUR\nPROJECT.",
+  subheading: "Have a project, campaign, brand, video, or digital product in mind? Send the mission brief and I'll help you shape the right creative direction.",
+  availability: "Usually replies within 24 hours — WhatsApp is the fastest route.",
 };
 
 export function normalizeSocialLinks(
@@ -132,6 +138,10 @@ export function normalizeContactContent(
   const whatsappNumber = toStr(siteContent.whatsappNumber).trim();
   const socialLinks = siteContent.socialLinks as Record<string, unknown> | undefined;
 
+  const heading = toStr(siteContent.contactHeading).trim() || fallback.heading;
+  const subheading = toStr(siteContent.contactSubheading).trim() || fallback.subheading;
+  const availability = toStr(siteContent.contactAvailability).trim() || fallback.availability;
+
   const validEmail = isValidEmail(email) ? email : fallback.email;
   const validWhatsapp = whatsappNumber || fallback.whatsappNumber;
   const socials = normalizeSocialLinks(socialLinks);
@@ -140,5 +150,8 @@ export function normalizeContactContent(
     email: validEmail,
     whatsappNumber: validWhatsapp,
     socials,
+    heading,
+    subheading,
+    availability,
   };
 }
