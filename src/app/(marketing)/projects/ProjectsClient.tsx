@@ -13,6 +13,7 @@ interface Project {
   title: string;
   category: string;
   categories: string[];
+  summary: string;
   mainResult: string;
   thumbnail: string;
 }
@@ -113,7 +114,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
                     {project.title}
                   </h3>
                   <p className="font-modern text-text-dim text-sm">
-                    {project.mainResult}
+                    {project.summary || project.mainResult}
                   </p>
                 </div>
               </Link>
