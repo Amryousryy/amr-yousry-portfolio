@@ -27,4 +27,5 @@ export const aboutContent = {
   ],
   ctaLabel: "Start a Project",
   ctaLink: "/#contact",
+  ctaIntro: "Need a creative partner who can connect design, video, and digital experience?",
 };

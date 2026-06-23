@@ -5,10 +5,19 @@ import { footerContent } from "@/content/footer";
 import { getPublishedContactContent } from "@/lib/public-contact-content";
 import type { SocialLinkItem } from "@/lib/contact-content-normalizer";
 
+let cachedSocials: SocialLinkItem[] | null = null;
+let cachedAt = 0;
+const CACHE_TTL = 60_000;
+
 async function getFooterSocials(): Promise<SocialLinkItem[]> {
+  if (cachedSocials && Date.now() - cachedAt < CACHE_TTL) {
+    return cachedSocials;
+  }
   try {
     const contactData = await getPublishedContactContent();
-    return contactData.socials;
+    cachedSocials = contactData.socials;
+    cachedAt = Date.now();
+    return cachedSocials;
   } catch {
     const { socialLinksArray: fallback } = await import("@/data/social-links");
     return fallback;

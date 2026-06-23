@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
@@ -13,6 +14,7 @@ interface ProjectCardProps {
 
 export function ProjectCard({ project }: ProjectCardProps) {
   const shouldReduceMotion = useReducedMotion();
+  const [imgError, setImgError] = useState(false);
 
   return (
     <motion.div 
@@ -22,13 +24,24 @@ export function ProjectCard({ project }: ProjectCardProps) {
     >
       {/* Pixel Frame Container */}
       <div className="relative aspect-[16/10] w-full overflow-hidden border-2 border-slate-800 bg-slate-900 pixel-shadow group-hover:border-brand-cyan/30 transition-colors duration-500">
-        <Image
-          src={project.thumbnail}
-          alt={project.title}
-          fill
-          className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
+        {imgError ? (
+          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+            <div className="text-center p-4">
+              <div className="w-12 h-12 mx-auto mb-2 border-2 border-slate-700 flex items-center justify-center">
+                <span className="font-pixel text-[8px] text-slate-600 tracking-wider">NO SIGNAL</span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <Image
+            src={project.thumbnail}
+            alt={project.title}
+            fill
+            className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            onError={() => setImgError(true)}
+          />
+        )}
         
         {/* Cinematic HUD Accents - Visible on hover */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-20">
@@ -64,16 +77,27 @@ export function ProjectCard({ project }: ProjectCardProps) {
           </div>
 
           <div className="mt-auto pt-3">
-            <Link href={`/projects/${project.slug}`} className="block">
-              <PixelButton 
-                variant="outline" 
-                size="sm" 
-                className="w-full sm:w-auto text-[10px] py-4 group-hover:bg-brand-cyan group-hover:text-brand-blue transition-all"
+            {project.slug ? (
+              <Link href={`/projects/${project.slug}`} className="block">
+                <PixelButton
+                  variant="outline"
+                  size="sm"
+                  className="w-full sm:w-auto text-[10px] py-4 group-hover:bg-brand-cyan group-hover:text-brand-blue transition-all"
+                >
+                  <span>View Project</span>
+                  <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
+                </PixelButton>
+              </Link>
+            ) : (
+              <PixelButton
+                variant="outline"
+                size="sm"
+                className="w-full sm:w-auto text-[10px] py-4 opacity-40 cursor-not-allowed"
+                disabled
               >
                 <span>View Project</span>
-                <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
               </PixelButton>
-            </Link>
+            )}
           </div>
         </div>
     </motion.div>

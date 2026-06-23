@@ -9,6 +9,7 @@ export interface PublicAboutContent {
   industries: string[];
   ctaLabel: string;
   ctaLink: string;
+  ctaIntro: string;
 }
 
 export interface CmsAboutInput {

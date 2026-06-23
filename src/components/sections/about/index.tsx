@@ -78,7 +78,7 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
                 className="mt-8"
               >
                 <p className="text-sm text-foreground/60 mb-3">
-                  Need a creative partner who can connect design, video, and digital experience?
+                  {aboutContent.ctaIntro}
                 </p>
                 <Link href={aboutContent.ctaLink} className="group inline-flex min-h-[44px] max-w-full items-center gap-3 sm:gap-4 text-sm font-bold uppercase tracking-[0.16em] sm:tracking-[0.2em] border-b border-brand-cyan pb-2">
                   <span>{aboutContent.ctaLabel}</span>
