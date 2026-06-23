@@ -101,7 +101,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const entry = await Analytics.create({
+    await Analytics.create({
       type,
       page,
       projectId,
@@ -109,7 +109,7 @@ export async function POST(req: Request) {
       metadata
     });
 
-    return NextResponse.json({ data: entry });
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error("POST_ANALYTICS_ERROR:", error);
     return NextResponse.json({ error: "Failed to log analytics" }, { status: 500 });

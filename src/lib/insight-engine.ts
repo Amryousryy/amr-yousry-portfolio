@@ -12,12 +12,21 @@ export interface Insight {
 }
 
 export async function generateBusinessInsights() {
-  await dbConnect();
+  try {
+    await dbConnect();
+  } catch {
+    return { metrics: { completionRate: 0, totalViews: 0 }, insights: [] };
+  }
 
   const insights: Insight[] = [];
 
   // 1. Page view tracking status
-  const totalViews = await Analytics.countDocuments({ type: "page_view" });
+  let totalViews = 0;
+  try {
+    totalViews = await Analytics.countDocuments({ type: "page_view" });
+  } catch {
+    totalViews = 0;
+  }
 
   if (totalViews === 0) {
     insights.push({
@@ -30,8 +39,15 @@ export async function generateBusinessInsights() {
   }
 
   // 2. Showreel Engagement Analysis
-  const showreelPlays = await Analytics.countDocuments({ interactionType: "showreel_play" });
-  const showreelCompletions = await Analytics.countDocuments({ interactionType: "showreel_complete" });
+  let showreelPlays = 0;
+  let showreelCompletions = 0;
+  try {
+    showreelPlays = await Analytics.countDocuments({ interactionType: "showreel_play" });
+    showreelCompletions = await Analytics.countDocuments({ interactionType: "showreel_complete" });
+  } catch {
+    showreelPlays = 0;
+    showreelCompletions = 0;
+  }
   const completionRate = showreelPlays > 0 ? (showreelCompletions / showreelPlays) * 100 : 0;
 
   if (showreelPlays > 0 && completionRate < 30 && showreelPlays > 10) {
@@ -53,10 +69,15 @@ export async function generateBusinessInsights() {
   }
 
   // 3. Underperforming Content
-  const projectViews = await Analytics.aggregate([
-    { $match: { type: "page_view", projectId: { $ne: null } } },
-    { $group: { _id: "$projectId", views: { $sum: 1 } } }
-  ]);
+  let projectViews: { _id: unknown; views: number }[] = [];
+  try {
+    projectViews = await Analytics.aggregate([
+      { $match: { type: "page_view", projectId: { $ne: null } } },
+      { $group: { _id: "$projectId", views: { $sum: 1 } } }
+    ]);
+  } catch {
+    projectViews = [];
+  }
 
   for (const p of projectViews) {
     if (p.views > 50) {

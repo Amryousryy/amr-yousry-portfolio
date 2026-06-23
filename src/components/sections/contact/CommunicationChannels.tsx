@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import ContactIconImage from "@/components/ui/contact-icon-image";
 import { contactContent as staticContactContent } from "@/content/contact";
 import { SocialLinkItem } from "@/lib/contact-content-normalizer";
+import { trackEvent } from "@/lib/tracker";
 
 interface CommunicationChannelsProps {
   email?: string;
@@ -32,6 +33,7 @@ export default function CommunicationChannels({
         target="_blank"
         rel="noopener noreferrer"
         aria-label="WhatsApp - Fastest response"
+        onClick={() => trackEvent("whatsapp_click", { path: window.location.pathname })}
         className="flex min-h-[56px] items-center gap-4 text-white font-pixel text-xs group transition-colors mb-5 md:mb-6"
       >
         <ContactIconImage 
@@ -51,6 +53,7 @@ export default function CommunicationChannels({
         whileHover={shouldReduceMotion ? {} : { x: 8 }}
         href={`mailto:${contactEmail}`}
         aria-label="Email - Business inquiries"
+        onClick={() => trackEvent("email_click", { path: window.location.pathname })}
         className="flex min-h-[56px] items-center gap-4 text-white font-pixel text-xs group transition-colors mb-5 md:mb-6"
       >
         <ContactIconImage 

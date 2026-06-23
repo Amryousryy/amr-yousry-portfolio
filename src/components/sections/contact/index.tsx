@@ -65,6 +65,7 @@ export default function ContactSection({ contactData }: ContactSectionProps) {
     window.open(whatsappUrl, '_blank');
     setSucceeded(true);
     trackEvent("contact_cta_click", { path: window.location.pathname, label: formData.service });
+    trackEvent("form_submit", { path: window.location.pathname, label: formData.service });
   };
 
   const handleReset = () => {
