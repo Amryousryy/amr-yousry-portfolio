@@ -279,10 +279,10 @@ assert(complexPreserved.industries === aboutContent.industries, "complex fields 
 // 11. CMS heading overrides fallback
 const headingOverride = normalizeAboutContent({
   story: ["New story"],
-  heading: "SENIOR\nMULTIMEDIA DESIGNER.",
+  heading: "SENIOR\nMULTIMEDIA\nDESIGNER.",
   stats: [],
 }, aboutContent);
-assert(headingOverride.heading === "SENIOR\nMULTIMEDIA DESIGNER.", "heading override — CMS heading used");
+assert(headingOverride.heading === "SENIOR\nMULTIMEDIA\nDESIGNER.", "heading override — CMS heading used");
 assert(headingOverride.badge === aboutContent.badge, "heading override — badge preserved");
 
 // 12. CMS empty heading falls back

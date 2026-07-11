@@ -40,15 +40,14 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="font-display font-bold tracking-tighter text-white break-words"
-                style={{ fontSize: 'clamp(1.75rem, 8.6vw, 4.25rem)', lineHeight: '0.96' }}
+                className="font-bold tracking-tighter text-white break-words"
+                style={{ fontSize: 'clamp(1.6rem, 5.5vw, 3rem)', lineHeight: '1.1', maxWidth: '14ch' }}
               >
                 {(() => {
                   const parts = aboutContent.heading.split("\n");
                   return parts.map((part, i) => (
-                    <span key={i}>
-                      {i > 0 && <br />}
-                      <span className={i === 0 ? "text-white" : "text-brand-cyan"}>{part}</span>
+                    <span key={i} className="block">
+                      <span className={i === parts.length - 1 ? "text-brand-cyan" : "text-white"}>{part}</span>
                     </span>
                   ));
                 })()}
@@ -63,6 +62,7 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
                     className="text-sm md:text-base text-foreground/70 leading-relaxed"
+                    style={{ textWrap: 'pretty', maxWidth: '60ch' }}
                   >
                     {paragraph}
                   </motion.p>
@@ -135,19 +135,19 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
 
           {/* Right Column - Stats + Character */}
           <aside className="lg:col-span-5 flex flex-col space-y-6 h-full">
-            {/* Experience Stats */}
-            <div className="space-y-4">
+            {/* Character Stats */}
+            <div className="space-y-0">
               {aboutContent.stats.map((stat, index) => (
                 <motion.div 
                   key={stat.label}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="flex items-center justify-between gap-4 border-t-2 border-slate-800 pt-3"
+                  transition={{ delay: index * 0.08 }}
+                  className="flex items-baseline justify-between gap-4 border-t-2 border-slate-800 py-3"
                 >
-                  <span className="font-pixel text-[8px] sm:text-[9px] text-brand-cyan tracking-wider uppercase min-w-0">{stat.label}</span>
-                  <span className="font-pixel text-xs sm:text-sm md:text-base text-white whitespace-nowrap leading-none text-right">{stat.value}</span>
+                  <span className="font-pixel text-[8px] sm:text-[9px] text-brand-cyan/70 tracking-[0.2em] uppercase min-w-0">{stat.label}</span>
+                  <span className="font-pixel text-[10px] sm:text-xs text-white whitespace-nowrap leading-none text-right tracking-wide">{stat.value}</span>
                 </motion.div>
               ))}
             </div>

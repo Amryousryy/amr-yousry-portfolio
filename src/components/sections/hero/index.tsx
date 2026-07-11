@@ -32,6 +32,7 @@ export default function HeroSection({ content = DEFAULT_CONTENT }: { content?: H
           <div className="mb-8">
             <h1 
               className="font-black text-white tracking-tighter leading-[1.05] sm:leading-[0.95] text-center text-[clamp(2.15rem,10vw,3.35rem)] md:text-[clamp(3rem,7vw,6rem)]"
+              style={{ textWrap: 'balance' }}
             >
               {content.headline.split('\n').filter(Boolean).map((line, i) => (
                 <span key={i} className="level-title block">{line}</span>
@@ -44,8 +45,9 @@ export default function HeroSection({ content = DEFAULT_CONTENT }: { content?: H
               style={{ 
                 fontSize: 'clamp(0.95rem, 4vw, 1.35rem)',
                 lineHeight: '1.55',
-                maxWidth: '700px',
-                margin: '1rem auto 0'
+                maxWidth: '580px',
+                margin: '1.25rem auto 0',
+                textWrap: 'pretty'
               }}
             >
               {content.subheadline}

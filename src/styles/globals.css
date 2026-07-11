@@ -35,6 +35,7 @@
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-pixel uppercase tracking-tighter;
+    text-wrap: balance;
   }
 
   section[id] {
@@ -101,6 +102,26 @@
   .level-title {
     overflow-wrap: normal;
     text-wrap: balance;
+  }
+
+  /* Editorial reading utilities */
+  .prose-balance {
+    text-wrap: balance;
+  }
+
+  .prose-pretty {
+    text-wrap: pretty;
+  }
+
+  .section-heading {
+    text-wrap: balance;
+    max-width: 20ch;
+    overflow-wrap: break-word;
+  }
+
+  .section-body {
+    text-wrap: pretty;
+    max-width: 65ch;
   }
 
   .pixel-text {

@@ -37,7 +37,7 @@ export async function Footer() {
             <Link href="/" className="group block mb-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue">
               <Image src="/images/footer-logo.svg" alt="AMR YOUSRY" width={120} height={28} className="w-30 md:w-36 h-auto transition-transform group-hover:scale-105" unoptimized />
             </Link>
-            <p className="font-modern text-text-dim text-sm sm:text-base max-w-[520px] leading-relaxed antialiased">
+            <p className="font-modern text-text-dim text-sm sm:text-base max-w-[520px] leading-relaxed antialiased" style={{ textWrap: 'pretty' }}>
               {footerContent.tagline}
             </p>
           </div>

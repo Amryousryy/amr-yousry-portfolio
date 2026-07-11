@@ -45,7 +45,8 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-[clamp(2rem,9vw,3.75rem)] md:text-5xl lg:text-6xl mb-6 break-words leading-tight"
+          className="text-[clamp(2rem,6.5vw,3.5rem)] md:text-5xl lg:text-6xl mb-6 break-words leading-tight"
+          style={{ textWrap: 'balance', maxWidth: '18ch' }}
         >
           Proven Results. High Impact.
         </motion.h1>
@@ -55,6 +56,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
           className="font-modern text-text-dim text-base md:text-lg leading-relaxed max-w-2xl"
+          style={{ textWrap: 'pretty' }}
         >
           A selection of projects that bridge the gap between cinematic visual artistry and measurable business conversion.
         </motion.p>
@@ -110,7 +112,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
                   <span className="font-pixel text-[10px] text-brand-cyan tracking-widest uppercase">
                     {formatCategory(project.category)}
                   </span>
-                  <h3 className="font-display text-xl font-bold uppercase tracking-tighter group-hover:text-brand-cyan transition-colors break-words leading-tight">
+                  <h3 className="font-display text-xl font-bold uppercase tracking-tighter group-hover:text-brand-cyan transition-colors break-words leading-tight" style={{ textWrap: 'balance' }}>
                     {project.title}
                   </h3>
                   <p className="font-modern text-text-dim text-sm">

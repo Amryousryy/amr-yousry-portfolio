@@ -98,7 +98,7 @@ export default function ContactSection({ contactData }: ContactSectionProps) {
             >
               <div className="h-[2px] w-8 sm:w-12 bg-brand-cyan shrink-0" />
               <span className="font-pixel text-brand-cyan text-[9px] sm:text-[10px] tracking-[0.22em] sm:tracking-[0.3em] uppercase">
-                Next Steps: Contact
+                Mission Control
               </span>
             </motion.div>
 
@@ -106,13 +106,12 @@ export default function ContactSection({ contactData }: ContactSectionProps) {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="font-display font-bold tracking-tighter text-white mb-6 break-words"
-              style={{ fontSize: 'clamp(1.85rem, 8.5vw, 3.4rem)', lineHeight: '0.98' }}
+              className="font-bold tracking-tighter text-white mb-6 break-words"
+              style={{ fontSize: 'clamp(1.6rem, 5.5vw, 3rem)', lineHeight: '1.1', maxWidth: '14ch' }}
             >
-              {contactContent.heading.split("\n").map((line, i) => (
-                <span key={i}>
-                  {i > 0 && <br />}
-                  {line}
+              {contactContent.heading.split("\n").map((line, i, arr) => (
+                <span key={i} className="block">
+                  <span className={i === arr.length - 1 ? "text-brand-cyan" : "text-white"}>{line}</span>
                 </span>
               ))}
             </motion.h2>
@@ -123,6 +122,7 @@ export default function ContactSection({ contactData }: ContactSectionProps) {
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
               className="font-modern text-foreground/70 text-sm md:text-base leading-relaxed max-w-[420px]"
+              style={{ textWrap: 'pretty' }}
             >
               {contactContent.subheading}
             </motion.p>

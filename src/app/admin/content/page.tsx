@@ -595,7 +595,7 @@ export default function SiteContentManagerPage() {
                         label="Contact Heading"
                         value={field.value}
                         onChange={field.onChange}
-                        placeholder="START YOUR\nPROJECT."
+                        placeholder="START\nMISSION."
                       />
                     )}
                   />

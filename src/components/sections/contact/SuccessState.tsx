@@ -29,7 +29,7 @@ export default function SuccessState({ onReset }: SuccessStateProps) {
             <CheckCircle2 size={48} />
           </motion.div>
           <div className="space-y-4">
-            <h3 className="text-3xl md:text-4xl font-display font-bold uppercase tracking-tighter text-white">MISSION ACCEPTED!</h3>
+            <h3 className="text-3xl md:text-4xl font-display font-bold uppercase tracking-tighter text-white" style={{ textWrap: 'balance' }}>MISSION ACCEPTED!</h3>
             <div className="h-[2px] w-24 bg-brand-cyan mx-auto" />
             <p className="font-modern text-text-dim uppercase tracking-[0.2em] text-[10px] max-w-sm mx-auto leading-relaxed">
               Mission link opened in WhatsApp. I&apos;ll respond to your coordinates within 24 hours.

@@ -287,12 +287,12 @@ assertAccepts(contentCreateSchema, {
 // 15. aboutTitle accepts text
 assert(contentCreateSchema.safeParse({
   about: "",
-  aboutTitle: "SENIOR\nMULTIMEDIA DESIGNER.",
+  aboutTitle: "SENIOR\nMULTIMEDIA\nDESIGNER.",
   servicesTitle: "Test",
   servicesSubtitle: "Test",
   servicesDescription: "Test",
   contactEmail: "",
-}).data?.aboutTitle === "SENIOR\nMULTIMEDIA DESIGNER.", "aboutTitle stores text");
+}).data?.aboutTitle === "SENIOR\nMULTIMEDIA\nDESIGNER.", "aboutTitle stores text");
 
 // 16. aboutStats default empty
 assert(Array.isArray(contentCreateSchema.safeParse({

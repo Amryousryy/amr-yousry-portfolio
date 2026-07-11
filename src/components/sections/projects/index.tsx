@@ -41,7 +41,7 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                whileInView={{ opacity: 1, y: 0 }}
                viewport={{ once: true }}
                className="font-display font-bold tracking-tighter text-white break-words"
-               style={{ fontSize: 'clamp(1.95rem, 9vw, 4.25rem)', lineHeight: '0.98' }}
+               style={{ fontSize: 'clamp(1.95rem, 6.5vw, 3.5rem)', lineHeight: '1.05', maxWidth: '16ch', textWrap: 'balance' }}
              >
                SELECTED<br /><span className="text-brand-cyan">MISSIONS.</span>
              </motion.h2>
@@ -51,6 +51,7 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                viewport={{ once: true }}
                transition={{ delay: 0.1 }}
                className="font-modern text-text-dim/90 text-base md:text-lg leading-relaxed antialiased max-w-lg mt-3"
+               style={{ textWrap: 'pretty' }}
              >
                A curated set of video-led projects, concepts, and campaign stories.
              </motion.p>

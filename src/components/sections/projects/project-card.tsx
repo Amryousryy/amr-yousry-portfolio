@@ -63,14 +63,14 @@ export function ProjectCard({ project }: ProjectCardProps) {
         {/* Content */}
         <div className="flex flex-col flex-grow pt-6 pb-4">
           <div className="min-h-[3.5rem] mb-3">
-            <h3 className="text-xl md:text-2xl font-display font-bold group-hover:text-brand-cyan transition-colors duration-500 leading-tight break-words">
+            <h3 className="text-xl md:text-2xl font-display font-bold group-hover:text-brand-cyan transition-colors duration-500 leading-tight break-words" style={{ textWrap: 'balance' }}>
               {project.title}
             </h3>
           </div>
           
           <div className="min-h-[2.5rem] mb-4">
             {project.summary && (
-              <p className="text-sm text-foreground/60 leading-snug line-clamp-2">
+              <p className="text-sm text-foreground/60 leading-snug line-clamp-2" style={{ textWrap: 'pretty' }}>
                 {project.summary}
               </p>
             )}

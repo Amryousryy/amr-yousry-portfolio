@@ -38,7 +38,7 @@ export default function Services() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-16 gap-8">
           <div className="max-w-2xl min-w-0">
             <h2 className="pixel-text text-accent text-sm mb-4">My Services</h2>
-            <h3 className="text-[clamp(1.75rem,8vw,3.75rem)] md:text-6xl font-display font-bold leading-tight break-words">
+            <h3 className="text-[clamp(1.75rem,6.5vw,3.25rem)] md:text-6xl font-display font-bold leading-tight break-words" style={{ textWrap: 'balance', maxWidth: '16ch' }}>
               Scaling brands with <br />
               <span className="text-primary italic">high-performance</span> content.
             </h3>
@@ -66,7 +66,7 @@ export default function Services() {
                 <div className="w-16 h-16 mb-8 flex items-center justify-center bg-primary/10 pixel-border group-hover:bg-accent transition-colors">
                   <service.icon className="w-8 h-8 text-accent group-hover:text-background transition-colors" />
                 </div>
-                <h4 className="text-lg md:text-xl font-display font-bold mb-4 group-hover:text-accent transition-colors break-words leading-snug">
+                <h4 className="text-lg md:text-xl font-display font-bold mb-4 group-hover:text-accent transition-colors break-words leading-snug" style={{ textWrap: 'balance' }}>
                   {service.title}
                 </h4>
                 <p className="text-foreground/60 leading-relaxed mb-6">

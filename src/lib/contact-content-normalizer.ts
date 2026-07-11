@@ -94,9 +94,9 @@ export const FALLBACK_CONTACT: PublicContactContent = {
   email: FALLBACK_EMAIL,
   whatsappNumber: FALLBACK_WHATSAPP,
   socials: FALLBACK_SOCIALS,
-  heading: "START YOUR\nPROJECT.",
-  subheading: "Have a project, campaign, brand, video, or digital product in mind? Send the mission brief and I'll help you shape the right creative direction.",
-  availability: "Usually replies within 24 hours — WhatsApp is the fastest route.",
+  heading: "START\nMISSION.",
+  subheading: "Ready to turn an idea into a memorable digital experience? Complete the mission brief and let's build something worth remembering.",
+  availability: "Usually responds within 24 hours — WhatsApp is the fastest route.",
 };
 
 export function normalizeSocialLinks(

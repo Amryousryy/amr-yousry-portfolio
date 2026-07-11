@@ -39,7 +39,7 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
         <div className="absolute -top-3 left-0 right-0 flex flex-wrap justify-end gap-1.5 z-10">
           <div className="flex items-center gap-1.5 px-2.5 py-1 bg-brand-blue/90 border border-slate-700/60">
             <div className="w-1.5 h-1.5 rounded-full bg-brand-cyan animate-pulse" />
-            <span className="font-pixel text-[7px] text-brand-cyan/80 tracking-[0.25em] uppercase">System Ready</span>
+            <span className="font-pixel text-[7px] text-brand-cyan/80 tracking-[0.25em] uppercase">Terminal Active</span>
           </div>
           <div className="flex items-center gap-1.5 px-2.5 py-1 bg-brand-blue/90 border border-slate-700/60">
             <Zap size={9} className="text-brand-cyan/70" />
@@ -142,7 +142,7 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
 
             {(errors.name || errors.email || errors.message) && (
               <p id="contact-error" className="font-pixel text-[10px] text-red-400 uppercase tracking-[0.25em] text-center mt-6" role="alert">
-                Complete the mission brief before launch.
+                Complete all fields before initiating mission.
               </p>
             )}
 
