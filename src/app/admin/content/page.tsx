@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useForm, useFieldArray, Controller, FieldErrors, FieldPath } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Save, Loader2, Info, Target, Mail, Clock, Plus, Trash2, GripVertical, Eye } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SettingsService } from "@/lib/api-client";
@@ -82,7 +82,7 @@ export default function SiteContentManagerPage() {
     reset,
     watch,
   } = useForm<FormData>({
-    resolver: zodResolver(contentCreateSchema),
+    resolver: standardSchemaResolver(contentCreateSchema),
     defaultValues: contentDefaultValues,
   });
 

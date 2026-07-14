@@ -135,11 +135,11 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     const guardedArrayFields = new Set(["services", "detailedResults", "caseStudyMedia", "gallery", "tags", "sections", "categories"]);
     const guardedTextField = new Set(["solution", "results", "category"]);
 
-    const bodyKeys = new Set(Object.keys(body));
+    const bodyKeysForUpdate = new Set(Object.keys(body));
     const safeUpdate: Record<string, unknown> = {};
 
     for (const [key, value] of Object.entries(validation.data)) {
-      if (!bodyKeys.has(key)) continue;
+      if (!bodyKeysForUpdate.has(key)) continue;
       if (key.startsWith("_") || key === "createdAt" || key === "updatedAt" || key === "__v") continue;
 
       if (guardedArrayFields.has(key)) {
@@ -210,7 +210,6 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     
     return NextResponse.json({ data: normalizeProject(project as unknown as Record<string, unknown>) });
   } catch (error: unknown) {
-    console.error("PUT_PROJECT_ERROR:", error);
     const mongoErr = error as { code?: number; keyPattern?: Record<string, unknown> };
     if (mongoErr?.code === 11000 && mongoErr?.keyPattern?.slug) {
       return NextResponse.json({ error: "A project with this slug already exists" }, { status: 409 });

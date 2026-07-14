@@ -29,7 +29,7 @@ export async function apiRequest<T>(
     
     // Some routes return { data: T }, others return T directly
     return { data: json.data !== undefined ? json.data : json };
-  } catch {
+  } catch (e: unknown) {
     return { error: "Network error occurred" };
   }
 }
@@ -78,7 +78,9 @@ export const ProjectService = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    if (error) throw new Error(typeof error === "string" ? error : "Failed to update project");
+    if (error) {
+      throw new Error(typeof error === "string" ? error : "Failed to update project");
+    }
     return result as Project;
   },
   delete: (id: string) =>

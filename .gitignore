@@ -44,6 +44,8 @@ notepad
 start-dev.bat
 qa-*
 backups/
+.test-cookies
+.test-session-cookies
 
 # npx cache (unpinned runtime download artifacts)
 .npx-cache/

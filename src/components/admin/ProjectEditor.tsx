@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
+import type { Resolver } from "react-hook-form";
 import { Project } from "@/types";
 import { 
   projectCreateSchema, 
@@ -48,7 +49,7 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
     setValue,
     reset,
   } = useForm<FormData>({
-    resolver: zodResolver(isEditMode ? projectUpdateSchema : projectCreateSchema),
+    resolver: standardSchemaResolver(isEditMode ? projectUpdateSchema : projectCreateSchema) as unknown as Resolver<FormData>,
     defaultValues: projectDefaultValues,
   });
 
@@ -140,6 +141,12 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
     setUnsavedSubmitting(true);
     if (!enableVideo) {
       data.video = undefined;
+    }
+    const optionalStringFields = ["problem", "strategy", "solution", "execution", "results", "idea", "mainResult", "client"] as const;
+    for (const field of optionalStringFields) {
+      if (data[field] === "") {
+        (data as Record<string, unknown>)[field] = undefined;
+      }
     }
     if (data.caseStudyMedia) {
       data.caseStudyMedia = data.caseStudyMedia.filter(

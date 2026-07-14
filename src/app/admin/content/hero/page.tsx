@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Save, Loader2, Eye, Clock } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SettingsService } from "@/lib/api-client";
@@ -52,7 +52,7 @@ export default function HeroSettingsPage() {
     reset,
     watch,
   } = useForm<FormData>({
-    resolver: zodResolver(heroCreateSchema),
+    resolver: standardSchemaResolver(heroCreateSchema),
     defaultValues: heroDefaultValues,
   });
 

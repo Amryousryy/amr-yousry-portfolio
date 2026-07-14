@@ -48,8 +48,9 @@ export default function EditProjectPage() {
   const resetMutationRef = useRef<() => void>(() => {});
 
   const mutation = useMutation({
-    mutationFn: ({ data }: { data: Partial<Project>; isAutoSave?: boolean }) =>
-      ProjectService.update(id as string, data),
+    mutationFn: ({ data }: { data: Partial<Project>; isAutoSave?: boolean }) => {
+      return ProjectService.update(id as string, data);
+    },
     onMutate: () => {
       clearSaveTimeout();
       saveTimeoutRef.current = setTimeout(() => {

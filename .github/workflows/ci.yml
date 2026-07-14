@@ -1,13 +1,15 @@
 # CI Quality Gate
 #
 # Build is blocking — the workflow fails if the build fails.
-# Readiness, auth rate-limit, insight engine, and settings validation unit tests block — pure function tests with no dependencies.
+# Unit tests (schema, regression) block — pure function tests, no dependencies.
+# Readiness, auth rate-limit, insight engine, and settings validation unit tests block.
 # Public contract tests block — verify public endpoints and security headers.
 # Lint is blocking — ESLint errors fail CI.
 #
-# Does not require production environment variables.
+# Integration tests (API, DB persistence) require a MongoDB service container.
+# They run only when the TEST_INTEGRATION env var is set (main branch / manual trigger).
+#
 # Does not expose secrets.
-# Does not require .env.local.
 # Does not mutate production data.
 
 name: CI
@@ -22,6 +24,9 @@ permissions:
   contents: read
 
 jobs:
+  # ──────────────────────────────────────────────────────
+  # Unit + Lint + Build (always run)
+  # ──────────────────────────────────────────────────────
   quality:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -39,11 +44,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: TypeScript type check
+        run: npx tsc --noEmit
+
       - name: Build (blocking)
         run: npm run build
 
       - name: Whitespace check (blocking)
         run: git diff --check
+
+      - name: Unit tests — schema validation (blocking)
+        run: npm run test:unit
+
+      - name: Unit tests — project validation (blocking)
+        run: npm run qa:project-validation-unit
 
       - name: Readiness unit tests (blocking)
         run: npm run qa:readiness-unit
@@ -63,9 +77,6 @@ jobs:
       - name: Contact content unit tests (blocking)
         run: npm run qa:public-contact-content-unit
 
-      - name: Project validation unit tests (blocking)
-        run: npm run qa:project-validation-unit
-
       - name: Public contract smoke tests (blocking)
         run: npm run qa:public-contract
         env:
@@ -76,3 +87,51 @@ jobs:
 
       - name: Lint (blocking)
         run: npm run lint
+
+  # ──────────────────────────────────────────────────────
+  # Integration + Regression (need MongoDB)
+  # ──────────────────────────────────────────────────────
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: quality
+
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start dev server
+        run: |
+          npm run dev &
+          npx wait-on http://localhost:3000 --timeout 60000
+        env:
+          MONGODB_URI: mongodb://localhost:27017/portfolio-test
+          NEXTAUTH_SECRET: ci-test-secret-not-real
+          NEXTAUTH_URL: http://localhost:3000
+
+      - name: Regression tests — save bug (blocking)
+        run: npm run test:regression
+
+      - name: Integration tests — API CRUD (blocking)
+        run: npm run test:integration
+        env:
+          TEST_BASE_URL: http://localhost:3000
+
+      - name: Stop dev server
+        if: always()
+        run: pkill -f "next dev" || true
