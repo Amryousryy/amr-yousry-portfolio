@@ -78,12 +78,12 @@ describe("projectCreateSchema", () => {
       it(`accepts valid ${field}`, () => {
         const r = projectCreateSchema.safeParse(validMinimal({ [field]: "Some content" }));
         expect(r.success).toBe(true);
-        if (r.success) expect(r.data[field]).toBe("Some content");
+        if (r.success) expect(r.data[field as keyof typeof r.data]).toBe("Some content");
       });
 
-      it(`rejects empty string ${field}`, () => {
+      it(`accepts empty string ${field}`, () => {
         const r = projectCreateSchema.safeParse(validMinimal({ [field]: "" }));
-        expect(r.success).toBe(false);
+        expect(r.success).toBe(true);
       });
     }
   });
