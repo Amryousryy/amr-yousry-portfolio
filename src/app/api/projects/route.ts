@@ -13,6 +13,17 @@ import { toPlainText } from "@/lib/text";
 const STRING_FIELDS = ["title", "slug", "category", "shortDescription", "fullDescription", "image", "video", "client", "clientName", "problem", "strategy", "solution", "execution", "results", "mainResult", "idea"];
 const ARRAY_FIELDS = ["tags", "categories", "services"];
 
+const SORT_FIELDS: Record<string, 1 | -1> = {
+  createdAt: -1,
+  updatedAt: -1,
+  title: 1,
+  status: 1,
+  category: 1,
+  clientName: 1,
+  year: 1,
+  displayOrder: 1,
+};
+
 function normalizeProjectFields(doc: Record<string, unknown>): Record<string, unknown> {
   const normalized = { ...doc };
   for (const field of STRING_FIELDS) {
@@ -63,7 +74,10 @@ export async function GET(req: Request) {
     const isAdmin = searchParams.get("admin") === "true";
     const featured = searchParams.get("featured");
     const category = searchParams.get("category");
+    const status = searchParams.get("status");
     const search = searchParams.get("search");
+    const sortParam = searchParams.get("sort");
+    const orderParam = searchParams.get("order");
     
     if (isAdmin) {
       const session = await getServerSession(authOptions);
@@ -76,10 +90,16 @@ export async function GET(req: Request) {
     
     if (featured === "true") query.featured = true;
     if (category) query.category = category;
+    if (isAdmin && status) {
+      query.status = status;
+    }
     if (search) {
       query.$or = [
         { title: { $regex: search, $options: "i" } },
-        { tags: { $regex: search, $options: "i" } }
+        { slug: { $regex: search, $options: "i" } },
+        { tags: { $regex: search, $options: "i" } },
+        { category: { $regex: search, $options: "i" } },
+        { clientName: { $regex: search, $options: "i" } },
       ];
     }
     
@@ -90,8 +110,14 @@ export async function GET(req: Request) {
     const { page, limit } = parsed.success ? parsed.data : { page: 1, limit: 12 };
     const skip = (page - 1) * limit;
 
+    let sort: Record<string, 1 | -1> = { displayOrder: 1, createdAt: -1 };
+    if (sortParam && sortParam in SORT_FIELDS) {
+      const direction = orderParam === "asc" ? 1 : -1;
+      sort = { [sortParam]: direction as 1 | -1, ...(sortParam !== "createdAt" ? { createdAt: -1 } : {}) };
+    }
+
     const [projects, total] = await Promise.all([
-      Project.find(query).sort({ displayOrder: 1, createdAt: -1 }).skip(skip).limit(limit).lean(),
+      Project.find(query).sort(sort).skip(skip).limit(limit).lean(),
       Project.countDocuments(query)
     ]);
 

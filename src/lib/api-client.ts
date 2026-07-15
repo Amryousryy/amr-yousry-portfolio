@@ -12,6 +12,12 @@ export interface ApiResponse<T> {
   };
 }
 
+export interface BulkResult {
+  successCount: number;
+  failCount: number;
+  failedIds: string[];
+}
+
 export async function apiRequest<T>(
   url: string,
   options?: RequestInit
@@ -27,15 +33,26 @@ export async function apiRequest<T>(
       return { error: json.error || "Something went wrong" };
     }
     
-    // Some routes return { data: T }, others return T directly
     return { data: json.data !== undefined ? json.data : json };
-  } catch (e: unknown) {
+  } catch {
     return { error: "Network error occurred" };
   }
 }
 
 export const ProjectService = {
-  getAll: async (isAdmin = false, params?: { page?: number; limit?: number; category?: string; featured?: boolean; search?: string }) => {
+  getAll: async (
+    isAdmin = false,
+    params?: {
+      page?: number;
+      limit?: number;
+      category?: string;
+      featured?: boolean;
+      search?: string;
+      sort?: string;
+      order?: "asc" | "desc";
+      status?: string;
+    }
+  ) => {
     try {
       const query = new URLSearchParams();
       if (isAdmin) query.set("admin", "true");
@@ -44,6 +61,9 @@ export const ProjectService = {
       if (params?.category) query.set("category", params.category);
       if (params?.featured) query.set("featured", "true");
       if (params?.search) query.set("search", params.search);
+      if (params?.sort) query.set("sort", params.sort);
+      if (params?.order) query.set("order", params.order);
+      if (params?.status) query.set("status", params.status);
       
       const res = await fetch(`/api/projects?${query.toString()}`);
       const json: ApiResponse<Project[]> = await res.json();
@@ -58,6 +78,17 @@ export const ProjectService = {
       return { data: [], error: String(err) };
     }
   },
+
+  bulkAction: async (action: "delete" | "publish" | "unpublish", ids: string[]) => {
+    const { data, error } = await apiRequest<BulkResult>("/api/projects/bulk", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action, ids }),
+    });
+    if (error) throw new Error(error);
+    return data as BulkResult;
+  },
+
   getById: async (id: string, isAdmin = false) => {
     const url = isAdmin ? `/api/projects/${id}?admin=true` : `/api/projects/${id}`;
     return apiRequest<Project>(url);
