@@ -11,4 +11,6 @@
 - `src/components/admin/DataTable.tsx` — removed internal pagination state, added `manualPagination: true`  
 - `src/app/admin/projects/page.tsx` — wired URL-based pagination, prefetch, auto-recovery  
 **Verification:** 10/10 E2E Playwright tests pass in real Chromium browser. 190 total tests passing.  
-**Deployment:** commit `28dbbcd`, production at https://amr-yousry-portfolio.vercel.app
+**Production Audit:** 15/15 cases pass against live production (https://amr-yousry-portfolio.vercel.app).  
+**Deployment:** commit `d99309e`, production at https://amr-yousry-portfolio.vercel.app  
+**Deployment ID:** `dpl_2nRZTwWMgv9GZhaAP4T3Hw3sZDv3`
