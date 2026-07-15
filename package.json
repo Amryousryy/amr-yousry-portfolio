@@ -24,7 +24,9 @@
         "qa:public-contract": "node scripts/qa/run-with-server.mjs scripts/qa/public-contract-smoke.mjs",
         "qa:public-homepage-content-unit": "jiti scripts/qa/public-homepage-content-unit.ts",
         "qa:public-contact-content-unit": "jiti scripts/qa/public-contact-content-unit.ts",
-        "qa:project-validation-unit": "jiti scripts/qa/project-validation-unit.ts"
+        "qa:project-validation-unit": "jiti scripts/qa/project-validation-unit.ts",
+        "test:e2e": "playwright test",
+        "test:e2e:ui": "playwright test --ui"
     },
     "dependencies": {
         "@hookform/resolvers": "^4.1.3",
@@ -52,6 +54,7 @@
         "zod": "^4.3.6"
     },
     "devDependencies": {
+        "@playwright/test": "^1.61.1",
         "@tailwindcss/postcss": "^4",
         "@types/node": "^20.19.39",
         "@types/react": "^19",

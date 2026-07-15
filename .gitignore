@@ -49,3 +49,10 @@ backups/
 
 # npx cache (unpinned runtime download artifacts)
 .npx-cache/
+
+# playwright
+playwright-report/
+test-results/
+tests/e2e/auth-state.json
+tests/e2e/screenshots/
+tests/e2e/verify.ts

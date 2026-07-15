@@ -6,78 +6,160 @@ import {
   Column,
   flexRender,
   getCoreRowModel,
-  useReactTable,
-  getPaginationRowModel,
   getSortedRowModel,
-  getFilteredRowModel,
   SortingState,
-  ColumnFiltersState,
-  PaginationState,
+  useReactTable,
 } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { VALID_PAGE_SIZES } from "@/hooks/useProjectsFilters";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  meta?: {
-    current?: number;
-    pages?: number;
-    total?: number;
-    hasNext?: boolean;
-    hasPrev?: boolean;
-  };
-  onPaginationChange?: (page: number, limit: number) => void;
-  pageSize?: number;
-  isLoading?: boolean;
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  pageSize: number;
+  isLoading: boolean;
+  isFetching?: boolean;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (size: number) => void;
   searchPlaceholder?: string;
   onSearchChange?: (value: string) => void;
   searchValue?: string;
+  sortField?: string;
+  sortOrder?: "asc" | "desc";
+  onSortChange?: (field: string, currentOrder: "asc" | "desc") => void;
   children?: React.ReactNode;
+}
+
+function PaginationFooter({
+  currentPage,
+  totalPages,
+  totalItems,
+  pageSize,
+  isLoading,
+  onPageChange,
+  onPageSizeChange,
+}: {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  pageSize: number;
+  isLoading: boolean;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (size: number) => void;
+}) {
+  const startItem = totalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const endItem = Math.min(currentPage * pageSize, totalItems);
+  const hasPrev = currentPage > 1;
+  const hasNext = currentPage < totalPages;
+
+  return (
+    <div className="flex items-center justify-between gap-4 flex-wrap">
+      <div className="flex items-center gap-3">
+        <span className="text-xs text-foreground/40">
+          {totalItems > 0
+            ? `Showing ${startItem}\u2013${endItem} of ${totalItems}`
+            : "No results"}
+        </span>
+        <select
+          value={pageSize}
+          onChange={(e) => onPageSizeChange(Number(e.target.value))}
+          className="bg-background border border-primary/20 text-xs px-2 py-1 text-foreground/60 outline-none focus:border-accent transition-colors"
+          aria-label="Projects per page"
+        >
+          {VALID_PAGE_SIZES.map((size) => (
+            <option key={size} value={size}>
+              {size} / page
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="flex items-center gap-1">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(1)}
+          disabled={!hasPrev || isLoading}
+          aria-label="First page"
+          className="px-2"
+        >
+          <ChevronsLeft className="w-4 h-4" />
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={!hasPrev || isLoading}
+          aria-label="Previous page"
+          className="px-2"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </Button>
+
+        <span className="text-xs text-foreground/50 px-2 min-w-[80px] text-center">
+          Page {currentPage} of {totalPages || 1}
+        </span>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={!hasNext || isLoading}
+          aria-label="Next page"
+          className="px-2"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(totalPages)}
+          disabled={!hasNext || isLoading}
+          aria-label="Last page"
+          className="px-2"
+        >
+          <ChevronsRight className="w-4 h-4" />
+        </Button>
+      </div>
+    </div>
+  );
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  meta,
-  onPaginationChange,
-  pageSize = 10,
+  currentPage,
+  totalPages,
+  totalItems,
+  pageSize,
   isLoading,
+  isFetching = false,
+  onPageChange,
+  onPageSizeChange,
   searchPlaceholder = "Search...",
   onSearchChange,
   searchValue = "",
   children,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [pagination, setPagination] = React.useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: pageSize,
-  });
 
   const table = useReactTable({
     data,
     columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
+    manualPagination: true,
+    pageCount: totalPages,
     state: {
       sorting,
-      columnFilters,
-      pagination,
+      pagination: { pageIndex: currentPage - 1, pageSize },
     },
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onPaginationChange: (updater) => {
-      const next = typeof updater === "function" ? updater(pagination) : updater;
-      setPagination(next);
-      onPaginationChange?.(next.pageIndex + 1, next.pageSize);
-    },
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
   });
-
-  const currentPage = meta?.current || pagination.pageIndex + 1;
-  const totalPages = meta?.pages || table.getPageCount();
 
   return (
     <div className="space-y-4">
@@ -91,6 +173,7 @@ export function DataTable<TData, TValue>({
                 onChange={(e) => onSearchChange(e.target.value)}
                 placeholder={searchPlaceholder}
                 className="w-full bg-background border border-primary/20 p-3 pl-10 outline-none focus:border-accent transition-colors text-sm"
+                aria-label={searchPlaceholder}
               />
               <svg
                 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30"
@@ -104,9 +187,10 @@ export function DataTable<TData, TValue>({
           )}
           {children}
         </div>
-        {meta?.total !== undefined && (
-          <div className="text-xs text-foreground/40">
-            {meta.total} total
+        {isFetching && !isLoading && (
+          <div className="flex items-center gap-2 text-xs text-foreground/40">
+            <div className="w-3 h-3 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+            Updating...
           </div>
         )}
       </div>
@@ -159,56 +243,28 @@ export function DataTable<TData, TValue>({
         </table>
       </div>
 
-      <div className="flex items-center justify-between">
-        <div className="text-xs text-foreground/40">
-          Page {currentPage} of {totalPages || 1}
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
-            className="p-2"
-          >
-            <ChevronsLeft className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-            className="p-2"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-            className="p-2"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
-            className="p-2"
-          >
-            <ChevronsRight className="w-4 h-4" />
-          </Button>
-        </div>
-      </div>
+      <PaginationFooter
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={totalItems}
+        pageSize={pageSize}
+        isLoading={isLoading}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
+      />
     </div>
   );
 }
 
-export function SortableHeader<TData, TValue>({ column, children }: { column: Column<TData, TValue>; children: React.ReactNode }) {
+export function SortableHeader<TData, TValue>({
+  column,
+  children,
+}: {
+  column: Column<TData, TValue>;
+  children: React.ReactNode;
+}) {
   const sorted = column.getIsSorted();
-  
+
   return (
     <button
       onClick={() => column.toggleSorting(sorted === "asc")}
