@@ -79,19 +79,19 @@ export async function generateBusinessInsights() {
     projectViews = [];
   }
 
-  for (const p of projectViews) {
-    if (p.views > 50) {
-        const project = await Project.findById(p._id);
-        if (!project) continue;
-        const title = safeProjectTitle(project);
-        insights.push({
-            type: "opportunity",
-            title: "Popular Project",
-            description: `'${title}' is attracting significant views.`,
-            impact: "This project is your best converting asset — leverage it.",
-            action: "Add a clear CTA or link to your services at the end of this project page."
-        });
-        break;
+  const popularIds = projectViews.filter(p => p.views > 50).map(p => p._id);
+  if (popularIds.length > 0) {
+    const projects = await Project.find({ slug: { $in: popularIds } });
+    for (const project of projects) {
+      const title = safeProjectTitle(project);
+      insights.push({
+          type: "opportunity",
+          title: "Popular Project",
+          description: `'${title}' is attracting significant views.`,
+          impact: "This project is your best converting asset — leverage it.",
+          action: "Add a clear CTA or link to your services at the end of this project page."
+      });
+      break;
     }
   }
 

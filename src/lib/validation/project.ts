@@ -4,7 +4,6 @@ import {
   normalizeSlug,
   seoSchema,
   safeUrlSchema,
-  optionalUrlSchema,
   contentStatusSchema,
 } from "./shared";
 

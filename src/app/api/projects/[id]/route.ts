@@ -8,31 +8,8 @@ import { projectUpdateSchema } from "@/lib/validation";
 import { deleteCloudinaryResources } from "@/lib/cloudinary";
 import { logActivity } from "@/lib/activity";
 import { checkReadiness, detectExpectedMediaType } from "@/lib/validation/project-readiness";
-import { toPlainText } from "@/lib/text";
+import { normalizeProject } from "@/lib/project-utils";
 import type { Project as ProjectType } from "@/types/project";
-
-function normalizeProject(doc: Record<string, unknown>): Record<string, unknown> {
-  const normalized = { ...doc };
-  const stringFields = ["title", "slug", "category", "shortDescription", "fullDescription", "image", "video", "client", "clientName", "problem", "strategy", "solution", "execution", "results", "mainResult", "idea", "outcome", "role"];
-  const arrayFields = ["tags", "categories", "services", "gallery"];
-  for (const field of stringFields) {
-    if (field in normalized) {
-      normalized[field] = toPlainText(normalized[field]);
-    }
-  }
-  for (const field of arrayFields) {
-    const arr = normalized[field];
-    if (Array.isArray(arr)) {
-      normalized[field] = arr.map((item: unknown) => toPlainText(item));
-    }
-  }
-  if (normalized.seo && typeof normalized.seo === "object") {
-    const seo = normalized.seo as Record<string, unknown>;
-    if (seo.title) seo.title = toPlainText(seo.title);
-    if (seo.description) seo.description = toPlainText(seo.description);
-  }
-  return normalized;
-}
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -82,7 +59,12 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await req.json();
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    }
 
     if (Array.isArray(body.caseStudyMedia)) {
       body.caseStudyMedia = body.caseStudyMedia.map((item: Record<string, unknown>) => {

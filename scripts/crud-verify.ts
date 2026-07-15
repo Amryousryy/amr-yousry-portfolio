@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * COMPLETE CRUD VERIFICATION — Real MongoDB
  *
@@ -40,6 +41,7 @@ async function api(method: string, path: string, body?: any) {
   return { status: res.status, data: json?.data ?? json, json, redirect: null };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function diff(before: any, after: any, keys: string[]) {
   const changes: string[] = [];
   for (const k of keys) {

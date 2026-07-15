@@ -153,7 +153,6 @@ const SettingsSchema: Schema = new Schema({
   siteContent: { type: SiteContentSchema },
 }, { timestamps: true });
 
-SettingsSchema.index({ "hero.status": 1 });
-SettingsSchema.index({ "siteContent.status": 1 });
+
 
 export default mongoose.models.Settings || mongoose.model<ISettings>("Settings", SettingsSchema);

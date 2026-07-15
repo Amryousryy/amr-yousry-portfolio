@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * REGRESSION TEST — Save Bug Fix
  *
@@ -13,7 +14,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { projectCreateSchema, projectUpdateSchema } from "@/lib/validation";
+import { projectUpdateSchema } from "@/lib/validation";
 import { stringSchema } from "@/lib/validation/shared";
 
 // ─── The exact bug: stringSchema.optional() with empty string ───

@@ -8,10 +8,7 @@ import { projectCreateSchema } from "@/lib/validation";
 import { logActivity } from "@/lib/activity";
 import { checkReadiness, detectExpectedMediaType } from "@/lib/validation/project-readiness";
 import { paginationSchema, getPagination } from "@/lib/pagination";
-import { toPlainText } from "@/lib/text";
-
-const STRING_FIELDS = ["title", "slug", "category", "shortDescription", "fullDescription", "image", "video", "client", "clientName", "problem", "strategy", "solution", "execution", "results", "mainResult", "idea"];
-const ARRAY_FIELDS = ["tags", "categories", "services"];
+import { normalizeProject } from "@/lib/project-utils";
 
 const SORT_FIELDS: Record<string, 1 | -1> = {
   createdAt: -1,
@@ -23,27 +20,6 @@ const SORT_FIELDS: Record<string, 1 | -1> = {
   year: 1,
   displayOrder: 1,
 };
-
-function normalizeProjectFields(doc: Record<string, unknown>): Record<string, unknown> {
-  const normalized = { ...doc };
-  for (const field of STRING_FIELDS) {
-    if (field in normalized) {
-      normalized[field] = toPlainText(normalized[field]);
-    }
-  }
-  for (const field of ARRAY_FIELDS) {
-    const arr = normalized[field];
-    if (Array.isArray(arr)) {
-      normalized[field] = arr.map((item: unknown) => toPlainText(item));
-    }
-  }
-  if (normalized.seo && typeof normalized.seo === "object") {
-    const seo = normalized.seo as Record<string, unknown>;
-    if (seo.title) seo.title = toPlainText(seo.title);
-    if (seo.description) seo.description = toPlainText(seo.description);
-  }
-  return normalized;
-}
 
 function successResponse<T>(data: T, pagination?: ReturnType<typeof getPagination>) {
   return NextResponse.json({
@@ -121,7 +97,7 @@ export async function GET(req: Request) {
       Project.countDocuments(query)
     ]);
 
-    const normalized = projects.map((p) => normalizeProjectFields(p as unknown as Record<string, unknown>)) as typeof projects;
+    const normalized = projects.map((p) => normalizeProject(p as unknown as Record<string, unknown>)) as typeof projects;
     const pagination = getPagination(page, limit, total);
     return successResponse(normalized, pagination);
   } catch (error) {

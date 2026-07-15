@@ -1,5 +1,3 @@
-
-import { z } from "zod";
 import { projectCreateSchema } from "../../src/lib/validation/project";
 
 let passed = 0;

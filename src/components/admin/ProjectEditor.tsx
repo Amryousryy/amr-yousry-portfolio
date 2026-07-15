@@ -74,6 +74,8 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
     name: "caseStudyMedia",
   });
 
+  // React Hook Form's watch() returns a function that can't be safely memoized by React Compiler.
+  // eslint-disable-next-line react-hooks/incompatible-library
   const watchedTitle = watch("title");
   const watchedSlug = watch("slug");
   const watchedImage = watch("image");

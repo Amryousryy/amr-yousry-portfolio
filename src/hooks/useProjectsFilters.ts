@@ -14,6 +14,7 @@ export interface ProjectsFilters {
 }
 
 const VALID_PAGE_SIZES = [10, 25, 50, 100];
+const DEFAULT_PAGE_SIZE = 12;
 const VALID_SORT_FIELDS = ["createdAt", "updatedAt", "title", "status", "category", "clientName", "year"];
 const VALID_STATUSES = ["", "draft", "published"];
 const VALID_CATEGORIES = ["", "branding", "web", "mobile", "ui-ux", "motion", "other"];
@@ -21,7 +22,7 @@ const VALID_ORDERS = ["asc", "desc"];
 const STORAGE_KEY_PAGE_SIZE = "admin-projects-page-size";
 
 function getStoredPageSize(): number {
-  if (typeof window === "undefined") return 12;
+  if (typeof window === "undefined") return DEFAULT_PAGE_SIZE;
   try {
     const stored = localStorage.getItem(STORAGE_KEY_PAGE_SIZE);
     if (stored) {
@@ -29,7 +30,7 @@ function getStoredPageSize(): number {
       if (VALID_PAGE_SIZES.includes(parsed)) return parsed;
     }
   } catch {}
-  return 12;
+  return DEFAULT_PAGE_SIZE;
 }
 
 function parseSearchParams(searchParams: URLSearchParams): ProjectsFilters {
@@ -37,7 +38,9 @@ function parseSearchParams(searchParams: URLSearchParams): ProjectsFilters {
   const page = Number.isFinite(rawPage) && rawPage >= 1 ? rawPage : 1;
 
   const rawLimit = Number(searchParams.get("limit"));
-  const limit = Number.isFinite(rawLimit) && VALID_PAGE_SIZES.includes(rawLimit) ? rawLimit : getStoredPageSize();
+  const limit = Number.isFinite(rawLimit) && VALID_PAGE_SIZES.includes(rawLimit)
+    ? rawLimit
+    : getStoredPageSize();
 
   const search = searchParams.get("search") ?? "";
 
@@ -63,8 +66,6 @@ export function useProjectsFilters() {
       for (const [key, value] of Object.entries(updates)) {
         if (key === "page" && value === 1) {
           params.delete(key);
-        } else if (key === "limit" && value === getStoredPageSize()) {
-          params.delete(key);
         } else if (key === "sort" && value === "createdAt") {
           params.delete(key);
         } else if (key === "order" && value === "desc") {
@@ -73,7 +74,7 @@ export function useProjectsFilters() {
           params.delete(key);
         } else if (key === "category" && value === "") {
           params.delete(key);
-        } else if (value) {
+        } else if (value !== undefined && value !== null && value !== "") {
           params.set(key, String(value));
         } else {
           params.delete(key);
@@ -97,4 +98,4 @@ export function useProjectsFilters() {
   };
 }
 
-export { VALID_PAGE_SIZES, VALID_SORT_FIELDS, VALID_STATUSES, VALID_CATEGORIES, VALID_ORDERS, STORAGE_KEY_PAGE_SIZE, getStoredPageSize };
+export { VALID_PAGE_SIZES, VALID_SORT_FIELDS, VALID_STATUSES, VALID_CATEGORIES, VALID_ORDERS, STORAGE_KEY_PAGE_SIZE, DEFAULT_PAGE_SIZE };

@@ -64,7 +64,7 @@ export async function GET() {
         $lookup: {
           from: "projects",
           localField: "_id",
-          foreignField: "_id",
+          foreignField: "slug",
           as: "project"
         }
       },

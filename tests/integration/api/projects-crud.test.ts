@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * API Integration Tests — Project CRUD endpoints.
  *
@@ -9,11 +10,8 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { writeFileSync, readFileSync, unlinkSync, existsSync } from "fs";
-import { join } from "path";
 
 const BASE_URL = process.env.TEST_BASE_URL || "http://localhost:3000";
-const COOKIE_PATH = join(process.cwd(), ".test-session-cookies");
 
 let cookieJar = "";
 

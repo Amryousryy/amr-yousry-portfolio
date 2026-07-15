@@ -62,6 +62,9 @@ const ProjectSchema: Schema = new Schema({
 
 ProjectSchema.index({ status: 1, displayOrder: 1 });
 ProjectSchema.index({ featured: 1, status: 1 });
+ProjectSchema.index({ status: 1, category: 1 });
+ProjectSchema.index({ status: 1, updatedAt: -1 });
+ProjectSchema.index({ status: 1, publishedAt: -1 });
 
 export interface IProject extends Document {
   title: string;

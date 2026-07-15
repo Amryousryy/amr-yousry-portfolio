@@ -48,11 +48,7 @@ export async function GET() {
       ? new Date(settings.hero.publishedAt) 
       : null;
 
-    const recentUpdates = await Project.find({})
-      .sort({ updatedAt: -1 })
-      .limit(3)
-      .select("title status updatedAt")
-      .lean() as unknown as Array<{ _id: unknown; title: string; status: string; updatedAt: Date }>;
+    const recentUpdates = recentProjects.slice(0, 3);
 
     return NextResponse.json({
       projects: {

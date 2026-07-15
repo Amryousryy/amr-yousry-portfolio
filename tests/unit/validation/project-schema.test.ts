@@ -35,7 +35,8 @@ describe("projectCreateSchema", () => {
     });
 
     it("rejects missing title", () => {
-      const { title, ...rest } = validMinimal();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { title: _, ...rest } = validMinimal();
       const r = projectCreateSchema.safeParse(rest);
       expect(r.success).toBe(false);
     });
@@ -46,7 +47,8 @@ describe("projectCreateSchema", () => {
     });
 
     it("rejects missing slug", () => {
-      const { slug, ...rest } = validMinimal();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { slug: _, ...rest } = validMinimal();
       const r = projectCreateSchema.safeParse(rest);
       expect(r.success).toBe(false);
     });

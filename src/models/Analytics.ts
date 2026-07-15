@@ -23,7 +23,7 @@ export interface IAnalytics extends Document {
 const AnalyticsSchema: Schema = new Schema({
   type: { type: String, enum: ["page_view", "interaction"], required: true },
   page: { type: String, required: true },
-  projectId: { type: Schema.Types.ObjectId, ref: "Project" },
+  projectId: { type: String },
   interactionType: { type: String },
   referrer: { type: String },
   referrerDomain: { type: String },
@@ -46,5 +46,6 @@ AnalyticsSchema.index({ visitorHash: 1, createdAt: -1 });
 AnalyticsSchema.index({ sessionId: 1, createdAt: -1 });
 AnalyticsSchema.index({ deviceType: 1, createdAt: -1 });
 AnalyticsSchema.index({ referrerDomain: 1, createdAt: -1 });
+AnalyticsSchema.index({ projectId: 1, createdAt: -1 });
 
 export default mongoose.models.Analytics || mongoose.model<IAnalytics>("Analytics", AnalyticsSchema);
