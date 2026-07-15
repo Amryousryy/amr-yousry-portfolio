@@ -35,7 +35,7 @@
 - 10 files ESLint-cleaned
 
 **Verification:** 190/190 tests pass, 0 ESLint errors, 0 ESLint warnings, TypeScript clean.
-**Deployment:** Pending
+**Deployment:** Commit `ac49916`, pending production deployment
 
 ---
 
