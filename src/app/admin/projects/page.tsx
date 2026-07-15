@@ -182,10 +182,10 @@ export default function ProjectsPage() {
 
   const handlePageSizeChange = useCallback(
     (newSize: number) => {
+      updateFilters({ limit: newSize, page: 1 });
       try {
         localStorage.setItem(STORAGE_KEY_PAGE_SIZE, String(newSize));
       } catch {}
-      updateFilters({ limit: newSize, page: 1 });
     },
     [updateFilters]
   );
