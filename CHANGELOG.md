@@ -14,7 +14,7 @@
 6. **Dependency Audit** — Removed unused `mongodb` direct dep (mongoose bundles its own), ran `npm audit fix` (23 packages updated)
 7. **Bundle** — Documented heavy deps (recharts ~500KB, gsap ~100KB single use, framer-motion ~150KB)
 8. **Database** — Added 4 missing compound indexes to Project model, 1 to Analytics model, removed 2 unused Settings indexes
-9. **Codebase Cleanup** — Removed 6 dead files (`hero.ts`, `stats.ts`, `useDebounce.ts`, `useProjectsSelection.ts`, `useAdminToast.ts`, `proxy.ts`), renamed `proxy.ts` → `middleware.ts`
+9. **Codebase Cleanup** — Removed 6 dead files (`hero.ts`, `stats.ts`, `useDebounce.ts`, `useProjectsSelection.ts`, `useAdminToast.ts`, `proxy.ts` stays as correct Next.js convention)
 10. **Architecture** — Fixed `projectId` type mismatch (ObjectId → String), extracted shared `normalizeProject` utility, added missing error handling in PUT handler
 
 **Files Changed:**
@@ -35,7 +35,7 @@
 - 10 files ESLint-cleaned
 
 **Verification:** 190/190 tests pass, 0 ESLint errors, 0 ESLint warnings, TypeScript clean.
-**Deployment:** Commit `ac49916`, pending production deployment
+**Deployment:** Commit `24935da`, pending production deployment
 
 ---
 
