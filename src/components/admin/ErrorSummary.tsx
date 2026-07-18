@@ -33,19 +33,19 @@ export function ErrorSummary({ errors, title = "Please fix the following errors:
   if (errorMessages.length === 0) return null;
 
   return (
-    <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-6 animate-in slide-in-from-top-2">
+    <div className="bg-[var(--color-danger)]/10 border border-[var(--color-danger)]/30 rounded-lg p-4 mb-6 animate-in slide-in-from-top-2">
       <div className="flex items-start gap-3">
-        <AlertCircle className="text-red-500 shrink-0 mt-0.5" size={18} />
+        <AlertCircle className="text-[var(--color-danger)] shrink-0 mt-0.5" size={18} />
         <div>
-          <h4 className="text-sm font-bold text-red-500 uppercase tracking-wider mb-2">{title}</h4>
+          <h4 data-error-title className="text-sm font-bold text-[var(--color-danger)] uppercase tracking-wider mb-2">{title}</h4>
           <ul className="space-y-1">
             {errorMessages.slice(0, 5).map((msg, index) => (
-              <li key={index} className="text-xs text-red-400">
+              <li key={index} className="text-xs text-[var(--color-danger-light)]">
                 • {msg}
               </li>
             ))}
             {errorMessages.length > 5 && (
-              <li className="text-xs text-red-400 italic">
+              <li className="text-xs text-[var(--color-danger-light)] italic">
                 And {errorMessages.length - 5} more errors...
               </li>
             )}
@@ -59,7 +59,7 @@ export function ErrorSummary({ errors, title = "Please fix the following errors:
 export function scrollToFirstError(errors: Record<string, unknown>) {
   const errorMessages = getAllErrors(errors);
   if (errorMessages.length > 0) {
-    const firstErrorElement = document.querySelector(".text-red-500:not(:empty)");
+    const firstErrorElement = document.querySelector("[data-error-title]");
     if (firstErrorElement) {
       firstErrorElement.scrollIntoView({ behavior: "smooth", block: "center" });
     }

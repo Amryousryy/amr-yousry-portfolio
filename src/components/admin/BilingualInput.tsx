@@ -39,7 +39,7 @@ export default function StringInput({
         placeholder={placeholder || `Enter ${label}...`}
       />
       {error && (
-        <p className="text-[10px] text-red-500">{error}</p>
+        <p className="text-[10px] text-[var(--color-danger)]">{error}</p>
       )}
     </div>
   );

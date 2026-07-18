@@ -1,7 +1,22 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { PixelButton } from "@/components/ui/pixel-button";
+import { useStagger } from "@/hooks/behavior";
 
+/**
+ * Sprint 05: Hero Section — Signature Experience
+ * 
+ * This component implements Stage 4: Hero Narrative
+ * from the 7-Stage Experience Model.
+ * 
+ * Migrated to use Behavior API:
+ * - Headline: staggered reveal with focus-pull variant
+ * - Subtitle: delayed reveal with fade variant
+ * - Buttons: interactive states with hover/press
+ */
 export interface HeroContent {
   headline: string;
   subheadline: string;
@@ -21,6 +36,26 @@ const DEFAULT_CONTENT: HeroContent = {
 };
 
 export default function HeroSection({ content = DEFAULT_CONTENT }: { content?: HeroContent }) {
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const buttonsRef = useRef<HTMLDivElement>(null);
+
+  const stagger = useStagger({
+    refs: [headlineRef, subtitleRef, buttonsRef],
+    variant: "focus-pull",
+    duration: "large",
+    easing: "ease-out",
+    stagger: 150,
+    distance: 8,
+  });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      stagger.play();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [stagger]);
+
   return (
     <Section className="min-h-[82svh] flex items-center justify-center relative overflow-hidden px-0 py-14 sm:py-20 md:py-28">
       {/* Background - single subtle grid + cinematic vignette */}
@@ -31,7 +66,8 @@ export default function HeroSection({ content = DEFAULT_CONTENT }: { content?: H
           {/* Headline Group - Premium retro title */}
           <div className="mb-8">
             <h1 
-              className="font-black text-white tracking-tighter leading-[1.05] sm:leading-[0.95] text-center text-[clamp(2.15rem,10vw,3.35rem)] md:text-[clamp(3rem,7vw,6rem)]"
+              ref={headlineRef}
+              className="font-black text-white tracking-tighter leading-[1.05] sm:leading-[0.95] text-center text-[clamp(2.15rem,10vw,3.35rem)] md:text-[clamp(3rem,7vw,6rem)] hero-entrance__line"
               style={{ textWrap: 'balance' }}
             >
               {content.headline.split('\n').filter(Boolean).map((line, i) => (
@@ -41,7 +77,8 @@ export default function HeroSection({ content = DEFAULT_CONTENT }: { content?: H
             
             {/* Subtitle - Business focused, readable, neutral color */}
             <p 
-              className="text-slate-300 font-normal px-2 sm:px-1"
+              ref={subtitleRef}
+              className="text-slate-300 font-normal px-2 sm:px-1 hero-entrance__subtitle"
               style={{ 
                 fontSize: 'clamp(0.95rem, 4vw, 1.35rem)',
                 lineHeight: '1.55',
@@ -55,7 +92,7 @@ export default function HeroSection({ content = DEFAULT_CONTENT }: { content?: H
           </div>
 
           {/* CTA Block - Closer to subtitle */}
-          <div className="mb-8">
+          <div ref={buttonsRef} className="mb-8 hero-entrance__buttons">
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center">
               <PixelButton 
                 variant="primary" 

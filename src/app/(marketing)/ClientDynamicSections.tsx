@@ -6,6 +6,7 @@ import type { PublicContactContent } from "@/lib/contact-content-normalizer";
 import type { PublicAboutContent } from "@/lib/about-content-normalizer";
 
 const ProjectsSection = dynamic(() => import("@/components/sections/projects"), { ssr: false });
+const ServicesSection = dynamic(() => import("@/components/sections/Services"), { ssr: false });
 const AboutSection = dynamic(() => import("@/components/sections/about"), { ssr: false });
 const ContactSection = dynamic(() => import("@/components/sections/contact"), { ssr: false });
 
@@ -19,6 +20,7 @@ export default function ClientDynamicSections({ projects, aboutData, contactData
   return (
     <>
       <ProjectsSection projects={projects} />
+      <ServicesSection />
       <AboutSection aboutData={aboutData} />
       <ContactSection contactData={contactData} />
     </>

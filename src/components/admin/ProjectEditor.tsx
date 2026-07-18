@@ -180,7 +180,7 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <ProjectFormActions
         isSaving={isSaving}
         isSubmitting={isSubmitting}
@@ -196,10 +196,8 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
         <ProjectReadinessPanel result={readinessResult} onClose={() => setReadinessResult(null)} />
       )}
 
-      <div className="space-y-12">
+      <div className="space-y-8">
         <BasicInfoFields register={register} errors={errors} />
-
-        <CategoriesFields control={control} />
 
         <SummaryFields register={register} control={control} errors={errors} />
 
@@ -229,6 +227,8 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
           enableVideo={enableVideo}
           setEnableVideo={setEnableVideo}
         />
+
+        <CategoriesFields control={control} />
 
         <ProjectStatusFields register={register} control={control} featured={watchedFeatured} status={watchedStatus} />
       </div>

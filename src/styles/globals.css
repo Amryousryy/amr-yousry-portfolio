@@ -1,4 +1,6 @@
 ﻿@import "tailwindcss";
+@import "./tokens/foundation.css";
+@import "./tokens/semantic.css";
 
 @theme {
   --font-pixel: var(--font-press-start);
@@ -13,10 +15,37 @@
   --color-text-main: #F8FAFC;
   --color-text-dim: #94A3B8;
 
+  --color-accent: #22D3EE;
+  --color-background: #1E1B4B;
+  --color-foreground: #F8FAFC;
+
   --spacing-8: 0.5rem;
   --spacing-16: 1rem;
   --spacing-24: 1.5rem;
   --spacing-32: 2rem;
+
+  /* Sprint 02: Motion Platform Tokens */
+  --duration-micro: 100ms;
+  --duration-small: 200ms;
+  --duration-medium: 300ms;
+  --duration-large: 500ms;
+  --duration-hero: 1000ms;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-in-out-back: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-spring: spring(400, 10, 1);
+
+  --translate-y-sm: 8px;
+  --translate-y-md: 16px;
+  --translate-y-lg: 32px;
+  --translate-y-xl: 64px;
+
+  --scale-sm: 0.95;
+  --scale-md: 1.0;
+  --scale-lg: 1.05;
+  --scale-xl: 1.1;
 }
 
 @layer base {
@@ -131,28 +160,213 @@
   }
 }
 
-/* Loading bar animation for boot sequence */
+/* ═══════════════════════════════════════════════
+   BOOT EXPERIENCE — Sprint 01.5 Polish
+   ═══════════════════════════════════════════════ */
+
+/* World Continuity — loader background matches hero's brand-blue */
+.boot-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #1E1B4B;
+  transition: opacity 600ms cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 800ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ambient vignette — matches hero's radial gradient for world continuity */
+.boot-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 0%, rgba(10, 10, 15, 0.55) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.boot-overlay--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Scroll lock — prevents immersion-breaking scroll during boot */
+body.boot-locked {
+  overflow: hidden;
+  touch-action: none;
+  -webkit-overflow-scrolling: none;
+}
+
+/* Grid breathing — subtle ambient pulse */
+.boot-overlay .game-grid-bg {
+  animation: bootGridBreathe 4s ease-in-out infinite;
+}
+
+@keyframes bootGridBreathe {
+  0%, 100% { opacity: 0.06; }
+  50% { opacity: 0.12; }
+}
+
+/* Logo — cinematic entrance with scale + glow */
+.logo-container--animate {
+  animation: bootLogoReveal 800ms cubic-bezier(0.16, 1, 0.3, 1) forwards,
+             bootLogoBreathe 3s ease-in-out 800ms infinite;
+}
+
+@keyframes bootLogoReveal {
+  0% { opacity: 0; transform: scale(0.88); filter: blur(4px); }
+  60% { opacity: 1; filter: blur(0); }
+  100% { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+
+@keyframes bootLogoBreathe {
+  0%, 100% { opacity: 0.55; filter: drop-shadow(0 0 0px transparent); }
+  50% { opacity: 0.85; filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.15)); }
+}
+
+/* Status message — cinematic text reveal */
+.boot-status-message {
+  animation: bootStatusReveal 400ms cubic-bezier(0, 0, 0.2, 1) forwards;
+}
+
+@keyframes bootStatusReveal {
+  0% { opacity: 0; transform: translateY(4px); filter: blur(1px); }
+  100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+/* Progress bar — enhanced glow */
+.boot-progress-glow {
+  box-shadow: 0 0 8px rgba(34, 211, 238, 0.25),
+              0 0 20px rgba(34, 211, 238, 0.08);
+}
+
+/* Reveal box — blur-to-sharp cinematic focus pull */
+.boot-reveal-box {
+  animation: bootRevealCinematic 900ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes bootRevealCinematic {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+    filter: blur(6px);
+  }
+  30% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  40% {
+    transform: translateY(-2px) scale(1.01);
+  }
+  55% {
+    opacity: 0.88;
+    transform: translate(1px, 0) scale(1);
+  }
+  65% {
+    opacity: 1;
+    transform: translate(-1px, 0);
+  }
+  80% {
+    transform: translate(0, 0) scale(1.002);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* SYSTEM READY — typewriter terminal flicker */
+.boot-system-ready {
+  animation: bootTerminalReady 1.2s steps(1) forwards;
+}
+
+@keyframes bootTerminalReady {
+  0% { opacity: 0; }
+  5% { opacity: 0.7; }
+  8% { opacity: 0.1; }
+  12% { opacity: 0.6; }
+  15% { opacity: 0.15; }
+  20% { opacity: 0.5; }
+  25% { opacity: 0.2; }
+  30% { opacity: 0.65; }
+  35% { opacity: 0.1; }
+  40% { opacity: 0.55; }
+  50% { opacity: 0.3; }
+  60% { opacity: 0.5; }
+  100% { opacity: 0.4; }
+}
+
+/* ═══════════════════════════════════════════════
+   HERO ENTRANCE — Cinematic world birth
+   Sprint 05: Migrated to Behavior API (useReveal)
+   ═══════════════════════════════════════════════ */
+
+.hero-entrance {
+  opacity: 0;
+  position: relative;
+}
+
+/* Phase transitions - now handled by Behavior API */
+.hero-entrance--hidden {
+  opacity: 0;
+}
+
+.hero-entrance--entering {
+  opacity: 1;
+}
+
+.hero-entrance--visible {
+  opacity: 1;
+}
+
+/* Color bridge — smooth transition from loader dark to hero blue */
+.hero-entrance::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #1E1B4B;
+  opacity: 0;
+  z-index: 0;
+  pointer-events: none;
+  animation: heroColorBridge var(--duration-large) var(--ease-in-out) forwards;
+}
+
+@keyframes heroColorBridge {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Staggered child reveals — now handled by Behavior API (useStagger) */
+.hero-entrance__line,
+.hero-entrance__subtitle,
+.hero-entrance__buttons {
+  opacity: 0;
+}
+
+/* Ensure proper rendering when not animating */
+.hero-entrance--visible .hero-entrance__line,
+.hero-entrance--visible .hero-entrance__subtitle,
+.hero-entrance--visible .hero-entrance__buttons {
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════════
+   LOADING BAR — Progress fill animation
+   ═══════════════════════════════════════════════ */
+
 @keyframes loadingBarFill {
   0% { width: 0%; }
+  50% { width: 70%; }
   100% { width: 100%; }
 }
 
-@keyframes glitchReveal {
-  0% { clip-path: inset(0 0 100% 0); opacity: 0; transform: translateY(8px) scale(0.98); }
-  20% { clip-path: inset(0 0 0 0); opacity: 1; transform: translateY(0) scale(1); filter: blur(1px); }
-  35% { clip-path: inset(10% 0 80% 0); transform: translate(-1px, 0); filter: blur(0); }
-  50% { clip-path: inset(70% 0 15% 0); transform: translate(1px, 0); }
-  70% { clip-path: inset(30% 0 50% 0); transform: translate(-1px, 0); }
-  100% { clip-path: inset(0 0 0 0); opacity: 1; transform: translate(0, 0); }
-}
-
-@keyframes flickerIn {
-  0%, 100% { opacity: 1; }
-  10% { opacity: 0.9; }
-  12% { opacity: 1; }
-  40% { opacity: 0.95; }
-  42% { opacity: 1; }
-}
+/* ═══════════════════════════════════════════════
+   MARQUEE — Continuous scrolling
+   ═══════════════════════════════════════════════ */
 
 /* Marquee animation */
 @keyframes marquee {

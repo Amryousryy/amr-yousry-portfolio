@@ -10,16 +10,16 @@ interface Props {
 
 function severityIcon(severity: ReadinessIssue["severity"]) {
   switch (severity) {
-    case "blocking": return <AlertCircle size={14} className="text-red-500 shrink-0 mt-0.5" />;
-    case "warning": return <AlertTriangle size={14} className="text-yellow-500 shrink-0 mt-0.5" />;
+    case "blocking": return <AlertCircle size={14} className="text-[var(--color-danger)] shrink-0 mt-0.5" />;
+    case "warning": return <AlertTriangle size={14} className="text-[var(--color-warning)] shrink-0 mt-0.5" />;
     case "info": return <Info size={14} className="text-foreground/40 shrink-0 mt-0.5" />;
   }
 }
 
 function severityBorder(severity: ReadinessIssue["severity"]) {
   switch (severity) {
-    case "blocking": return "border-l-red-500/50";
-    case "warning": return "border-l-yellow-500/50";
+    case "blocking": return "border-l-[var(--color-danger)]/50";
+    case "warning": return "border-l-[var(--color-warning)]/50";
     case "info": return "border-l-foreground/20";
   }
 }
@@ -35,11 +35,11 @@ export default function ProjectReadinessPanel({ result, onClose }: Props) {
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">
           {result.isPublishReady ? (
-            <AlertTriangle size={16} className="text-yellow-500" />
+            <AlertTriangle size={16} className="text-[var(--color-warning)]" />
           ) : (
-            <AlertCircle size={16} className="text-red-500" />
+            <AlertCircle size={16} className="text-[var(--color-danger)]" />
           )}
-          <span className={`text-xs font-bold uppercase tracking-wider ${result.isPublishReady ? "text-yellow-500" : "text-red-500"}`}>
+          <span className={`text-xs font-bold uppercase tracking-wider ${result.isPublishReady ? "text-[var(--color-warning)]" : "text-[var(--color-danger)]"}`}>
             {result.isPublishReady ? "Publish Ready" : "Needs Attention"}
           </span>
         </div>
@@ -52,10 +52,10 @@ export default function ProjectReadinessPanel({ result, onClose }: Props) {
 
       <div className="flex gap-4 text-[10px] text-foreground/60">
         {blocking.length > 0 && (
-          <span className="text-red-400">{blocking.length} blocking</span>
+          <span className="text-[var(--color-danger-light)]">{blocking.length} blocking</span>
         )}
         {warnings.length > 0 && (
-          <span className="text-yellow-400">{warnings.length} warning{warnings.length !== 1 ? "s" : ""}</span>
+          <span className="text-[var(--color-warning)]">{warnings.length} warning{warnings.length !== 1 ? "s" : ""}</span>
         )}
       </div>
 

@@ -11,6 +11,7 @@ export interface ProjectsFilters {
   order: "asc" | "desc";
   status: string;
   category: string;
+  featured: string;
 }
 
 const VALID_PAGE_SIZES = [10, 25, 50, 100];
@@ -50,8 +51,9 @@ function parseSearchParams(searchParams: URLSearchParams): ProjectsFilters {
 
   const status = searchParams.get("status") ?? "";
   const category = searchParams.get("category") ?? "";
+  const featured = searchParams.get("featured") ?? "";
 
-  return { page, limit, search, sort, order, status, category };
+  return { page, limit, search, sort, order, status, category, featured };
 }
 
 export function useProjectsFilters() {
@@ -73,6 +75,8 @@ export function useProjectsFilters() {
         } else if (key === "status" && value === "") {
           params.delete(key);
         } else if (key === "category" && value === "") {
+          params.delete(key);
+        } else if (key === "featured" && value === "") {
           params.delete(key);
         } else if (value !== undefined && value !== null && value !== "") {
           params.set(key, String(value));

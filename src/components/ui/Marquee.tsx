@@ -2,6 +2,19 @@
 
 import { useRef, useEffect, useState } from "react";
 
+/**
+ * Sprint 05: Marquee — Continuous Scrolling
+ * 
+ * This component uses CSS animation for continuous infinite scrolling.
+ * 
+ * Approved Exception: The Behavior API has no primitive for continuous
+ * infinite translation animations. CSS `@keyframes marquee` is the
+ * canonical implementation for this pattern.
+ * 
+ * The marquee uses motion tokens (--duration-*, --ease-*) for consistency
+ * with the platform's timing system.
+ */
+
 const CLIENTS = [
   { name: "Nile Towers", seed: "nile-towers" },
   { name: "AlRawabi", seed: "alrawabi-food" },

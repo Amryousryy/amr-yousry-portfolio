@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useForm, useFieldArray, Controller, FieldErrors, FieldPath } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import { Save, Loader2, Info, Target, Mail, Clock, Plus, Trash2, GripVertical, Eye } from "lucide-react";
+import { Save, Loader2, Info, Mail, Clock, Plus, Trash2, Eye } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SettingsService } from "@/lib/api-client";
 import { contentCreateSchema, ContentCreateInput, contentDefaultValues } from "@/lib/validation";
@@ -70,7 +70,7 @@ function convertToStringForm(content: SiteContent): FormData {
 
 export default function SiteContentManagerPage() {
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState<"about" | "services" | "contact">("about");
+  const [activeTab, setActiveTab] = useState<"about" | "contact">("about");
   const [lastSaved, setLastSaved] = useState<string | null>(null);
   const [submitAttempted, setSubmitAttempted] = useState(false);
 
@@ -84,11 +84,6 @@ export default function SiteContentManagerPage() {
   } = useForm<FormData>({
     resolver: standardSchemaResolver(contentCreateSchema),
     defaultValues: contentDefaultValues,
-  });
-
-  const { fields: serviceCardFields, append: appendServiceCard, remove: removeServiceCard } = useFieldArray({
-    control,
-    name: "servicesCards",
   });
 
   const { fields: aboutStatsFields, append: appendAboutStat, remove: removeAboutStat } = useFieldArray({
@@ -185,7 +180,6 @@ export default function SiteContentManagerPage() {
 
   const tabs = [
     { id: "about", name: "About Section", icon: Info },
-    { id: "services", name: "Services Section", icon: Target },
     { id: "contact", name: "Contact & Social", icon: Mail },
   ];
 
@@ -269,7 +263,7 @@ export default function SiteContentManagerPage() {
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as "about" | "services" | "contact")}
+            onClick={() => setActiveTab(tab.id as "about" | "contact")}
             className={`flex items-center space-x-3 px-6 py-3 text-[10px] font-bold uppercase transition-all ${activeTab === tab.id ? 'bg-accent text-background' : 'text-foreground/40 hover:text-foreground'}`}
           >
             <tab.icon size={14} />
@@ -460,121 +454,6 @@ export default function SiteContentManagerPage() {
                       >
                         <Trash2 size={16} />
                       </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "services" && (
-            <div className="space-y-8 animate-in fade-in duration-500">
-              <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-accent border-b border-primary/10 pb-4 mb-4">Services Introduction</h3>
-              
-              <Controller
-                name="servicesTitle"
-                control={control}
-                render={({ field }) => (
-                  <StringInput 
-                    label="Services Section Title" 
-                    value={field.value} 
-                    onChange={field.onChange}
-                  />
-                )}
-              />
-              
-              <Controller
-                name="servicesSubtitle"
-                control={control}
-                render={({ field }) => (
-                  <StringInput 
-                    label="Services Section Subtitle" 
-                    value={field.value} 
-                    onChange={field.onChange}
-                    type="textarea"
-                  />
-                )}
-              />
-              
-              <Controller
-                name="servicesDescription"
-                control={control}
-                render={({ field }) => (
-                  <StringInput 
-                    label="Services Section Description" 
-                    value={field.value} 
-                    onChange={field.onChange}
-                    type="textarea"
-                  />
-                )}
-              />
-
-              <div className="border-t border-primary/10 pt-8 mt-8">
-                <div className="flex justify-between items-center mb-6">
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-foreground/70">Service Cards</h4>
-                  <button
-                    type="button"
-                    onClick={() => appendServiceCard({ title: "", description: "", icon: "play-circle" })}
-                    className="flex items-center gap-2 px-4 py-2 bg-accent/20 text-accent text-xs font-bold uppercase hover:bg-accent/30 transition-colors"
-                  >
-                    <Plus size={14} />
-                    Add Service
-                  </button>
-                </div>
-
-                <div className="space-y-6">
-                  {serviceCardFields.map((card, index) => (
-                    <div key={card.id} className="p-6 bg-background/50 border border-primary/10">
-                      <div className="flex items-start gap-4">
-                        <div className="mt-2 text-foreground/30">
-                          <GripVertical size={16} />
-                        </div>
-                        <div className="flex-1 space-y-4">
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="space-y-2">
-                              <label className="text-[10px] font-bold uppercase text-accent">Icon (emoji)</label>
-                              <input
-                                {...register(`servicesCards.${index}.icon` as const)}
-                                className="w-full bg-background border border-primary/20 p-3 text-2xl text-center"
-                                placeholder="🎥"
-                              />
-                            </div>
-                            <div className="md:col-span-2 space-y-2">
-                              <Controller
-                                name={`servicesCards.${index}.title`}
-                                control={control}
-                                render={({ field }) => (
-                                  <StringInput
-                                    label="Service Title"
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                  />
-                                )}
-                              />
-                            </div>
-                          </div>
-                          <Controller
-                            name={`servicesCards.${index}.description`}
-                            control={control}
-                            render={({ field }) => (
-                              <StringInput
-                                label="Service Description"
-                                value={field.value}
-                                onChange={field.onChange}
-                                type="textarea"
-                                rows={3}
-                              />
-                            )}
-                          />
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => removeServiceCard(index)}
-                          className="mt-2 p-2 text-foreground/30 hover:text-red-500 transition-colors"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
                     </div>
                   ))}
                 </div>

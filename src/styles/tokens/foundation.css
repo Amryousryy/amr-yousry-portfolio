@@ -1,0 +1,55 @@
+/*
+ * Website Control Center — Foundation Tokens
+ *
+ * Layer 1: Raw platform values. No semantic meaning.
+ * These tokens are the smallest building blocks of the design system.
+ *
+ * Semantic Tokens MAY reference these tokens.
+ * Foundation Tokens must NEVER reference Semantic Tokens.
+ */
+
+:root {
+  /* ── Brand Colors ── */
+  --color-brand-purple: #6D28D9;
+  --color-brand-cyan: #22D3EE;
+  --color-brand-blue: #1E1B4B;
+  --color-brand-pink: #F472B6;
+
+  /* ── Platform Surface Colors ── */
+  --color-surface-sidebar: #0A0A0F;
+  --color-border-sidebar: #2D1B69;
+
+  /* ── Motion Durations ── */
+  --duration-fast: 100ms;
+  --duration-normal: 150ms;
+  --duration-slow: 300ms;
+
+  /* ── Elevation ── */
+  --shadow-pixel: 4px 4px 0 rgba(34, 211, 238, 0.12), 8px 8px 0 rgba(91, 51, 255, 0.08);
+  --shadow-pixel-border: 4px 4px 0px 0px #050508;
+  --shadow-glow-emerald: 0 0 6px rgba(52, 211, 153, 0.4);
+  --shadow-glow-yellow: 0 0 6px rgba(250, 204, 21, 0.3);
+  --shadow-glow-star: drop-shadow(0 0 4px rgba(250, 204, 21, 0.4));
+
+  /* ── Z-Index Scale ── */
+  --z-base: 0;
+  --z-above: 10;
+  --z-text: 20;
+  --z-dropdown: 30;
+  --z-sticky: 40;
+  --z-banner: 50;
+  --z-sidebar: 100;
+  --z-overlay: 9997;
+  --z-scanlines: 9998;
+
+  /* ── Border Radius ── */
+  --radius-none: 0;
+  --radius-sm: 0.125rem;
+  --radius-default: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-full: 9999px;
+
+  /* ── Border Widths ── */
+  --border-width-1: 1px;
+  --border-width-2: 2px;
+}

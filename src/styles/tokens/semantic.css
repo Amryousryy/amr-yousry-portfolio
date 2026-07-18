@@ -1,0 +1,39 @@
+/*
+ * Website Control Center — Semantic Tokens
+ *
+ * Layer 1: Meaning-based tokens. Reference Foundation Tokens.
+ * These tokens carry semantic meaning and are used by components.
+ *
+ * Foundation Tokens must NEVER reference these tokens.
+ * These tokens MAY reference Foundation Tokens.
+ */
+
+:root {
+  /* ── Semantic Colors ── */
+  --color-accent: var(--color-brand-cyan);
+  --color-background: var(--color-brand-blue);
+  --color-foreground: #F8FAFC;
+  --color-foreground-dim: #94A3B8;
+
+  /* ── Status Colors ── */
+  --color-danger: #EF4444;
+  --color-danger-light: #F87171;
+  --color-danger-hover: #DC2626;
+
+  --color-success: #34D399;
+  --color-success-dark: #10B981;
+
+  --color-warning: #FACC15;
+  --color-warning-dark: #EAB308;
+  --color-warning-light: #FBBF24;
+
+  /* ── Focus ── */
+  --focus-ring-color: var(--color-accent);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 0px;
+
+  /* ── Motion Easing ── */
+  --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+}

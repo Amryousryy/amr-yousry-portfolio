@@ -21,6 +21,9 @@ const eslintConfig = defineConfig([
     "qa-verify-latest.mjs",
     "qa-filters.mjs",
     "qa-prod.mjs",
+    // Node.js tooling (not app code):
+    "eslint-plugin/**",
+    "scripts/**",
   ]),
 ]);
 

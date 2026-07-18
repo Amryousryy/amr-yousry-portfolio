@@ -6,13 +6,33 @@ import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Save, Loader2, Eye, Clock } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SettingsService } from "@/lib/api-client";
-import { heroCreateSchema, HeroCreateInput, heroDefaultValues } from "@/lib/validation";
 import { toast } from "sonner";
 import { ErrorSummary, scrollToFirstError } from "@/components/admin/ErrorSummary";
 import { useUnsavedChanges } from "@/lib/hooks";
-import type { HeroSettings } from "@/types";
+import { z } from "zod";
+import { stringSchema, contentStatusSchema } from "@/lib/validation";
 
-type FormData = HeroCreateInput;
+const heroPageSchema = z.object({
+  headline: stringSchema,
+  subheadline: stringSchema,
+  primaryCTA: stringSchema,
+  primaryCTALink: z.string().min(1, "Primary CTA link is required"),
+  secondaryCTA: stringSchema,
+  secondaryCTALink: z.string().min(1, "Secondary CTA link is required"),
+  status: contentStatusSchema.default("draft"),
+});
+
+type HeroPageData = z.infer<typeof heroPageSchema>;
+
+const heroDefaultValues: HeroPageData = {
+  headline: "",
+  subheadline: "",
+  primaryCTA: "",
+  primaryCTALink: "",
+  secondaryCTA: "",
+  secondaryCTALink: "",
+  status: "draft",
+};
 
 function getFieldError(errors: Record<string, unknown>, path: string): string | undefined {
   const parts = path.split(".");
@@ -24,17 +44,15 @@ function getFieldError(errors: Record<string, unknown>, path: string): string | 
   return current?.message as string | undefined;
 }
 
-function convertToForm(content: HeroSettings): FormData {
+function convertToForm(content: Record<string, unknown>): HeroPageData {
   if (!content) return heroDefaultValues;
   return {
-    headline: content.headline || "",
-    subheadline: content.subheadline || "",
-    primaryCTA: content.primaryCTA || "",
-    primaryCTALink: content.primaryCTALink || "",
-    secondaryCTA: content.secondaryCTA || "",
-    secondaryCTALink: content.secondaryCTALink || "",
-    posterImage: content.posterImage || "",
-    showreelVideo: content.showreelVideo || "",
+    headline: (content.headline as string) || "",
+    subheadline: (content.subheadline as string) || "",
+    primaryCTA: (content.primaryCTA as string) || "",
+    primaryCTALink: (content.primaryCTALink as string) || "",
+    secondaryCTA: (content.secondaryCTA as string) || "",
+    secondaryCTALink: (content.secondaryCTALink as string) || "",
     status: (content.status as "draft" | "published") || "draft",
   };
 }
@@ -51,8 +69,8 @@ export default function HeroSettingsPage() {
     formState: { errors, isSubmitting },
     reset,
     watch,
-  } = useForm<FormData>({
-    resolver: standardSchemaResolver(heroCreateSchema),
+  } = useForm<HeroPageData>({
+    resolver: standardSchemaResolver(heroPageSchema),
     defaultValues: heroDefaultValues,
   });
 
@@ -65,13 +83,13 @@ export default function HeroSettingsPage() {
 
   React.useEffect(() => {
     if (content && Object.keys(content).length > 0) {
-      const formValues = convertToForm(content);
+      const formValues = convertToForm(content as unknown as Record<string, unknown>);
       reset(formValues);
     }
   }, [content, reset]);
 
   const mutation = useMutation({
-    mutationFn: (data: FormData) => SettingsService.updateHero(data),
+    mutationFn: (data: HeroPageData) => SettingsService.updateHero(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["hero-settings"] });
       toast.success("Hero settings updated successfully!");
@@ -83,13 +101,13 @@ export default function HeroSettingsPage() {
     }
   });
 
-  const { setSubmitting: setUnsavedSubmitting, markAsSaved } = useUnsavedChanges<FormData>({
+  const { setSubmitting: setUnsavedSubmitting, markAsSaved } = useUnsavedChanges<HeroPageData>({
     watch,
     defaultValues: heroDefaultValues,
     enabled: true,
   });
 
-  const handleSubmitWithValidation = (data: FormData) => {
+  const handleSubmitWithValidation = (data: HeroPageData) => {
     setSubmitAttempted(false);
     mutation.mutate(data);
   };
@@ -137,7 +155,7 @@ export default function HeroSettingsPage() {
         <div>
           <h1 className="text-4xl font-display font-bold mb-2 uppercase tracking-tighter">Hero Settings</h1>
           <p className="text-foreground/50 pixel-text text-xs uppercase tracking-widest">
-            Manage homepage hero headline, CTAs, and media
+            Manage homepage hero headline, CTAs, and buttons
           </p>
           {content?.status && (
             <div className="flex items-center gap-3 mt-2 text-[10px]">
@@ -293,28 +311,6 @@ export default function HeroSettingsPage() {
                     <p className="text-[10px] text-red-500">{getFieldError(errors as unknown as Record<string, unknown>, "secondaryCTALink")}</p>
                   )}
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-8">
-            <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-accent border-b border-primary/10 pb-4">Media</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-2">
-                <label className="pixel-text text-[10px] text-accent block uppercase tracking-widest">Showreel Video URL</label>
-                <input
-                  {...register("showreelVideo")}
-                  className="w-full bg-primary/5 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm"
-                  placeholder="https://..."
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="pixel-text text-[10px] text-accent block uppercase tracking-widest">Poster / Hero Image URL</label>
-                <input
-                  {...register("posterImage")}
-                  className="w-full bg-primary/5 border border-primary/20 p-4 outline-none focus:border-accent transition-colors text-sm"
-                  placeholder="https://..."
-                />
               </div>
             </div>
           </div>

@@ -2,6 +2,8 @@
 
 import { UseFormRegister, FieldErrors } from "react-hook-form";
 import { ProjectCreateInput } from "@/lib/validation";
+import FormSection from "@/components/admin/FormSection";
+import FormField, { FormInput } from "@/components/admin/FormField";
 
 type FormData = ProjectCreateInput;
 
@@ -24,75 +26,49 @@ function getFieldError(errors: FieldErrors<FormData>, path: string): string | un
 
 export default function BasicInfoFields({ register, errors }: BasicInfoFieldsProps) {
   return (
-    <div className="space-y-4">
-      <h2 className="text-sm font-display font-bold uppercase tracking-wider text-accent border-b border-primary/10 pb-2">Basic Information</h2>
-      <div>
-        <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-          Title <span className="text-red-500">*</span>
-        </label>
-        <input
+    <FormSection title="Basic Information" accent>
+      <FormField label="Title" required error={getFieldError(errors, "title")}>
+        <FormInput
           {...register("title")}
-          className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
           placeholder="Project title"
         />
-        {getFieldError(errors, "title") && (
-          <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "title")}</p>
-        )}
-      </div>
+      </FormField>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div>
-          <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-            Slug <span className="text-red-500">*</span>
-          </label>
-          <input
+        <FormField label="Slug" required error={getFieldError(errors, "slug")}>
+          <FormInput
             {...register("slug")}
-            className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
             placeholder="project-slug"
           />
-          {getFieldError(errors, "slug") && (
-            <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "slug")}</p>
-          )}
-        </div>
+        </FormField>
 
-        <div>
-          <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">Client Name</label>
-          <input
+        <FormField label="Client Name">
+          <FormInput
             {...register("clientName")}
-            className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
             placeholder="Client Name"
           />
-        </div>
+        </FormField>
 
-        <div>
-          <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">Year</label>
-          <input
+        <FormField label="Year">
+          <FormInput
             {...register("year")}
-            className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
             placeholder="2024"
           />
-        </div>
+        </FormField>
 
-        <div>
-          <label className="block text-xs font-bold uppercase tracking-widest text-foreground/70 mb-2">
-            Category <span className="text-red-500">*</span>
-          </label>
-          <input
+        <FormField label="Category" required error={getFieldError(errors, "category")}>
+          <FormInput
             list="category-suggestions"
             {...register("category")}
-            className="w-full bg-background/50 border border-primary/20 p-3 outline-none focus:border-accent transition-colors"
-            placeholder="Select or type a category"
+            placeholder="Select or type"
           />
           <datalist id="category-suggestions">
             {CATEGORY_SUGGESTIONS.map((cat) => (
               <option key={cat} value={cat} />
             ))}
           </datalist>
-          {getFieldError(errors, "category") && (
-            <p className="text-[10px] text-red-500 mt-1">{getFieldError(errors, "category")}</p>
-          )}
-        </div>
+        </FormField>
       </div>
-    </div>
+    </FormSection>
   );
 }

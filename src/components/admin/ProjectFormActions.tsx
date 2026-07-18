@@ -11,12 +11,12 @@ interface ProjectFormActionsProps {
 
 export default function ProjectFormActions({ isSaving, isSubmitting, lastSaved, onSave }: ProjectFormActionsProps) {
   return (
-    <div className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b border-primary/20 p-4 -mx-6 px-6 -mt-6 mb-6">
+    <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-primary/15 -mx-6 px-6 -mt-6 mb-4 py-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           {lastSaved && (
-            <span className="text-xs text-foreground/40 flex items-center gap-1">
-              <Clock size={12} />
+            <span className="text-[11px] text-foreground/35 flex items-center gap-1.5">
+              <Clock size={11} />
               Saved at {lastSaved}
             </span>
           )}
@@ -25,9 +25,9 @@ export default function ProjectFormActions({ isSaving, isSubmitting, lastSaved, 
           type="button"
           onClick={onSave}
           disabled={isSaving || isSubmitting}
-          className="flex items-center space-x-3 px-8 py-3 bg-accent text-background font-bold uppercase tracking-widest text-xs pixel-border hover:scale-105 transition-transform disabled:opacity-50"
+          className="flex items-center gap-2.5 px-6 py-2.5 bg-accent text-background text-[11px] font-bold uppercase tracking-widest hover:opacity-90 transition-opacity disabled:opacity-50"
         >
-          {isSaving || isSubmitting ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
+          {isSaving || isSubmitting ? <Loader2 className="animate-spin" size={14} /> : <Save size={14} />}
           <span>{isSaving || isSubmitting ? "Saving..." : "Save Project"}</span>
         </button>
       </div>

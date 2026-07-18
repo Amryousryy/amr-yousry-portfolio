@@ -25,6 +25,10 @@
         "qa:public-homepage-content-unit": "jiti scripts/qa/public-homepage-content-unit.ts",
         "qa:public-contact-content-unit": "jiti scripts/qa/public-contact-content-unit.ts",
         "qa:project-validation-unit": "jiti scripts/qa/project-validation-unit.ts",
+        "validate:behavior": "node scripts/validate-behavior.js",
+        "health:metrics": "node scripts/health-metrics.js",
+        "health:report": "node scripts/health-report.js",
+        "health:dashboard": "node scripts/kpi-dashboard.js",
         "test:e2e": "playwright test",
         "test:e2e:ui": "playwright test --ui"
     },

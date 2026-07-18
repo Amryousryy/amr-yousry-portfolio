@@ -197,52 +197,59 @@ export function DataTable<TData, TValue>({
         )}
       </div>
 
-      <div className="border border-primary/10 overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-primary/20">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    className="p-4 text-left text-xs font-medium uppercase tracking-wider text-foreground/60"
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody className="divide-y divide-primary/10">
-            {isLoading ? (
-              <tr>
-                <td colSpan={columns.length} className="p-8 text-center">
-                  <div className="flex items-center justify-center">
-                    <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-                  </div>
-                </td>
-              </tr>
-            ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="hover:bg-primary/10 transition-colors">
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="p-4 text-sm">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
+      <div className="border border-primary/10 overflow-hidden bg-background">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-primary/[0.08] border-b border-primary/10">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th
+                      key={header.id}
+                      className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-foreground/50 select-none"
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(header.column.columnDef.header, header.getContext())}
+                    </th>
                   ))}
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={columns.length} className="p-8 text-center text-foreground/40 text-sm">
-                  No results found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              ))}
+            </thead>
+            <tbody className="divide-y divide-primary/10">
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={`skeleton-${i}`} className="animate-pulse">
+                    {Array.from({ length: columns.length }).map((_, j) => (
+                      <td key={`skeleton-cell-${i}-${j}`} className="px-4 py-3">
+                        <div className="h-4 bg-primary/15 rounded w-3/4" />
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              ) : table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <tr
+                    key={row.id}
+                    className="hover:bg-primary/[0.06] active:bg-primary/[0.1] transition-colors duration-[var(--duration-normal)] group"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id} className="px-4 py-3 text-sm">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={columns.length} className="px-4 py-12 text-center text-foreground/40 text-sm">
+                    No results found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <PaginationFooter

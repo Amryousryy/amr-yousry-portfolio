@@ -9,24 +9,31 @@ import {
   LogOut,
   ExternalLink,
   Plus,
-  Rocket,
-  FileText,
-  LayoutDashboard
+  Globe,
+  Home,
+  User,
+  Mail
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 const menuGroups = [
   {
-    title: "Site Content",
+    title: "Home",
     items: [
-      { name: "Content", icon: FileText, href: "/admin/content" },
-      { name: "Hero", icon: LayoutDashboard, href: "/admin/content/hero" },
+      { name: "Hero", icon: Home, href: "/admin/content/hero" },
+      { name: "About", icon: User, href: "/admin/content" },
     ]
   },
   {
-    title: "Project CMS",
+    title: "Projects",
     items: [
       { name: "Projects", icon: FolderKanban, href: "/admin/projects" },
+    ]
+  },
+  {
+    title: "Contact",
+    items: [
+      { name: "Contact", icon: Mail, href: "/admin/content/contact" },
     ]
   },
   {
@@ -41,15 +48,15 @@ export default function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-[#0A0A0F]/80 backdrop-blur-xl border-r border-[#2D1B69]/30 flex flex-col z-[100]">
+    <aside className="fixed left-0 top-0 h-screen w-64 bg-[var(--color-surface-sidebar)]/80 backdrop-blur-xl border-r border-[var(--color-border-sidebar)]/30 flex flex-col z-[var(--z-sidebar)]">
       <div className="p-6">
         <div className="flex items-center space-x-3 mb-8">
           <div className="w-10 h-10 rounded-sm bg-accent flex items-center justify-center">
-            <Rocket className="text-background" size={20} />
+            <Globe className="text-background" size={20} />
           </div>
           <div>
-            <span className="font-display font-bold uppercase tracking-widest text-xs block">Portfolio</span>
-            <span className="text-[10px] text-accent font-bold uppercase tracking-widest">CMS</span>
+            <span className="font-display font-bold uppercase tracking-widest text-xs block">Website</span>
+            <span className="text-[10px] text-accent font-bold uppercase tracking-widest">Control Center</span>
           </div>
         </div>
 
@@ -91,7 +98,7 @@ export default function AdminSidebar() {
         </nav>
       </div>
 
-      <div className="mt-auto p-6 border-t border-[#2D1B69]/30 space-y-2">
+      <div className="mt-auto p-6 border-t border-[var(--color-border-sidebar)]/30 space-y-2">
         <Link
           href="/"
           target="_blank"

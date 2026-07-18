@@ -2,6 +2,21 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import Link from "next/link";
 
+/**
+ * Sprint 05: PixelButton — Interaction States
+ * 
+ * This component implements Stage 5: Interaction
+ * from the 7-Stage Experience Model.
+ * 
+ * Motion Contracts (CSS-based for optimal performance):
+ * - Hover: translate(2px, 2px) with border reduction
+ * - Press: translate(4px, 4px) with border removal
+ * - Focus: ring with brand-cyan
+ * - Transition: 75ms ease-out
+ * 
+ * Note: Simple hover/press interactions use CSS transitions for performance.
+ * Complex animations should use the Behavior API (useInteraction hook).
+ */
 interface PixelButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "outline";
   size?: "sm" | "md" | "lg";

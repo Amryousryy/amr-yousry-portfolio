@@ -152,7 +152,7 @@ export default function MediaUploader({
             <button
               type="button"
               onClick={handleRemove}
-              className="p-3 bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
+              className="p-3 bg-[var(--color-danger)]/20 text-[var(--color-danger-light)] hover:bg-[var(--color-danger)]/30 transition-colors"
             >
               <X size={20} />
             </button>
@@ -259,7 +259,7 @@ export default function MediaUploader({
       </div>
 
       {uploadError && (
-        <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+        <div className="flex items-center gap-2 p-3 bg-[var(--color-danger)]/10 border border-[var(--color-danger)]/20 text-[var(--color-danger-light)] text-xs">
           <AlertCircle size={14} />
           <span>{uploadError}</span>
         </div>
