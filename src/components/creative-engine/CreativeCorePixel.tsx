@@ -13,6 +13,7 @@
  */
 
 import { CSSProperties } from "react";
+import "@/styles/creative-engine/ce_core_focal.css";
 
 export interface CreativeCorePixelProps {
   /** Display size in pixels (default: 48) */

@@ -1,7 +1,7 @@
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { PixelButton } from "@/components/ui/pixel-button";
-import { MaintenanceDronePixel } from "@/components/creative-engine/MaintenanceDronePixel";
+import { WorldInteraction } from "@/components/creative-engine/WorldInteraction";
 
 export interface HeroContent {
   headline: string;
@@ -50,12 +50,12 @@ export default function HeroSection({ content = DEFAULT_CONTENT }: { content?: H
       {/* P3: Light sweep — reduced to near-invisible */}
       <div className="hero-sweep" aria-hidden="true" />
 
-      {/* P4: Maintenance Drone — patrols the Creative Core */}
+      {/* P4: World Interaction — Drone inspects Creative Core */}
       <div 
-        className="absolute bottom-[15%] right-[8%] md:bottom-[20%] md:right-[12%] opacity-30 hover:opacity-50 transition-opacity duration-700 pointer-events-auto z-[2]"
+        className="absolute top-[12%] right-[5%] md:top-[15%] md:right-[8%] opacity-40 hover:opacity-60 transition-opacity duration-700 pointer-events-auto z-[2]"
         aria-hidden="true"
       >
-        <MaintenanceDronePixel size={56} variant="idle" />
+        <WorldInteraction enabled={true} />
       </div>
 
       <Container className="relative z-10">

@@ -1,0 +1,30 @@
+/* Creative Engine — World Interaction Animations */
+/* Coordinates visual communication between objects */
+
+/* Energy stream — visible during Drone-Core transfer */
+.ce-energy-stream {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px;
+  height: 24px;
+  background: linear-gradient(to bottom, #22D3EE, #6D28D9, #22D3EE);
+  opacity: 0.6;
+  animation: ceEnergyFlow 1000ms ease-in-out;
+}
+
+@keyframes ceEnergyFlow {
+  0% { opacity: 0; transform: translate(-50%, -50%) scaleY(0); }
+  30% { opacity: 0.6; transform: translate(-50%, -50%) scaleY(1); }
+  70% { opacity: 0.6; transform: translate(-50%, -50%) scaleY(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scaleY(0); }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .ce-energy-stream {
+    animation: none;
+    opacity: 0;
+  }
+}

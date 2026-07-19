@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-19T10:12:15.123Z",
+  "timestamp": "2026-07-19T13:05:08.610Z",
   "adoption": {
     "hookFiles": 9,
-    "componentFiles": 147,
+    "componentFiles": 151,
     "behaviorApiImports": 12,
     "behaviorApiUsages": 2,
     "hookUsageCount": {
@@ -20,10 +20,10 @@
     "expiringSoon": 0
   },
   "codeQuality": {
-    "clientComponents": 61,
-    "serverComponents": 22,
-    "ariaAttributes": 51,
-    "roleAttributes": 5
+    "clientComponents": 64,
+    "serverComponents": 23,
+    "ariaAttributes": 59,
+    "roleAttributes": 8
   },
   "documentation": {
     "totalExceptions": 8,

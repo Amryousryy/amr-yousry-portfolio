@@ -16,6 +16,7 @@
  */
 
 import { CSSProperties, useEffect, useRef, useState, useCallback } from "react";
+import "@/styles/creative-engine/ce_drone.css";
 
 export type DroneVariant = "idle" | "inspect" | "transfer" | "static";
 

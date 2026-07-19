@@ -13,6 +13,7 @@
 import { useState, useCallback } from "react";
 import { MaintenanceDronePixel, DroneInteractionState } from "./MaintenanceDronePixel";
 import { CreativeCorePixel } from "./CreativeCorePixel";
+import "@/styles/creative-engine/ce_world_interaction.css";
 
 export interface WorldInteractionProps {
   /** Enable the Drone-Core interaction */
@@ -70,20 +71,7 @@ export function WorldInteraction({
 
       {/* Energy Stream — visible during transfer */}
       {energyStream && (
-        <div 
-          className="ce-energy-stream"
-          style={{
-            position: "absolute",
-            left: "50%",
-            top: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "2px",
-            height: "24px",
-            background: "linear-gradient(to bottom, #22D3EE, #6D28D9, #22D3EE)",
-            opacity: 0.6,
-            animation: "ceEnergyFlow 1000ms ease-in-out",
-          }}
-        />
+        <div className="ce-energy-stream" />
       )}
 
       {/* Maintenance Drone — performs inspection */}
@@ -93,15 +81,6 @@ export function WorldInteraction({
         interactWithCore={enabled}
         onInteractionStateChange={handleDroneStateChange}
       />
-
-      <style>{`
-        @keyframes ceEnergyFlow {
-          0% { opacity: 0; transform: translate(-50%, -50%) scaleY(0); }
-          30% { opacity: 0.6; transform: translate(-50%, -50%) scaleY(1); }
-          70% { opacity: 0.6; transform: translate(-50%, -50%) scaleY(1); }
-          100% { opacity: 0; transform: translate(-50%, -50%) scaleY(0); }
-        }
-      `}</style>
     </div>
   );
 }

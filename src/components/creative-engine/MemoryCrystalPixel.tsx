@@ -16,6 +16,7 @@
  */
 
 import { CSSProperties, useEffect, useRef, useState } from "react";
+import "@/styles/creative-engine/ce_crystal.css";
 
 export interface MemoryCrystalPixelProps {
   /** Display size in pixels (default: 48) */
