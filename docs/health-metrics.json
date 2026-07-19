@@ -1,15 +1,12 @@
 {
-  "timestamp": "2026-07-18T22:35:46.209Z",
+  "timestamp": "2026-07-19T10:12:15.123Z",
   "adoption": {
     "hookFiles": 9,
-    "componentFiles": 148,
-    "behaviorApiImports": 36,
-    "behaviorApiUsages": 14,
+    "componentFiles": 147,
+    "behaviorApiImports": 12,
+    "behaviorApiUsages": 2,
     "hookUsageCount": {
-      "useAmbient": 4,
-      "useStagger": 2,
-      "useReveal": 4,
-      "useInteraction": 4
+      "useAmbient": 2
     },
     "directAnimate": 0,
     "inlineAnimations": 1,
@@ -23,10 +20,10 @@
     "expiringSoon": 0
   },
   "codeQuality": {
-    "clientComponents": 63,
-    "serverComponents": 21,
-    "ariaAttributes": 37,
-    "roleAttributes": 4
+    "clientComponents": 61,
+    "serverComponents": 22,
+    "ariaAttributes": 51,
+    "roleAttributes": 5
   },
   "documentation": {
     "totalExceptions": 8,

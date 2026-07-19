@@ -12,7 +12,7 @@ import Link from "next/link";
  * - Hover: translate(2px, 2px) with border reduction
  * - Press: translate(4px, 4px) with border removal
  * - Focus: ring with brand-cyan
- * - Transition: 75ms ease-out
+ * - Transition: 160ms ease-out
  * 
  * Note: Simple hover/press interactions use CSS transitions for performance.
  * Complex animations should use the Behavior API (useInteraction hook).
@@ -45,7 +45,7 @@ export function PixelButton({
   };
 
   const classes = cn(
-    "font-pixel uppercase transition-all duration-75 relative inline-flex min-h-[44px] max-w-full items-center justify-center text-center leading-tight whitespace-normal break-words focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue",
+    "font-pixel uppercase transition-all duration-[160ms] relative inline-flex min-h-[44px] max-w-full items-center justify-center text-center leading-tight whitespace-normal break-words focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue",
     variants[variant],
     sizes[size],
     className

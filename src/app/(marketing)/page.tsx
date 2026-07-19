@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import HeroSection from "@/components/sections/hero";
+import { HeroAmbience } from "@/components/sections/hero/HeroAmbience";
 import BrandMarquee from "@/components/ui/BrandMarquee";
-import { HeroEntrance } from "@/components/ui/HeroEntrance";
 import ClientDynamicSections from "./ClientDynamicSections";
 import { Section } from "@/components/ui/section";
 import { getFeaturedProjects } from "@/lib/projects/public-projects";
@@ -27,9 +27,8 @@ export default async function Home() {
 
   return (
     <>
-      <HeroEntrance>
-        <HeroSection content={heroContent} />
-      </HeroEntrance>
+      <HeroSection content={heroContent} />
+      <HeroAmbience />
 
       {/* Soft gradient transition: Hero → BrandMarquee */}
       <div className="h-[2px] bg-gradient-to-r from-transparent via-slate-700/40 to-transparent" />

@@ -42,9 +42,15 @@ export function Navbar() {
   return (
     <header 
       className={cn(
-        "fixed top-0 inset-x-0 w-full z-50 transition-all duration-300",
-        scrolled ? "bg-brand-blue/90 backdrop-blur-md border-b border-brand-blue py-3" : "bg-transparent py-6"
+        "fixed top-0 inset-x-0 w-full z-50 transition-all duration-500",
+        scrolled 
+          ? "bg-brand-blue/90 backdrop-blur-md border-b border-brand-blue/50 py-3" 
+          : "bg-transparent py-6"
       )}
+      style={!scrolled ? { 
+        background: 'linear-gradient(180deg, rgba(30, 27, 75, 0.4) 0%, transparent 100%)',
+        backdropFilter: 'blur(2px)'
+      } : undefined}
     >
       <Container>
         <nav aria-label="Main navigation" className="flex min-w-0 items-center justify-between gap-3">

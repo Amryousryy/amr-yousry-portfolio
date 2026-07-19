@@ -142,6 +142,10 @@ export function useReveal(options: RevealOptions): RevealResult {
       return;
     }
 
+    if (animationRef.current) {
+      animationRef.current.cancel();
+    }
+
     const durationMs = DURATION_MAP[duration];
     const easingStr = EASING_MAP[easing];
     const keyframes = getKeyframes();

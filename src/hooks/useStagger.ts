@@ -83,7 +83,12 @@ export function useStagger(options: StaggerOptions): StaggerResult {
   } = options;
 
   const animationsRef = useRef<Map<number, Animation>>(new Map());
+  const refsRef = useRef(refs);
   const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    refsRef.current = refs;
+  });
 
   const getKeyframes = useCallback((): Keyframe[] => {
     const directionMap = {
@@ -135,13 +140,19 @@ export function useStagger(options: StaggerOptions): StaggerResult {
       return;
     }
 
+    animationsRef.current.forEach((animation) => {
+      animation.cancel();
+    });
+    animationsRef.current.clear();
+
     const durationMs = DURATION_MAP[duration];
     const easingStr = EASING_MAP[easing];
     const keyframes = getKeyframes();
 
+    const currentRefs = refsRef.current;
     const animations: Promise<Animation>[] = [];
 
-    refs.forEach((ref, index) => {
+    currentRefs.forEach((ref, index) => {
       if (ref.current) {
         const animation = ref.current.animate(keyframes, {
           duration: durationMs,
@@ -157,7 +168,7 @@ export function useStagger(options: StaggerOptions): StaggerResult {
 
     await Promise.all(animations);
     setIsVisible(true);
-  }, [refs, duration, easing, stagger, getKeyframes]);
+  }, [duration, easing, stagger, getKeyframes]);
 
   const reverse = useCallback(async (): Promise<void> => {
     if (prefersReducedMotion()) {

@@ -10,7 +10,6 @@ import { PreviewBanner, isPreviewMode } from "@/components/admin/PreviewBanner";
 import { SettingsService } from "@/lib/api-client";
 
 const FilmStripSection = dynamic(() => import("@/components/ui/FilmStripSection"), { ssr: false });
-const ServicesSection = dynamic(() => import("@/components/sections/Services"), { ssr: false });
 const AboutSection = dynamic(() => import("@/components/sections/about"), { ssr: false });
 const ContactSection = dynamic(() => import("@/components/sections/contact"), { ssr: false });
 const Marquee = dynamic(() => import("@/components/ui/Marquee"), { ssr: false });
@@ -38,11 +37,10 @@ function PreviewContent() {
   return (
     <>
       {showPreviewBanner && <PreviewBanner message="Preview Mode - Unpublished Changes" />}
-      <SectionNarrator sections={["hero", "projects", "services", "testimonials", "about", "contact"]} />
+      <SectionNarrator sections={["hero", "projects", "about", "contact"]} />
       <HeroSection />
       <Marquee />
       <FilmStripSection />
-      <ServicesSection />
       <AboutSection />
       <ContactSection />
     </>

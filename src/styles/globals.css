@@ -161,10 +161,13 @@
 }
 
 /* ═══════════════════════════════════════════════
-   BOOT EXPERIENCE — Sprint 01.5 Polish
+   BOOT SEQUENCE v2 — Retro Pixel Creative Engine
+   
+   Premium pixel OS aesthetic. 16-bit style.
+   All transform/opacity. GPU-friendly.
    ═══════════════════════════════════════════════ */
 
-/* World Continuity — loader background matches hero's brand-blue */
+/* ── Overlay: Almost-black purple with vignette ── */
 .boot-overlay {
   position: fixed;
   inset: 0;
@@ -173,195 +176,578 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #1E1B4B;
-  transition: opacity 600ms cubic-bezier(0.4, 0, 0.2, 1),
-              background-color 800ms cubic-bezier(0.4, 0, 0.2, 1);
+  background: #0D0A1A;
+  transition: opacity 600ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Ambient vignette — matches hero's radial gradient for world continuity */
-.boot-overlay::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, transparent 0%, rgba(10, 10, 15, 0.55) 100%);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.boot-overlay--hidden {
+.boot-overlay--exit {
   opacity: 0;
   pointer-events: none;
 }
 
-/* Scroll lock — prevents immersion-breaking scroll during boot */
+/* Scroll lock */
 body.boot-locked {
   overflow: hidden;
   touch-action: none;
-  -webkit-overflow-scrolling: none;
 }
 
-/* Grid breathing — subtle ambient pulse */
-.boot-overlay .game-grid-bg {
-  animation: bootGridBreathe 4s ease-in-out infinite;
-}
-
-@keyframes bootGridBreathe {
-  0%, 100% { opacity: 0.06; }
-  50% { opacity: 0.12; }
-}
-
-/* Logo — cinematic entrance with scale + glow */
-.logo-container--animate {
-  animation: bootLogoReveal 800ms cubic-bezier(0.16, 1, 0.3, 1) forwards,
-             bootLogoBreathe 3s ease-in-out 800ms infinite;
-}
-
-@keyframes bootLogoReveal {
-  0% { opacity: 0; transform: scale(0.88); filter: blur(4px); }
-  60% { opacity: 1; filter: blur(0); }
-  100% { opacity: 1; transform: scale(1); filter: blur(0); }
-}
-
-@keyframes bootLogoBreathe {
-  0%, 100% { opacity: 0.55; filter: drop-shadow(0 0 0px transparent); }
-  50% { opacity: 0.85; filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.15)); }
-}
-
-/* Status message — cinematic text reveal */
-.boot-status-message {
-  animation: bootStatusReveal 400ms cubic-bezier(0, 0, 0.2, 1) forwards;
-}
-
-@keyframes bootStatusReveal {
-  0% { opacity: 0; transform: translateY(4px); filter: blur(1px); }
-  100% { opacity: 1; transform: translateY(0); filter: blur(0); }
-}
-
-/* Progress bar — enhanced glow */
-.boot-progress-glow {
-  box-shadow: 0 0 8px rgba(34, 211, 238, 0.25),
-              0 0 20px rgba(34, 211, 238, 0.08);
-}
-
-/* Reveal box — blur-to-sharp cinematic focus pull */
-.boot-reveal-box {
-  animation: bootRevealCinematic 900ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes bootRevealCinematic {
-  0% {
-    opacity: 0;
-    transform: translateY(10px) scale(0.96);
-    filter: blur(6px);
-  }
-  30% {
-    opacity: 1;
-    filter: blur(0);
-  }
-  40% {
-    transform: translateY(-2px) scale(1.01);
-  }
-  55% {
-    opacity: 0.88;
-    transform: translate(1px, 0) scale(1);
-  }
-  65% {
-    opacity: 1;
-    transform: translate(-1px, 0);
-  }
-  80% {
-    transform: translate(0, 0) scale(1.002);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(0, 0) scale(1);
-    filter: blur(0);
-  }
-}
-
-/* SYSTEM READY — typewriter terminal flicker */
-.boot-system-ready {
-  animation: bootTerminalReady 1.2s steps(1) forwards;
-}
-
-@keyframes bootTerminalReady {
-  0% { opacity: 0; }
-  5% { opacity: 0.7; }
-  8% { opacity: 0.1; }
-  12% { opacity: 0.6; }
-  15% { opacity: 0.15; }
-  20% { opacity: 0.5; }
-  25% { opacity: 0.2; }
-  30% { opacity: 0.65; }
-  35% { opacity: 0.1; }
-  40% { opacity: 0.55; }
-  50% { opacity: 0.3; }
-  60% { opacity: 0.5; }
-  100% { opacity: 0.4; }
-}
-
-/* ═══════════════════════════════════════════════
-   HERO ENTRANCE — Cinematic world birth
-   Sprint 05: Migrated to Behavior API (useReveal)
-   ═══════════════════════════════════════════════ */
-
-.hero-entrance {
-  opacity: 0;
-  position: relative;
-}
-
-/* Phase transitions - now handled by Behavior API */
-.hero-entrance--hidden {
-  opacity: 0;
-}
-
-.hero-entrance--entering {
-  opacity: 1;
-}
-
-.hero-entrance--visible {
-  opacity: 1;
-}
-
-/* Color bridge — smooth transition from loader dark to hero blue */
-.hero-entrance::before {
-  content: '';
+/* ── Scanline overlay ── */
+.boot-scanlines {
   position: absolute;
   inset: 0;
-  background: #1E1B4B;
-  opacity: 0;
-  z-index: 0;
   pointer-events: none;
-  animation: heroColorBridge var(--duration-large) var(--ease-in-out) forwards;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.04) 2px,
+    rgba(0, 0, 0, 0.04) 4px
+  );
+  z-index: 2;
 }
 
-@keyframes heroColorBridge {
-  0% { opacity: 1; }
-  100% { opacity: 0; }
+/* ── Grid background ── */
+.boot-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+  animation: bootGridPulse 4s ease-in-out infinite;
 }
 
-/* Staggered child reveals — now handled by Behavior API (useStagger) */
-.hero-entrance__line,
-.hero-entrance__subtitle,
-.hero-entrance__buttons {
+@keyframes bootGridPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+
+/* ── Content container ── */
+.boot-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+}
+
+/* ── Logo ── */
+.boot-logo {
+  opacity: 0.6;
+  animation: bootLogoIn 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.boot-logo--animate {
+  animation: bootLogoIn 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards,
+             bootLogoBreath 3s ease-in-out 600ms infinite;
+}
+
+@keyframes bootLogoIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 0.7; transform: scale(1); }
+}
+
+@keyframes bootLogoBreath {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+}
+
+/* ── Title ── */
+.boot-title {
+  text-align: center;
+}
+
+.boot-title__name {
+  font-family: var(--font-pixel);
+  font-size: clamp(14px, 3vw, 18px);
+  letter-spacing: 0.3em;
+  color: #F8FAFC;
+  margin: 0;
+  animation: bootTextIn 500ms cubic-bezier(0.22, 1, 0.36, 1) 200ms forwards;
   opacity: 0;
 }
 
-/* Ensure proper rendering when not animating */
-.hero-entrance--visible .hero-entrance__line,
-.hero-entrance--visible .hero-entrance__subtitle,
-.hero-entrance--visible .hero-entrance__buttons {
+.boot-title__sub {
+  font-family: var(--font-pixel);
+  font-size: clamp(8px, 1.5vw, 10px);
+  letter-spacing: 0.2em;
+  color: rgba(34, 211, 238, 0.6);
+  margin: 8px 0 0;
+  animation: bootTextIn 500ms cubic-bezier(0.22, 1, 0.36, 1) 400ms forwards;
+  opacity: 0;
+}
+
+@keyframes bootTextIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Status message ── */
+.boot-status {
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: rgba(34, 211, 238, 0.5);
+  margin: 0;
+  height: 14px;
+  animation: bootStatusIn 300ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes bootStatusIn {
+  from { opacity: 0; transform: translateY(2px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Energy Cells: 10 pixel blocks ── */
+.boot-cells {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+  border: 1px solid rgba(34, 211, 238, 0.15);
+  background: rgba(30, 27, 75, 0.5);
+}
+
+.boot-cell {
+  width: 16px;
+  height: 8px;
+  background: rgba(34, 211, 238, 0.06);
+  border: 1px solid rgba(34, 211, 238, 0.08);
+  transition: all 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.boot-cell--active {
+  background: rgba(34, 211, 238, 0.7);
+  border-color: rgba(34, 211, 238, 0.5);
+  box-shadow: 0 0 6px rgba(34, 211, 238, 0.3),
+              0 0 12px rgba(34, 211, 238, 0.1);
+}
+
+/* ── Pixel Drone Mascot ── */
+.boot-drone {
+  position: relative;
+  width: 24px;
+  height: 28px;
+  margin-top: 4px;
+}
+
+.boot-drone__antenna {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 6px;
+  background: rgba(34, 211, 238, 0.5);
+}
+
+.boot-drone__antenna::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: rgba(34, 211, 238, 0.8);
+  animation: bootAntennaPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes bootAntennaPulse {
+  0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.2); }
+}
+
+.boot-drone__head {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 10px;
+  background: #1E1B4B;
+  border: 1px solid rgba(34, 211, 238, 0.3);
+}
+
+.boot-drone__eye {
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: #22D3EE;
+  box-shadow: 0 0 4px rgba(34, 211, 238, 0.6);
+}
+
+.boot-drone__body {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 8px;
+  background: #1E1B4B;
+  border: 1px solid rgba(109, 40, 217, 0.3);
+}
+
+.boot-drone__core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 4px;
+  background: #6D28D9;
+  box-shadow: 0 0 4px rgba(109, 40, 217, 0.5);
+}
+
+.boot-drone__wing {
+  position: absolute;
+  top: 18px;
+  width: 4px;
+  height: 4px;
+  background: rgba(34, 211, 238, 0.25);
+  animation: bootWingFlap 0.8s ease-in-out infinite;
+}
+
+.boot-drone__wing--l {
+  left: 0;
+  animation-direction: normal;
+}
+
+.boot-drone__wing--r {
+  right: 0;
+  animation-direction: reverse;
+}
+
+@keyframes bootWingFlap {
+  0%, 100% { transform: translateY(0); opacity: 0.3; }
+  50% { transform: translateY(-2px); opacity: 0.6; }
+}
+
+/* ── System status ── */
+.boot-system {
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  letter-spacing: 0.25em;
+  color: rgba(34, 211, 238, 0.25);
+  margin: 0;
+  animation: bootSystemFlicker 2s steps(1) infinite;
+}
+
+@keyframes bootSystemFlicker {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.4; }
+}
+
+/* ═══════════════════════════════════════════════
+   HERO AMBIENCE v4 — Cinematic Polish
+   
+   Design: Single focal light + 3 depth layers
+   Principle: Feel the atmosphere, not the animation
+   All transform/opacity/blur only. GPU-friendly.
+   ═══════════════════════════════════════════════ */
+
+/* ── P1: Focal Light — the dominant visual anchor ── */
+/* A single warm light behind the headline. You feel it,
+   you don't see it. Feathered edges, no hard boundaries. */
+.hero-focal {
+  position: absolute;
+  width: 900px;
+  height: 600px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse 100% 100% at 50% 48%,
+    rgba(251, 146, 60, 0.04) 0%,
+    rgba(234, 88, 12, 0.02) 25%,
+    rgba(251, 191, 36, 0.008) 50%,
+    transparent 75%
+  );
+  filter: blur(50px);
+  pointer-events: none;
+  will-change: opacity;
+  animation: heroFocalBreath 32s ease-in-out infinite;
+}
+
+@keyframes heroFocalBreath {
+  0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.02); }
+}
+
+/* ── LAYER 1: Background — large, blurry, very slow ── */
+.hero-layer-bg {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.hero-layer-bg--warm {
+  width: 800px;
+  height: 800px;
+  top: -300px;
+  right: -250px;
+  background: radial-gradient(circle, rgba(234, 88, 12, 0.025) 0%, transparent 65%);
+  filter: blur(60px);
+  animation: heroDriftBg 40s ease-in-out infinite;
+}
+
+.hero-layer-bg--cool {
+  width: 700px;
+  height: 700px;
+  bottom: -280px;
+  left: -220px;
+  background: radial-gradient(circle, rgba(251, 146, 60, 0.018) 0%, transparent 60%);
+  filter: blur(55px);
+  animation: heroDriftBg2 45s ease-in-out infinite;
+}
+
+@keyframes heroDriftBg {
+  0%, 100% { transform: translate(0, 0); }
+  30% { transform: translate(-15px, 10px); }
+  60% { transform: translate(10px, -8px); }
+}
+
+@keyframes heroDriftBg2 {
+  0%, 100% { transform: translate(0, 0); }
+  35% { transform: translate(12px, -10px); }
+  65% { transform: translate(-10px, 8px); }
+}
+
+/* ── LAYER 2: Mid — moderate blur, moderate speed ── */
+.hero-layer-mid {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.hero-layer-mid--a {
+  width: 450px;
+  height: 450px;
+  top: 15%;
+  right: 10%;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.015) 0%, transparent 55%);
+  filter: blur(35px);
+  animation: heroDriftMid 30s ease-in-out infinite;
+}
+
+.hero-layer-mid--b {
+  width: 400px;
+  height: 400px;
+  bottom: 10%;
+  left: 12%;
+  background: radial-gradient(circle, rgba(234, 88, 12, 0.012) 0%, transparent 50%);
+  filter: blur(30px);
+  animation: heroDriftMid2 34s ease-in-out infinite;
+}
+
+@keyframes heroDriftMid {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-10px, 8px); }
+  50% { transform: translate(6px, -5px); }
+  75% { transform: translate(-4px, 10px); }
+}
+
+@keyframes heroDriftMid2 {
+  0%, 100% { transform: translate(0, 0); }
+  30% { transform: translate(8px, -6px); }
+  60% { transform: translate(-8px, 4px); }
+}
+
+/* ── LAYER 3: Foreground — smaller, faster, barely visible ── */
+.hero-layer-fg {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.hero-layer-fg--a {
+  width: 200px;
+  height: 200px;
+  top: 30%;
+  left: 20%;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.01) 0%, transparent 50%);
+  filter: blur(15px);
+  animation: heroDriftFg 22s ease-in-out infinite;
+}
+
+.hero-layer-fg--b {
+  width: 180px;
+  height: 180px;
+  bottom: 25%;
+  right: 18%;
+  background: radial-gradient(circle, rgba(251, 146, 60, 0.008) 0%, transparent 45%);
+  filter: blur(12px);
+  animation: heroDriftFg2 26s ease-in-out infinite;
+}
+
+@keyframes heroDriftFg {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(6px, -4px); }
+  66% { transform: translate(-5px, 5px); }
+}
+
+@keyframes heroDriftFg2 {
+  0%, 100% { transform: translate(0, 0); }
+  40% { transform: translate(-5px, 3px); }
+  70% { transform: translate(4px, -5px); }
+}
+
+/* ── Light sweep — barely perceptible horizontal shimmer ── */
+.hero-sweep {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 35%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(251, 191, 36, 0.005) 40%,
+    rgba(251, 146, 60, 0.012) 50%,
+    rgba(251, 191, 36, 0.005) 60%,
+    transparent 100%
+  );
+  pointer-events: none;
+  animation: heroSweep 35s linear infinite;
+  animation-delay: 5s;
+}
+
+@keyframes heroSweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(700%); }
+}
+
+/* ── Atmospheric dust — 2 particles max, barely visible ── */
+.hero-dust {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.hero-dust--1 {
+  width: 1.5px;
+  height: 1.5px;
+  top: 35%;
+  left: 25%;
+  background: rgba(251, 191, 36, 0.12);
+  animation: heroDust1 30s ease-in-out infinite;
+}
+
+.hero-dust--2 {
+  width: 1px;
+  height: 1px;
+  top: 55%;
+  right: 30%;
+  background: rgba(251, 146, 60, 0.08);
+  animation: heroDust2 36s ease-in-out infinite;
+  animation-delay: 10s;
+}
+
+@keyframes heroDust1 {
+  0%, 100% { transform: translate(0, 0); opacity: 0.08; }
+  50% { transform: translate(8px, -12px); opacity: 0.14; }
+}
+
+@keyframes heroDust2 {
+  0%, 100% { transform: translate(0, 0); opacity: 0.06; }
+  50% { transform: translate(-6px, 8px); opacity: 0.1; }
+}
+
+/* ── Cursor glow — light that follows, never leads ── */
+.hero-cursor-glow {
+  position: absolute;
+  width: 450px;
+  height: 450px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(251, 146, 60, 0.025) 0%, rgba(234, 88, 12, 0.008) 35%, transparent 70%);
+  pointer-events: none;
+  will-change: transform, opacity;
+  filter: blur(20px);
+  opacity: 0;
+  transition: opacity 1.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.hero-cursor-glow--active {
   opacity: 1;
 }
 
 /* ═══════════════════════════════════════════════
-   LOADING BAR — Progress fill animation
+   HERO CONTENT REVEAL v5 — Cinematic entrance
+   
+   Text fades in. Buttons follow. No scale on text.
+   No translate. No blur. Only opacity + scale(CTA).
    ═══════════════════════════════════════════════ */
 
-@keyframes loadingBarFill {
-  0% { width: 0%; }
-  50% { width: 70%; }
-  100% { width: 100%; }
+.hero-reveal-headline {
+  opacity: 0;
+  animation: heroRevealFade 800ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.hero-reveal-paragraph {
+  opacity: 0;
+  animation: heroRevealFade 800ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 100ms;
+}
+
+.hero-reveal-cta {
+  opacity: 0;
+  transform: scale(0.96);
+  animation: heroRevealCta 260ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 650ms;
+}
+
+.hero-reveal-cta--delay {
+  animation-delay: 820ms;
+}
+
+@keyframes heroRevealFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes heroRevealCta {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ── Reduced motion: freeze everything, show content immediately ── */
+@media (prefers-reduced-motion: reduce) {
+  .hero-focal,
+  .hero-layer-bg,
+  .hero-layer-bg--warm,
+  .hero-layer-bg--cool,
+  .hero-layer-mid,
+  .hero-layer-mid--a,
+  .hero-layer-mid--b,
+  .hero-layer-fg,
+  .hero-layer-fg--a,
+  .hero-layer-fg--b,
+  .hero-sweep,
+  .hero-dust,
+  .hero-reveal-headline,
+  .hero-reveal-paragraph,
+  .hero-reveal-cta {
+    animation: none;
+  }
+  .hero-reveal-headline,
+  .hero-reveal-paragraph,
+  .hero-reveal-cta {
+    opacity: 1;
+    transform: none;
+  }
+  .hero-cursor-glow {
+    display: none;
+  }
 }
 
 /* ═══════════════════════════════════════════════
