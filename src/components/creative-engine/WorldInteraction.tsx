@@ -1,54 +1,77 @@
 /**
- * Creative Engine — World Interaction System
+ * Creative Engine — World Interaction Orchestrator
  * 
- * Coordinates interactions between objects in the universe.
- * First implementation: Drone inspects Creative Core.
- * 
- * This system makes the universe feel alive —
- * objects are aware of each other and communicate.
+ * Phase 4.0: State-driven ecosystem coordinator.
+ * Replaces timeline-only interactions with event-driven behavior.
  */
 
 "use client";
 
-import { useState, useCallback } from "react";
-import { MaintenanceDronePixel, DroneInteractionState } from "./MaintenanceDronePixel";
+import { useEffect } from "react";
+import { MaintenanceDronePixel } from "./MaintenanceDronePixel";
 import { CreativeCorePixel } from "./CreativeCorePixel";
+import { useEcosystem } from "@/lib/creative-engine/context";
+import { ECOSYSTEM_CONFIG } from "@/lib/creative-engine/types";
 import "@/styles/creative-engine/ce_world_interaction.css";
 
 export interface WorldInteractionProps {
-  /** Enable the Drone-Core interaction */
   enabled?: boolean;
-  /** Additional CSS classes */
   className?: string;
 }
 
-/**
- * Drone-Core Interaction Sequence:
- * 1. Drone approaches Core
- * 2. Drone hovers (inspect)
- * 3. Energy transfers from Core to Drone
- * 4. Core pulses in response
- * 5. Drone confirms completion
- * 6. Both return to idle
- */
 export function WorldInteraction({
   enabled = true,
   className = "",
 }: WorldInteractionProps) {
-  const [droneState, setDroneState] = useState<DroneInteractionState>("idle");
+  const eco = useEcosystem();
+  const { state, processEvent } = eco;
 
-  // Derive Core state from Drone state (no separate state needed)
-  const coreActive = droneState === "transferring";
-  const energyStream = droneState === "transferring";
+  // ── Drone Patrol → Maintenance Request (state-driven) ────────
 
-  const handleDroneStateChange = useCallback((state: DroneInteractionState) => {
-    setDroneState(state);
-  }, []);
+  useEffect(() => {
+    if (!enabled || state.reducedMotion || state.pageHidden) return;
+    if (state.drone.state !== "patrol") return;
+
+    const delay =
+      ECOSYSTEM_CONFIG.patrolIntervalMin +
+      Math.random() * (ECOSYSTEM_CONFIG.patrolIntervalMax - ECOSYSTEM_CONFIG.patrolIntervalMin);
+
+    const timer = setTimeout(() => {
+      if (state.core.state === "idle" && eco.canActivate) {
+        processEvent({ type: "core:maintenance_request" });
+      }
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [
+    state.drone.state,
+    state.core.state,
+    state.reducedMotion,
+    state.pageHidden,
+    eco.canActivate,
+    processEvent,
+    enabled,
+  ]);
+
+  // ── Core Maintenance → Drone Inspection trigger ──────────────
+
+  useEffect(() => {
+    if (!enabled) return;
+    if (state.core.state === "maintenance" && state.drone.state === "patrol") {
+      processEvent({ type: "drone:maintenance_complete" });
+    }
+  }, [state.core.state, state.drone.state, processEvent, enabled]);
+
+  // ── Visual state derivation ──────────────────────────────────
+
+  const isTransferring =
+    state.drone.state === "transfer_energy" || state.core.state === "energy_transfer";
+  const isInspecting = state.drone.state === "inspect" || state.drone.state === "repair";
 
   if (!enabled) return null;
 
   return (
-    <div 
+    <div
       className={`ce-world-interaction ${className}`}
       style={{
         position: "relative",
@@ -62,24 +85,25 @@ export function WorldInteraction({
       {/* Creative Core — responds to Drone inspection */}
       <CreativeCorePixel
         size={48}
-        variant={coreActive ? "pulse" : "idle"}
+        variant={eco.coreVariant}
         style={{
-          transition: "filter 300ms ease",
-          filter: coreActive ? "brightness(1.3)" : "brightness(1)",
+          transition: "filter 300ms ease, opacity 300ms ease",
+          filter: isTransferring ? "brightness(1.3)" : "brightness(1)",
+          opacity: state.core.state === "low_power" ? 0.6 : 1,
         }}
       />
 
       {/* Energy Stream — visible during transfer */}
-      {energyStream && (
-        <div className="ce-energy-stream" />
-      )}
+      {isTransferring && <div className="ce-energy-stream" />}
 
       {/* Maintenance Drone — performs inspection */}
       <MaintenanceDronePixel
         size={72}
-        variant={droneState === "inspecting" ? "inspect" : droneState === "transferring" ? "transfer" : "idle"}
-        interactWithCore={enabled}
-        onInteractionStateChange={handleDroneStateChange}
+        variant={eco.droneVariant}
+        style={{
+          transition: "filter 300ms ease",
+          filter: isInspecting ? "brightness(1.15)" : "brightness(1)",
+        }}
       />
     </div>
   );

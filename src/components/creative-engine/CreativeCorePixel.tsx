@@ -1,24 +1,23 @@
+"use client";
+
 /**
- * Creative Core — Pixel Emblem
+ * Creative Core — Pixel Emblem (Phase 4.0)
  * 
  * Asset ID: ce_core_focal_v01
  * Canvas: 16×16px native, 3× display (48×48px)
  * 
- * A pixel art representation of the Creative Core —
- * the Engine's heart, the brightest ambient element.
- * 
- * Usage:
- *   <CreativeCorePixel size={48} variant="idle" />
- *   <CreativeCorePixel size={96} variant="pulse" />
+ * State-driven component. Reads variant from ecosystem.
+ * No internal timers. The ecosystem decides when it pulses.
  */
 
 import { CSSProperties } from "react";
+import { useEcosystem } from "@/lib/creative-engine/context";
 import "@/styles/creative-engine/ce_core_focal.css";
 
 export interface CreativeCorePixelProps {
   /** Display size in pixels (default: 48) */
   size?: number;
-  /** Animation variant */
+  /** Override variant — if omitted, reads from ecosystem */
   variant?: "idle" | "pulse" | "static";
   /** Additional CSS classes */
   className?: string;
@@ -30,14 +29,24 @@ export interface CreativeCorePixelProps {
 
 export function CreativeCorePixel({
   size = 48,
-  variant = "idle",
+  variant,
   className = "",
   style,
   ariaLabel = "Creative Core",
 }: CreativeCorePixelProps) {
+  let resolvedVariant: "idle" | "pulse" | "static";
+
+  try {
+    const eco = useEcosystem();
+    resolvedVariant = variant ?? eco.coreVariant;
+  } catch {
+    // Outside provider — use prop or default
+    resolvedVariant = variant ?? "idle";
+  }
+
   return (
     <div
-      className={`ce-core-pixel ce-core-pixel--${variant} ${className}`}
+      className={`ce-core-pixel ce-core-pixel--${resolvedVariant} ${className}`}
       style={{
         width: size,
         height: size,

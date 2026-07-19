@@ -1,27 +1,23 @@
 "use client";
 
 /**
- * Memory Crystal — Pixel Sprite Component
+ * Memory Crystal — Pixel Sprite Component (Phase 4.0)
  * 
  * Asset ID: ce_crystal_idle_v01
  * Canvas: 16×16px native, 3× display (48×48px)
  * 
- * A pixel art representation of the Memory Crystal —
- * the Engine's memory banks, storing creative decisions.
- * 
- * Usage:
- *   <MemoryCrystalPixel size={48} variant="idle" />
- *   <MemoryCrystalPixel size={96} variant="pulse" />
- *   <MemoryCrystalPixel size={48} variant="activate" />
+ * State-driven component. Reads variant from ecosystem.
+ * No internal timers. The ecosystem decides when it resonates.
  */
 
-import { CSSProperties, useEffect, useRef, useState } from "react";
+import { CSSProperties, useRef } from "react";
+import { useEcosystem } from "@/lib/creative-engine/context";
 import "@/styles/creative-engine/ce_crystal.css";
 
 export interface MemoryCrystalPixelProps {
   /** Display size in pixels (default: 48) */
   size?: number;
-  /** Animation variant */
+  /** Override variant — if omitted, reads from ecosystem */
   variant?: "idle" | "pulse" | "activate" | "static";
   /** Additional CSS classes */
   className?: string;
@@ -29,64 +25,30 @@ export interface MemoryCrystalPixelProps {
   style?: CSSProperties;
   /** Accessibility label */
   ariaLabel?: string;
-  /** Auto-play pulse on interval (ms). 0 = disabled. Default: 15000 */
-  pulseInterval?: number;
-  /** Trigger activate animation on scroll intersection */
-  activateOnScroll?: boolean;
 }
 
 export function MemoryCrystalPixel({
   size = 48,
-  variant = "idle",
+  variant,
   className = "",
   style,
   ariaLabel = "Memory Crystal",
-  pulseInterval = 15000,
-  activateOnScroll = false,
 }: MemoryCrystalPixelProps) {
-  const [currentVariant, setCurrentVariant] = useState(variant);
-  const [isActive, setIsActive] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Scroll intersection trigger
-  useEffect(() => {
-    if (!activateOnScroll || variant !== "idle") return;
-    const el = ref.current;
-    if (!el) return;
+  let resolvedVariant: "idle" | "pulse" | "activate" | "static";
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !isActive) {
-          setIsActive(true);
-          setCurrentVariant("activate");
-          setTimeout(() => setCurrentVariant("idle"), 600);
-        }
-      },
-      { threshold: 0.5 }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [activateOnScroll, variant, isActive]);
-
-  // Random pulse trigger
-  useEffect(() => {
-    if (variant !== "idle" || pulseInterval <= 0) return;
-
-    const interval = setInterval(() => {
-      if (Math.random() > 0.6) {
-        setCurrentVariant("pulse");
-        setTimeout(() => setCurrentVariant("idle"), 900);
-      }
-    }, pulseInterval);
-
-    return () => clearInterval(interval);
-  }, [variant, pulseInterval]);
+  try {
+    const eco = useEcosystem();
+    resolvedVariant = variant ?? eco.crystalVariant;
+  } catch {
+    resolvedVariant = variant ?? "idle";
+  }
 
   return (
     <div
       ref={ref}
-      className={`ce-crystal-pixel ce-crystal-pixel--${currentVariant} ${className}`}
+      className={`ce-crystal-pixel ce-crystal-pixel--${resolvedVariant} ${className}`}
       style={{
         width: size,
         height: size,
