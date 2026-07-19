@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="48" height="48" shape-rendering="crispEdges">
+  <!-- Creative Core — Focal Light (Pulse — Peak State) -->
+  <!-- Asset ID: ce_core_focal_pulse_v01 -->
+  <!-- Canvas: 16×16px native, 3× display (48×48px) -->
+  
+  <style>
+    @keyframes corePulse {
+      0%, 100% { opacity: 0.85; }
+      25% { opacity: 1; }
+      50% { opacity: 0.95; }
+      75% { opacity: 1; }
+    }
+    @keyframes ringPulse {
+      0%, 100% { opacity: 0.8; }
+      25% { opacity: 1; }
+      50% { opacity: 0.9; }
+      75% { opacity: 1; }
+    }
+    @keyframes glowExpand {
+      0%, 100% { opacity: 0.1; }
+      25% { opacity: 0.4; }
+      50% { opacity: 0.15; }
+      75% { opacity: 0.3; }
+    }
+    .core-body { animation: corePulse 4s ease-in-out infinite; }
+    .ring { animation: ringPulse 4s ease-in-out infinite; }
+    .glow { animation: glowExpand 4s ease-in-out infinite; }
+  </style>
+
+  <!-- Expanded glow (pulse peak — 1px larger than idle) -->
+  <g class="glow">
+    <rect x="6" y="0" width="4" height="1" fill="#22D3EE" opacity="0.25"/>
+    <rect x="4" y="1" width="1" height="1" fill="#22D3EE" opacity="0.25"/>
+    <rect x="11" y="1" width="1" height="1" fill="#22D3EE" opacity="0.25"/>
+    <rect x="3" y="2" width="1" height="1" fill="#22D3EE" opacity="0.25"/>
+    <rect x="12" y="2" width="1" height="1" fill="#22D3EE" opacity="0.25"/>
+    <rect x="2" y="3" width="1" height="1" fill="#22D3EE" opacity="0.25"/>
+    <rect x="13" y="3" width="1" height="1" fill="#22D3EE" opacity="0.25"/>
+    <rect x="1" y="4" width="1" height="1" fill="#22D3EE" opacity="0.25"/>
+    <rect x="14" y="4" width="1" height="1" fill="#22D3EE" opacity="0.25"/>
+    <rect x="0" y="6" width="1" height="4" fill="#22D3EE" opacity="0.25"/>
+    <rect x="15" y="6" width="1" height="4" fill="#22D3EE" opacity="0.25"/>
+    <rect x="1" y="11" width="1" height="1" fill="#22D3EE" opacity="0.25"/>
+    <rect x="14" y="11" width="1" height="1" fill="#22D3EE" opacity="0.25"/>
+    <rect x="2" y="12" width="1" height="1" fill="#22D3EE" opacity="0.25"/>
+    <rect x="13" y="12" width="1" height="1" fill="#22D3EE" opacity="0.25"/>
+    <rect x="3" y="13" width="1" height="1" fill="#22D3EE" opacity="0.25"/>
+    <rect x="12" y="13" width="1" height="1" fill="#22D3EE" opacity="0.25"/>
+    <rect x="4" y="14" width="1" height="1" fill="#22D3EE" opacity="0.25"/>
+    <rect x="11" y="14" width="1" height="1" fill="#22D3EE" opacity="0.25"/>
+    <rect x="6" y="15" width="4" height="1" fill="#22D3EE" opacity="0.25"/>
+  </g>
+
+  <!-- Ring glow (outermost) -->
+  <g class="ring">
+    <rect x="7" y="0" width="2" height="1" fill="#22D3EE" opacity="0.4"/>
+    <rect x="5" y="1" width="1" height="1" fill="#22D3EE" opacity="0.4"/>
+    <rect x="10" y="1" width="1" height="1" fill="#22D3EE" opacity="0.4"/>
+    <rect x="4" y="2" width="1" height="1" fill="#22D3EE" opacity="0.4"/>
+    <rect x="11" y="2" width="1" height="1" fill="#22D3EE" opacity="0.4"/>
+    <rect x="3" y="3" width="1" height="1" fill="#22D3EE" opacity="0.4"/>
+    <rect x="12" y="3" width="1" height="1" fill="#22D3EE" opacity="0.4"/>
+    <rect x="1" y="7" width="1" height="2" fill="#22D3EE" opacity="0.4"/>
+    <rect x="14" y="7" width="1" height="2" fill="#22D3EE" opacity="0.4"/>
+    <rect x="3" y="12" width="1" height="1" fill="#22D3EE" opacity="0.4"/>
+    <rect x="12" y="12" width="1" height="1" fill="#22D3EE" opacity="0.4"/>
+    <rect x="4" y="13" width="1" height="1" fill="#22D3EE" opacity="0.4"/>
+    <rect x="11" y="13" width="1" height="1" fill="#22D3EE" opacity="0.4"/>
+    <rect x="5" y="14" width="1" height="1" fill="#22D3EE" opacity="0.4"/>
+    <rect x="10" y="14" width="1" height="1" fill="#22D3EE" opacity="0.4"/>
+  </g>
+
+  <!-- Containment ring -->
+  <g class="ring">
+    <rect x="7" y="1" width="2" height="1" fill="#22D3EE"/>
+    <rect x="5" y="2" width="1" height="1" fill="#22D3EE"/>
+    <rect x="10" y="2" width="1" height="1" fill="#22D3EE"/>
+    <rect x="4" y="3" width="1" height="1" fill="#22D3EE"/>
+    <rect x="11" y="3" width="1" height="1" fill="#22D3EE"/>
+    <rect x="3" y="4" width="1" height="1" fill="#22D3EE"/>
+    <rect x="12" y="4" width="1" height="1" fill="#22D3EE"/>
+    <rect x="2" y="5" width="1" height="1" fill="#22D3EE"/>
+    <rect x="13" y="5" width="1" height="1" fill="#22D3EE"/>
+    <rect x="2" y="6" width="1" height="1" fill="#22D3EE"/>
+    <rect x="13" y="6" width="1" height="1" fill="#22D3EE"/>
+    <rect x="2" y="7" width="1" height="2" fill="#22D3EE"/>
+    <rect x="13" y="7" width="1" height="2" fill="#22D3EE"/>
+    <rect x="2" y="9" width="1" height="1" fill="#22D3EE"/>
+    <rect x="13" y="9" width="1" height="1" fill="#22D3EE"/>
+    <rect x="2" y="10" width="1" height="1" fill="#22D3EE"/>
+    <rect x="13" y="10" width="1" height="1" fill="#22D3EE"/>
+    <rect x="3" y="11" width="1" height="1" fill="#22D3EE"/>
+    <rect x="12" y="11" width="1" height="1" fill="#22D3EE"/>
+    <rect x="4" y="12" width="1" height="1" fill="#22D3EE"/>
+    <rect x="11" y="12" width="1" height="1" fill="#22D3EE"/>
+    <rect x="5" y="13" width="1" height="1" fill="#22D3EE"/>
+    <rect x="10" y="13" width="1" height="1" fill="#22D3EE"/>
+    <rect x="7" y="14" width="2" height="1" fill="#22D3EE"/>
+  </g>
+
+  <!-- Core body -->
+  <g class="core-body">
+    <!-- Core edge (Dark Orange) -->
+    <rect x="5" y="4" width="6" height="1" fill="#9A3412"/>
+    <rect x="4" y="5" width="1" height="6" fill="#9A3412"/>
+    <rect x="11" y="5" width="1" height="6" fill="#9A3412"/>
+    <rect x="5" y="11" width="6" height="1" fill="#9A3412"/>
+
+    <!-- Core mid (Deep Amber) -->
+    <rect x="6" y="4" width="4" height="1" fill="#EA580C"/>
+    <rect x="5" y="5" width="1" height="6" fill="#EA580C"/>
+    <rect x="10" y="5" width="1" height="6" fill="#EA580C"/>
+    <rect x="6" y="11" width="4" height="1" fill="#EA580C"/>
+    <rect x="5" y="5" width="6" height="1" fill="#EA580C"/>
+    <rect x="5" y="10" width="6" height="1" fill="#EA580C"/>
+
+    <!-- Core center (Warm Orange) -->
+    <rect x="6" y="5" width="4" height="1" fill="#FB923C"/>
+    <rect x="5" y="6" width="1" height="4" fill="#FB923C"/>
+    <rect x="10" y="6" width="1" height="4" fill="#FB923C"/>
+    <rect x="6" y="10" width="4" height="1" fill="#FB923C"/>
+    <rect x="6" y="6" width="4" height="4" fill="#FB923C"/>
+  </g>
+</svg>

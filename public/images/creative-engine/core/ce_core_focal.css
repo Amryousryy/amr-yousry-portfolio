@@ -1,0 +1,51 @@
+/* Creative Core — Focal Light Pixel Emblem */
+/* Asset ID: ce_core_focal_v01 */
+/* Animation: Idle Pulse + Ring Pulse + Glow Expansion */
+
+.ce-core-pixel {
+  display: inline-block;
+  width: 48px;
+  height: 48px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.ce-core-pixel--idle {
+  animation: ceCoreIdlePulse 4s ease-in-out infinite;
+}
+
+.ce-core-pixel--pulse {
+  animation: ceCoreIdlePulse 4s ease-in-out infinite,
+             ceCoreRingPulse 4s ease-in-out infinite,
+             ceCoreGlowExpand 4s ease-in-out infinite;
+}
+
+@keyframes ceCoreIdlePulse {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  25% { opacity: 1; transform: scale(1.02); }
+  50% { opacity: 0.95; transform: scale(1); }
+  75% { opacity: 1; transform: scale(1.01); }
+}
+
+@keyframes ceCoreRingPulse {
+  0%, 100% { filter: brightness(0.9); }
+  25% { filter: brightness(1.1); }
+  50% { filter: brightness(0.95); }
+  75% { filter: brightness(1.05); }
+}
+
+@keyframes ceCoreGlowExpand {
+  0%, 100% { filter: drop-shadow(0 0 0px rgba(34, 211, 238, 0)); }
+  25% { filter: drop-shadow(0 0 4px rgba(34, 211, 238, 0.3)); }
+  50% { filter: drop-shadow(0 0 1px rgba(34, 211, 238, 0.1)); }
+  75% { filter: drop-shadow(0 0 3px rgba(34, 211, 238, 0.2)); }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .ce-core-pixel--idle,
+  .ce-core-pixel--pulse {
+    animation: none;
+    opacity: 0.9;
+  }
+}
