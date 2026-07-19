@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * Memory Crystal — Pixel Sprite Component
  * 

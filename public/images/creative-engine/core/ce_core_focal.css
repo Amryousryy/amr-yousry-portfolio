@@ -11,13 +11,13 @@
 }
 
 .ce-core-pixel--idle {
-  animation: ceCoreIdlePulse 4s ease-in-out infinite;
+  animation: ceCoreIdlePulse 1200ms ease-in-out infinite;
 }
 
 .ce-core-pixel--pulse {
-  animation: ceCoreIdlePulse 4s ease-in-out infinite,
-             ceCoreRingPulse 4s ease-in-out infinite,
-             ceCoreGlowExpand 4s ease-in-out infinite;
+  animation: ceCoreIdlePulse 1200ms ease-in-out infinite,
+             ceCoreRingPulse 1200ms ease-in-out infinite,
+             ceCoreGlowExpand 1200ms ease-in-out infinite;
 }
 
 @keyframes ceCoreIdlePulse {
