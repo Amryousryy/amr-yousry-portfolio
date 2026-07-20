@@ -5,6 +5,17 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Planned
+
+See [ROADMAP.md](ROADMAP.md) for the full product roadmap and upcoming release schedule.
+
+- **v1.1** — Refinement & Experience Polish
+- **v1.2** — Content & Discoverability
+- **v1.3** — Platform & Tooling
+- **v2.0** — Platform Evolution
+
 ## v1.0.0 — Official Production Release (July 20, 2026)
 
 ### Added

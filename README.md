@@ -2,7 +2,10 @@
 
 A premium creative portfolio built with Next.js 16, featuring high-converting multimedia showcases, editorial case studies, an immersive world-parallax environment, and a streamlined contact conversion flow.
 
+**Version:** v1.0.0 — [Release Notes](https://github.com/Amryousryy/amr-yousry-portfolio/releases/tag/v1.0.0)
+**Status:** Production Stable
 **Production URL:** https://amr-yousry-portfolio.vercel.app
+**Roadmap:** See [ROADMAP.md](ROADMAP.md) for planned releases and versioning strategy.
 
 ## Tech Stack
 
