@@ -1,4 +1,4 @@
-import type { Project, ProjectMedia, ProjectMediaItem } from "@/types/project-static";
+import type { Project, ProjectMedia, ProjectMediaItem, SocialProofItem, QuickFacts, BeforeAfter } from "@/types/project-static";
 import dbConnect from "@/lib/db";
 import ProjectModel from "@/models/Project";
 import { getMediaKind, getEmbeddableVideoUrl, getMediaProvider } from "@/lib/media/config";
@@ -48,6 +48,8 @@ function normalizeCaseStudyMedia(arr: unknown): ProjectMedia[] {
         src: toPlainText(obj.src),
         alt: toPlainText(obj.alt, undefined),
         caption: toPlainText(obj.caption, undefined),
+        title: toPlainText(obj.title, undefined),
+        description: toPlainText(obj.description, undefined),
       } as ProjectMedia;
     }
     return null;
@@ -58,17 +60,17 @@ function normalizeMediaItems(doc: Record<string, unknown>, title: string): Proje
   const items: ProjectMediaItem[] = [];
   const seen = new Set<string>();
 
-  const addItem = (src: string, alt?: string, caption?: string) => {
+  const addItem = (src: string, alt?: string, caption?: string, title?: string, description?: string) => {
     if (!src || seen.has(src)) return;
     seen.add(src);
     const kind = getMediaKind(src);
     const embedUrl = getEmbeddableVideoUrl(src);
-    items.push({ kind, src, embedUrl: embedUrl || undefined, provider: getMediaProvider(src), alt, caption });
+    items.push({ kind, src, embedUrl: embedUrl || undefined, provider: getMediaProvider(src), alt, caption, title, description });
   };
 
   const caseStudyMedia = normalizeCaseStudyMedia(doc.caseStudyMedia) || [];
   for (const m of caseStudyMedia) {
-    if (m.src) addItem(m.src, m.alt, m.caption);
+    if (m.src) addItem(m.src, m.alt, m.caption, m.title, m.description);
   }
 
   const gallery = normalizeStrings(doc.gallery);
@@ -90,14 +92,14 @@ function withMedia(project: Project): Project {
   if (project.media && project.media.length > 0) return project;
   const items: ProjectMediaItem[] = [];
   const seen = new Set<string>();
-  const addItem = (src: string, alt?: string, caption?: string) => {
+  const addItem = (src: string, alt?: string, caption?: string, title?: string, description?: string) => {
     if (!src || seen.has(src)) return;
     seen.add(src);
     const kind = getMediaKind(src);
-    items.push({ kind, src, embedUrl: getEmbeddableVideoUrl(src) || undefined, provider: getMediaProvider(src), alt, caption });
+    items.push({ kind, src, embedUrl: getEmbeddableVideoUrl(src) || undefined, provider: getMediaProvider(src), alt, caption, title, description });
   };
   if (project.caseStudyMedia) {
-    for (const m of project.caseStudyMedia) addItem(m.src, m.alt, m.caption);
+    for (const m of project.caseStudyMedia) addItem(m.src, m.alt, m.caption, m.title, m.description);
   }
   if (items.length === 0 && project.thumbnail) addItem(project.thumbnail, project.title);
   return { ...project, media: items };
@@ -129,9 +131,14 @@ function toPublicProject(doc: Record<string, unknown>): Project {
     featured: (doc.featured as boolean) || false,
     bannerImage: imageUrl,
     problem: toPlainText(doc.problem) || "",
-    idea: toPlainText(doc.idea) || "",
+    solution: toPlainText(doc.solution) || toPlainText(doc.idea) || "",
     execution: toPlainText(doc.execution) || "",
     detailedResults: normalizeDetailedResults(doc.detailedResults),
+    keyDecisions: doc.keyDecisions as { decision: string; reason: string; alternativeConsidered?: string; whyRejected?: string; impact: string }[] | undefined,
+    outcomeNarrative: toPlainText(doc.outcomeNarrative, undefined),
+    quickFacts: doc.quickFacts as QuickFacts | undefined,
+    beforeAfter: doc.beforeAfter as BeforeAfter | undefined,
+    socialProof: doc.socialProof as SocialProofItem[] | undefined,
     caseStudyMedia: normalizeCaseStudyMedia(doc.caseStudyMedia),
     heroVideo: toPlainText(doc.video) || undefined,
     media: normalizeMediaItems(doc, title),

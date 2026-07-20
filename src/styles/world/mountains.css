@@ -1,0 +1,45 @@
+.world-mountains {
+  position: absolute;
+  inset: auto 0 0 0;
+  pointer-events: none;
+  transition: background 1.5s ease;
+}
+
+.world-mountains--far {
+  height: 35vh;
+  background: var(--world-mountain-layer3);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 400'%3E%3Cpath d='M0,400 L0,280 L180,280 L180,260 L360,260 L360,240 L540,240 L540,220 L720,220 L720,240 L900,240 L900,260 L1080,260 L1080,270 L1200,270 L1200,400 Z' fill='black'/%3E%3C/svg%3E");
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  transform: translate3d(
+    calc(var(--parallax-x, 0) * 0.3 * 1px),
+    calc(var(--parallax-y, 0) * 0.3 * 1px),
+    0
+  );
+}
+
+.world-mountains--mid {
+  height: 30vh;
+  background: var(--world-mountain-layer2);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 400'%3E%3Cpath d='M0,400 L0,250 L120,250 L120,220 L240,220 L240,190 L360,190 L360,210 L480,210 L480,180 L600,180 L600,200 L720,200 L720,170 L840,170 L840,190 L960,190 L960,210 L1080,210 L1080,240 L1200,240 L1200,400 Z' fill='black'/%3E%3C/svg%3E");
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  transform: translate3d(
+    calc(var(--parallax-x, 0) * 0.5 * 1px),
+    calc(var(--parallax-y, 0) * 0.5 * 1px),
+    0
+  );
+}
+
+.world-mountains--near {
+  height: 25vh;
+  background: var(--world-mountain-base);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 400'%3E%3Cpath d='M0,400 L0,230 L90,230 L90,200 L180,200 L180,170 L270,170 L270,190 L360,190 L360,160 L450,160 L450,180 L540,180 L540,150 L630,150 L630,175 L720,175 L720,145 L810,145 L810,170 L900,170 L900,190 L990,190 L990,210 L1200,210 L1200,400 Z' fill='black'/%3E%3C/svg%3E");
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  transform: translate3d(
+    calc(var(--parallax-x, 0) * 0.8 * 1px),
+    calc(var(--parallax-y, 0) * 0.8 * 1px),
+    0
+  );
+}

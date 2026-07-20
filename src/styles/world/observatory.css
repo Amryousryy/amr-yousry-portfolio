@@ -1,0 +1,104 @@
+.world-observatory {
+  position: absolute;
+  inset: 0;
+}
+
+.world-observatory-silhouette {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 35vh;
+  background: var(--observatory-dome, #1E1B4B);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100'%3E%3Cpath d='M0,100 L0,95 L55,95 L65,92 L75,90 L85,89 C85,64 115,64 115,89 L125,90 L135,92 L145,95 L200,95 L200,100 Z M100,76 L112,56 L115,57 L103,77 Z' fill='black'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.world-observatory-starmap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.world-observatory-constellation-line {
+  stroke: var(--observatory-star-map, rgba(34, 211, 238, 0.1));
+  stroke-width: 0.5;
+  stroke-linecap: round;
+  opacity: 0;
+  animation: constellationFade 28s ease-in-out infinite;
+}
+
+@keyframes constellationFade {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.05;
+  }
+  75% {
+    opacity: 0.12;
+  }
+}
+
+.world-observatory-constellation-star {
+  fill: var(--observatory-telescope, #22D3EE);
+  opacity: 0;
+  animation: starTwinkle 24s ease-in-out infinite;
+}
+
+@keyframes starTwinkle {
+  0%,
+  100% {
+    opacity: 0;
+    r: 1;
+  }
+  20% {
+    opacity: 0.4;
+    r: 1.5;
+  }
+  40% {
+    opacity: 0.1;
+    r: 1;
+  }
+  60% {
+    opacity: 0.3;
+    r: 1.2;
+  }
+  80% {
+    opacity: 0.05;
+    r: 0.8;
+  }
+}
+
+.world-observatory-glow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 25vh;
+  background: linear-gradient(
+    0deg,
+    var(--observatory-star-map, rgba(34, 211, 238, 0.03)) 0%,
+    transparent 100%
+  );
+  animation: glowBreathe 20s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes glowBreathe {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}

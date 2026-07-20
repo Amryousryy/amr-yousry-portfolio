@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { contactContent as staticContactContent } from "@/content/contact";
-import { useState, FormEvent } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { trackEvent } from "@/lib/tracker";
 import SuccessState from "@/components/sections/contact/SuccessState";
 import CommunicationChannels from "@/components/sections/contact/CommunicationChannels";
@@ -27,6 +27,15 @@ export default function ContactSection({ contactData }: ContactSectionProps) {
         whatsapp: { ...staticContactContent.whatsapp, number: contactData.whatsappNumber },
       }
     : staticContactContent;
+  useEffect(() => {
+    if (window.location.hash === "#project-inquiry") {
+      const input = document.getElementById("contact-name");
+      if (input) {
+        setTimeout(() => input.focus(), 300);
+      }
+    }
+  }, []);
+
   const [errors, setErrors] = useState<{name?: boolean; email?: boolean; message?: boolean}>({});
   const [formData, setFormData] = useState({
     name: "",
@@ -79,7 +88,7 @@ export default function ContactSection({ contactData }: ContactSectionProps) {
   }
 
   return (
-    <Section id="contact" className="bg-brand-blue/95 relative pb-16 sm:pb-36 pt-14 sm:pt-20 md:pt-32 overflow-hidden">
+    <Section id="contact" className="relative pb-16 sm:pb-36 pt-14 sm:pt-20 md:pt-32 overflow-hidden">
       {/* Atmospheric overlay - action-oriented lighting */}
       <div className="absolute inset-0 bg-gradient-to-b from-brand-blue/95 via-brand-cyan/2 to-brand-blue/95 pointer-events-none" />
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-cyan/25 to-transparent pointer-events-none" />

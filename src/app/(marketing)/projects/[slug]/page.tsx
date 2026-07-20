@@ -1,8 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
-import { PixelButton } from "@/components/ui/pixel-button";
 import { getProjectBySlug, getPublicProjects } from "@/lib/projects/public-projects";
 import { getMediaKind, getEmbeddableVideoUrl, getMediaProvider } from "@/lib/media/config";
 import { ExternalLink } from "lucide-react";
@@ -59,16 +57,59 @@ export async function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
 }
 
+function firstSentence(text: string): string {
+  const parts = text.split(/[.!?]/).filter((s) => s.trim().length > 0);
+  return parts.length > 0 ? parts[0].trim() + "." : text;
+}
+
 export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
   const { slug } = await params;
   const project = await getProjectBySlug(slug);
 
   if (!project) return notFound();
 
+  const allProjects = await getPublicProjects();
+  const relatedProjects = allProjects
+    .filter((p) => p.slug !== slug)
+    .slice(0, 2);
+
+  const heroStatement = project.outcomeNarrative
+    ? firstSentence(project.outcomeNarrative)
+    : (project.mainResult || project.summary);
+
   return (
-    <Section className="min-h-screen py-24 md:py-32 bg-background overflow-hidden">
-      {/* Hero Media */}
-      <div className="relative h-[40vh] sm:h-[56vh] min-h-[280px] sm:min-h-[420px] md:h-[60vh] mb-14 md:mb-20 overflow-hidden">
+    <Section className="min-h-screen bg-background overflow-hidden">
+      {/* HERO — metadata first, media below */}
+      <Container>
+        <div className="pt-16 sm:pt-20 md:pt-28 pb-8 sm:pb-10 md:pb-14">
+          <span className="font-pixel text-brand-cyan text-[10px] sm:text-sm tracking-widest uppercase mb-4 block">
+            {formatCategory(project.category)}
+          </span>
+          <h1
+            className="text-[clamp(1.75rem,6.5vw,3.5rem)] md:text-6xl lg:text-7xl font-display font-bold uppercase tracking-tighter break-words leading-tight"
+            style={{ textWrap: "balance", maxWidth: "16ch" }}
+          >
+            {project.title}
+          </h1>
+          {heroStatement && (
+            <p
+              className="font-modern text-xl md:text-2xl text-white leading-[1.4] max-w-[680px] mt-6 mb-5"
+              style={{ textWrap: "balance" }}
+            >
+              {heroStatement}
+            </p>
+          )}
+          <p
+            className="font-modern text-sm sm:text-base text-foreground/60 max-w-[600px] leading-relaxed"
+            style={{ textWrap: "balance" }}
+          >
+            {project.summary}
+          </p>
+        </div>
+      </Container>
+
+      {/* HERO MEDIA */}
+      <div className="relative h-[40vh] sm:h-[56vh] md:h-[64vh] min-h-[280px] sm:min-h-[400px] overflow-hidden">
         {(() => {
           const hv = project.heroVideo;
           if (!hv) {
@@ -129,30 +170,34 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
             />
           );
         })()}
-        <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
-        <div className="absolute bottom-0 left-0 w-full p-4 sm:p-8 md:p-16">
-          <Container>
-            <span className="font-pixel text-brand-cyan text-[10px] sm:text-sm tracking-widest uppercase mb-4 block">
-              {formatCategory(project.category)}
-            </span>
-            <h1 className="text-[clamp(1.75rem,6.5vw,3.5rem)] md:text-6xl lg:text-7xl font-display font-bold uppercase tracking-tighter break-words leading-tight" style={{ textWrap: 'balance', maxWidth: '16ch' }}>
-              {project.title}
-            </h1>
-          </Container>
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/10 to-transparent" />
       </div>
 
       <Container>
-        <CaseStudyClient project={{ ...project, slug }} />
-
-        {/* Back CTA */}
-        <div className="mt-20 pt-12 border-t border-slate-800 text-center">
-          <Link href="/projects">
-            <PixelButton variant="outline" className="px-8 py-3 text-sm">
-              ← All Projects
-            </PixelButton>
-          </Link>
-        </div>
+        <CaseStudyClient
+          project={{
+            problem: project.problem,
+            solution: project.solution,
+            execution: project.execution,
+            mainResult: project.mainResult,
+            outcomeNarrative: project.outcomeNarrative,
+            detailedResults: project.detailedResults,
+            keyDecisions: project.keyDecisions,
+            quickFacts: project.quickFacts,
+            beforeAfter: project.beforeAfter,
+            socialProof: project.socialProof,
+            services: project.services || [],
+            media: project.media,
+            title: project.title,
+          }}
+          relatedProjects={relatedProjects.map((p) => ({
+            slug: p.slug,
+            title: p.title,
+            category: p.category,
+            thumbnail: p.thumbnail,
+            summary: p.summary,
+          }))}
+        />
       </Container>
     </Section>
   );

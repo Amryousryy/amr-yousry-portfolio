@@ -1,0 +1,36 @@
+.world-star {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--world-star-color, #F8FAFC);
+  pointer-events: none;
+  animation: worldStarTwinkle var(--star-duration, 3s) ease-in-out infinite;
+  animation-delay: var(--star-delay, 0s);
+  transform: translate3d(
+    calc(var(--parallax-x, 0) * 0.15 * 1px),
+    calc(var(--parallax-y, 0) * 0.15 * 1px),
+    0
+  );
+}
+
+@keyframes worldStarTwinkle {
+  0%, 100% { opacity: var(--star-base-opacity, 0.5); }
+  50% { opacity: 0.1; }
+}
+
+@media (max-width: 639px) {
+  .world-star {
+    display: none;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .world-star:nth-child(n+31) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-star {
+    animation: none;
+  }
+}

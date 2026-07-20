@@ -12,6 +12,8 @@ export interface CaseStudyMediaItem {
   src: string;
   alt?: string;
   caption?: string;
+  title?: string;
+  description?: string;
 }
 
 export interface DetailedResult {

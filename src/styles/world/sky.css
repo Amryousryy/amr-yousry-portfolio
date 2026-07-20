@@ -1,0 +1,29 @@
+.world-sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    var(--world-sky-start) 0%,
+    var(--world-sky-mid) 50%,
+    var(--world-sky-end) 100%
+  );
+  transition: background 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.world-moon {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  top: 15%;
+  right: 10%;
+  background: var(--world-moon-color, rgba(251, 191, 36, 0.03));
+  box-shadow: 0 0 32px 12px var(--world-moon-glow, rgba(251, 191, 36, 0.015));
+  pointer-events: none;
+}
+
+@media (max-width: 639px) {
+  .world-moon {
+    display: none;
+  }
+}

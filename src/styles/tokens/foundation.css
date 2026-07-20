@@ -33,6 +33,14 @@
 
   /* ── Z-Index Scale ── */
   --z-base: 0;
+  --z-world-sky: 0;
+  --z-world-stars: 1;
+  --z-world-mountains: 2;
+  --z-world-features: 5;
+  --z-world-comets: 6;
+  --z-world-aurora: 7;
+  --z-world-foreground: 8;
+  --z-world-grid: 9;
   --z-above: 10;
   --z-text: 20;
   --z-dropdown: 30;

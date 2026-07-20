@@ -1,0 +1,68 @@
+.world-city {
+  position: absolute;
+  inset: 0;
+}
+
+.world-city-skyline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 45vh;
+  background: var(--city-building, #1E1B4B);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100'%3E%3Cpath d='M0,100 L0,55 L6,55 L6,48 L12,48 L12,55 L22,55 L22,40 L32,40 L32,50 L36,50 L36,42 L40,42 L40,35 L42,35 L42,25 L52,25 L52,35 L56,35 L56,45 L60,45 L60,30 L72,30 L72,38 L76,38 L76,20 L80,20 L80,30 L90,30 L90,28 L100,28 L100,42 L112,42 L112,35 L116,35 L116,22 L120,22 L120,35 L132,35 L132,30 L142,30 L142,45 L148,45 L148,38 L152,38 L152,25 L162,25 L162,40 L168,40 L168,32 L172,32 L172,20 L182,20 L182,28 L192,28 L192,42 L196,42 L196,50 L200,50 L200,100 Z' fill='black'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.world-city-glow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30vh;
+  background: linear-gradient(
+    0deg,
+    var(--city-window, rgba(34, 211, 238, 0.04)) 0%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.world-city-lights {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: auto;
+  height: 45vh;
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100'%3E%3Cpath d='M0,100 L0,55 L6,55 L6,48 L12,48 L12,55 L22,55 L22,40 L32,40 L32,50 L36,50 L36,42 L40,42 L40,35 L42,35 L42,25 L52,25 L52,35 L56,35 L56,45 L60,45 L60,30 L72,30 L72,38 L76,38 L76,20 L80,20 L80,30 L90,30 L90,28 L100,28 L100,42 L112,42 L112,35 L116,35 L116,22 L120,22 L120,35 L132,35 L132,30 L142,30 L142,45 L148,45 L148,38 L152,38 L152,25 L162,25 L162,40 L168,40 L168,32 L172,32 L172,20 L182,20 L182,28 L192,28 L192,42 L196,42 L196,50 L200,50 L200,100 Z' fill='black'/%3E%3C/svg%3E");
+}
+
+.world-city-light {
+  position: absolute;
+  width: 2px;
+  height: 3px;
+  background: var(--city-window, rgba(34, 211, 238, 0.3));
+  opacity: 1;
+  pointer-events: none;
+}
+
+.world-city-light--pulse {
+  animation: windowPulse var(--pulse-duration, 5s) ease-in-out infinite;
+  animation-delay: var(--pulse-delay, 0s);
+  background: var(--city-window-active, rgba(34, 211, 238, 0.6));
+}
+
+@keyframes windowPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.15;
+  }
+}

@@ -1,0 +1,34 @@
+.world-root {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  contain: layout style paint;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.world-root[data-theme="night"] {
+  --world-sky-start: #06030F;
+  --world-sky-mid: #1E1B4B;
+  --world-sky-end: #2D1B69;
+  --world-mountain-base: rgba(45, 27, 105, 0.3);
+  --world-mountain-layer1: rgba(45, 27, 105, 0.25);
+  --world-mountain-layer2: rgba(35, 20, 85, 0.18);
+  --world-mountain-layer3: rgba(25, 15, 65, 0.1);
+  --world-accent-glow: rgba(109, 40, 217, 0.08);
+  --world-ambient-light: rgba(109, 40, 217, 0.06);
+  --world-fog: rgba(13, 10, 26, 0.3);
+  --world-star-color: #F8FAFC;
+  --world-comet-color: #22D3EE;
+  --world-comet-trail: rgba(109, 40, 217, 0.4);
+  --world-comet-glow: rgba(34, 211, 238, 0.15);
+  --world-moon-color: rgba(251, 191, 36, 0.03);
+  --world-moon-glow: rgba(251, 191, 36, 0.015);
+}
+
+[data-page-hidden="true"] .world-root * {
+  animation-play-state: paused !important;
+  transition: none !important;
+}

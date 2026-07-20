@@ -16,7 +16,7 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <Section id="projects" className="bg-brand-blue/95 pt-14 md:pt-16 pb-16 md:pb-20 relative">
+    <Section id="projects" className="pt-14 md:pt-16 pb-16 md:pb-20 relative">
       {/* Atmospheric overlay - subtle warmth */}
       <div className="absolute inset-0 bg-gradient-to-b from-brand-blue/95 via-transparent to-brand-blue/98 pointer-events-none" />
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-cyan/20 to-transparent pointer-events-none" />

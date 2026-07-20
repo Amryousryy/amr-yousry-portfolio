@@ -3,6 +3,8 @@ export interface ProjectMedia {
   src: string;
   alt?: string;
   caption?: string;
+  title?: string;
+  description?: string;
 }
 
 export interface ProjectMediaItem {
@@ -12,12 +14,41 @@ export interface ProjectMediaItem {
   provider?: string | null;
   alt?: string;
   caption?: string;
+  title?: string;
+  description?: string;
   thumbnail?: string;
 }
 
 export interface ProjectResult {
   label: string;
   value: string;
+}
+
+export interface KeyDecision {
+  decision: string;
+  reason: string;
+  alternativeConsidered?: string;
+  whyRejected?: string;
+  impact: string;
+}
+
+export interface SocialProofItem {
+  type: "testimonial" | "award" | "recognition" | "featured" | "performance";
+  content: string;
+  source?: string;
+}
+
+export interface QuickFacts {
+  challenge: string;
+  solution: string;
+  outcome: string;
+}
+
+export interface BeforeAfter {
+  before: string;
+  after: string;
+  mediaBefore?: string;
+  mediaAfter?: string;
 }
 
 export interface ProjectSeo {
@@ -44,9 +75,14 @@ export interface Project {
   // Case study page
   bannerImage: string;
   problem: string;
-  idea: string;
+  solution: string;
   execution: string;
   detailedResults: ProjectResult[];
+  keyDecisions?: KeyDecision[];
+  outcomeNarrative?: string;
+  quickFacts?: QuickFacts;
+  beforeAfter?: BeforeAfter;
+  socialProof?: SocialProofItem[];
 
   // Media support
   caseStudyMedia?: ProjectMedia[];

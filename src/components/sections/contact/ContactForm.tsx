@@ -28,7 +28,7 @@ interface ContactFormProps {
 
 export default function ContactForm({ formData, errors, onChange, onSubmit }: ContactFormProps) {
   return (
-    <div className="lg:col-span-7">
+    <div id="project-inquiry" className="lg:col-span-7">
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}

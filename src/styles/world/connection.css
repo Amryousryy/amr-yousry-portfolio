@@ -1,0 +1,73 @@
+.world-connection {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  transition: background 2.5s ease, opacity 2.5s ease;
+  background: transparent;
+  opacity: 0.5;
+}
+
+[data-zone="entrance"] .world-connection {
+  background: radial-gradient(
+    ellipse at center bottom,
+    rgba(109, 40, 217, 0.025) 0%,
+    transparent 60%
+  );
+}
+
+[data-zone="forest"] .world-connection {
+  background: radial-gradient(
+    ellipse at center bottom,
+    rgba(52, 211, 153, 0.025) 0%,
+    transparent 60%
+  );
+}
+
+[data-zone="city"] .world-connection {
+  background: radial-gradient(
+    ellipse at center bottom,
+    rgba(34, 211, 238, 0.025) 0%,
+    transparent 60%
+  );
+}
+
+[data-zone="energy"] .world-connection {
+  background: radial-gradient(
+    ellipse at center bottom,
+    rgba(109, 40, 217, 0.03) 0%,
+    rgba(34, 211, 238, 0.015) 40%,
+    transparent 60%
+  );
+}
+
+[data-zone="observatory"] .world-connection {
+  background: radial-gradient(
+    ellipse at center bottom,
+    rgba(251, 191, 36, 0.015) 0%,
+    rgba(34, 211, 238, 0.02) 35%,
+    transparent 55%
+  );
+  animation: worldConnectionComplete 20s ease-in-out infinite;
+}
+
+@keyframes worldConnectionComplete {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-connection {
+    opacity: 0.3;
+  }
+
+  [data-zone="observatory"] .world-connection {
+    animation: none;
+    opacity: 0.3;
+  }
+}
