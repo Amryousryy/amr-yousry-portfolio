@@ -52,9 +52,9 @@
   50% { opacity: 1; }
 }
 
-/* Inspect — eye brightens, core pulses */
+/* Inspect — eye brightens, core pulses, continuous while inspecting */
 .ce-drone-pixel--inspect {
-  animation: ceDroneInspect 500ms ease-in-out;
+  animation: ceDroneInspect 1500ms ease-in-out infinite;
 }
 
 @keyframes ceDroneInspect {
@@ -63,9 +63,9 @@
   100% { filter: brightness(1); }
 }
 
-/* Transfer — core receives energy, maximum glow */
+/* Transfer — core receives energy, maximum glow, continuous while transferring */
 .ce-drone-pixel--transfer {
-  animation: ceDroneTransfer 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+  animation: ceDroneTransfer 1500ms cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 @keyframes ceDroneTransfer {
@@ -91,4 +91,11 @@
   .ce-drone-pixel--transfer {
     animation: none;
   }
+}
+
+/* Static — no animation */
+.ce-drone-pixel--static,
+.ce-drone-pixel--static .ce-drone-wing,
+.ce-drone-pixel--static .ce-drone-antenna {
+  animation: none;
 }

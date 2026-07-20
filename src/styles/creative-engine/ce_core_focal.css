@@ -49,3 +49,8 @@
     opacity: 0.9;
   }
 }
+
+/* Static — no animation */
+.ce-core-pixel--static {
+  animation: none;
+}

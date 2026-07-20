@@ -21,9 +21,9 @@
   75% { opacity: 0.95; transform: scale(1.005); filter: brightness(1.05); }
 }
 
-/* Pulse — 6 frames, 900ms, play once */
+/* Pulse — 6 frames, 900ms, continuous while active */
 .ce-crystal-pixel--pulse {
-  animation: ceCrystalPulse 900ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: ceCrystalPulse 900ms cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 @keyframes ceCrystalPulse {
@@ -60,4 +60,9 @@
     opacity: 1;
     transform: none;
   }
+}
+
+/* Static — no animation */
+.ce-crystal-pixel--static {
+  animation: none;
 }

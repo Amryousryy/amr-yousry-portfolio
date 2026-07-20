@@ -1,0 +1,130 @@
+/* Signal Beacon — Pixel Sprite Animations */
+/* Asset ID: ce_beacon_idle_v01, ce_beacon_active_v01 */
+
+.ce-beacon-pixel {
+  display: inline-block;
+  width: 48px;
+  height: 48px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  position: relative;
+}
+
+/* Idle — gentle breathing, calm presence */
+.ce-beacon-pixel--idle {
+  animation: ceBeaconIdle 1200ms ease-in-out infinite;
+}
+
+@keyframes ceBeaconIdle {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 0.95; }
+}
+
+/* Idle tip glow */
+.ce-beacon-pixel--idle .ce-beacon-tip {
+  animation: ceBeaconTipGlow 1200ms ease-in-out infinite;
+}
+
+@keyframes ceBeaconTipGlow {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* Idle core pulse */
+.ce-beacon-pixel--idle .ce-beacon-core {
+  animation: ceBeaconCorePulse 1200ms ease-in-out infinite;
+}
+
+@keyframes ceBeaconCorePulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.5; }
+}
+
+/* Active — bright broadcast, signal rings emanate */
+.ce-beacon-pixel--active {
+  animation: ceBeaconActive 1500ms ease-in-out infinite;
+}
+
+@keyframes ceBeaconActive {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.2); }
+}
+
+/* Active tip — bright pulse */
+.ce-beacon-pixel--active .ce-beacon-tip {
+  animation: ceBeaconActiveTip 800ms ease-in-out infinite;
+}
+
+@keyframes ceBeaconActiveTip {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+/* Active core — bright glow */
+.ce-beacon-pixel--active .ce-beacon-core {
+  animation: ceBeaconActiveCore 800ms ease-in-out infinite;
+}
+
+@keyframes ceBeaconActiveCore {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+}
+
+/* Signal rings — expand and fade outward */
+.ce-beacon-pixel--active .ce-beacon-ring--1 {
+  animation: ceBeaconRing1 1500ms ease-out infinite;
+}
+
+.ce-beacon-pixel--active .ce-beacon-ring--2 {
+  animation: ceBeaconRing2 1500ms ease-out 200ms infinite;
+}
+
+.ce-beacon-pixel--active .ce-beacon-ring--3 {
+  animation: ceBeaconRing3 1500ms ease-out 400ms infinite;
+}
+
+@keyframes ceBeaconRing1 {
+  0% { opacity: 0.4; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.5); }
+}
+
+@keyframes ceBeaconRing2 {
+  0% { opacity: 0.3; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.8); }
+}
+
+@keyframes ceBeaconRing3 {
+  0% { opacity: 0.2; transform: scale(1); }
+  100% { opacity: 0; transform: scale(2); }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .ce-beacon-pixel--idle,
+  .ce-beacon-pixel--active {
+    animation: none;
+    opacity: 0.9;
+  }
+  .ce-beacon-pixel--idle .ce-beacon-tip,
+  .ce-beacon-pixel--idle .ce-beacon-core,
+  .ce-beacon-pixel--active .ce-beacon-tip,
+  .ce-beacon-pixel--active .ce-beacon-core {
+    animation: none;
+  }
+  .ce-beacon-pixel--active .ce-beacon-ring--1,
+  .ce-beacon-pixel--active .ce-beacon-ring--2,
+  .ce-beacon-pixel--active .ce-beacon-ring--3 {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Static — no animation */
+.ce-beacon-pixel--static,
+.ce-beacon-pixel--static .ce-beacon-tip,
+.ce-beacon-pixel--static .ce-beacon-core,
+.ce-beacon-pixel--static .ce-beacon-ring--1,
+.ce-beacon-pixel--static .ce-beacon-ring--2,
+.ce-beacon-pixel--static .ce-beacon-ring--3 {
+  animation: none;
+}

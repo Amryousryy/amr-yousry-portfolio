@@ -1,8 +1,8 @@
 /**
  * Creative Engine — Ecosystem Manager
  * 
- * Phase 4.0: Central state machine that coordinates all objects.
- * No timeline-only interactions. Every animation has a cause.
+ * Phase 6.1: Architecture Refinement & v1.0 Stable Release.
+ * Every object owns a state machine. Every interaction has a cause.
  */
 
 "use client";
@@ -11,49 +11,32 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type {
   EcosystemState,
   EcosystemEvent,
-  ObjectId,
-  ObjectState,
   CoreState,
   CrystalState,
   DroneState,
+  BeaconState,
+  PortalState,
+  ObjectId,
 } from "./types";
 import { ECOSYSTEM_CONFIG } from "./types";
 
 // ─── Initial State ───────────────────────────────────────────────
 
 function createInitialState(): EcosystemState {
-  const now = Date.now();
   let reducedMotion = false;
   if (typeof window !== "undefined") {
     reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   }
   return {
-    core: {
-      id: "core",
-      state: "idle",
-      energy: 80,
-      lastActive: now,
-      cooldownUntil: 0,
-    },
-    crystal: {
-      id: "crystal",
-      state: "dormant",
-      energy: 60,
-      lastActive: now,
-      cooldownUntil: 0,
-    },
-    drone: {
-      id: "drone",
-      state: "patrol",
-      energy: 90,
-      lastActive: now,
-      cooldownUntil: 0,
-    },
-    activeCount: 1,
-    heroVisible: true,
+    core: { id: "core", state: "idle", energy: 80, lastActive: Date.now(), cooldownUntil: 0 },
+    crystal: { id: "crystal", state: "dormant", energy: 60, lastActive: Date.now(), cooldownUntil: 0 },
+    drone: { id: "drone", state: "patrol", energy: 90, lastActive: Date.now(), cooldownUntil: 0 },
+    beacon: { id: "beacon", state: "idle", energy: 85, lastActive: Date.now(), cooldownUntil: 0 },
+    portal: { id: "portal", state: "idle", energy: 0, lastActive: Date.now(), cooldownUntil: 0, syncEvents: [] },
+    activeCount: 0,
     reducedMotion,
     pageHidden: false,
-    lastTick: now,
+    lastTick: Date.now(),
   };
 }
 
@@ -61,9 +44,8 @@ function createInitialState(): EcosystemState {
 
 export function coreStateToVariant(state: CoreState): "idle" | "pulse" {
   switch (state) {
-    case "charging":
-    case "synchronizing":
     case "energy_transfer":
+    case "maintenance":
       return "pulse";
     default:
       return "idle";
@@ -85,7 +67,6 @@ export function crystalStateToVariant(state: CrystalState): "idle" | "pulse" | "
 export function droneStateToVariant(state: DroneState): "idle" | "inspect" | "transfer" {
   switch (state) {
     case "inspect":
-    case "repair":
       return "inspect";
     case "transfer_energy":
       return "transfer";
@@ -94,34 +75,37 @@ export function droneStateToVariant(state: DroneState): "idle" | "inspect" | "tr
   }
 }
 
-// ─── Transition Logic ────────────────────────────────────────────
-
-function canActivate(state: EcosystemState): boolean {
-  return state.activeCount < ECOSYSTEM_CONFIG.maxActive;
+export function beaconStateToVariant(state: BeaconState): "idle" | "active" {
+  return state === "active" ? "active" : "idle";
 }
+
+export function portalStateToVariant(state: PortalState): "idle" | "preparing" | "opening" | "active" | "synchronizing" | "closing" {
+  switch (state) {
+    case "preparing":
+      return "preparing";
+    case "opening":
+      return "opening";
+    case "active":
+      return "active";
+    case "synchronizing":
+      return "synchronizing";
+    case "closing":
+      return "closing";
+    default:
+      return "idle";
+  }
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────
 
 function isCooledDown(obj: { cooldownUntil: number }): boolean {
   return Date.now() >= obj.cooldownUntil;
-}
-
-function applyCooldown(state: EcosystemState, id: ObjectId): EcosystemState {
-  const now = Date.now();
-  return {
-    ...state,
-    [id]: {
-      ...state[id],
-      cooldownUntil: now + ECOSYSTEM_CONFIG.interactionCooldown,
-      lastActive: now,
-    },
-  };
 }
 
 // ─── Ecosystem Hook ──────────────────────────────────────────────
 
 export function useCreativeEngine() {
   const [state, setState] = useState<EcosystemState>(createInitialState);
-
-  // Sync ref outside of render via effect
   const stateRef = useRef(state);
   useEffect(() => {
     stateRef.current = state;
@@ -136,114 +120,98 @@ export function useCreativeEngine() {
 
       switch (event.type) {
         // ── World Events ──────────────────────────────────────
-        case "world:hero_visible":
-          return { ...next, heroVisible: event.visible };
-
         case "world:reduced_motion":
           return { ...next, reducedMotion: event.active };
 
         case "world:page_hidden":
           return { ...next, pageHidden: event.hidden };
 
-        case "world:scroll_position":
-          // Scroll position used by consumers, no state change needed
-          return next;
-
         // ── Core Events ───────────────────────────────────────
-        case "core:energy_drop": {
-          if (prev.core.state !== "idle" && prev.core.state !== "cooling") return prev;
-          const newEnergy = Math.max(20, event.energy);
-          return {
-            ...next,
-            core: {
-              ...prev.core,
-              energy: newEnergy,
-              state: newEnergy < 40 ? "low_power" : "idle",
-            },
-          };
-        }
-
         case "core:maintenance_request": {
+          if (prev.core.state !== "idle" && prev.core.state !== "low_power") return prev;
           if (!isCooledDown(prev.core)) return prev;
-          if (!canActivate(prev)) return prev;
+          if (prev.activeCount >= ECOSYSTEM_CONFIG.maxActive) return prev;
           return {
             ...next,
-            core: { ...prev.core, state: "maintenance" },
+            core: { ...prev.core, state: "maintenance", lastActive: now, cooldownUntil: now + ECOSYSTEM_CONFIG.interactionCooldown * 2 },
             activeCount: prev.activeCount + 1,
           };
         }
 
         case "core:sync_complete": {
-          if (prev.core.state !== "synchronizing") return prev;
-          const cooled = applyCooldown(prev, "core");
+          if (prev.core.state !== "energy_transfer") return prev;
           return {
-            ...cooled,
-            core: { ...cooled.core, state: "idle", energy: Math.min(100, cooled.core.energy + 20) },
-            activeCount: Math.max(0, cooled.activeCount - 1),
+            ...next,
+            core: { ...prev.core, state: "idle", energy: Math.min(100, prev.core.energy + 15), lastActive: now, cooldownUntil: now + ECOSYSTEM_CONFIG.interactionCooldown },
+            activeCount: Math.max(0, prev.activeCount - 1),
           };
         }
 
         // ── Drone Events ──────────────────────────────────────
-        case "drone:maintenance_complete": {
-          if (prev.drone.state !== "inspect" && prev.drone.state !== "repair") return prev;
-          const cooled = applyCooldown(prev, "drone");
-          return {
-            ...cooled,
-            drone: { ...cooled.drone, state: "return" },
-          };
+        case "drone:approach": {
+          if (prev.drone.state !== "patrol") return prev;
+          if (prev.activeCount >= ECOSYSTEM_CONFIG.maxActive) return prev;
+          return { ...next, drone: { ...prev.drone, state: "approach", lastActive: now }, activeCount: prev.activeCount + 1 };
+        }
+
+        case "drone:inspect_start": {
+          if (prev.drone.state !== "approach") return prev;
+          return { ...next, drone: { ...prev.drone, state: "inspect", lastActive: now } };
+        }
+
+        case "drone:inspect_complete": {
+          if (prev.drone.state !== "inspect") return prev;
+          return { ...next, drone: { ...prev.drone, state: "transfer_energy", lastActive: now } };
         }
 
         case "drone:energy_received": {
           if (prev.drone.state !== "transfer_energy") return prev;
-          const cooled = applyCooldown(prev, "drone");
           return {
-            ...cooled,
-            drone: {
-              ...cooled.drone,
-              state: "return",
-              energy: Math.min(100, cooled.drone.energy + 30),
-            },
-            core: {
-              ...prev.core,
-              state: "energy_transfer",
-              energy: Math.max(0, prev.core.energy - 15),
-            },
+            ...next,
+            drone: { ...prev.drone, state: "return", energy: Math.min(100, prev.drone.energy + 30), lastActive: now },
+            core: { ...prev.core, state: "energy_transfer", energy: Math.max(0, prev.core.energy - 15), lastActive: now },
           };
+        }
+
+        case "drone:return": {
+          if (prev.drone.state !== "return" && prev.drone.state !== "transfer_energy") return prev;
+          return { ...next, drone: { ...prev.drone, state: "patrol", lastActive: now, cooldownUntil: now + ECOSYSTEM_CONFIG.interactionCooldown }, activeCount: Math.max(0, prev.activeCount - 1) };
         }
 
         // ── Crystal Events ────────────────────────────────────
         case "crystal:sync_received": {
+          if (prev.crystal.state !== "dormant") return prev;
           if (!isCooledDown(prev.crystal)) return prev;
-          if (!canActivate(prev)) return prev;
-          return {
-            ...next,
-            crystal: { ...prev.crystal, state: "active" },
-            activeCount: prev.activeCount + 1,
-          };
+          if (prev.activeCount >= ECOSYSTEM_CONFIG.maxActive) return prev;
+          return { ...next, crystal: { ...prev.crystal, state: "resonating", lastActive: now, cooldownUntil: now + ECOSYSTEM_CONFIG.interactionCooldown }, activeCount: prev.activeCount + 1 };
         }
 
         case "crystal:energy_released": {
-          if (prev.crystal.state !== "active" && prev.crystal.state !== "energy_release") return prev;
-          const cooled = applyCooldown(prev, "crystal");
+          if (prev.crystal.state !== "resonating" && prev.crystal.state !== "active" && prev.crystal.state !== "energy_release") return prev;
           return {
-            ...cooled,
-            crystal: {
-              ...cooled.crystal,
-              state: "dormant",
-              energy: Math.max(0, cooled.crystal.energy - event.energy),
-            },
-            activeCount: Math.max(0, cooled.activeCount - 1),
+            ...next,
+            crystal: { ...prev.crystal, state: "dormant", energy: Math.max(0, prev.crystal.energy - event.energy), lastActive: now, cooldownUntil: now + ECOSYSTEM_CONFIG.interactionCooldown },
+            core: { ...prev.core, energy: Math.min(100, prev.core.energy + event.energy) },
+            portal: { ...prev.portal, syncEvents: [...prev.portal.syncEvents, now] },
+            activeCount: Math.max(0, prev.activeCount - 1),
           };
         }
 
-        // ── System Events ─────────────────────────────────────
-        case "system:cooldown_complete": {
+        case "crystal:resonance_boost": {
+          if (prev.crystal.state !== "dormant") return prev;
+          return { ...next, crystal: { ...prev.crystal, energy: Math.min(100, prev.crystal.energy + event.energy), lastActive: now } };
+        }
+
+        // ── Beacon Events ─────────────────────────────────────
+        case "beacon:activate": {
+          if (prev.beacon.state !== "idle") return prev;
+          if (!isCooledDown(prev.beacon)) return prev;
+          if (prev.activeCount >= ECOSYSTEM_CONFIG.maxActive) return prev;
           return {
             ...next,
-            [event.target]: {
-              ...next[event.target],
-              cooldownUntil: 0,
-            },
+            beacon: { ...prev.beacon, state: "active", lastActive: now, cooldownUntil: now + ECOSYSTEM_CONFIG.interactionCooldown },
+            portal: { ...prev.portal, syncEvents: [...prev.portal.syncEvents, now] },
+            activeCount: prev.activeCount + 1,
           };
         }
 
@@ -254,7 +222,6 @@ export function useCreativeEngine() {
   }, []);
 
   // ── Autonomous Ticking ───────────────────────────────────────
-  // The world continues operating regardless of user interaction.
 
   useEffect(() => {
     const tick = setInterval(() => {
@@ -267,13 +234,11 @@ export function useCreativeEngine() {
 
         // Energy regeneration for idle objects
         const regen = (id: ObjectId) => {
-          if (next[id].state === "idle" || next[id].state === "patrol" || next[id].state === "dormant") {
+          const obj = next[id] as { state: string; energy: number };
+          if (obj.state === "idle" || obj.state === "patrol" || obj.state === "dormant") {
             next = {
               ...next,
-              [id]: {
-                ...next[id],
-                energy: Math.min(100, next[id].energy + ECOSYSTEM_CONFIG.energyRegenRate),
-              },
+              [id]: { ...next[id], energy: Math.min(100, obj.energy + ECOSYSTEM_CONFIG.energyRegenRate) },
             };
           }
         };
@@ -281,30 +246,86 @@ export function useCreativeEngine() {
         regen("core");
         regen("crystal");
         regen("drone");
+        regen("beacon");
 
-        // Auto-transition: drone return → patrol
-        if (next.drone.state === "return" && now > next.drone.cooldownUntil) {
-          next = {
-            ...next,
-            drone: { ...next.drone, state: "patrol" },
-          };
+        // ── Crystal state progression ───────────────────────
+        if (next.crystal.state === "resonating" && now - next.crystal.lastActive > 2000) {
+          next = { ...next, crystal: { ...next.crystal, state: "active", lastActive: now } };
+        }
+        if (next.crystal.state === "active" && now - next.crystal.lastActive > 5000) {
+          next = { ...next, crystal: { ...next.crystal, state: "energy_release", lastActive: now } };
         }
 
-        // Auto-transition: core energy_transfer → idle
-        if (next.core.state === "energy_transfer") {
-          next = {
-            ...next,
-            core: { ...next.core, state: "idle" },
-          };
+        // ── Beacon auto-deactivation ───────────────────────
+        if (next.beacon.state === "active" && now - next.beacon.lastActive > ECOSYSTEM_CONFIG.beaconActiveDuration) {
+          next = { ...next, beacon: { ...next.beacon, state: "idle", lastActive: now }, activeCount: Math.max(0, next.activeCount - 1) };
         }
 
-        // Auto-transition: crystal active → dormant (after 6s)
-        if (next.crystal.state === "active" && now - next.crystal.lastActive > 6000) {
+        // ── Portal state progression ──────────────────────
+        if (next.portal.state === "preparing" && now - next.portal.lastActive > ECOSYSTEM_CONFIG.portalPreparingDuration) {
+          next = { ...next, portal: { ...next.portal, state: "opening", lastActive: now } };
+        }
+        if (next.portal.state === "opening" && now - next.portal.lastActive > ECOSYSTEM_CONFIG.portalOpeningDuration) {
+          next = { ...next, portal: { ...next.portal, state: "active", lastActive: now } };
+        }
+        if (next.portal.state === "active" && now - next.portal.lastActive > ECOSYSTEM_CONFIG.portalActiveDuration) {
           next = {
             ...next,
-            crystal: { ...next.crystal, state: "dormant" },
-            activeCount: Math.max(0, next.activeCount - 1),
+            portal: { ...next.portal, state: "synchronizing", lastActive: now },
+            core: { ...next.core, energy: Math.min(100, next.core.energy + 5) },
+            crystal: { ...next.crystal, energy: Math.min(100, next.crystal.energy + 3) },
+            beacon: { ...next.beacon, energy: Math.min(100, next.beacon.energy + 3) },
           };
+        }
+        if (next.portal.state === "synchronizing" && now - next.portal.lastActive > ECOSYSTEM_CONFIG.portalSyncDuration) {
+          next = { ...next, portal: { ...next.portal, state: "closing", lastActive: now } };
+        }
+        if (next.portal.state === "closing" && now - next.portal.lastActive > ECOSYSTEM_CONFIG.portalClosingDuration) {
+          next = { ...next, portal: { ...next.portal, state: "dormant", lastActive: now } };
+        }
+        if (next.portal.state === "dormant") {
+          next = { ...next, portal: { ...next.portal, state: "idle", lastActive: now, syncEvents: [] } };
+        }
+
+        // ── Portal activation conditions ──────────────────
+        if (next.portal.state === "idle" && now >= next.portal.cooldownUntil) {
+          const recentSyncs = next.portal.syncEvents.filter((t) => now - t < ECOSYSTEM_CONFIG.portalSyncWindow);
+          next = { ...next, portal: { ...next.portal, syncEvents: recentSyncs } };
+
+          const coreReady = next.core.energy > ECOSYSTEM_CONFIG.portalEnergyThreshold;
+          const beaconActive = next.beacon.state === "active";
+          const crystalRecentlyReleased = now - next.crystal.lastActive < 3000 && next.crystal.state === "dormant";
+          const multipleSyncs = recentSyncs.length >= ECOSYSTEM_CONFIG.portalSyncThreshold;
+
+          if ((coreReady && beaconActive && crystalRecentlyReleased) || multipleSyncs) {
+            next = { ...next, portal: { ...next.portal, state: "preparing", lastActive: now, cooldownUntil: now + ECOSYSTEM_CONFIG.portalActivationCooldown } };
+          }
+        }
+
+        // ── Occasional energy fluctuation ───────────────────
+        if (next.core.state === "idle" && Math.random() < 0.003) {
+          const drop = 8 + Math.floor(Math.random() * 12);
+          const newEnergy = Math.max(20, next.core.energy - drop);
+          next = { ...next, core: { ...next.core, energy: newEnergy, state: newEnergy < 40 ? "low_power" : next.core.state, lastActive: now } };
+        }
+
+        // ── Safety timeouts ─────────────────────────────────
+        const maxState = ECOSYSTEM_CONFIG.maxStateTime;
+
+        if (next.core.state !== "idle" && now - next.core.lastActive > maxState) {
+          next = { ...next, core: { ...next.core, state: "idle", lastActive: now, cooldownUntil: now + 5000 }, activeCount: Math.max(0, next.activeCount - 1) };
+        }
+        if (next.drone.state !== "patrol" && now - next.drone.lastActive > maxState) {
+          next = { ...next, drone: { ...next.drone, state: "patrol", lastActive: now, cooldownUntil: now + 5000 }, activeCount: Math.max(0, next.activeCount - 1) };
+        }
+        if (next.crystal.state !== "dormant" && now - next.crystal.lastActive > maxState) {
+          next = { ...next, crystal: { ...next.crystal, state: "dormant", lastActive: now, cooldownUntil: now + 5000 }, activeCount: Math.max(0, next.activeCount - 1) };
+        }
+        if (next.beacon.state !== "idle" && now - next.beacon.lastActive > maxState) {
+          next = { ...next, beacon: { ...next.beacon, state: "idle", lastActive: now, cooldownUntil: now + 5000 }, activeCount: Math.max(0, next.activeCount - 1) };
+        }
+        if (next.portal.state !== "idle" && now - next.portal.lastActive > maxState) {
+          next = { ...next, portal: { ...next.portal, state: "idle", lastActive: now, cooldownUntil: now + ECOSYSTEM_CONFIG.portalActivationCooldown, syncEvents: next.portal.syncEvents.filter((t) => now - t < ECOSYSTEM_CONFIG.portalSyncWindow) } };
         }
 
         return next;
@@ -325,7 +346,6 @@ export function useCreativeEngine() {
   }, [processEvent]);
 
   // ── Reduced Motion ───────────────────────────────────────────
-  // Initial state handled by createInitialState. This only watches for changes.
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -337,35 +357,19 @@ export function useCreativeEngine() {
 
   // ── Public API ───────────────────────────────────────────────
 
-  const getObjectState = useCallback(
-    (id: ObjectId) => stateRef.current[id] as ObjectState,
-    []
-  );
-
-  const isActive = useCallback(
-    (id: ObjectId) => {
-      const s = stateRef.current[id];
-      return s.state !== "idle" && s.state !== "patrol" && s.state !== "dormant";
-    },
-    []
-  );
-
   return {
     state,
     processEvent,
-    getObjectState,
-    isActive,
-    /** Derived visual variants */
     coreVariant: coreStateToVariant(state.core.state),
     crystalVariant: crystalStateToVariant(state.crystal.state),
     droneVariant: droneStateToVariant(state.drone.state),
-    /** Energy levels */
+    beaconVariant: beaconStateToVariant(state.beacon.state),
+    portalVariant: portalStateToVariant(state.portal.state),
     coreEnergy: state.core.energy,
     crystalEnergy: state.crystal.energy,
     droneEnergy: state.drone.energy,
-    /** System flags */
-    canActivate: canActivate(state),
-    heroVisible: state.heroVisible,
+    beaconEnergy: state.beacon.energy,
+    canActivate: state.activeCount < ECOSYSTEM_CONFIG.maxActive,
     reducedMotion: state.reducedMotion,
   };
 }
