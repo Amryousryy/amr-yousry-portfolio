@@ -51,7 +51,7 @@ export default function HeroSection({ content = DEFAULT_CONTENT }: { content?: H
 
       <Container className="relative z-10">
         <div className="text-center w-full max-w-[820px] min-w-0 mx-auto">
-          <div className="mb-8">
+          <div className="mb-6">
             <h1
               className="hero-reveal-headline font-black text-white tracking-tighter leading-[1.05] sm:leading-[0.95] text-center text-[clamp(2.15rem,10vw,3.35rem)] md:text-[clamp(3rem,7vw,6rem)]"
               style={{ textWrap: 'balance' }}
@@ -60,29 +60,6 @@ export default function HeroSection({ content = DEFAULT_CONTENT }: { content?: H
                 <span key={i} className="level-title block">{line}</span>
               ))}
             </h1>
-
-            <p
-              className="hero-reveal-paragraph text-slate-300/80 font-normal px-2 sm:px-1"
-              style={{
-                fontSize: 'clamp(0.95rem, 4vw, 1.35rem)',
-                lineHeight: '1.55',
-                maxWidth: '580px',
-                margin: '1.25rem auto 0',
-                textWrap: 'pretty'
-              }}
-            >
-              {(() => {
-                const target = 'for brands';
-                const idx = content.subheadline.indexOf(target);
-                if (idx === -1) return content.subheadline;
-                return (
-                  <>
-                    <span className="block">{content.subheadline.slice(0, idx).trim()}</span>
-                    <span className="block">{content.subheadline.slice(idx)}</span>
-                  </>
-                );
-              })()}
-            </p>
           </div>
 
           <div className="mb-8">
