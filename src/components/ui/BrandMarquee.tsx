@@ -32,7 +32,7 @@ export default function BrandMarquee() {
   return (
     <div className="bg-brand-blue/80 border-y border-slate-800/50 py-8 md:py-12 overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 mb-6 md:mb-8">
-        <p className="font-pixel text-brand-cyan/60 text-[10px] tracking-[0.3em] uppercase text-center">
+        <p className="font-pixel text-brand-cyan/60 text-[11px] tracking-[0.3em] uppercase text-center">
           Trusted By
         </p>
       </div>

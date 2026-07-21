@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { useZoneFeature } from "./use-zone-feature";
 import type { RenderConfig } from "@/types/world";
+import { mulberry32 } from "@/lib/seeded-random";
 
 interface WorldCityLightsProps {
   config: RenderConfig;
@@ -16,25 +17,29 @@ interface WindowData {
   delay: number;
 }
 
-function generateWindows(density: number): WindowData[] {
+function generateWindows(density: number, rng: () => number): WindowData[] {
   const cols = 20;
   const rows = 8;
   const positions: WindowData[] = [];
 
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-      if (Math.random() > density) continue;
+      if (rng() > density) continue;
       positions.push({
         left: (c / cols) * 96 + 2,
         top: (r / rows) * 55 + 25,
-        pulse: Math.random() < 0.3,
-        duration: 5 + Math.random() * 5,
-        delay: Math.random() * 8,
+        pulse: rng() < 0.3,
+        duration: 5 + rng() * 5,
+        delay: rng() * 8,
       });
     }
   }
 
   return positions;
+}
+
+function computeSeed(config: RenderConfig): number {
+  return Math.round(config.features.city.density * 10000) + 9000;
 }
 
 export default function WorldCityLights({ config }: WorldCityLightsProps) {
@@ -43,8 +48,8 @@ export default function WorldCityLights({ config }: WorldCityLightsProps) {
   );
 
   const windows = useMemo(
-    () => generateWindows(config.features.city.density),
-    [config.features.city.density]
+    () => generateWindows(config.features.city.density, mulberry32(computeSeed(config))),
+    [config]
   );
 
   if (!shouldRender) return null;

@@ -3,8 +3,8 @@
 import { motion } from "framer-motion";
 import { PixelButton } from "@/components/ui/pixel-button";
 import { contactContent } from "@/content/contact";
-import { ChevronDown, Zap } from "lucide-react";
-import { FormEvent } from "react";
+import { ChevronDown } from "lucide-react";
+import { FormEvent, useState } from "react";
 
 interface ContactFormData {
   name: string;
@@ -27,6 +27,13 @@ interface ContactFormProps {
 }
 
 export default function ContactForm({ formData, errors, onChange, onSubmit }: ContactFormProps) {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = (e: FormEvent) => {
+    setSubmitting(true);
+    onSubmit(e);
+  };
+
   return (
     <div id="project-inquiry" className="lg:col-span-7">
       <motion.div 
@@ -39,11 +46,7 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
         <div className="absolute -top-3 left-0 right-0 flex flex-wrap justify-end gap-1.5 z-10">
           <div className="flex items-center gap-1.5 px-2.5 py-1 bg-brand-blue/90 border border-slate-700/60">
             <div className="w-1.5 h-1.5 rounded-full bg-brand-cyan animate-pulse" />
-            <span className="font-pixel text-[7px] text-brand-cyan/80 tracking-[0.25em] uppercase">Terminal Active</span>
-          </div>
-          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-brand-blue/90 border border-slate-700/60">
-            <Zap size={9} className="text-brand-cyan/70" />
-            <span className="font-pixel text-[7px] text-brand-cyan/70 tracking-[0.25em] uppercase">Secure Link</span>
+            <span className="font-pixel text-[8px] text-brand-cyan/80 tracking-[0.25em] uppercase">Terminal Active</span>
           </div>
         </div>
 
@@ -54,12 +57,12 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
           />
 
           <form 
-            onSubmit={onSubmit}
+            onSubmit={handleSubmit}
             className="relative z-10"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label htmlFor="contact-name" className="font-pixel text-[9px] text-brand-cyan/80 tracking-[0.2em] uppercase block px-1">
+                <label htmlFor="contact-name" className="font-pixel text-[10px] text-brand-cyan/80 tracking-[0.2em] uppercase block px-1">
                   {contactContent.form.labels.name}
                 </label>
                 <input 
@@ -71,14 +74,14 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
                   placeholder={contactContent.form.placeholders.name}
                   aria-invalid={errors.name ? "true" : undefined}
                   aria-describedby={errors.name ? "contact-error" : undefined}
-                  className={`w-full min-h-[48px] bg-slate-800/30 border-2 px-4 py-3.5 font-modern text-white placeholder:text-text-dim/40 outline-none transition-all duration-300 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue
+                   className={`w-full min-h-[48px] bg-slate-800/30 border-2 px-4 py-3.5 font-modern text-white placeholder:text-text-dim/40 outline-none transition-all duration-300 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue
                     ${errors.name 
                       ? 'border-red-400/60 focus:border-red-400 focus:bg-slate-800/70' 
-                      : 'border-slate-800 hover:border-slate-700 focus:border-brand-cyan/60 focus:bg-slate-800/60 focus:shadow-[0_0_12px_-4px_#22D3EE]'}`}
+                      : 'border-slate-800 hover:border-slate-700 active:border-slate-700 focus:border-brand-cyan/60 focus:bg-slate-800/60 focus:shadow-[0_0_12px_-4px_#22D3EE]'}`}
                 />
               </div>
               <div className="space-y-2">
-                <label htmlFor="contact-email" className="font-pixel text-[9px] text-brand-cyan/80 tracking-[0.2em] uppercase block px-1">
+                <label htmlFor="contact-email" className="font-pixel text-[10px] text-brand-cyan/80 tracking-[0.2em] uppercase block px-1">
                   {contactContent.form.labels.email}
                 </label>
                 <input 
@@ -93,13 +96,13 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
                   className={`w-full min-h-[48px] bg-slate-800/30 border-2 px-4 py-3.5 font-modern text-white placeholder:text-text-dim/40 outline-none transition-all duration-300 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue
                     ${errors.email 
                       ? 'border-red-400/60 focus:border-red-400 focus:bg-slate-800/70' 
-                      : 'border-slate-800 hover:border-slate-700 focus:border-brand-cyan/60 focus:bg-slate-800/60 focus:shadow-[0_0_12px_-4px_#22D3EE]'}`}
+                      : 'border-slate-800 hover:border-slate-700 active:border-slate-700 focus:border-brand-cyan/60 focus:bg-slate-800/60 focus:shadow-[0_0_12px_-4px_#22D3EE]'}`}
                 />
               </div>
             </div>
 
             <div className="space-y-2 mt-6">
-                <label htmlFor="contact-service" className="font-pixel text-[9px] text-brand-cyan/80 tracking-[0.2em] uppercase block px-1">
+                <label htmlFor="contact-service" className="font-pixel text-[10px] text-brand-cyan/80 tracking-[0.2em] uppercase block px-1">
                 {contactContent.form.labels.service}
               </label>
               <div className="relative">
@@ -108,7 +111,7 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
                   name="service"
                   value={formData.service}
                   onChange={onChange}
-                  className="w-full min-h-[48px] bg-slate-800/30 border-2 border-slate-800 hover:border-slate-700 px-4 py-3.5 font-modern text-white focus:border-brand-cyan/60 focus:bg-slate-800/60 focus:shadow-[0_0_12px_-4px_#22D3EE] outline-none transition-all duration-300 appearance-none cursor-pointer text-base pr-12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
+                  className="w-full min-h-[48px] bg-slate-800/30 border-2 border-slate-800 hover:border-slate-700 active:border-slate-700 px-4 py-3.5 font-modern text-white focus:border-brand-cyan/60 focus:bg-slate-800/60 focus:shadow-[0_0_12px_-4px_#22D3EE] outline-none transition-all duration-300 appearance-none cursor-pointer text-base pr-12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
                 >
                   {contactContent.form.services.map((service) => (
                     <option key={service} value={service} className="bg-slate-900">{service}</option>
@@ -121,7 +124,7 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
             </div>
 
             <div className="space-y-2 mt-6">
-                <label htmlFor="contact-message" className="font-pixel text-[9px] text-brand-cyan/80 tracking-[0.2em] uppercase block px-1">
+                <label htmlFor="contact-message" className="font-pixel text-[10px] text-brand-cyan/80 tracking-[0.2em] uppercase block px-1">
                 {contactContent.form.labels.message}
               </label>
               <textarea 
@@ -133,10 +136,10 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
                 placeholder={contactContent.form.placeholders.message}
                 aria-invalid={errors.message ? "true" : undefined}
                 aria-describedby={errors.message ? "contact-error" : undefined}
-                className={`w-full bg-slate-800/30 border-2 px-4 py-3.5 font-modern text-white placeholder:text-text-dim/40 outline-none transition-all duration-300 resize-none text-base leading-relaxed min-h-[140px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue
-                  ${errors.message 
-                    ? 'border-red-400/60 focus:border-red-400 focus:bg-slate-800/70' 
-                    : 'border-slate-800 hover:border-slate-700 focus:border-brand-cyan/60 focus:bg-slate-800/60 focus:shadow-[0_0_12px_-4px_#22D3EE]'}`}
+                   className={`w-full bg-slate-800/30 border-2 px-4 py-3.5 font-modern text-white placeholder:text-text-dim/40 outline-none transition-all duration-300 resize-none text-base leading-relaxed min-h-[140px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue
+                    ${errors.message 
+                      ? 'border-red-400/60 focus:border-red-400 focus:bg-slate-800/70' 
+                      : 'border-slate-800 hover:border-slate-700 active:border-slate-700 focus:border-brand-cyan/60 focus:bg-slate-800/60 focus:shadow-[0_0_12px_-4px_#22D3EE]'}`}
               />
             </div>
 
@@ -152,7 +155,7 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
                 variant="primary" 
                 className="w-full py-6 text-xs tracking-[0.22em] sm:tracking-[0.3em] font-bold"
               >
-                {contactContent.form.labels.submit.toUpperCase()}
+                {submitting ? "Preparing your creative brief…" : contactContent.form.labels.submit.toUpperCase()}
               </PixelButton>
             </div>
           </form>

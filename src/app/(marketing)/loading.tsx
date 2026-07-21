@@ -40,7 +40,7 @@ export default function Loading() {
         <div className="w-32 h-1 border border-brand-cyan/30 p-[1px] bg-[#0A0A0F]">
           <div ref={barRef} className="h-full bg-brand-cyan/60 animate-[loadingBarFill_1s_ease-in-out_infinite]" />
         </div>
-        <p className="font-pixel text-brand-cyan/50 text-[7px] tracking-[0.3em]">
+        <p className="font-pixel text-brand-cyan/50 text-[9px] tracking-[0.3em]">
           LOADING
         </p>
       </div>

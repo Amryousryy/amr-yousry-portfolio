@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { aboutContent as staticAboutContent } from "@/content/about";
@@ -14,6 +15,7 @@ interface AboutSectionProps {
 
 export default function AboutSection({ aboutData }: AboutSectionProps) {
   const aboutContent = normalizeAboutContent(aboutData, staticAboutContent);
+  const [storyExpanded, setStoryExpanded] = useState(false);
 
   return (
     <Section id="about" className="relative py-14 md:py-20">
@@ -32,7 +34,7 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                className="font-pixel text-brand-cyan text-[9px] sm:text-[10px] tracking-[0.24em] sm:tracking-[0.3em] uppercase mb-3 block"
+                className="font-pixel text-brand-cyan text-[10px] sm:text-[11px] tracking-[0.24em] sm:tracking-[0.3em] uppercase mb-3 block"
               >
                 {aboutContent.badge}
               </motion.span>
@@ -54,13 +56,34 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
               </motion.h2>
               
               <div className="space-y-4 mt-6">
-                {aboutContent.story.map((paragraph, index) => (
+                {aboutContent.story.slice(0, 2).map((paragraph, index) => (
                   <motion.p 
                     key={index}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
+                    className="text-sm md:text-base text-foreground/70 leading-relaxed"
+                    style={{ textWrap: 'pretty', maxWidth: '60ch' }}
+                  >
+                    {paragraph}
+                  </motion.p>
+                ))}
+                {aboutContent.story.length > 2 && !storyExpanded && (
+                  <button
+                    type="button"
+                    onClick={() => setStoryExpanded(true)}
+                    className="font-pixel text-[11px] text-brand-cyan/70 hover:text-brand-cyan tracking-wider transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
+                  >
+                    Continue the story →
+                  </button>
+                )}
+                {storyExpanded && aboutContent.story.slice(2).map((paragraph, index) => (
+                  <motion.p
+                    key={index + 2}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
                     className="text-sm md:text-base text-foreground/70 leading-relaxed"
                     style={{ textWrap: 'pretty', maxWidth: '60ch' }}
                   >
@@ -80,7 +103,7 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
                 <p className="text-sm text-foreground/60 mb-3">
                   {aboutContent.ctaIntro}
                 </p>
-                <Link href={aboutContent.ctaLink} className="group inline-flex min-h-[44px] max-w-full items-center gap-3 sm:gap-4 text-sm font-bold uppercase tracking-[0.16em] sm:tracking-[0.2em] border-b border-brand-cyan pb-2">
+                <Link href={aboutContent.ctaLink} className="group inline-flex min-h-[44px] max-w-full items-center gap-3 sm:gap-4 text-sm font-bold uppercase tracking-[0.16em] sm:tracking-[0.2em] border-b border-brand-cyan py-2">
                   <span>{aboutContent.ctaLabel}</span>
                   <div className="w-8 h-[1px] bg-brand-cyan transition-all group-hover:w-16" />
                 </Link>
@@ -88,21 +111,21 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
             </div>
 
             {/* Capability Cards - Below Text */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 w-full max-w-[620px]">
+            <div className="flex sm:grid sm:grid-cols-2 gap-4 pt-4 w-full max-w-[620px] overflow-x-auto snap-x snap-mandatory scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent" style={{ scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}>
               {aboutContent.skillClusters.map((cluster) => (
                 <motion.div 
                   key={cluster.title}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  className="bg-slate-900/30 border-2 border-slate-800 p-4 w-full min-w-0"
+                  className="bg-slate-900/30 border-2 border-slate-800 p-4 w-full min-w-[260px] sm:min-w-0 shrink-0 snap-start"
                 >
-                  <h4 className="font-pixel text-[10px] text-brand-cyan tracking-wider mb-3">{cluster.title}</h4>
+                  <h4 className="font-pixel text-[11px] text-brand-cyan tracking-wider mb-3">{cluster.title}</h4>
                   <div className="flex flex-wrap gap-1.5">
                     {cluster.skills.map((skill) => (
                       <span
                         key={skill}
-                        className="border border-slate-700 bg-slate-800/50 px-2 py-1 text-[10px] sm:text-[11px] font-modern text-slate-300/85 uppercase tracking-wider hover:border-brand-cyan hover:text-white transition-colors"
+                        className="border border-slate-700 bg-slate-800/50 px-2 py-1 text-[10px] sm:text-[11px] font-modern text-slate-300/85 uppercase tracking-wider hover:border-brand-cyan hover:text-white active:border-brand-cyan active:text-white transition-colors"
                       >
                         {skill}
                       </span>
@@ -116,7 +139,7 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="bg-slate-900/30 border-2 border-slate-800 p-4 w-full min-w-0 sm:col-span-2"
+                className="bg-slate-900/30 border-2 border-slate-800 p-4 w-full min-w-[260px] sm:min-w-0 shrink-0 snap-start sm:col-span-2"
               >
                 <h4 className="font-pixel text-[10px] text-brand-cyan tracking-wider mb-3">MISSION SECTORS</h4>
                 <div className="flex flex-wrap gap-1.5">
@@ -146,8 +169,8 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
                   transition={{ delay: index * 0.08 }}
                   className="flex items-baseline justify-between gap-4 border-t-2 border-slate-800 py-3"
                 >
-                  <span className="font-pixel text-[8px] sm:text-[9px] text-brand-cyan/70 tracking-[0.2em] uppercase min-w-0">{stat.label}</span>
-                  <span className="font-pixel text-[10px] sm:text-xs text-white whitespace-nowrap leading-none text-right tracking-wide">{stat.value}</span>
+                  <span className="font-pixel text-[9px] sm:text-[10px] text-brand-cyan/70 tracking-[0.2em] uppercase min-w-0">{stat.label}</span>
+                  <span className="font-pixel text-[11px] sm:text-xs text-white whitespace-nowrap leading-none text-right tracking-wide">{stat.value}</span>
                 </motion.div>
               ))}
             </div>

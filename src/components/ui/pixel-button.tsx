@@ -35,7 +35,7 @@ export function PixelButton({
   const variants = {
     primary: "bg-brand-cyan text-brand-blue border-brand-blue border-b-4 border-r-4 hover:translate-x-[2px] hover:translate-y-[2px] hover:border-b-2 hover:border-r-2 active:translate-x-[4px] active:translate-y-[4px] active:border-b-0 active:border-r-0",
     secondary: "bg-brand-purple text-white border-brand-blue border-b-4 border-r-4 hover:translate-x-[2px] hover:translate-y-[2px] hover:border-b-2 hover:border-r-2 active:translate-x-[4px] active:translate-y-[4px] active:border-b-0 active:border-r-0",
-    outline: "bg-transparent border-2 border-slate-800 hover:bg-slate-800 text-text-dim hover:text-white",
+    outline: "bg-transparent border-2 border-slate-800 hover:bg-slate-800 active:bg-slate-800 text-text-dim hover:text-white active:text-white",
   };
 
   const sizes = {
@@ -45,7 +45,7 @@ export function PixelButton({
   };
 
   const classes = cn(
-    "font-pixel uppercase transition-all duration-[160ms] relative inline-flex min-h-[44px] max-w-full items-center justify-center text-center leading-tight whitespace-normal break-words focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue",
+    "font-pixel uppercase transition-all duration-[160ms] relative inline-flex min-h-[44px] max-w-full items-center justify-center text-center leading-tight whitespace-normal break-words cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue",
     variants[variant],
     sizes[size],
     className

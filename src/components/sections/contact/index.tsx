@@ -106,7 +106,7 @@ export default function ContactSection({ contactData }: ContactSectionProps) {
               className="flex min-w-0 items-center gap-3 sm:gap-4 mb-8"
             >
               <div className="h-[2px] w-8 sm:w-12 bg-brand-cyan shrink-0" />
-              <span className="font-pixel text-brand-cyan text-[9px] sm:text-[10px] tracking-[0.22em] sm:tracking-[0.3em] uppercase">
+              <span className="font-pixel text-brand-cyan text-[10px] sm:text-[11px] tracking-[0.22em] sm:tracking-[0.3em] uppercase">
                 Mission Control
               </span>
             </motion.div>
@@ -141,7 +141,7 @@ export default function ContactSection({ contactData }: ContactSectionProps) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.15 }}
-              className="font-pixel text-[8px] text-brand-cyan/80 tracking-[0.15em] mt-4 mb-10"
+              className="font-pixel text-[9px] text-brand-cyan/80 tracking-[0.15em] mt-4 mb-10"
             >
               {contactContent.availability}
             </motion.p>

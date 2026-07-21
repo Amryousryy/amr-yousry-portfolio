@@ -21,12 +21,22 @@ export default function WorldRoot({ children }: WorldRootProps) {
       ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
       : false
   );
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 768 : true
+  );
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
   }, []);
 
   useEffect(() => {
@@ -52,12 +62,16 @@ export default function WorldRoot({ children }: WorldRootProps) {
 
   return (
     <WorldContext.Provider value={{ state: worldState, updateZone }}>
-      <div className="world-root" data-theme={worldState.activeTheme} data-zone={timeline.currentZone} aria-hidden="true">
-        <WorldTimeline currentZone={timeline.currentZone} onZoneChange={updateZone}>
-          <Environment />
-        </WorldTimeline>
-        <div className="world-connection" aria-hidden="true" />
-      </div>
+      {isMobile ? (
+        <div className="world-root world-root--mobile" data-theme={worldState.activeTheme} aria-hidden="true" />
+      ) : (
+        <div className="world-root" data-theme={worldState.activeTheme} data-zone={timeline.currentZone} aria-hidden="true">
+          <WorldTimeline currentZone={timeline.currentZone} onZoneChange={updateZone}>
+            <Environment />
+          </WorldTimeline>
+          <div className="world-connection" aria-hidden="true" />
+        </div>
+      )}
       {children}
     </WorldContext.Provider>
   );

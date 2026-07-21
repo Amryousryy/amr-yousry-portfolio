@@ -116,7 +116,7 @@ export default function FilmStripSection() {
             key={project._id}
             href={`/projects/${project.slug}`}
             data-project
-            className="case-study-card w-full max-w-[440px] md:w-[450px] mx-auto md:mx-0 md:flex-shrink-0 bg-[#0a0a0f] border border-white/5 relative group cursor-pointer overflow-hidden transition-colors duration-500 hover:border-accent/30"
+            className="case-study-card w-full max-w-[440px] md:w-[450px] mx-auto md:mx-0 md:flex-shrink-0 bg-[#0a0a0f] border border-white/5 relative group cursor-pointer overflow-hidden transition-colors duration-500 hover:border-accent/30 active:border-accent/30"
             style={{ 
               contentVisibility: 'auto', 
               containIntrinsicSize: 'auto 600px',
@@ -141,7 +141,7 @@ export default function FilmStripSection() {
 
               {project.category && (
                 <div className="absolute top-4 right-4">
-                  <span className="pixel-text text-accent text-[8px] sm:text-[9px] bg-accent/10 backdrop-blur-md px-2.5 sm:px-3 py-1.5 border border-accent/20 uppercase tracking-widest">
+                  <span className="pixel-text text-accent text-[9px] sm:text-[10px] bg-accent/10 backdrop-blur-md px-2.5 sm:px-3 py-1.5 border border-accent/20 uppercase tracking-widest">
                     {project.category}
                   </span>
                 </div>
@@ -150,7 +150,7 @@ export default function FilmStripSection() {
 
             <div className="p-5 sm:p-8 space-y-4">
               <div className="space-y-1">
-                <span className="pixel-text text-white/30 text-[9px] uppercase tracking-widest">Selected Work</span>
+                <span className="pixel-text text-white/30 text-[10px] uppercase tracking-widest">Selected Work</span>
                 <h3 className="text-xl sm:text-2xl font-display font-bold text-white tracking-tighter group-hover:text-accent transition-colors duration-300 break-words leading-tight">
                   {project.title}
                 </h3>
@@ -161,10 +161,10 @@ export default function FilmStripSection() {
               </p>
 
               <div className="pt-4 flex flex-wrap items-center justify-between gap-3 border-t border-white/5">
-                <span className="pixel-text text-white/30 text-[9px] uppercase tracking-widest">
+                <span className="pixel-text text-white/30 text-[10px] uppercase tracking-widest">
                   {project.year || "2026"}
                 </span>
-                <span className="text-accent text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
+                <span className="text-accent text-[10px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0 group-active:translate-x-0">
                   View Case Study →
                 </span>
               </div>

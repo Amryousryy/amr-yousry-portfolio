@@ -36,7 +36,7 @@ function MediaTypeBadge({ kind, provider }: { kind: string; provider?: string | 
     : <ImageIcon size={10} />;
 
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-background/80 border border-primary/20 text-[8px] font-bold uppercase tracking-wider text-foreground/60">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-background/80 border border-primary/20 text-[9px] font-bold uppercase tracking-wider text-foreground/60">
       {icon}
       {provider || label}
     </span>
@@ -64,7 +64,7 @@ function MediaErrorFallback({ item }: { item: ProjectMediaItem }) {
           {isVideo ? "Video cannot be previewed right now." : "Media unavailable"}
         </span>
         {isVideo && (
-          <span className="text-[8px] text-foreground/20 uppercase tracking-wider text-center">
+          <span className="text-[9px] text-foreground/20 uppercase tracking-wider text-center">
             Try again shortly or open the video directly.
           </span>
         )}
@@ -292,7 +292,7 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
           </span>
         )}
         {item.provider && (
-          <span className="absolute bottom-0 left-0 right-0 bg-background/80 text-[7px] text-foreground/50 text-center uppercase leading-tight py-0.5 truncate px-1">
+          <span className="absolute bottom-0 left-0 right-0 bg-background/80 text-[8px] text-foreground/50 text-center uppercase leading-tight py-0.5 truncate px-1">
             {item.provider}
           </span>
         )}

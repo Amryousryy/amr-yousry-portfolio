@@ -53,7 +53,7 @@ function ReadingCard({ children }: { children: React.ReactNode }) {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="font-pixel text-brand-cyan text-xs sm:text-sm tracking-widest uppercase mb-6">
+    <h2 className="font-pixel text-brand-cyan text-[11px] sm:text-sm tracking-widest uppercase mb-6">
       {children}
     </h2>
   );
@@ -81,7 +81,7 @@ function SpacerSm() {
 
 function ChapterLabel({ number, question }: { number: string; question: string }) {
   return (
-    <span className="font-pixel text-[9px] text-foreground/30 tracking-widest uppercase block mb-1">
+    <span className="font-pixel text-[10px] text-foreground/30 tracking-widest uppercase block mb-1">
       <span className="text-foreground/50">{number}</span> / {question}
     </span>
   );
@@ -240,7 +240,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
 
                       <div className="space-y-4">
                         <div>
-                          <span className="font-pixel text-[9px] text-brand-cyan/60 tracking-widest uppercase block mb-1.5">
+                          <span className="font-pixel text-[10px] text-brand-cyan/60 tracking-widest uppercase block mb-1.5">
                             Rationale
                           </span>
                           <p className="font-modern text-sm md:text-base text-foreground/70 leading-relaxed">
@@ -250,7 +250,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
 
                         {kd.alternativeConsidered && (
                           <div className="pl-4 md:pl-6 border-l border-amber-400/20">
-                            <span className="font-pixel text-[9px] text-amber-400/60 tracking-widest uppercase block mb-1.5">
+                            <span className="font-pixel text-[10px] text-amber-400/60 tracking-widest uppercase block mb-1.5">
                               Alternative Considered
                             </span>
                             <p className="font-modern text-sm md:text-base text-foreground/60 leading-relaxed">
@@ -261,7 +261,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
 
                         {kd.whyRejected && (
                           <div className="pl-4 md:pl-6 border-l border-red-400/20">
-                            <span className="font-pixel text-[9px] text-red-400/50 tracking-widest uppercase block mb-1.5">
+                            <span className="font-pixel text-[10px] text-red-400/50 tracking-widest uppercase block mb-1.5">
                               Why It Was Rejected
                             </span>
                             <p className="font-modern text-sm md:text-base text-foreground/60 leading-relaxed">
@@ -271,7 +271,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
                         )}
 
                         <div className="pl-4 md:pl-6 border-l border-brand-cyan/20">
-                          <span className="font-pixel text-[9px] text-brand-cyan tracking-widest uppercase block mb-1.5">
+                          <span className="font-pixel text-[10px] text-brand-cyan tracking-widest uppercase block mb-1.5">
                             Business Impact
                           </span>
                           <p className="font-modern text-sm md:text-base text-brand-cyan/80 leading-relaxed">
@@ -318,7 +318,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
                       {steps.map((step, idx) => (
                         <div key={idx} className="relative pl-8">
                           <span className="absolute left-0 top-1 w-[15px] h-[15px] rounded-full border border-brand-cyan/30 bg-background flex items-center justify-center">
-                            <span className="text-[7px] font-pixel text-brand-cyan/60">{idx + 1}</span>
+                            <span className="text-[8px] font-pixel text-brand-cyan/60">{idx + 1}</span>
                           </span>
                           <p className="font-modern text-sm md:text-base text-foreground/70 leading-relaxed">
                             {step.trim()}
@@ -348,7 +348,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mt-8">
             <div className="bg-[rgba(8,10,20,0.45)] border border-[rgba(255,255,255,0.05)] backdrop-blur-[12px] p-8 sm:p-10 md:p-14">
-              <span className="font-pixel text-[9px] text-red-400/60 tracking-widest uppercase block mb-4">Before</span>
+              <span className="font-pixel text-[10px] text-red-400/60 tracking-widest uppercase block mb-4">Before</span>
               {beforeAfter!.mediaBefore && (
                 <div className="relative h-44 sm:h-52 mb-5 overflow-hidden">
                   <Image src={beforeAfter!.mediaBefore} alt="Before" fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
@@ -357,7 +357,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
               <NarrativeText>{beforeAfter!.before}</NarrativeText>
             </div>
             <div className="bg-[rgba(8,10,20,0.45)] border border-[rgba(255,255,255,0.05)] backdrop-blur-[12px] p-8 sm:p-10 md:p-14">
-              <span className="font-pixel text-[9px] text-brand-cyan tracking-widest uppercase block mb-4">After</span>
+              <span className="font-pixel text-[10px] text-brand-cyan tracking-widest uppercase block mb-4">After</span>
               {beforeAfter!.mediaAfter && (
                 <div className="relative h-44 sm:h-52 mb-5 overflow-hidden">
                   <Image src={beforeAfter!.mediaAfter} alt="After" fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
@@ -393,7 +393,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
           className="mt-16 md:mt-20"
         >
           <div className="flex items-center gap-4 mb-6">
-            <h2 className="font-pixel text-brand-cyan text-xs sm:text-sm tracking-widest uppercase shrink-0">
+            <h2 className="font-pixel text-brand-cyan text-[11px] sm:text-sm tracking-widest uppercase shrink-0">
               Related Projects
             </h2>
             <div className="flex-1 h-px bg-[rgba(255,255,255,0.04)]" />
@@ -414,9 +414,9 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
                     sizes="(max-width: 640px) 100vw, 50vw"
                   />
                 </div>
-                <div className="flex flex-col justify-between flex-1 pt-1.5 sm:pt-2 px-1.5 sm:px-2 pb-3 sm:pb-4">
+                <div className="flex flex-col justify-between flex-1 pt-2 sm:pt-2 px-3 sm:px-3 pb-3 sm:pb-4">
                   <div>
-                    <span className="font-pixel text-[9px] sm:text-[10px] text-brand-cyan tracking-widest uppercase block mb-2">
+                    <span className="font-pixel text-[10px] sm:text-[11px] text-brand-cyan tracking-widest uppercase block mb-2">
                       {rp.category}
                     </span>
                     <h3 className="font-display font-bold text-sm sm:text-base text-white uppercase leading-tight tracking-tight mb-1.5">
@@ -426,7 +426,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
                       {rp.summary}
                     </p>
                   </div>
-                  <span className="font-pixel text-[9px] text-foreground/50 tracking-widest uppercase inline-flex items-center gap-1.5 self-start">
+                  <span className="font-pixel text-[10px] text-foreground/50 tracking-widest uppercase inline-flex items-center gap-1.5 self-start">
                     View Project
                     <ArrowRight size={10} className="text-foreground/50" />
                   </span>
@@ -463,7 +463,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
                       {item.type === "testimonial" && <span className="text-white">&rdquo;</span>}
                     </p>
                     {item.source && (
-                      <p className="font-pixel text-[9px] text-text-dim tracking-wider uppercase mt-1">
+                      <p className="font-pixel text-[10px] text-text-dim tracking-wider uppercase mt-1">
                         {item.source}
                       </p>
                     )}
@@ -515,7 +515,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
 function FactCard({ question, answer }: { question: string; answer: string }) {
   return (
     <div className="bg-background p-5 sm:p-7">
-      <span className="font-pixel text-[9px] sm:text-[10px] text-brand-cyan tracking-widest uppercase block mb-2">
+      <span className="font-pixel text-[10px] sm:text-[11px] text-brand-cyan tracking-widest uppercase block mb-2">
         {question}
       </span>
       <span className="font-modern text-sm sm:text-base text-foreground/80 leading-relaxed block" style={{ textWrap: "balance" }}>

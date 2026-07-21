@@ -18,9 +18,9 @@ interface ClientDynamicSectionsProps {
 export default function ClientDynamicSections({ projects, aboutData, contactData }: ClientDynamicSectionsProps) {
   return (
     <>
-      <ProjectsSection projects={projects} />
-      <AboutSection aboutData={aboutData} />
-      <ContactSection contactData={contactData} />
+      <div data-reveal><ProjectsSection projects={projects} /></div>
+      <div data-reveal><AboutSection aboutData={aboutData} /></div>
+      <div data-reveal><ContactSection contactData={contactData} /></div>
     </>
   );
 }

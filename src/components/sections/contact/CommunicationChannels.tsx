@@ -24,7 +24,7 @@ export default function CommunicationChannels({
 
   return (
     <div className="pt-6 border-t border-slate-800/60">
-      <h3 className="font-pixel text-[9px] text-brand-cyan/85 mb-6 tracking-[0.3em] uppercase">Communication Channels</h3>
+      <h3 className="font-pixel text-[10px] text-brand-cyan/85 mb-6 tracking-[0.3em] uppercase">Communication Channels</h3>
       
       {/* WhatsApp - Primary */}
       <motion.a 
@@ -40,10 +40,10 @@ export default function CommunicationChannels({
           src="/images/social/whatsapp-pixel-v2.png" 
           wrapperSize={56} 
           scale={1.3} 
-          imgClassName="hover:scale-105 transition-transform duration-200" 
+          imgClassName="group-hover:scale-105 group-active:scale-105 transition-transform duration-200" 
         />
         <div>
-          <span className="group-hover:text-brand-cyan transition-colors tracking-widest block">WHATSAPP</span>
+          <span className="group-hover:text-brand-cyan group-active:text-brand-cyan transition-colors tracking-widest block">WHATSAPP</span>
           <span className="font-modern text-[10px] text-brand-cyan/75 tracking-wider">Fastest response</span>
         </div>
       </motion.a>
@@ -60,10 +60,10 @@ export default function CommunicationChannels({
           src="/images/social/email-pixel-v2.png" 
           wrapperSize={56} 
           scale={1.25} 
-          imgClassName="hover:scale-105 transition-transform duration-200" 
+          imgClassName="group-hover:scale-105 group-active:scale-105 transition-transform duration-200" 
         />
         <div>
-          <span className="group-hover:text-brand-cyan transition-colors tracking-widest block">EMAIL</span>
+          <span className="group-hover:text-brand-cyan group-active:text-brand-cyan transition-colors tracking-widest block">EMAIL</span>
           <span className="font-modern text-[10px] text-brand-cyan/75 tracking-wider">Business inquiries</span>
         </div>
       </motion.a>
@@ -87,13 +87,13 @@ export default function CommunicationChannels({
               target="_blank"
               rel="noopener noreferrer"
               aria-label={social.label}
-              className="bg-slate-800/20 hover:bg-slate-800/40 border border-slate-700/30 rounded-sm"
+              className="bg-slate-800/20 hover:bg-slate-800/40 active:bg-slate-800/40 border border-slate-700/30 rounded-sm group"
             >
               <ContactIconImage 
                 src={cfg.src} 
                 wrapperSize={48} 
                 scale={cfg.scale} 
-                imgClassName="hover:scale-105 transition-transform duration-200" 
+                imgClassName="group-hover:scale-105 group-active:scale-105 transition-transform duration-200" 
               />
               <span className="sr-only">{social.label}</span>
             </motion.a>

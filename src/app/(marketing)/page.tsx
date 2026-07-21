@@ -4,6 +4,7 @@ import { HeroAmbience } from "@/components/sections/hero/HeroAmbience";
 import BrandMarquee from "@/components/ui/BrandMarquee";
 import ClientDynamicSections from "./ClientDynamicSections";
 import { Section } from "@/components/ui/section";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { getFeaturedProjects } from "@/lib/projects/public-projects";
 import { getPublishedHeroContent } from "@/lib/public-homepage-content";
 import { getPublishedAboutContent } from "@/lib/public-homepage-content";
@@ -26,22 +27,22 @@ export default async function Home() {
   ]);
 
   return (
-    <>
+    <ScrollReveal>
       <HeroSection content={heroContent} />
       <HeroAmbience />
 
-      {/* Soft gradient transition: Hero → BrandMarquee */}
-      <div className="h-[2px] bg-gradient-to-r from-transparent via-slate-700/40 to-transparent" />
+      {/* Section transition: Hero → BrandMarquee */}
+      <div className="h-px md:h-[2px] bg-gradient-to-r from-transparent via-slate-600/60 md:via-slate-700/40 to-transparent" />
       
-      <Section className="py-0">
+      <Section className="py-0" data-reveal>
         <BrandMarquee />
       </Section>
 
-      {/* Soft gradient transition: BrandMarquee → Projects */}
-      <div className="h-[2px] bg-gradient-to-r from-transparent via-slate-700/40 to-transparent" />
+      {/* Section transition: BrandMarquee → Projects */}
+      <div className="h-px md:h-[2px] bg-gradient-to-r from-transparent via-slate-600/60 md:via-slate-700/40 to-transparent" />
 
       <ClientDynamicSections projects={featuredProjects} aboutData={aboutContent} contactData={contactData} />
       {/* Other sections will be added here as we rebuild */}
-    </>
+    </ScrollReveal>
   );
 }

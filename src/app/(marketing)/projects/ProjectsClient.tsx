@@ -71,7 +71,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
               setActiveFilter(cat.value);
               trackEvent("category_filter_click", { path: "/projects", category: cat.value });
             }}
-            className={`font-pixel text-[9px] sm:text-[10px] tracking-widest uppercase px-4 sm:px-5 py-2.5 sm:py-3 border-2 transition-all duration-200 min-h-[44px] ${
+            className={`font-pixel text-[10px] sm:text-[11px] tracking-widest uppercase px-4 sm:px-5 py-2.5 sm:py-3 border-2 transition-all duration-200 min-h-[44px] ${
               activeFilter === cat.value
                 ? "bg-brand-cyan text-brand-blue border-brand-cyan"
                 : "bg-transparent text-text-dim border-slate-700 hover:border-brand-cyan hover:text-brand-cyan"

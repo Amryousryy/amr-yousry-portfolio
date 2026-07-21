@@ -28,11 +28,20 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Focus management for mobile menu
+  // Focus management + body scroll lock for mobile menu
   useEffect(() => {
     if (isOpen) {
       requestAnimationFrame(() => firstLinkRef.current?.focus());
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
     }
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    };
   }, [isOpen]);
 
   // Close mobile menu on route change
@@ -47,17 +56,17 @@ export function Navbar() {
           ? "bg-brand-blue/90 backdrop-blur-md border-b border-brand-blue/50 py-3" 
           : "bg-transparent py-6"
       )}
-      style={!scrolled ? { 
-        background: 'linear-gradient(180deg, rgba(30, 27, 75, 0.4) 0%, transparent 100%)',
-        backdropFilter: 'blur(2px)'
-      } : undefined}
+      style={scrolled 
+        ? { WebkitBackdropFilter: 'blur(12px)' }
+        : { background: 'linear-gradient(180deg, rgba(30, 27, 75, 0.4) 0%, transparent 100%)' }
+      }
     >
       <Container>
         <nav aria-label="Main navigation" className="flex min-w-0 items-center justify-between gap-3">
           {/* Logo */}
           <Link href="/" className="group flex min-w-0 items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue">
             <Image src="/images/logo.svg" alt="AMR YOUSRY" width={32} height={32} className="w-9 h-9 md:w-10 md:h-10 transition-transform group-hover:scale-105" unoptimized />
-            <span className="font-pixel text-sm text-brand-cyan tracking-[0.2em] hidden sm:inline-block">AMR YOUSRY</span>
+            <span className="font-pixel text-[10px] sm:text-sm text-brand-cyan tracking-[0.2em]">AMR YOUSRY</span>
           </Link>
 
           {/* Desktop Nav */}
@@ -103,18 +112,20 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
+            onClick={() => setIsOpen(false)}
             onKeyDown={(e) => { if (e.key === "Escape") { setIsOpen(false); menuToggleRef.current?.focus(); } }}
             className="absolute top-full left-0 w-full bg-brand-blue/95 backdrop-blur-sm border-b border-slate-800/50 md:hidden"
+            style={{ WebkitBackdropFilter: 'blur(8px)' }}
           >
-            <div className="flex flex-col p-5 gap-4 items-center text-center">
+            <div className="flex flex-col p-5 gap-4 items-center text-center" onClick={(e) => e.stopPropagation()}>
               {navLinks.map((link, i) => (
                 <Link 
                   key={link.label} 
                   ref={i === 0 ? firstLinkRef : undefined}
                   href={link.href}
                   className={cn(
-                    "font-pixel text-sm tracking-widest py-3 min-h-[44px] flex items-center justify-center w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue",
-                    link.isCTA ? "text-brand-cyan" : "text-text-dim hover:text-brand-cyan transition-colors"
+                    "font-pixel text-sm tracking-widest py-3 min-h-[44px] flex items-center justify-center w-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue",
+                    link.isCTA ? "text-brand-cyan" : "text-text-dim hover:text-brand-cyan active:text-brand-cyan transition-colors"
                   )}
                 >
                   {link.label}

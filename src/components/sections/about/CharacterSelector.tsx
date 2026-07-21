@@ -114,7 +114,7 @@ export default function CharacterSelector() {
             onClick={() => handleTransition('prev')}
             disabled={isTransitioning}
             aria-label="Previous character"
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-20 font-pixel text-brand-cyan text-xl bg-slate-900/50 border border-slate-700 hover:border-brand-cyan w-11 h-11 flex items-center justify-center transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-20 font-pixel text-brand-cyan text-xl bg-slate-900/50 border border-slate-700 hover:border-brand-cyan active:border-brand-cyan w-11 h-11 flex items-center justify-center transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
           >
             ‹
           </button>
@@ -125,7 +125,7 @@ export default function CharacterSelector() {
             onClick={() => handleTransition('next')}
             disabled={isTransitioning}
             aria-label="Next character"
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-20 font-pixel text-brand-cyan text-xl bg-slate-900/50 border border-slate-700 hover:border-brand-cyan w-11 h-11 flex items-center justify-center transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-20 font-pixel text-brand-cyan text-xl bg-slate-900/50 border border-slate-700 hover:border-brand-cyan active:border-brand-cyan w-11 h-11 flex items-center justify-center transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
           >
             ›
           </button>

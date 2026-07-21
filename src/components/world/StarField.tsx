@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import type { RenderConfig } from "@/types/world";
+import { mulberry32 } from "@/lib/seeded-random";
 
 interface StarFieldProps {
   config: RenderConfig;
@@ -25,8 +26,8 @@ const TINT_WEIGHTS = [0.6, 0.25, 0.15] as const;
 const BLUR_LEVELS = [0, 0.5, 1] as const;
 const BLUR_WEIGHTS = [0.5, 0.35, 0.15] as const;
 
-function pickWeighted<T>(options: readonly T[], weights: readonly number[]): T {
-  const r = Math.random();
+function pickWeighted<T>(rng: () => number, options: readonly T[], weights: readonly number[]): T {
+  const r = rng();
   let cumulative = 0;
   for (let i = 0; i < options.length; i++) {
     cumulative += weights[i];
@@ -35,12 +36,12 @@ function pickWeighted<T>(options: readonly T[], weights: readonly number[]): T {
   return options[options.length - 1];
 }
 
-function generateStars(density: number): StarConfig[] {
+function generateStars(density: number, rng: () => number): StarConfig[] {
   const count = Math.round(density * MAX_STARS);
   const stars: StarConfig[] = [];
 
   for (let i = 0; i < count; i++) {
-    const group = Math.random();
+    const group = rng();
     let size: number, duration: [number, number], baseOpacity: [number, number], delay: [number, number];
 
     if (group < 0.2) {
@@ -61,24 +62,37 @@ function generateStars(density: number): StarConfig[] {
     }
 
     stars.push({
-      x: Math.random() * 100,
-      y: Math.random() * 60,
+      x: rng() * 100,
+      y: rng() * 60,
       size,
-      duration: duration[0] + Math.random() * (duration[1] - duration[0]),
-      delay: delay[0] + Math.random() * (delay[1] - delay[0]),
-      baseOpacity: baseOpacity[0] + Math.random() * (baseOpacity[1] - baseOpacity[0]),
-      tint: pickWeighted(TINTS, TINT_WEIGHTS),
-      blur: pickWeighted(BLUR_LEVELS, BLUR_WEIGHTS),
+      duration: duration[0] + rng() * (duration[1] - duration[0]),
+      delay: delay[0] + rng() * (delay[1] - delay[0]),
+      baseOpacity: baseOpacity[0] + rng() * (baseOpacity[1] - baseOpacity[0]),
+      tint: pickWeighted(rng, TINTS, TINT_WEIGHTS),
+      blur: pickWeighted(rng, BLUR_LEVELS, BLUR_WEIGHTS),
     });
   }
 
   return stars;
 }
 
+function computeSeed(config: RenderConfig): number {
+  let seed = Math.round(config.atmosphere.starDensity * 10000);
+  const caps = config.capabilities;
+  if (caps.city) seed += 1000;
+  if (caps.cityLights) seed += 2000;
+  if (caps.forest) seed += 3000;
+  if (caps.energyGrid) seed += 4000;
+  if (caps.observatory) seed += 5000;
+  if (caps.comets) seed += 6000;
+  if (caps.aurora) seed += 7000;
+  return seed;
+}
+
 export default function StarField({ config }: StarFieldProps) {
   const stars = useMemo(
-    () => generateStars(config.atmosphere.starDensity),
-    [config.atmosphere.starDensity]
+    () => generateStars(config.atmosphere.starDensity, mulberry32(computeSeed(config))),
+    [config]
   );
 
   if (!config.capabilities.stars) return null;

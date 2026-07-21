@@ -50,7 +50,7 @@ export async function Footer() {
                 <li key={link.label}>
                   <Link 
                     href={link.href}
-                    className="font-modern text-text-dim hover:text-brand-cyan transition-all duration-200 text-sm uppercase tracking-wider inline-block hover:translate-x-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
+                    className="font-modern text-text-dim hover:text-brand-cyan active:text-brand-cyan transition-all duration-200 text-sm uppercase tracking-wider inline-flex items-center min-h-[44px] py-2 hover:translate-x-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
                   >
                     {link.label}
                   </Link>
@@ -69,7 +69,7 @@ export async function Footer() {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-modern text-text-dim hover:text-brand-cyan transition-all duration-200 text-sm uppercase tracking-wider inline-flex flex-wrap items-center gap-2 group hover:translate-x-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
+                    className="font-modern text-text-dim hover:text-brand-cyan active:text-brand-cyan transition-all duration-200 text-sm uppercase tracking-wider inline-flex flex-wrap items-center gap-2 group min-h-[44px] py-2 hover:translate-x-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
                   >
                     <span>{social.label}</span>
                     <span className="font-pixel text-[8px] opacity-0 group-hover:opacity-100 transition-opacity">LVL. UP</span>

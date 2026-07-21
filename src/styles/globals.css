@@ -79,6 +79,14 @@
   svg {
     max-width: 100%;
   }
+
+  a, button, [role="button"], [role="link"], input, select, textarea, label, summary {
+    touch-action: manipulation;
+  }
+
+  input, select, textarea {
+    font-size: 16px;
+  }
 }
 
 @layer components {
@@ -162,13 +170,15 @@
 }
 
 /* ═══════════════════════════════════════════════
-   BOOT SEQUENCE v2 — Retro Pixel Creative Engine
+   BOOT SEQUENCE v4 — Premium SNES Pixel Refinement
    
-   Premium pixel OS aesthetic. 16-bit style.
+   Three-element hierarchy: Logo → Tagline → Loading Bar
+   Staged entrance, smart timing, accessibility-first.
+   Purple identity (#7C3AED) with cyan accent light (#22D3EE).
    All transform/opacity. GPU-friendly.
    ═══════════════════════════════════════════════ */
 
-/* ── Overlay: Almost-black purple with vignette ── */
+/* ── Overlay: Near-black with subtle purple atmosphere ── */
 .boot-overlay {
   position: fixed;
   inset: 0;
@@ -177,12 +187,43 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #0D0A1A;
-  transition: opacity 600ms cubic-bezier(0.4, 0, 0.2, 1);
+  background: #090612;
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+  transition:
+    opacity 350ms cubic-bezier(0.4, 0, 0.2, 1),
+    backdrop-filter 350ms ease,
+    -webkit-backdrop-filter 350ms ease;
+}
+
+/* Subtle purple atmospheric wash */
+.boot-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 40%, rgba(124, 58, 237, 0.035), transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Soft vignette — draws eye to center */
+.boot-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.12) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.boot-overlay--ready {
+  /* triggers final glow via child selectors */
 }
 
 .boot-overlay--exit {
   opacity: 0;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
   pointer-events: none;
 }
 
@@ -192,256 +233,307 @@ body.boot-locked {
   touch-action: none;
 }
 
-/* ── Scanline overlay ── */
+/* ── Scanline overlay (subtle CRT) ── */
 .boot-scanlines {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  z-index: 3;
   background: repeating-linear-gradient(
     0deg,
     transparent,
     transparent 2px,
-    rgba(0, 0, 0, 0.04) 2px,
-    rgba(0, 0, 0, 0.04) 4px
+    rgba(0, 0, 0, 0.01) 2px,
+    rgba(0, 0, 0, 0.01) 4px
   );
-  z-index: 2;
 }
 
-/* ── Grid background ── */
+/* ── Ambient pixel stars (reduced density, 6–12% opacity) ── */
+.boot-stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0.5;
+  background:
+    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.12), transparent),
+    radial-gradient(1px 1px at 55% 20%, rgba(255,255,255,0.08), transparent),
+    radial-gradient(1px 1px at 75% 60%, rgba(255,255,255,0.1), transparent),
+    radial-gradient(1px 1px at 30% 75%, rgba(255,255,255,0.06), transparent),
+    radial-gradient(1px 1px at 85% 35%, rgba(255,255,255,0.09), transparent),
+    radial-gradient(1px 1px at 10% 55%, rgba(255,255,255,0.05), transparent);
+}
+
+/* ── Pixel grid (almost invisible, 24px spacing) ── */
 .boot-grid {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  z-index: 3;
   background-image:
-    linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px);
-  background-size: 32px 32px;
-  animation: bootGridPulse 4s ease-in-out infinite;
+    repeating-linear-gradient(0deg, transparent, transparent 23px, rgba(124, 58, 237, 0.008) 23px, rgba(124, 58, 237, 0.008) 24px),
+    repeating-linear-gradient(90deg, transparent, transparent 23px, rgba(124, 58, 237, 0.008) 23px, rgba(124, 58, 237, 0.008) 24px);
 }
 
-@keyframes bootGridPulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.7; }
-}
-
-/* ── Content container ── */
+/* ── Content container (optical centering + 8pt spacing) ── */
 .boot-content {
   position: relative;
   z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
   padding: 24px;
+  transform: translateY(-5%);
 }
 
-/* ── Logo ── */
+/* ── Logo (dominant element, responsive sizing) ── */
 .boot-logo {
-  opacity: 0.6;
-  animation: bootLogoIn 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: bootLogoIn 250ms cubic-bezier(0.22, 1, 0.36, 1) 100ms both;
 }
 
-.boot-logo--animate {
-  animation: bootLogoIn 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards,
-             bootLogoBreath 3s ease-in-out 600ms infinite;
+.boot-logo-img {
+  width: clamp(56px, 12vw, 96px);
+  height: auto;
+  animation: bootLogoBreath 4s ease-in-out 500ms infinite;
 }
 
 @keyframes bootLogoIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 0.7; transform: scale(1); }
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes bootLogoBreath {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 0.8; }
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.85; }
+  50% { transform: translateY(-1.5px) scale(1.004); opacity: 0.92; }
 }
 
-/* ── Title ── */
-.boot-title {
-  text-align: center;
+/* ── Brand signature: energy transfers from bar to logo ── */
+.boot-overlay--ready .boot-logo-img {
+  animation: bootLogoBreath 4s ease-in-out 500ms infinite, brandTransfer 500ms ease-out 150ms forwards;
 }
 
-.boot-title__name {
+@keyframes brandTransfer {
+  0% { opacity: 0.85; }
+  40% { opacity: 0.96; }
+  70% { opacity: 1; }
+  100% { opacity: 0.93; }
+}
+
+/* ── Tagline: MAKE IDEAS MATTER ── */
+.boot-tagline {
   font-family: var(--font-pixel);
-  font-size: clamp(14px, 3vw, 18px);
-  letter-spacing: 0.3em;
-  color: #F8FAFC;
-  margin: 0;
-  animation: bootTextIn 500ms cubic-bezier(0.22, 1, 0.36, 1) 200ms forwards;
+  font-size: clamp(9px, 2.5vw, 13px);
+  letter-spacing: 0.35em;
+  color: #67E8F9;
   opacity: 0;
-}
-
-.boot-title__sub {
-  font-family: var(--font-pixel);
-  font-size: clamp(8px, 1.5vw, 10px);
-  letter-spacing: 0.2em;
-  color: rgba(34, 211, 238, 0.6);
-  margin: 8px 0 0;
-  animation: bootTextIn 500ms cubic-bezier(0.22, 1, 0.36, 1) 400ms forwards;
-  opacity: 0;
-}
-
-@keyframes bootTextIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ── Status message ── */
-.boot-status {
-  font-family: var(--font-pixel);
-  font-size: 9px;
-  letter-spacing: 0.15em;
-  color: rgba(34, 211, 238, 0.5);
   margin: 0;
-  height: 14px;
-  animation: bootStatusIn 300ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: bootTaglineIn 250ms cubic-bezier(0.22, 1, 0.36, 1) 350ms both;
+  text-shadow: 0 0 20px rgba(103, 232, 249, 0.08);
 }
 
-@keyframes bootStatusIn {
-  from { opacity: 0; transform: translateY(2px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes bootTaglineIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* ── Energy Cells: 10 pixel blocks ── */
-.boot-cells {
+/* ── Pixel Loading Bar (SNES-inspired 3D bevel frame) ── */
+.boot-bar-frame {
+  width: min(65vw, 460px);
+  padding: 4px;
+  background: #090612;
+  image-rendering: pixelated;
+  opacity: 0;
+  animation: bootBarIn 150ms ease-out 500ms both;
+  box-shadow:
+    0 0 0 1px #1e1a40,
+    0 0 0 2px #0d0a1e,
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    inset 0 -1px 0 rgba(0,0,0,0.35),
+    inset 1px 0 0 rgba(255,255,255,0.03),
+    inset -1px 0 0 rgba(0,0,0,0.08);
+}
+
+@keyframes bootBarIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.boot-bar {
   display: flex;
-  gap: 4px;
-  padding: 8px 12px;
-  border: 1px solid rgba(34, 211, 238, 0.15);
-  background: rgba(30, 27, 75, 0.5);
+  gap: 3px;
+  height: 16px;
 }
 
+/* ── Pixel Energy Cells ── */
 .boot-cell {
-  width: 16px;
-  height: 8px;
-  background: rgba(34, 211, 238, 0.06);
-  border: 1px solid rgba(34, 211, 238, 0.08);
-  transition: all 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  flex: 1;
+  min-width: 6px;
+  height: 100%;
+  background: #7C3AED;
+  image-rendering: pixelated;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.1),
+    inset 0 -1px 0 rgba(0,0,0,0.3),
+    inset 1px 0 0 rgba(255,255,255,0.04),
+    inset -1px 0 0 rgba(0,0,0,0.12);
+  will-change: background, box-shadow;
 }
 
+/* ── Cell activation: Purple → Accent Purple + cyan rim light ── */
 .boot-cell--active {
-  background: rgba(34, 211, 238, 0.7);
-  border-color: rgba(34, 211, 238, 0.5);
-  box-shadow: 0 0 6px rgba(34, 211, 238, 0.3),
-              0 0 12px rgba(34, 211, 238, 0.1);
+  background: #A855F7;
+  box-shadow:
+    0 0 6px rgba(34, 211, 238, 0.25),
+    0 0 12px rgba(34, 211, 238, 0.08),
+    inset 0 1px 0 rgba(255,255,255,0.2),
+    inset 0 -1px 0 rgba(0,0,0,0.15),
+    inset 1px 0 0 rgba(255,255,255,0.06),
+    inset -1px 0 0 rgba(0,0,0,0.08);
+  animation: cellActivate 500ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-/* ── Pixel Drone Mascot ── */
-.boot-drone {
-  position: relative;
-  width: 24px;
-  height: 28px;
-  margin-top: 4px;
+@keyframes cellActivate {
+  0% {
+    background: #7C3AED;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.1),
+      inset 0 -1px 0 rgba(0,0,0,0.3),
+      inset 1px 0 0 rgba(255,255,255,0.04),
+      inset -1px 0 0 rgba(0,0,0,0.12);
+  }
+  20% {
+    background: #A855F7;
+    box-shadow:
+      0 0 4px rgba(34, 211, 238, 0.3),
+      inset 0 1px 0 rgba(255,255,255,0.15),
+      inset 0 -1px 0 rgba(0,0,0,0.1);
+  }
+  50% {
+    background: #A855F7;
+    box-shadow:
+      0 0 8px rgba(34, 211, 238, 0.5),
+      0 0 20px rgba(34, 211, 238, 0.2),
+      inset 0 1px 0 rgba(255,255,255,0.25),
+      inset 2px 0 0 rgba(34, 211, 238, 0.12);
+  }
+  100% {
+    background: #A855F7;
+    box-shadow:
+      0 0 6px rgba(34, 211, 238, 0.25),
+      0 0 12px rgba(34, 211, 238, 0.08),
+      inset 0 1px 0 rgba(255,255,255,0.2),
+      inset 0 -1px 0 rgba(0,0,0,0.15),
+      inset 1px 0 0 rgba(255,255,255,0.06),
+      inset -1px 0 0 rgba(0,0,0,0.08);
+  }
 }
 
-.boot-drone__antenna {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 2px;
-  height: 6px;
-  background: rgba(34, 211, 238, 0.5);
+/* ── Final glow: synchronous pulse across all cells ── */
+.boot-bar--ready .boot-cell--active {
+  animation: cellFinalGlow 400ms ease-in-out 150ms forwards;
 }
 
-.boot-drone__antenna::after {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 4px;
-  height: 4px;
-  background: rgba(34, 211, 238, 0.8);
-  animation: bootAntennaPulse 1.5s ease-in-out infinite;
+@keyframes cellFinalGlow {
+  0% {
+    box-shadow:
+      0 0 6px rgba(34, 211, 238, 0.25),
+      0 0 12px rgba(34, 211, 238, 0.08),
+      inset 0 1px 0 rgba(255,255,255,0.2),
+      inset 0 -1px 0 rgba(0,0,0,0.15),
+      inset 1px 0 0 rgba(255,255,255,0.06),
+      inset -1px 0 0 rgba(0,0,0,0.08);
+  }
+  30% {
+    box-shadow:
+      0 0 16px rgba(34, 211, 238, 0.6),
+      0 0 32px rgba(34, 211, 238, 0.25),
+      inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+  70% {
+    box-shadow:
+      0 0 8px rgba(34, 211, 238, 0.3),
+      0 0 16px rgba(34, 211, 238, 0.1),
+      inset 0 1px 0 rgba(255,255,255,0.2),
+      inset 0 -1px 0 rgba(0,0,0,0.15);
+  }
+  100% {
+    box-shadow:
+      0 0 6px rgba(34, 211, 238, 0.25),
+      0 0 12px rgba(34, 211, 238, 0.08),
+      inset 0 1px 0 rgba(255,255,255,0.2),
+      inset 0 -1px 0 rgba(0,0,0,0.15),
+      inset 1px 0 0 rgba(255,255,255,0.06),
+      inset -1px 0 0 rgba(0,0,0,0.08);
+  }
 }
 
-@keyframes bootAntennaPulse {
-  0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
-  50% { opacity: 1; transform: translateX(-50%) scale(1.2); }
+/* ── Portfolio wrapper (hidden during loading, fades in on exit) ── */
+.boot-portfolio {
+  opacity: 0;
+  transition: opacity 350ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.boot-drone__head {
-  position: absolute;
-  top: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 16px;
-  height: 10px;
-  background: #1E1B4B;
-  border: 1px solid rgba(34, 211, 238, 0.3);
+.boot-portfolio--enter {
+  opacity: 1;
 }
 
-.boot-drone__eye {
-  position: absolute;
-  top: 3px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 4px;
-  height: 4px;
-  background: #22D3EE;
-  box-shadow: 0 0 4px rgba(34, 211, 238, 0.6);
+/* ═══════════════════════════════════════════════
+   ACCESSIBILITY
+   ═══════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .boot-overlay {
+    transition: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .boot-overlay::before,
+  .boot-overlay::after {
+    display: none;
+  }
+
+  .boot-logo,
+  .boot-logo-img {
+    animation: none;
+    opacity: 1;
+  }
+
+  .boot-tagline {
+    animation: none;
+    opacity: 1;
+  }
+
+  .boot-bar-frame {
+    animation: none;
+    opacity: 1;
+  }
+
+  .boot-cell {
+    transition: none;
+  }
+
+  .boot-cell--active {
+    animation: none;
+    background: #A855F7;
+  }
 }
 
-.boot-drone__body {
-  position: absolute;
-  top: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 12px;
-  height: 8px;
-  background: #1E1B4B;
-  border: 1px solid rgba(109, 40, 217, 0.3);
-}
+@media (prefers-contrast: more) {
+  .boot-tagline {
+    color: #06B6D4;
+  }
 
-.boot-drone__core {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 4px;
-  height: 4px;
-  background: #6D28D9;
-  box-shadow: 0 0 4px rgba(109, 40, 217, 0.5);
-}
+  .boot-cell {
+    background: #6D28D9;
+  }
 
-.boot-drone__wing {
-  position: absolute;
-  top: 18px;
-  width: 4px;
-  height: 4px;
-  background: rgba(34, 211, 238, 0.25);
-  animation: bootWingFlap 0.8s ease-in-out infinite;
-}
-
-.boot-drone__wing--l {
-  left: 0;
-  animation-direction: normal;
-}
-
-.boot-drone__wing--r {
-  right: 0;
-  animation-direction: reverse;
-}
-
-@keyframes bootWingFlap {
-  0%, 100% { transform: translateY(0); opacity: 0.3; }
-  50% { transform: translateY(-2px); opacity: 0.6; }
-}
-
-/* ── System status ── */
-.boot-system {
-  font-family: var(--font-pixel);
-  font-size: 7px;
-  letter-spacing: 0.25em;
-  color: rgba(34, 211, 238, 0.25);
-  margin: 0;
-  animation: bootSystemFlicker 2s steps(1) infinite;
-}
-
-@keyframes bootSystemFlicker {
-  0%, 100% { opacity: 0.25; }
-  50% { opacity: 0.4; }
+  .boot-cell--active {
+    background: #7C3AED;
+    box-shadow: none;
+    animation: none;
+  }
 }
 
 /* ═══════════════════════════════════════════════
@@ -721,6 +813,61 @@ body.boot-locked {
   to { opacity: 1; transform: scale(1); }
 }
 
+/* ── Hero scroll indicator animation ── */
+@keyframes heroScroll {
+  0%, 100% { transform: translateY(0); opacity: 0.4; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+
+.hero-scroll-indicator {
+  opacity: 0;
+  animation: heroRevealFade 800ms cubic-bezier(0.22, 1, 0.36, 1) 1.2s forwards;
+}
+
+.animate-hero-scroll {
+  animation: heroScroll 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-indicator,
+  .animate-hero-scroll {
+    animation: none;
+  }
+  .hero-scroll-indicator {
+    opacity: 0;
+  }
+}
+
+/* ── Scroll reveal animation ── */
+@keyframes revealFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-reveal].revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* ── Reduced motion: freeze everything, show content immediately ── */
 @media (prefers-reduced-motion: reduce) {
   .hero-focal,
@@ -768,6 +915,23 @@ body.boot-locked {
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee {
     animation: none;
+  }
+}
+
+/* ── Mobile: simplify hero atmosphere to save GPU ── */
+@media (max-width: 767px) {
+  .hero-layer-bg,
+  .hero-layer-mid,
+  .hero-layer-fg,
+  .hero-sweep,
+  .hero-dust {
+    display: none;
+  }
+
+  .hero-focal {
+    animation: none;
+    opacity: 0.6;
+    filter: blur(30px);
   }
 }
 
