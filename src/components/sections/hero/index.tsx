@@ -109,13 +109,6 @@ export default function HeroSection({ content = DEFAULT_CONTENT }: { content?: H
           </div>
         </div>
       </Container>
-
-      {/* Scroll indicator — visible on mobile only */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 md:hidden hero-scroll-indicator" aria-hidden="true">
-        <div className="w-5 h-8 border-2 border-white/20 rounded-full flex items-start justify-center p-1">
-          <div className="w-1 h-2 bg-white/40 rounded-full animate-hero-scroll" />
-        </div>
-      </div>
     </Section>
   );
 }
