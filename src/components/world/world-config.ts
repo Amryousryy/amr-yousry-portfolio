@@ -4,7 +4,7 @@ import { WORLD_THEMES } from "./world-themes";
 export const WORLD_ZONES: Record<WorldZone, WorldZoneConfig> = {
   entrance: {
     sky: { gradientDirection: "180deg", gradientStops: [{ position: 0 }, { position: 50 }, { position: 100 }] },
-    mountains: { visible: true, layers: 3, silhouette: "mountains-entrance" },
+    mountains: { visible: false, layers: 0, silhouette: "mountains-entrance" },
     features: {
       city: { visible: false, density: 0 },
       forest: { visible: false, density: 0 },
