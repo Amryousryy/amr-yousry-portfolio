@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Press_Start_2P, Inter } from "next/font/google";
 import "@/styles/globals.css";
 import "@/styles/pixel-system.css";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 
 const pressStart2P = Press_Start_2P({
   subsets: ["latin"],
@@ -76,6 +77,7 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
+        <GoogleAnalytics />
         {children}
       </body>
     </html>
