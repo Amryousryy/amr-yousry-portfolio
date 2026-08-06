@@ -16,17 +16,13 @@ export default function WorldRoot({ children }: WorldRootProps) {
   });
 
   const [pageHidden, setPageHidden] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(
-    typeof window !== "undefined"
-      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
-      : false
-  );
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 768 : true
-  );
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [isMobile, setIsMobile] = useState(true);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sync with external media query on mount
+    setReducedMotion(mq.matches);
     const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
@@ -46,8 +42,16 @@ export default function WorldRoot({ children }: WorldRootProps) {
   }, []);
 
   useEffect(() => {
-    document.documentElement.dataset.pageHidden = String(pageHidden);
-  }, [pageHidden]);
+    const sync = () => {
+      if (document.hidden) {
+        document.documentElement.dataset.pageHidden = "true";
+      } else {
+        delete document.documentElement.dataset.pageHidden;
+      }
+    };
+    document.addEventListener("visibilitychange", sync);
+    return () => document.removeEventListener("visibilitychange", sync);
+  }, []);
 
   const updateZone = useCallback((zone: WorldZone) => {
     setTimeline((prev) => ({ ...prev, currentZone: zone }));
