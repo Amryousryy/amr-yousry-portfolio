@@ -12,7 +12,7 @@ import { getPublishedContactContent } from "@/lib/public-contact-content";
 
 export const metadata: Metadata = {
   alternates: {
-    canonical: "https://amr-yousry-portfolio.vercel.app",
+    canonical: "https://amryousry.com",
   },
 };
 

@@ -2,7 +2,7 @@
 
 **Status:** Ready for Release ✅  
 **Latest Commit:** `720f25f` — feat: improve seo metadata and sitemap  
-**Production URL:** https://amr-yousry-portfolio.vercel.app  
+**Production URL:** https://amryousry.com  
 **Branch:** `main` (in sync with `origin/main`)
 
 ---

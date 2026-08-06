@@ -9,7 +9,7 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Projects",
   alternates: {
-    canonical: "https://amr-yousry-portfolio.vercel.app/projects",
+    canonical: "https://amryousry.com/projects",
   },
   description:
     "A selection of cinematic case studies in creative direction, video production, motion design, and brand storytelling.",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     title: "Projects | Amr Yousry",
     description:
       "A selection of cinematic case studies in creative direction, video production, motion design, and brand storytelling.",
-    url: "https://amr-yousry-portfolio.vercel.app/projects",
+    url: "https://amryousry.com/projects",
     siteName: "Amr Yousry Portfolio",
     images: [
       {

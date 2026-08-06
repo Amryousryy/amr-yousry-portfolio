@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Preview Mode | Amr Yousry",
     description: "Preview of unpublished content.",
-    url: "https://amr-yousry-portfolio.vercel.app/preview",
+    url: "https://amryousry.com/preview",
     siteName: "Amr Yousry Portfolio",
     images: [
       {

@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/admin", "/api", "/preview"],
       },
     ],
-    sitemap: "https://amr-yousry-portfolio.vercel.app/sitemap.xml",
+    sitemap: "https://amryousry.com/sitemap.xml",
   };
 }

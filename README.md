@@ -4,7 +4,7 @@ A premium creative portfolio built with Next.js 16, featuring high-converting mu
 
 **Version:** v1.0.0 — [Release Notes](https://github.com/Amryousryy/amr-yousry-portfolio/releases/tag/v1.0.0)
 **Status:** Production Stable
-**Production URL:** https://amr-yousry-portfolio.vercel.app
+**Production URL:** https://amryousry.com
 **Roadmap:** See [ROADMAP.md](ROADMAP.md) for planned releases and versioning strategy.
 
 ## Tech Stack

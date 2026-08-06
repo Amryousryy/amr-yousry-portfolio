@@ -25,11 +25,11 @@ export async function generateMetadata({ params }: CaseStudyPageProps): Promise<
   const seoDescription = project.seo?.description || project.summary || `${project.title} — A project by Amr Yousry.`;
   const title = seoTitle;
   const ogTitle = `${seoTitle} | Amr Yousry Portfolio`;
-  const url = `https://amr-yousry-portfolio.vercel.app/projects/${slug}`;
+  const url = `https://amryousry.com/projects/${slug}`;
   const imageUrl = project.bannerImage || project.thumbnail || "/images/meta/og-preview-v6.jpg";
   const absoluteImageUrl = imageUrl.startsWith("http")
     ? imageUrl
-    : `https://amr-yousry-portfolio.vercel.app${imageUrl}`;
+    : `https://amryousry.com${imageUrl}`;
 
   return {
     title,

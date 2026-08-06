@@ -13,7 +13,7 @@
 | Git Commit | 120c103 |
 | GitHub Push | ✓ SUCCESS |
 | Deployment Status | ✓ SUCCESS |
-| Production URL | https://amr-yousry-portfolio.vercel.app |
+| Production URL | https://amryousry.com |
 | Validation Results | ✓ PASS |
 | Smoke Test Results | ✓ PASS |
 | Overall Status | ✅ RELEASE SUCCESSFUL |
@@ -77,7 +77,7 @@
 | Deployment Platform | Vercel |
 | Deployment ID | dpl_8Cu2jx7BWHLjDYX4cWYmzDr3pZZV |
 | Deployment Status | ✓ READY |
-| Production URL | https://amr-yousry-portfolio.vercel.app |
+| Production URL | https://amryousry.com |
 | Inspector URL | https://vercel.com/amr-yousrys-projects/amr-yousry-portfolio/8Cu2jx7BWHLjDYX4cWYmzDr3pZZV |
 
 ---
@@ -195,7 +195,7 @@ The Creative Engine Platform v1.0 has been successfully:
   Date:           July 19, 2026
   Status:         ✅ RELEASE SUCCESSFUL
   
-  Production URL: https://amr-yousry-portfolio.vercel.app
+  Production URL: https://amryousry.com
   GitHub:         https://github.com/Amryousryy/amr-yousry-portfolio
   Commit:         120c103
   

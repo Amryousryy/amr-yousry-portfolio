@@ -15,7 +15,7 @@
 3. During multi-sprint review milestones
 
 ## Evaluation Environment
-- **Production URL:** https://amr-yousry-portfolio.vercel.app
+- **Production URL:** https://amryousry.com
 - **Local Dev:** http://localhost:3000
 - **Viewports:** 375px (mobile), 768px (tablet), 1280px (desktop), 2560px (wide)
 

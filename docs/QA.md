@@ -80,7 +80,7 @@ npm run qa:admin-guardrails
 3. Run the public contract test:
    ```bash
    QA_ALLOW_PRODUCTION_READONLY=true \
-   QA_BASE_URL=https://amr-yousry-portfolio.vercel.app \
+   QA_BASE_URL=https://amryousry.com \
    node scripts/qa/public-contract-smoke.mjs
    ```
 

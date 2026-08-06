@@ -19,7 +19,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://amr-yousry-portfolio.vercel.app"),
+  metadataBase: new URL("https://amryousry.com"),
   title: {
     default: "Amr Yousry | Senior Multimedia Designer",
     template: "%s | Amr Yousry",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    url: "https://amr-yousry-portfolio.vercel.app",
+    url: "https://amryousry.com",
     siteName: "Amr Yousry Portfolio",
     title: "Amr Yousry | Senior Multimedia Designer",
     description:

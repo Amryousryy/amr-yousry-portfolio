@@ -4,7 +4,7 @@ export default function JsonLd() {
     "@type": "Person",
     name: "Amr Yousry",
     alternateName: "AMR YOUSRY CREATIVES",
-    url: "https://amr-yousry-portfolio.vercel.app",
+    url: "https://amryousry.com",
     knowsAbout: [
       "Creative Direction",
       "Video Production",
@@ -21,7 +21,7 @@ export default function JsonLd() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "AMR YOUSRY CREATIVES",
-    url: "https://amr-yousry-portfolio.vercel.app",
+    url: "https://amryousry.com",
     description:
       "Cinematic visuals, brand systems, and digital experiences built for attention, trust, and conversion.",
     author: {

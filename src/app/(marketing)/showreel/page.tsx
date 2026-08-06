@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
   title: "Showreel",
   alternates: {
-    canonical: "https://amr-yousry-portfolio.vercel.app/showreel",
+    canonical: "https://amryousry.com/showreel",
   },
   description:
     "A curated selection of cinematic video work and creative direction. New showreel in progress — browse project case studies in the meantime.",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     title: "Showreel | Amr Yousry",
     description:
       "A curated selection of cinematic video work and creative direction. New showreel in progress — browse project case studies in the meantime.",
-    url: "https://amr-yousry-portfolio.vercel.app/showreel",
+    url: "https://amryousry.com/showreel",
     siteName: "Amr Yousry Portfolio",
     images: [
       {

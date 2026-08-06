@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getPublicProjects } from "@/lib/projects/public-projects";
 
-const BASE_URL = "https://amr-yousry-portfolio.vercel.app";
+const BASE_URL = "https://amryousry.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticEntries: MetadataRoute.Sitemap = [

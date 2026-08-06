@@ -4,7 +4,7 @@
 
 **Version:** 2.0 — Engineering Knowledge Operating System
 **Repository:** `https://github.com/Amryousryy/amr-yousry-portfolio`
-**Production:** `https://amr-yousry-portfolio.vercel.app`
+**Production:** `https://amryousry.com`
 **Generated:** July 2026
 
 ---
@@ -1907,12 +1907,12 @@ git push origin main  # Vercel auto-deploys
 **When:** Site is completely unreachable.
 
 **Diagnostic steps:**
-1. Check `https://amr-yousry-portfolio.vercel.app/api/health`
+1. Check `https://amryousry.com/api/health`
 2. Check Vercel status page: `https://www.vercel-status.com`
 3. Check MongoDB Atlas status: `https://status.mongodb.com`
 4. Check Cloudinary status: `https://status.cloudinary.com`
 5. Check Vercel function logs for errors
-6. Check DNS resolution: `nslookup amr-yousry-portfolio.vercel.app`
+6. Check DNS resolution: `nslookup amryousry.com`
 
 **Common causes and fixes:**
 | Cause | Symptom | Fix |
