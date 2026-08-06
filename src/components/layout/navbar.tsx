@@ -8,12 +8,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { event } from "@/lib/analytics";
 
 const navLinks = [
   { label: "WORK", href: "/projects" },
   { label: "ABOUT", href: "/#about" },
   { label: "CONTACT", href: "/#contact", isCTA: true },
 ];
+
+const trackNavigation = (link: { label: string; href: string }) =>
+  event("navigation_click", { label: link.label, destination: link.href });
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -64,7 +68,7 @@ export function Navbar() {
       <Container>
         <nav aria-label="Main navigation" className="flex min-w-0 items-center justify-between gap-3">
           {/* Logo */}
-          <Link href="/" className="group flex min-w-0 items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue">
+          <Link href="/" onClick={() => event("navigation_click", { label: "LOGO", destination: "/" })} className="group flex min-w-0 items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue">
             <Image src="/images/logo.svg" alt="AMR YOUSRY" width={32} height={32} className="w-9 h-9 md:w-10 md:h-10 transition-transform group-hover:scale-105" unoptimized />
             <span className="font-pixel text-[10px] sm:text-sm text-brand-cyan tracking-[0.2em]">AMR YOUSRY</span>
           </Link>
@@ -75,6 +79,7 @@ export function Navbar() {
               <Link 
                 key={link.label} 
                 href={link.href}
+                onClick={() => trackNavigation(link)}
                 className={cn(
                   "font-pixel text-[10px] tracking-[0.2em] transition-all duration-200 relative group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue",
                   link.isCTA 
@@ -123,6 +128,7 @@ export function Navbar() {
                   key={link.label} 
                   ref={i === 0 ? firstLinkRef : undefined}
                   href={link.href}
+                  onClick={() => trackNavigation(link)}
                   className={cn(
                     "font-pixel text-sm tracking-widest py-3 min-h-[44px] flex items-center justify-center w-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue",
                     link.isCTA ? "text-brand-cyan" : "text-text-dim hover:text-brand-cyan active:text-brand-cyan transition-colors"

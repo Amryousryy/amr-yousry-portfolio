@@ -6,6 +6,7 @@ import { Section } from "@/components/ui/section";
 import { contactContent as staticContactContent } from "@/content/contact";
 import { useState, useEffect, FormEvent } from "react";
 import { trackEvent } from "@/lib/tracker";
+import { event } from "@/lib/analytics";
 import SuccessState from "@/components/sections/contact/SuccessState";
 import CommunicationChannels from "@/components/sections/contact/CommunicationChannels";
 import ContactForm from "@/components/sections/contact/ContactForm";
@@ -75,6 +76,8 @@ export default function ContactSection({ contactData }: ContactSectionProps) {
     setSucceeded(true);
     trackEvent("contact_cta_click", { path: window.location.pathname, label: formData.service });
     trackEvent("form_submit", { path: window.location.pathname, label: formData.service });
+    event("contact_cta_click", { service: formData.service });
+    event("contact_form_submit", { service: formData.service });
   };
 
   const handleReset = () => {

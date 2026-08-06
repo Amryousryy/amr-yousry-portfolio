@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { trackEvent } from "@/lib/tracker";
+import { event } from "@/lib/analytics";
 import { PROJECT_CATEGORIES, formatCategory } from "@/lib/projects/categories";
 
 interface Project {
@@ -70,6 +71,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
             onClick={() => {
               setActiveFilter(cat.value);
               trackEvent("category_filter_click", { path: "/projects", category: cat.value });
+              event("category_filter_click", { category: cat.value, page: "/projects" });
             }}
             className={`font-pixel text-[10px] sm:text-[11px] tracking-widest uppercase px-4 sm:px-5 py-2.5 sm:py-3 border-2 transition-all duration-200 min-h-[44px] ${
               activeFilter === cat.value
@@ -96,7 +98,10 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
               <Link
                 href={`/projects/${project.slug}`}
                 className="group block min-w-0"
-                onClick={() => trackEvent("project_card_click", { path: "/projects", projectSlug: project.slug })}
+                onClick={() => {
+                  trackEvent("project_card_click", { path: "/projects", projectSlug: project.slug });
+                  event("portfolio_project_open", { project_slug: project.slug, project_title: project.title });
+                }}
               >
                 <div className="relative overflow-hidden pixel-border mb-6 bg-slate-900/50">
                   <Image

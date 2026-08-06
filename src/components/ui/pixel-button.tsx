@@ -22,6 +22,7 @@ interface PixelButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>
   size?: "sm" | "md" | "lg";
   children: React.ReactNode;
   href?: string;
+  onClick?: React.MouseEventHandler<HTMLAnchorElement | HTMLButtonElement>;
 }
 
 export function PixelButton({
@@ -30,6 +31,7 @@ export function PixelButton({
   className,
   children,
   href,
+  onClick,
   ...props
 }: PixelButtonProps) {
   const variants = {
@@ -56,21 +58,21 @@ export function PixelButton({
 
     if (isAnchor) {
       return (
-        <a href={href} className={classes} {...props as React.AnchorHTMLAttributes<HTMLAnchorElement>}>
+        <a href={href} className={classes} onClick={onClick} {...props as React.AnchorHTMLAttributes<HTMLAnchorElement>}>
           {children}
         </a>
       );
     }
 
     return (
-      <Link href={href} className={classes}>
+      <Link href={href} className={classes} onClick={onClick}>
         {children}
       </Link>
     );
   }
 
   return (
-    <button className={classes} {...props}>
+    <button className={classes} onClick={onClick} {...props}>
       {children}
     </button>
   );

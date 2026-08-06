@@ -1,6 +1,9 @@
+"use client";
+
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { PixelButton } from "@/components/ui/pixel-button";
+import { event } from "@/lib/analytics";
 
 export interface HeroContent {
   headline: string;
@@ -69,6 +72,7 @@ export default function HeroSection({ content = DEFAULT_CONTENT }: { content?: H
                 href={content.primaryCTALink}
                 className="hero-reveal-cta w-full sm:w-auto px-6 sm:px-10 py-4 sm:py-5 text-xs sm:text-sm tracking-widest group"
                 style={{ minHeight: '60px', minWidth: 'min(100%, 220px)' }}
+                onClick={() => event("hero_cta_click", { cta_label: content.primaryCTA, cta_destination: content.primaryCTALink })}
               >
                 <span>{content.primaryCTA}</span>
                 <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
@@ -79,6 +83,7 @@ export default function HeroSection({ content = DEFAULT_CONTENT }: { content?: H
                 href={content.secondaryCTALink}
                 className="hero-reveal-cta hero-reveal-cta--delay w-full sm:w-auto px-6 sm:px-10 py-4 text-xs sm:text-sm tracking-widest"
                 style={{ minHeight: '56px', minWidth: 'min(100%, 180px)' }}
+                onClick={() => event("hero_cta_click", { cta_label: content.secondaryCTA, cta_destination: content.secondaryCTALink })}
               >
                 {content.secondaryCTA}
               </PixelButton>

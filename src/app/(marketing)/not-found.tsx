@@ -1,6 +1,14 @@
+"use client";
+
+import { useEffect } from "react";
 import Link from "next/link";
+import { event } from "@/lib/analytics";
 
 export default function NotFound() {
+  useEffect(() => {
+    event("page_not_found", { path: window.location.pathname });
+  }, []);
+
   return (
     <div className="min-h-screen bg-brand-blue flex items-center justify-center px-6">
       <div className="text-center max-w-md">

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { trackEvent } from "@/lib/tracker";
+import { event } from "@/lib/analytics";
 import { ArrowRight, Quote } from "lucide-react";
 import type { ProjectMediaItem, KeyDecision, SocialProofItem, BeforeAfter, QuickFacts } from "@/types/project-static";
 import ProjectMediaGallery from "@/components/projects/ProjectMediaGallery";
@@ -117,10 +118,13 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
   const hasSocialProof = !!(socialProof && socialProof.length > 0);
 
   useEffect(() => {
+    const slug = window.location.pathname.split("/").pop() || "";
     trackEvent("project_detail_view", {
       path: window.location.pathname,
-      projectSlug: window.location.pathname.split("/").pop() || "",
+      projectSlug: slug,
     });
+    event("project_detail_view", { project_slug: slug, project_title: title });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
