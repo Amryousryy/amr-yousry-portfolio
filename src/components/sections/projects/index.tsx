@@ -18,7 +18,7 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
   return (
     <Section id="projects" className="pt-14 md:pt-16 pb-16 md:pb-20 relative">
       {/* Atmospheric overlay - subtle warmth */}
-      <div className="absolute inset-0 bg-gradient-to-b from-brand-blue/95 via-transparent to-brand-blue/98 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-surface/95 via-transparent to-surface/98 pointer-events-none" />
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-cyan/20 to-transparent pointer-events-none" />
       
       <Container>
@@ -31,8 +31,8 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                viewport={{ once: true }}
                className="flex min-w-0 items-center gap-3 sm:gap-4 mb-4"
              >
-               <div className="h-[2px] w-8 sm:w-12 bg-brand-cyan shrink-0" />
-                <span className="font-pixel text-brand-cyan text-[10px] sm:text-[11px] tracking-[0.22em] sm:tracking-[0.3em] uppercase">
+               <div className="h-[2px] w-8 sm:w-12 bg-accent shrink-0" />
+                <span className="font-pixel text-accent text-[10px] sm:text-[11px] tracking-[0.22em] sm:tracking-[0.3em] uppercase">
                  Mission Log: Selected Works
                </span>
              </motion.div>
@@ -40,10 +40,10 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                initial={{ opacity: 0, y: 20 }}
                whileInView={{ opacity: 1, y: 0 }}
                viewport={{ once: true }}
-               className="font-display font-bold tracking-tighter text-white break-words"
+               className="font-display font-bold tracking-tighter text-strong break-words"
                style={{ fontSize: 'clamp(1.95rem, 6.5vw, 3.5rem)', lineHeight: '1.05', maxWidth: '16ch', textWrap: 'balance' }}
-             >
-               SELECTED<br /><span className="text-brand-cyan">MISSIONS.</span>
+              >
+                SELECTED<br /><span className="text-accent">MISSIONS.</span>
              </motion.h2>
              <motion.p 
                initial={{ opacity: 0, y: 20 }}

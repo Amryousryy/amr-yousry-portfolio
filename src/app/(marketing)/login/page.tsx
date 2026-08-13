@@ -67,7 +67,7 @@ function LoginForm() {
             type="text"
             value={email}
             onChange={(e) => { setEmail(e.target.value); clearError(); }}
-            className="w-full bg-background border border-primary/20 p-4 outline-none focus:border-accent transition-colors font-mono text-sm"
+            className="w-full bg-field border border-line p-4 outline-none focus:border-accent transition-colors font-mono text-sm"
             placeholder="admin@example.com"
             autoComplete="email"
           />
@@ -79,7 +79,7 @@ function LoginForm() {
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => { setPassword(e.target.value); clearError(); }}
-              className="w-full bg-background border border-primary/20 p-4 pr-12 outline-none focus:border-accent transition-colors font-mono text-sm"
+              className="w-full bg-field border border-line p-4 pr-12 outline-none focus:border-accent transition-colors font-mono text-sm"
               placeholder="••••••••"
               autoComplete="current-password"
             />

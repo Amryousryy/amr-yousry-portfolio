@@ -32,14 +32,14 @@ export default async function Home() {
       <HeroAmbience />
 
       {/* Section transition: Hero → BrandMarquee */}
-      <div className="h-px md:h-[2px] bg-gradient-to-r from-transparent via-slate-600/60 md:via-slate-700/40 to-transparent" />
+      <div className="h-px md:h-[2px] bg-gradient-to-r from-transparent via-line-faint to-transparent" />
       
       <Section className="py-0" data-reveal>
         <BrandMarquee />
       </Section>
 
       {/* Section transition: BrandMarquee → Projects */}
-      <div className="h-px md:h-[2px] bg-gradient-to-r from-transparent via-slate-600/60 md:via-slate-700/40 to-transparent" />
+      <div className="h-px md:h-[2px] bg-gradient-to-r from-transparent via-line-faint to-transparent" />
 
       <ClientDynamicSections projects={featuredProjects} aboutData={aboutContent} contactData={contactData} />
       {/* Other sections will be added here as we rebuild */}

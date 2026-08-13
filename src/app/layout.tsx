@@ -69,8 +69,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${pressStart2P.variable} ${inter.variable}`}>
+    <html lang="en" className={`${pressStart2P.variable} ${inter.variable}`} suppressHydrationWarning>
       <body className="pixel-grid min-h-screen flex flex-col" style={{ padding: 'env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)' }}>
+        {/* Set theme before first paint: dark is the brand default; only a stored
+            user choice opts into light mode. SSR-safe and hydration-safe. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("ay-theme");var d=t==="light"?"light":"dark";var r=document.documentElement;r.dataset.theme=d;var m=document.querySelector('meta[name="theme-color"]');if(m){m.setAttribute("content",d==="light"?"#E2F3F9":"#240e68")}}catch(e){document.documentElement.dataset.theme="dark"}})();`,
+          }}
+        />
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[99999] focus:px-4 focus:py-2 focus:bg-brand-cyan focus:text-brand-blue focus:font-pixel focus:text-[10px] focus:tracking-wider focus:uppercase focus:outline-none focus:ring-2 focus:ring-brand-cyan focus:ring-offset-2 focus:ring-offset-brand-blue"

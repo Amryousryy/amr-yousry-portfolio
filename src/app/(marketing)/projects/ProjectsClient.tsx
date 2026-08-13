@@ -38,7 +38,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          className="font-pixel text-brand-cyan text-[10px] sm:text-sm tracking-widest mb-4 block"
+          className="font-pixel text-accent text-[10px] sm:text-sm tracking-widest mb-4 block"
         >
           MISSION LOG: SELECTED WORKS
         </motion.span>
@@ -46,7 +46,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-[clamp(2rem,6.5vw,3.5rem)] md:text-5xl lg:text-6xl mb-6 break-words leading-tight"
+          className="text-[clamp(2rem,6.5vw,3.5rem)] md:text-5xl lg:text-6xl mb-6 break-words leading-tight text-strong"
           style={{ textWrap: 'balance', maxWidth: '18ch' }}
         >
           Proven Results. High Impact.
@@ -76,7 +76,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
             className={`font-pixel text-[10px] sm:text-[11px] tracking-widest uppercase px-4 sm:px-5 py-2.5 sm:py-3 border-2 transition-all duration-200 min-h-[44px] ${
               activeFilter === cat.value
                 ? "bg-brand-cyan text-brand-blue border-brand-cyan"
-                : "bg-transparent text-text-dim border-slate-700 hover:border-brand-cyan hover:text-brand-cyan"
+                : "bg-transparent text-text-dim border-line hover:border-accent hover:text-accent"
             }`}
           >
             {cat.label}
@@ -103,7 +103,7 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
                   event("portfolio_project_open", { project_slug: project.slug, project_title: project.title });
                 }}
               >
-                <div className="relative overflow-hidden pixel-border mb-6 bg-slate-900/50">
+                <div className="relative overflow-hidden pixel-border mb-6 bg-media-placeholder">
                   <Image
                     src={project.thumbnail}
                     alt={project.title}
@@ -114,10 +114,10 @@ export function ProjectsClient({ projects }: ProjectsClientProps) {
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
                 <div className="space-y-2">
-                  <span className="font-pixel text-[10px] text-brand-cyan tracking-widest uppercase">
+                  <span className="font-pixel text-[10px] text-accent tracking-widest uppercase">
                     {formatCategory(project.category)}
                   </span>
-                  <h3 className="font-display text-xl font-bold uppercase tracking-tighter group-hover:text-brand-cyan transition-colors break-words leading-tight" style={{ textWrap: 'balance' }}>
+                  <h3 className="font-display text-xl font-bold uppercase tracking-tighter text-strong group-hover:text-accent transition-colors break-words leading-tight" style={{ textWrap: 'balance' }}>
                     {project.title}
                   </h3>
                   <p className="font-modern text-text-dim text-sm">

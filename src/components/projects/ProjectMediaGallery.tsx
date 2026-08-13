@@ -265,7 +265,7 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
         className={`relative shrink-0 w-20 h-14 sm:w-24 sm:h-16 overflow-hidden border focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
           isActive
             ? "border-accent/80 shadow-[0_0_12px_rgba(0,255,255,0.15)]"
-            : "border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.2)] opacity-70 hover:opacity-100 transition-all duration-300"
+            : "border-line-faint hover:border-line-soft opacity-70 hover:opacity-100 transition-all duration-300"
         }`}
       >
         {item.kind === "image" && item.src ? (
@@ -309,7 +309,7 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Section Header */}
-      <div className="flex items-center gap-3 border-b border-[rgba(255,255,255,0.06)] pb-3">
+      <div className="flex items-center gap-3 border-b border-line-faint pb-3">
         <span className="font-pixel text-[9px] text-foreground/40 tracking-[0.2em] uppercase">
           Project Gallery
         </span>
@@ -321,7 +321,7 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
       </div>
 
       {/* Featured Media Stage */}
-      <div className="relative w-full bg-[rgba(8,10,20,0.45)] border border-[rgba(255,255,255,0.05)] overflow-hidden">
+      <div className="relative w-full bg-panel border border-line-faint overflow-hidden">
         <div className="aspect-[16/9] md:aspect-[16/9] relative">
           <AnimatePresence mode="wait">
             <motion.div
@@ -345,7 +345,7 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
                 onClick={goPrev}
                 disabled={safeIndex === 0}
                 aria-label="Previous media"
-                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 sm:p-3 bg-background/90 border border-[rgba(255,255,255,0.06)] text-foreground/50 hover:text-foreground/80 hover:border-[rgba(255,255,255,0.15)] transition-all duration-200 disabled:opacity-20 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-accent min-w-[44px] min-h-[44px] flex items-center justify-center active:scale-[0.95]"
+                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 sm:p-3 bg-background/90 border border-line-faint text-foreground/50 hover:text-foreground/80 hover:border-line-soft transition-all duration-200 disabled:opacity-20 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-accent min-w-[44px] min-h-[44px] flex items-center justify-center active:scale-[0.95]"
               >
                 <ChevronLeft size={18} />
               </button>
@@ -354,7 +354,7 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
                 onClick={goNext}
                 disabled={safeIndex === items.length - 1}
                 aria-label="Next media"
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 sm:p-3 bg-background/90 border border-[rgba(255,255,255,0.06)] text-foreground/50 hover:text-foreground/80 hover:border-[rgba(255,255,255,0.15)] transition-all duration-200 disabled:opacity-20 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-accent min-w-[44px] min-h-[44px] flex items-center justify-center active:scale-[0.95]"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 sm:p-3 bg-background/90 border border-line-faint text-foreground/50 hover:text-foreground/80 hover:border-line-soft transition-all duration-200 disabled:opacity-20 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-accent min-w-[44px] min-h-[44px] flex items-center justify-center active:scale-[0.95]"
               >
                 <ChevronRight size={18} />
               </button>
@@ -382,12 +382,12 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="bg-[rgba(8,10,20,0.45)] border border-[rgba(255,255,255,0.05)] backdrop-blur-[12px] p-6 sm:p-8"
+          className="bg-panel border border-line-faint backdrop-blur-[12px] p-6 sm:p-8"
         >
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0 flex-1">
               {active.title && (
-                <h3 className="font-display text-base sm:text-lg text-white uppercase tracking-tight leading-tight mb-2">
+                <h3 className="font-display text-base sm:text-lg text-strong uppercase tracking-tight leading-tight mb-2">
                   {active.title}
                 </h3>
               )}
@@ -402,7 +402,7 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
                 type="button"
                 onClick={() => setExpandedContext(!expandedContext)}
                 aria-label={expandedContext ? "Hide details" : "Show details"}
-                className="shrink-0 px-2 py-1 text-[9px] font-pixel uppercase tracking-wider text-foreground/40 hover:text-foreground/70 border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.15)] transition-all duration-200 active:scale-[0.95]"
+                className="shrink-0 px-2 py-1 text-[9px] font-pixel uppercase tracking-wider text-foreground/40 hover:text-foreground/70 border border-line-faint hover:border-line-soft transition-all duration-200 active:scale-[0.95]"
               >
                 {expandedContext ? "Close" : "Details"}
               </button>
@@ -413,7 +413,7 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
-              className="font-modern text-xs text-foreground/50 leading-relaxed mt-4 pt-4 border-t border-[rgba(255,255,255,0.06)]"
+              className="font-modern text-xs text-foreground/50 leading-relaxed mt-4 pt-4 border-t border-line-faint"
             >
               {active.caption}
             </motion.p>

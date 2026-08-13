@@ -45,13 +45,13 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
       >
         {/* Form Status HUD */}
         <div className="absolute -top-3 left-0 right-0 flex flex-wrap justify-end gap-1.5 z-10">
-          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-brand-blue/90 border border-slate-700/60">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-surface/90 border border-line-soft">
             <div className="w-1.5 h-1.5 rounded-full bg-brand-cyan animate-pulse" />
-            <span className="font-pixel text-[8px] text-brand-cyan/80 tracking-[0.25em] uppercase">Terminal Active</span>
+            <span className="font-pixel text-[8px] text-accent/80 tracking-[0.25em] uppercase">Terminal Active</span>
           </div>
         </div>
 
-        <div className="bg-slate-900/40 border-2 border-slate-800 p-5 sm:p-6 md:p-10 lg:p-10 pixel-shadow relative overflow-hidden">
+        <div className="bg-panel border-2 border-line p-5 sm:p-6 md:p-10 lg:p-10 pixel-shadow relative overflow-hidden">
           {/* Subtle Background Pattern */}
           <div className="absolute inset-0 opacity-[0.02] pointer-events-none" 
             style={{ backgroundImage: 'radial-gradient(var(--color-brand-cyan) 1px, transparent 1px)', backgroundSize: '24px 24px' }} 
@@ -63,7 +63,7 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label htmlFor="contact-name" className="font-pixel text-[10px] text-brand-cyan/80 tracking-[0.2em] uppercase block px-1">
+                <label htmlFor="contact-name" className="font-pixel text-[10px] text-accent/80 tracking-[0.2em] uppercase block px-1">
                   {contactContent.form.labels.name}
                 </label>
                 <input 
@@ -75,14 +75,14 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
                   placeholder={contactContent.form.placeholders.name}
                   aria-invalid={errors.name ? "true" : undefined}
                   aria-describedby={errors.name ? "contact-error" : undefined}
-                   className={`w-full min-h-[48px] bg-slate-800/30 border-2 px-4 py-3.5 font-modern text-white placeholder:text-text-dim/40 outline-none transition-all duration-300 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue
+                   className={`w-full min-h-[48px] bg-field border-2 px-4 py-3.5 font-modern text-strong placeholder:text-text-dim/40 outline-none transition-all duration-300 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue
                     ${errors.name 
-                      ? 'border-red-400/60 focus:border-red-400 focus:bg-slate-800/70' 
-                      : 'border-slate-800 hover:border-slate-700 active:border-slate-700 focus:border-brand-cyan/60 focus:bg-slate-800/60 focus:shadow-[0_0_12px_-4px_#22D3EE]'}`}
+                      ? 'border-red-400/60 focus:border-red-400 focus:bg-field-focus' 
+                      : 'border-line hover:border-line-soft active:border-line-soft focus:border-brand-cyan/60 focus:bg-field-focus focus:shadow-[0_0_12px_-4px_#22D3EE]'}`}
                 />
               </div>
               <div className="space-y-2">
-                <label htmlFor="contact-email" className="font-pixel text-[10px] text-brand-cyan/80 tracking-[0.2em] uppercase block px-1">
+                <label htmlFor="contact-email" className="font-pixel text-[10px] text-accent/80 tracking-[0.2em] uppercase block px-1">
                   {contactContent.form.labels.email}
                 </label>
                 <input 
@@ -94,16 +94,16 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
                   placeholder={contactContent.form.placeholders.email}
                   aria-invalid={errors.email ? "true" : undefined}
                   aria-describedby={errors.email ? "contact-error" : undefined}
-                  className={`w-full min-h-[48px] bg-slate-800/30 border-2 px-4 py-3.5 font-modern text-white placeholder:text-text-dim/40 outline-none transition-all duration-300 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue
+                  className={`w-full min-h-[48px] bg-field border-2 px-4 py-3.5 font-modern text-strong placeholder:text-text-dim/40 outline-none transition-all duration-300 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue
                     ${errors.email 
-                      ? 'border-red-400/60 focus:border-red-400 focus:bg-slate-800/70' 
-                      : 'border-slate-800 hover:border-slate-700 active:border-slate-700 focus:border-brand-cyan/60 focus:bg-slate-800/60 focus:shadow-[0_0_12px_-4px_#22D3EE]'}`}
+                      ? 'border-red-400/60 focus:border-red-400 focus:bg-field-focus' 
+                      : 'border-line hover:border-line-soft active:border-line-soft focus:border-brand-cyan/60 focus:bg-field-focus focus:shadow-[0_0_12px_-4px_#22D3EE]'}`}
                 />
               </div>
             </div>
 
             <div className="space-y-2 mt-6">
-                <label htmlFor="contact-service" className="font-pixel text-[10px] text-brand-cyan/80 tracking-[0.2em] uppercase block px-1">
+                <label htmlFor="contact-service" className="font-pixel text-[10px] text-accent/80 tracking-[0.2em] uppercase block px-1">
                 {contactContent.form.labels.service}
               </label>
               <div className="relative">
@@ -112,20 +112,20 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
                   name="service"
                   value={formData.service}
                   onChange={onChange}
-                  className="w-full min-h-[48px] bg-slate-800/30 border-2 border-slate-800 hover:border-slate-700 active:border-slate-700 px-4 py-3.5 font-modern text-white focus:border-brand-cyan/60 focus:bg-slate-800/60 focus:shadow-[0_0_12px_-4px_#22D3EE] outline-none transition-all duration-300 appearance-none cursor-pointer text-base pr-12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
+                  className="w-full min-h-[48px] bg-field border-2 border-line hover:border-line-soft active:border-line-soft px-4 py-3.5 font-modern text-strong focus:border-brand-cyan/60 focus:bg-field-focus focus:shadow-[0_0_12px_-4px_#22D3EE] outline-none transition-all duration-300 appearance-none cursor-pointer text-base pr-12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
                 >
                   {contactContent.form.services.map((service) => (
-                    <option key={service} value={service} className="bg-slate-900">{service}</option>
+                    <option key={service} value={service} className="bg-option text-strong">{service}</option>
                   ))}
                 </select>
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-brand-cyan/50">
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-accent/50">
                   <ChevronDown size={16} />
                 </div>
               </div>
             </div>
 
             <div className="space-y-2 mt-6">
-                <label htmlFor="contact-message" className="font-pixel text-[10px] text-brand-cyan/80 tracking-[0.2em] uppercase block px-1">
+                <label htmlFor="contact-message" className="font-pixel text-[10px] text-accent/80 tracking-[0.2em] uppercase block px-1">
                 {contactContent.form.labels.message}
               </label>
               <textarea 
@@ -137,10 +137,10 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
                 placeholder={contactContent.form.placeholders.message}
                 aria-invalid={errors.message ? "true" : undefined}
                 aria-describedby={errors.message ? "contact-error" : undefined}
-                   className={`w-full bg-slate-800/30 border-2 px-4 py-3.5 font-modern text-white placeholder:text-text-dim/40 outline-none transition-all duration-300 resize-none text-base leading-relaxed min-h-[140px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue
+                   className={`w-full bg-field border-2 px-4 py-3.5 font-modern text-strong placeholder:text-text-dim/40 outline-none transition-all duration-300 resize-none text-base leading-relaxed min-h-[140px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue
                     ${errors.message 
-                      ? 'border-red-400/60 focus:border-red-400 focus:bg-slate-800/70' 
-                      : 'border-slate-800 hover:border-slate-700 active:border-slate-700 focus:border-brand-cyan/60 focus:bg-slate-800/60 focus:shadow-[0_0_12px_-4px_#22D3EE]'}`}
+                      ? 'border-red-400/60 focus:border-red-400 focus:bg-field-focus' 
+                      : 'border-line hover:border-line-soft active:border-line-soft focus:border-brand-cyan/60 focus:bg-field-focus focus:shadow-[0_0_12px_-4px_#22D3EE]'}`}
               />
             </div>
 

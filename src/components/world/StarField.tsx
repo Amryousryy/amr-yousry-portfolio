@@ -98,8 +98,8 @@ export default function StarField({ config }: StarFieldProps) {
   if (!config.capabilities.stars) return null;
 
   const tintColor: Record<string, string | undefined> = {
-    warm: "#FCD34D",
-    cool: "#67E8F9",
+    warm: "var(--world-star-warm, #FCD34D)",
+    cool: "var(--world-star-cool, #67E8F9)",
   };
 
   return (

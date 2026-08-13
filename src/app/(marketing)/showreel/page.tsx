@@ -53,10 +53,10 @@ export default function ShowreelPage() {
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="mb-10 md:mb-12 text-center">
-            <span className="font-pixel text-brand-cyan text-[10px] tracking-[0.3em] uppercase block mb-4">
+            <span className="font-pixel text-accent text-[10px] tracking-[0.3em] uppercase block mb-4">
               Showreel
             </span>
-            <h1 className="text-[clamp(2rem,9vw,3.75rem)] md:text-6xl font-pixel uppercase tracking-tighter mb-6 break-words leading-tight">
+            <h1 className="text-[clamp(2rem,9vw,3.75rem)] md:text-6xl font-pixel uppercase tracking-tighter mb-6 break-words leading-tight text-strong">
               {showreelConfig.title}
             </h1>
             {showreelConfig.description && (
@@ -67,7 +67,7 @@ export default function ShowreelPage() {
           </div>
 
           {/* Video Player */}
-          <div className="relative aspect-video bg-slate-900 border-2 border-slate-800 overflow-hidden mb-12">
+          <div className="relative aspect-video bg-media-placeholder border-2 border-line overflow-hidden mb-12">
             {isYouTube && (
               <iframe
                 src={showreelConfig.src.replace("watch?v=", "embed/")}
@@ -110,7 +110,7 @@ export default function ShowreelPage() {
             )}
 
             {!isVideo && !showreelConfig.thumbnail && (
-              <div className="relative w-full h-full flex flex-col items-center justify-center gap-6 px-6 bg-gradient-to-b from-slate-900/80 via-slate-900/50 to-slate-900/80">
+              <div className="relative w-full h-full flex flex-col items-center justify-center gap-6 px-6 bg-gradient-to-b from-media-placeholder via-media-placeholder to-media-placeholder">
                 {/* Game grid background */}
                 <div className="absolute inset-0 game-grid-bg opacity-20 pointer-events-none" />
                 {/* Cinematic corner accents */}
@@ -130,7 +130,7 @@ export default function ShowreelPage() {
                   </p>
                   <Link
                     href="/projects"
-                    className="font-pixel text-brand-cyan text-[10px] tracking-widest uppercase border-2 border-brand-cyan px-6 py-3 hover:bg-brand-cyan hover:text-brand-blue transition-colors"
+                    className="font-pixel text-accent text-[10px] tracking-widest uppercase border-2 border-accent px-6 py-3 hover:bg-accent hover:text-surface transition-colors"
                   >
                     Browse Projects
                   </Link>

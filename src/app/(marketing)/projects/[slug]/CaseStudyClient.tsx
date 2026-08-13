@@ -45,7 +45,7 @@ function ReadingCard({ children }: { children: React.ReactNode }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.4 }}
-      className="bg-[rgba(8,10,20,0.45)] border border-[rgba(255,255,255,0.05)] backdrop-blur-[12px] p-8 sm:p-10 md:p-14"
+      className="bg-panel border border-line-faint backdrop-blur-[12px] p-8 sm:p-10 md:p-14"
     >
       {children}
     </motion.div>
@@ -54,7 +54,7 @@ function ReadingCard({ children }: { children: React.ReactNode }) {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="font-pixel text-brand-cyan text-[11px] sm:text-sm tracking-widest uppercase mb-6">
+    <h2 className="font-pixel text-accent text-[11px] sm:text-sm tracking-widest uppercase mb-6">
       {children}
     </h2>
   );
@@ -138,7 +138,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.4 }}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-[rgba(255,255,255,0.06)] mb-16 md:mb-24"
+              className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-line-faint mb-16 md:mb-24"
             >
               <FactCard question="Who was this created for?" answer={project.title} />
               <FactCard question="What problem needed solving?" answer={quickFacts!.challenge} />
@@ -155,7 +155,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
             <SectionLabel>Outcome</SectionLabel>
             {outcomeNarrative && (
               <p
-                className="font-modern text-lg md:text-xl text-white leading-[1.65] mb-8"
+                className="font-modern text-lg md:text-xl text-strong leading-[1.65] mb-8"
                 style={{ textWrap: "balance" }}
               >
                 {outcomeNarrative}
@@ -163,17 +163,17 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
             )}
             {!outcomeNarrative && mainResult && (
               <p
-                className="font-modern text-lg md:text-xl text-white leading-[1.65] mb-8"
+                className="font-modern text-lg md:text-xl text-strong leading-[1.65] mb-8"
                 style={{ textWrap: "balance" }}
               >
                 {mainResult}
               </p>
             )}
             {detailedResults && detailedResults.length > 0 && (
-              <div className="grid grid-cols-2 gap-8 sm:gap-10 border-t border-[rgba(255,255,255,0.06)] pt-8 mt-8">
+              <div className="grid grid-cols-2 gap-8 sm:gap-10 border-t border-line-faint pt-8 mt-8">
                 {detailedResults.map((r, i) => (
                   <div key={i}>
-                    <span className="font-pixel text-2xl md:text-3xl text-white block leading-tight">
+                    <span className="font-pixel text-2xl md:text-3xl text-strong block leading-tight">
                       {r.value}
                     </span>
                     <span className="font-pixel text-[10px] text-text-dim tracking-wider uppercase mt-1.5 block">
@@ -212,7 +212,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
                   <>
                     {fs && (
                       <p
-                        className="font-modern text-lg md:text-xl text-white leading-[1.65] mb-5"
+                        className="font-modern text-lg md:text-xl text-strong leading-[1.65] mb-5"
                         style={{ textWrap: "balance" }}
                       >
                         &ldquo;{fs}&rdquo;
@@ -236,15 +236,15 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
               <div className="space-y-12">
                 {keyDecisions!.map((kd, i) => (
                   <div key={i}>
-                    {i > 0 && <div className="border-t border-[rgba(255,255,255,0.06)] mb-10" />}
-                    <div className="border-l-2 border-brand-cyan/30 pl-6 md:pl-8">
-                      <h3 className="font-display text-base sm:text-lg text-white uppercase tracking-tight leading-tight mb-5">
+                    {i > 0 && <div className="border-t border-line-faint mb-10" />}
+                    <div className="border-l-2 border-accent/30 pl-6 md:pl-8">
+                      <h3 className="font-display text-base sm:text-lg text-strong uppercase tracking-tight leading-tight mb-5">
                         {kd.decision}
                       </h3>
 
                       <div className="space-y-4">
                         <div>
-                          <span className="font-pixel text-[10px] text-brand-cyan/60 tracking-widest uppercase block mb-1.5">
+                          <span className="font-pixel text-[10px] text-accent/60 tracking-widest uppercase block mb-1.5">
                             Rationale
                           </span>
                           <p className="font-modern text-sm md:text-base text-foreground/70 leading-relaxed">
@@ -274,11 +274,11 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
                           </div>
                         )}
 
-                        <div className="pl-4 md:pl-6 border-l border-brand-cyan/20">
-                          <span className="font-pixel text-[10px] text-brand-cyan tracking-widest uppercase block mb-1.5">
+                        <div className="pl-4 md:pl-6 border-l border-accent/20">
+                          <span className="font-pixel text-[10px] text-accent tracking-widest uppercase block mb-1.5">
                             Business Impact
                           </span>
-                          <p className="font-modern text-sm md:text-base text-brand-cyan/80 leading-relaxed">
+                          <p className="font-modern text-sm md:text-base text-accent/80 leading-relaxed">
                             {kd.impact}
                           </p>
                         </div>
@@ -303,7 +303,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
                   {services.map((s) => (
                     <span
                       key={s}
-                      className="font-pixel text-[9px] sm:text-[10px] text-brand-cyan/80 tracking-widest uppercase px-3 py-1.5 border border-brand-cyan/10 bg-brand-cyan/5 hover:border-brand-cyan/25 hover:bg-brand-cyan/10 transition-all duration-200"
+                      className="font-pixel text-[9px] sm:text-[10px] text-accent/80 tracking-widest uppercase px-3 py-1.5 border border-accent/10 bg-accent/5 hover:border-accent/25 hover:bg-accent/10 transition-all duration-200"
                     >
                       {s}
                     </span>
@@ -317,12 +317,12 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
                 }
                 return (
                   <div className="relative">
-                    <div className="absolute left-[7px] top-3 bottom-3 w-px bg-[rgba(255,255,255,0.06)]" />
+                    <div className="absolute left-[7px] top-3 bottom-3 w-px bg-line-faint" />
                     <div className="space-y-8">
                       {steps.map((step, idx) => (
                         <div key={idx} className="relative pl-8">
-                          <span className="absolute left-0 top-1 w-[15px] h-[15px] rounded-full border border-brand-cyan/30 bg-background flex items-center justify-center">
-                            <span className="text-[8px] font-pixel text-brand-cyan/60">{idx + 1}</span>
+                          <span className="absolute left-0 top-1 w-[15px] h-[15px] rounded-full border border-accent/30 bg-background flex items-center justify-center">
+                            <span className="text-[8px] font-pixel text-accent/60">{idx + 1}</span>
                           </span>
                           <p className="font-modern text-sm md:text-base text-foreground/70 leading-relaxed">
                             {step.trim()}
@@ -361,7 +361,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
               <NarrativeText>{beforeAfter!.before}</NarrativeText>
             </div>
             <div className="bg-[rgba(8,10,20,0.45)] border border-[rgba(255,255,255,0.05)] backdrop-blur-[12px] p-8 sm:p-10 md:p-14">
-              <span className="font-pixel text-[10px] text-brand-cyan tracking-widest uppercase block mb-4">After</span>
+              <span className="font-pixel text-[10px] text-accent tracking-widest uppercase block mb-4">After</span>
               {beforeAfter!.mediaAfter && (
                 <div className="relative h-44 sm:h-52 mb-5 overflow-hidden">
                   <Image src={beforeAfter!.mediaAfter} alt="After" fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
@@ -397,7 +397,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
           className="mt-16 md:mt-20"
         >
           <div className="flex items-center gap-4 mb-6">
-            <h2 className="font-pixel text-brand-cyan text-[11px] sm:text-sm tracking-widest uppercase shrink-0">
+            <h2 className="font-pixel text-accent text-[11px] sm:text-sm tracking-widest uppercase shrink-0">
               Related Projects
             </h2>
             <div className="flex-1 h-px bg-[rgba(255,255,255,0.04)]" />
@@ -407,7 +407,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
               <Link
                 key={rp.slug}
                 href={`/projects/${rp.slug}`}
-                className="group flex flex-col bg-[rgba(8,10,20,0.45)] border border-[rgba(255,255,255,0.05)] hover:border-brand-cyan/30 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)] transition-all duration-300 overflow-hidden"
+                className="group flex flex-col bg-[rgba(8,10,20,0.45)] border border-[rgba(255,255,255,0.05)] hover:border-accent/30 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)] transition-all duration-300 overflow-hidden"
               >
                 <div className="relative aspect-[4/3] shrink-0">
                   <Image
@@ -420,10 +420,10 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
                 </div>
                 <div className="flex flex-col justify-between flex-1 pt-2 sm:pt-2 px-3 sm:px-3 pb-3 sm:pb-4">
                   <div>
-                    <span className="font-pixel text-[10px] sm:text-[11px] text-brand-cyan tracking-widest uppercase block mb-2">
+                    <span className="font-pixel text-[10px] sm:text-[11px] text-accent tracking-widest uppercase block mb-2">
                       {rp.category}
                     </span>
-                    <h3 className="font-display font-bold text-sm sm:text-base text-white uppercase leading-tight tracking-tight mb-1.5">
+                    <h3 className="font-display font-bold text-sm sm:text-base text-strong uppercase leading-tight tracking-tight mb-1.5">
                       {rp.title}
                     </h3>
                     <p className="font-modern text-xs text-foreground/60 leading-normal line-clamp-3">
@@ -456,15 +456,15 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
               {socialProof!.map((item, i) => (
                 <div key={i} className="flex items-start gap-3">
                   {item.type === "testimonial" ? (
-                    <Quote size={16} className="text-brand-cyan/40 shrink-0 mt-0.5" />
+                    <Quote size={16} className="text-accent/40 shrink-0 mt-0.5" />
                   ) : (
-                    <span className="w-1.5 h-1.5 rounded-full bg-brand-cyan/40 shrink-0 mt-2" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent/40 shrink-0 mt-2" />
                   )}
                   <div>
                     <p className="font-modern text-sm md:text-base text-foreground/80 leading-relaxed">
-                      {item.type === "testimonial" && <span className="text-white">&ldquo;</span>}
+                      {item.type === "testimonial" && <span className="text-strong">&ldquo;</span>}
                       {item.content}
-                      {item.type === "testimonial" && <span className="text-white">&rdquo;</span>}
+                      {item.type === "testimonial" && <span className="text-strong">&rdquo;</span>}
                     </p>
                     {item.source && (
                       <p className="font-pixel text-[10px] text-text-dim tracking-wider uppercase mt-1">
@@ -485,7 +485,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.4 }}
-        className="mt-20 md:mt-28 pt-16 md:pt-20 border-t border-[rgba(255,255,255,0.06)] text-center"
+        className="mt-20 md:mt-28 pt-16 md:pt-20 border-t border-line-faint text-center"
       >
         <p
           className="font-modern text-base text-foreground/50 leading-relaxed mb-4"
@@ -519,7 +519,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
 function FactCard({ question, answer }: { question: string; answer: string }) {
   return (
     <div className="bg-background p-5 sm:p-7">
-      <span className="font-pixel text-[10px] sm:text-[11px] text-brand-cyan tracking-widest uppercase block mb-2">
+      <span className="font-pixel text-[10px] sm:text-[11px] text-accent tracking-widest uppercase block mb-2">
         {question}
       </span>
       <span className="font-modern text-sm sm:text-base text-foreground/80 leading-relaxed block" style={{ textWrap: "balance" }}>

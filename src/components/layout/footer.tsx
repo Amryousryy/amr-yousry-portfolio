@@ -28,7 +28,7 @@ export async function Footer() {
   const socialLinks = await getFooterSocials();
 
   return (
-    <footer className="bg-brand-blue border-t border-slate-800 py-14 md:py-24 overflow-hidden">
+    <footer className="bg-surface border-t border-line py-14 md:py-24 overflow-hidden">
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-12">
             
@@ -44,13 +44,13 @@ export async function Footer() {
 
           {/* Navigation Links */}
           <div className="lg:col-span-3">
-            <h2 className="font-pixel text-[10px] text-brand-cyan tracking-widest mb-6 uppercase">Navigation</h2>
+            <h2 className="font-pixel text-[10px] text-accent tracking-widest mb-6 uppercase">Navigation</h2>
             <ul className="space-y-3">
               {footerContent.links.map((link) => (
                 <li key={link.label}>
                   <Link 
                     href={link.href}
-                    className="font-modern text-text-dim hover:text-brand-cyan active:text-brand-cyan transition-all duration-200 text-sm uppercase tracking-wider inline-flex items-center min-h-[44px] py-2 hover:translate-x-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
+                    className="font-modern text-text-dim hover:text-accent active:text-accent transition-all duration-200 text-sm uppercase tracking-wider inline-flex items-center min-h-[44px] py-2 hover:translate-x-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
                   >
                     {link.label}
                   </Link>
@@ -61,7 +61,7 @@ export async function Footer() {
 
           {/* Social Links */}
           <div className="lg:col-span-3">
-            <h2 className="font-pixel text-[10px] text-brand-cyan tracking-widest mb-6 uppercase">Connect</h2>
+            <h2 className="font-pixel text-[10px] text-accent tracking-widest mb-6 uppercase">Connect</h2>
             <ul className="space-y-3">
               {socialLinks.map((social) => (
                 <li key={social.label}>
@@ -69,7 +69,7 @@ export async function Footer() {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-modern text-text-dim hover:text-brand-cyan active:text-brand-cyan transition-all duration-200 text-sm uppercase tracking-wider inline-flex flex-wrap items-center gap-2 group min-h-[44px] py-2 hover:translate-x-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
+                    className="font-modern text-text-dim hover:text-accent active:text-accent transition-all duration-200 text-sm uppercase tracking-wider inline-flex flex-wrap items-center gap-2 group min-h-[44px] py-2 hover:translate-x-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
                   >
                     <span>{social.label}</span>
                     <span className="font-pixel text-[8px] opacity-0 group-hover:opacity-100 transition-opacity">LVL. UP</span>
@@ -81,7 +81,7 @@ export async function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-14 md:mt-16 pt-8 border-t border-slate-800/50 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+        <div className="mt-14 md:mt-16 pt-8 border-t border-line/50 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
           <p className="font-pixel text-[8px] text-text-dim tracking-widest uppercase leading-relaxed break-words">
             {footerContent.copyright}
           </p>

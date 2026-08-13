@@ -93,7 +93,7 @@ export default function ContactSection({ contactData }: ContactSectionProps) {
   return (
     <Section id="contact" className="relative pb-16 sm:pb-36 pt-14 sm:pt-20 md:pt-32 overflow-hidden">
       {/* Atmospheric overlay - action-oriented lighting */}
-      <div className="absolute inset-0 bg-gradient-to-b from-brand-blue/95 via-brand-cyan/2 to-brand-blue/95 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-surface/95 via-brand-cyan/2 to-surface/95 pointer-events-none" />
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-cyan/25 to-transparent pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-cyan/20 to-transparent pointer-events-none" />
       
@@ -108,8 +108,8 @@ export default function ContactSection({ contactData }: ContactSectionProps) {
               viewport={{ once: true }}
               className="flex min-w-0 items-center gap-3 sm:gap-4 mb-8"
             >
-              <div className="h-[2px] w-8 sm:w-12 bg-brand-cyan shrink-0" />
-              <span className="font-pixel text-brand-cyan text-[10px] sm:text-[11px] tracking-[0.22em] sm:tracking-[0.3em] uppercase">
+              <div className="h-[2px] w-8 sm:w-12 bg-accent shrink-0" />
+              <span className="font-pixel text-accent text-[10px] sm:text-[11px] tracking-[0.22em] sm:tracking-[0.3em] uppercase">
                 Mission Control
               </span>
             </motion.div>
@@ -118,12 +118,12 @@ export default function ContactSection({ contactData }: ContactSectionProps) {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="font-bold tracking-tighter text-white mb-6 break-words"
+              className="font-bold tracking-tighter text-strong mb-6 break-words"
               style={{ fontSize: 'clamp(1.6rem, 5.5vw, 3rem)', lineHeight: '1.1', maxWidth: '14ch' }}
             >
               {contactContent.heading.split("\n").map((line, i, arr) => (
                 <span key={i} className="block">
-                  <span className={i === arr.length - 1 ? "text-brand-cyan" : "text-white"}>{line}</span>
+                  <span className={i === arr.length - 1 ? "text-accent" : "text-strong"}>{line}</span>
                 </span>
               ))}
             </motion.h2>
@@ -144,7 +144,7 @@ export default function ContactSection({ contactData }: ContactSectionProps) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.15 }}
-              className="font-pixel text-[9px] text-brand-cyan/80 tracking-[0.15em] mt-4 mb-10"
+              className="font-pixel text-[9px] text-accent/80 tracking-[0.15em] mt-4 mb-10"
             >
               {contactContent.availability}
             </motion.p>

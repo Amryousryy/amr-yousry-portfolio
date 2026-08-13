@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/ui/container";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { event } from "@/lib/analytics";
@@ -57,12 +58,12 @@ export function Navbar() {
       className={cn(
         "fixed top-0 inset-x-0 w-full z-50 transition-all duration-500",
         scrolled 
-          ? "bg-brand-blue/90 backdrop-blur-md border-b border-brand-blue/50 py-3" 
+          ? "bg-surface/90 backdrop-blur-md border-b border-line/50 py-3" 
           : "bg-transparent py-6"
       )}
       style={scrolled 
         ? { WebkitBackdropFilter: 'blur(12px)' }
-        : { background: 'linear-gradient(180deg, rgba(30, 27, 75, 0.4) 0%, transparent 100%)' }
+        : { background: 'linear-gradient(180deg, color-mix(in srgb, var(--color-surface) 40%, transparent) 0%, transparent 100%)' }
       }
     >
       <Container>
@@ -70,7 +71,7 @@ export function Navbar() {
           {/* Logo */}
           <Link href="/" onClick={() => event("navigation_click", { label: "LOGO", destination: "/" })} className="group flex min-w-0 items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue">
             <Image src="/images/logo.svg" alt="AMR YOUSRY" width={32} height={32} className="w-9 h-9 md:w-10 md:h-10 transition-transform group-hover:scale-105" unoptimized />
-            <span className="font-pixel text-[10px] sm:text-sm text-brand-cyan tracking-[0.2em]">AMR YOUSRY</span>
+            <span className="font-pixel text-[10px] sm:text-sm text-accent tracking-[0.2em]">AMR YOUSRY</span>
           </Link>
 
           {/* Desktop Nav */}
@@ -84,21 +85,22 @@ export function Navbar() {
                   "font-pixel text-[10px] tracking-[0.2em] transition-all duration-200 relative group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue",
                   link.isCTA 
                     ? "bg-brand-cyan text-brand-blue px-5 py-2 border-2 border-brand-cyan shadow-[2px_2px_0px_0px_rgba(0,0,0,0.8)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,0.8)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none" 
-                    : "text-text-dim hover:text-brand-cyan"
+                    : "text-text-dim hover:text-accent"
                 )}
               >
                 {link.label}
                 {!link.isCTA && (
-                  <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-brand-cyan transition-all group-hover:w-full" />
+                  <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-accent transition-all group-hover:w-full" />
                 )}
               </Link>
             ))}
+            <ThemeToggle />
           </div>
 
           {/* Mobile Menu Toggle */}
           <button 
             ref={menuToggleRef}
-            className="md:hidden text-white p-3 hover:text-brand-cyan transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
+            className="md:hidden text-strong p-3 hover:text-accent transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
             onClick={() => setIsOpen(!isOpen)}
             onKeyDown={(e) => { if (e.key === "Escape" && isOpen) { setIsOpen(false); menuToggleRef.current?.focus(); } }}
             aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
@@ -119,7 +121,7 @@ export function Navbar() {
             transition={{ duration: 0.2 }}
             onClick={() => setIsOpen(false)}
             onKeyDown={(e) => { if (e.key === "Escape") { setIsOpen(false); menuToggleRef.current?.focus(); } }}
-            className="absolute top-full left-0 w-full bg-brand-blue/95 backdrop-blur-sm border-b border-slate-800/50 md:hidden"
+            className="absolute top-full left-0 w-full bg-surface/95 backdrop-blur-sm border-b border-line/50 md:hidden"
             style={{ WebkitBackdropFilter: 'blur(8px)' }}
           >
             <div className="flex flex-col p-5 gap-4 items-center text-center" onClick={(e) => e.stopPropagation()}>
@@ -131,12 +133,13 @@ export function Navbar() {
                   onClick={() => trackNavigation(link)}
                   className={cn(
                     "font-pixel text-sm tracking-widest py-3 min-h-[44px] flex items-center justify-center w-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue",
-                    link.isCTA ? "text-brand-cyan" : "text-text-dim hover:text-brand-cyan active:text-brand-cyan transition-colors"
+                    link.isCTA ? "text-accent" : "text-text-dim hover:text-accent active:text-accent transition-colors"
                   )}
                 >
                   {link.label}
                 </Link>
               ))}
+              <ThemeToggle />
             </div>
           </motion.div>
         )}

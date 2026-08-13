@@ -17,12 +17,12 @@ export function ProjectCard({ project }: ProjectCardProps) {
   const [imgError, setImgError] = useState(false);
 
   const frame = (
-    <div className="relative aspect-[16/10] w-full overflow-hidden border-2 border-slate-800 bg-slate-900 pixel-shadow group-hover:border-brand-cyan/30 transition-colors duration-500">
+    <div className="relative aspect-[16/10] w-full overflow-hidden border-2 border-line bg-media-placeholder pixel-shadow group-hover:border-brand-cyan/30 transition-colors duration-500">
         {imgError ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-media-placeholder via-media-placeholder to-media-placeholder">
             <div className="text-center p-4">
-              <div className="w-12 h-12 mx-auto mb-2 border-2 border-slate-700 flex items-center justify-center">
-                <span className="font-pixel text-[8px] text-slate-600 tracking-wider">NO SIGNAL</span>
+              <div className="w-12 h-12 mx-auto mb-2 border-2 border-line-soft flex items-center justify-center">
+                <span className="font-pixel text-[8px] text-strong-dim tracking-wider">NO SIGNAL</span>
               </div>
             </div>
           </div>
@@ -76,7 +76,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         {/* Content */}
         <div className="flex flex-col flex-grow pt-6 pb-4">
           <div className="min-h-[3.5rem] mb-3">
-            <h3 className="text-xl md:text-2xl font-display font-bold group-hover:text-brand-cyan transition-colors duration-500 leading-tight break-words" style={{ textWrap: 'balance' }}>
+            <h3 className="text-xl md:text-2xl font-display font-bold text-strong group-hover:text-accent transition-colors duration-500 leading-tight break-words" style={{ textWrap: 'balance' }}>
               {project.title}
             </h3>
           </div>
@@ -97,6 +97,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
                   size="sm"
                   className="w-full sm:w-auto text-[10px] py-4 group-hover:bg-brand-cyan group-hover:text-brand-blue transition-all"
                 >
+
                   <span>View Project</span>
                   <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
                 </PixelButton>

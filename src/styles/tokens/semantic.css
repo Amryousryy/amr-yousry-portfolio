@@ -15,6 +15,28 @@
   --color-foreground: #F8FAFC;
   --color-foreground-dim: #94A3B8;
 
+  /* ── Themed Text ── */
+  --color-text-strong: #FFFFFF;
+  --color-text-strong-dim: rgba(203, 213, 225, 0.85);
+
+  /* ── Themed Surfaces ── */
+  --color-surface: var(--color-brand-blue);
+  --color-panel: rgba(8, 10, 20, 0.45);
+  --color-panel-soft: rgba(30, 41, 59, 0.3);
+  --color-field: rgba(30, 41, 59, 0.3);
+  --color-field-focus: rgba(30, 41, 59, 0.6);
+  --color-tag: rgba(51, 65, 85, 0.5);
+  --color-media-placeholder: rgba(15, 23, 42, 0.5);
+  --color-option: #0F172A;
+
+  /* ── Themed Lines ── */
+  --color-line: #334155;
+  --color-line-soft: #475569;
+  --color-line-faint: rgba(255, 255, 255, 0.06);
+
+  /* ── Form Controls ── */
+  color-scheme: dark;
+
   /* ── Status Colors ── */
   --color-danger: #EF4444;
   --color-danger-light: #F87171;
@@ -36,4 +58,42 @@
   --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
+}
+
+/*
+ * LIGHT THEME — Same brand, opposite atmosphere.
+ *
+ * Dark stays the default (brand policy) and this override block is inert
+ * unless the user explicitly opts into light mode via the theme toggle.
+ * Only semantic tokens flip here; foundation tokens are never remapped.
+ */
+:root[data-theme="light"] {
+  /* ── Semantic Colors ── */
+  --color-accent: var(--color-brand-purple);
+  --color-background: #E2F3F9;
+  --color-foreground: #17123B;
+  --color-foreground-dim: #5A5478;
+  --color-text-dim: #5A5478;
+
+  /* ── Themed Text ── */
+  --color-text-strong: #17123B;
+  --color-text-strong-dim: rgba(23, 18, 59, 0.78);
+
+  /* ── Themed Surfaces ── */
+  --color-surface: #E2F3F9;
+  --color-panel: rgba(255, 255, 255, 0.6);
+  --color-panel-soft: rgba(255, 255, 255, 0.55);
+  --color-field: rgba(30, 27, 75, 0.04);
+  --color-field-focus: rgba(255, 255, 255, 0.85);
+  --color-tag: rgba(30, 27, 75, 0.08);
+  --color-media-placeholder: rgba(255, 255, 255, 0.35);
+  --color-option: #F2FAFD;
+
+  /* ── Themed Lines ── */
+  --color-line: rgba(30, 27, 75, 0.25);
+  --color-line-soft: rgba(30, 27, 75, 0.4);
+  --color-line-faint: rgba(30, 27, 75, 0.14);
+
+  /* ── Form Controls ── */
+  color-scheme: light;
 }

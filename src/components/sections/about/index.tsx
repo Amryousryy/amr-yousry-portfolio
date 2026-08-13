@@ -20,7 +20,7 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
   return (
     <Section id="about" className="relative py-14 md:py-20">
       {/* Atmospheric overlay - warm personal tone */}
-      <div className="absolute inset-0 bg-gradient-to-br from-brand-pink/3 via-transparent to-brand-blue/98 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-brand-pink/3 via-transparent to-surface/98 pointer-events-none" />
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-pink/15 to-transparent pointer-events-none" />
       
       <Container>
@@ -34,7 +34,7 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                className="font-pixel text-brand-cyan text-[10px] sm:text-[11px] tracking-[0.24em] sm:tracking-[0.3em] uppercase mb-3 block"
+                className="font-pixel text-accent text-[10px] sm:text-[11px] tracking-[0.24em] sm:tracking-[0.3em] uppercase mb-3 block"
               >
                 {aboutContent.badge}
               </motion.span>
@@ -42,14 +42,14 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="font-bold tracking-tighter text-white break-words"
+                className="font-bold tracking-tighter text-strong break-words"
                 style={{ fontSize: 'clamp(1.6rem, 5.5vw, 3rem)', lineHeight: '1.1', maxWidth: '14ch' }}
               >
                 {(() => {
                   const parts = aboutContent.heading.split("\n");
                   return parts.map((part, i) => (
                     <span key={i} className="block">
-                      <span className={i === parts.length - 1 ? "text-brand-cyan" : "text-white"}>{part}</span>
+                      <span className={i === parts.length - 1 ? "text-accent" : "text-strong"}>{part}</span>
                     </span>
                   ));
                 })()}
@@ -73,7 +73,7 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
                   <button
                     type="button"
                     onClick={() => setStoryExpanded(true)}
-                    className="font-pixel text-[11px] text-brand-cyan/70 hover:text-brand-cyan tracking-wider transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
+                    className="font-pixel text-[11px] text-accent/70 hover:text-accent tracking-wider transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
                   >
                     Continue the story →
                   </button>
@@ -118,14 +118,14 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  className="bg-slate-900/30 border-2 border-slate-800 p-4 w-full min-w-[260px] sm:min-w-0 shrink-0 snap-start"
+                  className="bg-panel-soft border-2 border-line p-4 w-full min-w-[260px] sm:min-w-0 shrink-0 snap-start"
                 >
-                  <h4 className="font-pixel text-[11px] text-brand-cyan tracking-wider mb-3">{cluster.title}</h4>
+                  <h4 className="font-pixel text-[11px] text-accent tracking-wider mb-3">{cluster.title}</h4>
                   <div className="flex flex-wrap gap-1.5">
                     {cluster.skills.map((skill) => (
                       <span
                         key={skill}
-                        className="border border-slate-700 bg-slate-800/50 px-2 py-1 text-[10px] sm:text-[11px] font-modern text-slate-300/85 uppercase tracking-wider hover:border-brand-cyan hover:text-white active:border-brand-cyan active:text-white transition-colors"
+                        className="border border-line-soft bg-tag px-2 py-1 text-[10px] sm:text-[11px] font-modern text-strong-dim uppercase tracking-wider hover:border-accent hover:text-strong active:border-accent active:text-strong transition-colors"
                       >
                         {skill}
                       </span>
@@ -139,14 +139,14 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="bg-slate-900/30 border-2 border-slate-800 p-4 w-full min-w-[260px] sm:min-w-0 shrink-0 snap-start sm:col-span-2"
+                className="bg-panel-soft border-2 border-line p-4 w-full min-w-[260px] sm:min-w-0 shrink-0 snap-start sm:col-span-2"
               >
-                <h4 className="font-pixel text-[10px] text-brand-cyan tracking-wider mb-3">MISSION SECTORS</h4>
+                <h4 className="font-pixel text-[10px] text-accent tracking-wider mb-3">MISSION SECTORS</h4>
                 <div className="flex flex-wrap gap-1.5">
                   {aboutContent.industries.map((industry) => (
                     <span
                       key={industry}
-                      className="border border-slate-700 bg-slate-800/50 px-2 py-1 text-[10px] sm:text-[11px] font-modern text-slate-300/85 uppercase tracking-wider"
+                      className="border border-line-soft bg-tag px-2 py-1 text-[10px] sm:text-[11px] font-modern text-strong-dim uppercase tracking-wider"
                     >
                       {industry}
                     </span>
@@ -167,10 +167,10 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.08 }}
-                  className="flex items-baseline justify-between gap-4 border-t-2 border-slate-800 py-3"
+                  className="flex items-baseline justify-between gap-4 border-t-2 border-line py-3"
                 >
-                  <span className="font-pixel text-[9px] sm:text-[10px] text-brand-cyan/70 tracking-[0.2em] uppercase min-w-0">{stat.label}</span>
-                  <span className="font-pixel text-[11px] sm:text-xs text-white whitespace-nowrap leading-none text-right tracking-wide">{stat.value}</span>
+                  <span className="font-pixel text-[9px] sm:text-[10px] text-accent/70 tracking-[0.2em] uppercase min-w-0">{stat.label}</span>
+                  <span className="font-pixel text-[11px] sm:text-xs text-strong whitespace-nowrap leading-none text-right tracking-wide">{stat.value}</span>
                 </motion.div>
               ))}
             </div>
@@ -183,7 +183,7 @@ export default function AboutSection({ aboutData }: AboutSectionProps) {
                transition={{ duration: 0.8, ease: "easeOut" }}
                 className="relative group w-full flex-1 min-h-[300px] md:min-h-[520px]"
              >
-               <div className="relative w-full h-full bg-slate-900/40 border-2 border-slate-800 p-4 flex items-center justify-center overflow-hidden">
+               <div className="relative w-full h-full bg-panel-soft border-2 border-line p-4 flex items-center justify-center overflow-hidden">
                  <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
                    style={{ backgroundImage: 'radial-gradient(var(--color-brand-cyan) 1px, transparent 1px)', backgroundSize: '24px 24px' }} 
                  />

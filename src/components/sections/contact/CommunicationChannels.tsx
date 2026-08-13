@@ -24,8 +24,8 @@ export default function CommunicationChannels({
   const socialLinks = socials || staticContactContent.socials;
 
   return (
-    <div className="pt-6 border-t border-slate-800/60">
-      <h3 className="font-pixel text-[10px] text-brand-cyan/85 mb-6 tracking-[0.3em] uppercase">Communication Channels</h3>
+    <div className="pt-6 border-t border-line/60">
+      <h3 className="font-pixel text-[10px] text-accent/85 mb-6 tracking-[0.3em] uppercase">Communication Channels</h3>
       
       {/* WhatsApp - Primary */}
       <motion.a 
@@ -35,7 +35,7 @@ export default function CommunicationChannels({
         rel="noopener noreferrer"
         aria-label="WhatsApp - Fastest response"
         onClick={() => trackEvent("whatsapp_click", { path: window.location.pathname })}
-        className="flex min-h-[56px] items-center gap-4 text-white font-pixel text-xs group transition-colors mb-5 md:mb-6"
+        className="flex min-h-[56px] items-center gap-4 text-strong font-pixel text-xs group transition-colors mb-5 md:mb-6"
       >
         <ContactIconImage 
           src="/images/social/whatsapp-pixel-v2.png" 
@@ -45,8 +45,8 @@ export default function CommunicationChannels({
           imgClassName="group-hover:scale-105 group-active:scale-105 transition-transform duration-200" 
         />
         <div>
-          <span className="group-hover:text-brand-cyan group-active:text-brand-cyan transition-colors tracking-widest block">WHATSAPP</span>
-          <span className="font-modern text-[10px] text-brand-cyan/75 tracking-wider">Fastest response</span>
+          <span className="group-hover:text-accent group-active:text-accent transition-colors tracking-widest block">WHATSAPP</span>
+          <span className="font-modern text-[10px] text-accent/75 tracking-wider">Fastest response</span>
         </div>
       </motion.a>
 
@@ -59,7 +59,7 @@ export default function CommunicationChannels({
           trackEvent("email_click", { path: window.location.pathname });
           event("email_click", { path: window.location.pathname });
         }}
-        className="flex min-h-[56px] items-center gap-4 text-white font-pixel text-xs group transition-colors mb-5 md:mb-6"
+        className="flex min-h-[56px] items-center gap-4 text-strong font-pixel text-xs group transition-colors mb-5 md:mb-6"
       >
         <ContactIconImage 
           src="/images/social/email-pixel-v2.png" 
@@ -69,8 +69,8 @@ export default function CommunicationChannels({
           imgClassName="group-hover:scale-105 group-active:scale-105 transition-transform duration-200" 
         />
         <div>
-          <span className="group-hover:text-brand-cyan group-active:text-brand-cyan transition-colors tracking-widest block">EMAIL</span>
-          <span className="font-modern text-[10px] text-brand-cyan/75 tracking-wider">Business inquiries</span>
+          <span className="group-hover:text-accent group-active:text-accent transition-colors tracking-widest block">EMAIL</span>
+          <span className="font-modern text-[10px] text-accent/75 tracking-wider">Business inquiries</span>
         </div>
       </motion.a>
 
@@ -93,7 +93,7 @@ export default function CommunicationChannels({
               target="_blank"
               rel="noopener noreferrer"
               aria-label={social.label}
-              className="bg-slate-800/20 hover:bg-slate-800/40 active:bg-slate-800/40 border border-slate-700/30 rounded-sm group"
+              className="bg-tag hover:bg-tag active:bg-tag border border-line-soft rounded-sm group"
             >
               <ContactIconImage 
                 src={cfg.src} 

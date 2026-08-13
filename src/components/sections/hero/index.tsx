@@ -43,7 +43,7 @@ export default function HeroSection({ content = DEFAULT_CONTENT }: { content?: H
       <div className="hero-layer-fg hero-layer-fg--b" aria-hidden="true" />
 
       {/* Vignette — warm dark edges, focus center */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(15,8,3,0.55)_100%)] pointer-events-none z-0" />
+      <div className="hero-vignette absolute inset-0 pointer-events-none z-0" />
 
       {/* P3: Atmospheric dust — 2 particles, barely perceptible */}
       <div className="hero-dust hero-dust--1" aria-hidden="true" />
@@ -56,7 +56,7 @@ export default function HeroSection({ content = DEFAULT_CONTENT }: { content?: H
         <div className="text-center w-full max-w-[820px] min-w-0 mx-auto">
           <div className="mb-6">
             <h1
-              className="hero-reveal-headline font-black text-white tracking-tighter leading-[1.05] sm:leading-[0.95] text-center text-[clamp(2.15rem,10vw,3.35rem)] md:text-[clamp(3rem,7vw,6rem)]"
+              className="hero-reveal-headline font-black text-strong tracking-tighter leading-[1.05] sm:leading-[0.95] text-center text-[clamp(2.15rem,10vw,3.35rem)] md:text-[clamp(3rem,7vw,6rem)]"
               style={{ textWrap: 'balance' }}
             >
               {content.headline.split('\n').filter(Boolean).map((line, i) => (
