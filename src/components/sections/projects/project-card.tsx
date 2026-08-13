@@ -16,14 +16,8 @@ export function ProjectCard({ project }: ProjectCardProps) {
   const shouldReduceMotion = useReducedMotion();
   const [imgError, setImgError] = useState(false);
 
-  return (
-    <motion.div 
-      initial={false}
-      whileHover={shouldReduceMotion ? {} : { y: -10 }}
-      className="group relative flex min-w-0 flex-col h-full"
-    >
-      {/* Pixel Frame Container */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden border-2 border-slate-800 bg-slate-900 pixel-shadow group-hover:border-brand-cyan/30 transition-colors duration-500">
+  const frame = (
+    <div className="relative aspect-[16/10] w-full overflow-hidden border-2 border-slate-800 bg-slate-900 pixel-shadow group-hover:border-brand-cyan/30 transition-colors duration-500">
         {imgError ? (
           <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
             <div className="text-center p-4">
@@ -59,6 +53,25 @@ export function ProjectCard({ project }: ProjectCardProps) {
           {formatCategory(project.category)}
         </div>
       </div>
+  );
+
+  return (
+    <motion.div 
+      initial={false}
+      whileHover={shouldReduceMotion ? {} : { y: -10 }}
+      className="group relative flex min-w-0 flex-col h-full"
+    >
+      {project.slug ? (
+        <Link
+          href={`/projects/${project.slug}`}
+          aria-label={`View ${project.title} project`}
+          className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
+        >
+          {frame}
+        </Link>
+      ) : (
+        frame
+      )}
 
         {/* Content */}
         <div className="flex flex-col flex-grow pt-6 pb-4">
