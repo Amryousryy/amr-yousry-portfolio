@@ -1,11 +1,16 @@
 export const mediaConfig = {
   cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || '',
   uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || '',
-  apiKey: process.env.CLOUDINARY_API_KEY,
-  apiSecret: process.env.CLOUDINARY_API_SECRET,
   isConfigured: !!(process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET),
   isUploadConfigured: !!(process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME && process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET),
 };
+
+export function getMediaConfig() {
+  return {
+    apiKey: process.env.CLOUDINARY_API_KEY,
+    apiSecret: process.env.CLOUDINARY_API_SECRET,
+  };
+}
 
 export function getMediaUrls(publicId: string, options?: {
   width?: number;

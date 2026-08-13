@@ -126,6 +126,8 @@ export const contentUpdateSchema = contentCreateSchema.partial();
 export type ContentCreateInput = z.infer<typeof contentCreateSchema>;
 export type ContentUpdateInput = z.infer<typeof contentUpdateSchema>;
 
+import { socialLinks } from "../../data/social-links";
+
 export const contentDefaultValues: ContentCreateInput = {
   about: "",
   aboutTitle: "",
@@ -159,8 +161,6 @@ export const contentDefaultValues: ContentCreateInput = {
     { title: "UGC Production", description: "Authentic creator-style content that builds trust and drives conversions.", icon: "users" },
   ],
 };
-
-import { socialLinks } from "../../data/social-links";
 
 export function createContentFormValues(existing?: Partial<ContentCreateInput>): ContentCreateInput {
   return {

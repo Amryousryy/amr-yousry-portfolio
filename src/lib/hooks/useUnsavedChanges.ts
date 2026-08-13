@@ -16,20 +16,22 @@ export function useUnsavedChanges<T extends FieldValues>({
 }: UseUnsavedChangesOptions<T>) {
   const isSubmittingRef = useRef(false);
   const initialValuesRef = useRef<T>(defaultValues);
-  const isEnabledRef = useRef(enabled);
+  const hasChangesRef = useRef(false);
+  const handleBeforeUnloadRef = useRef<((e: BeforeUnloadEvent) => void) | null>(null);
 
   useEffect(() => {
     initialValuesRef.current = defaultValues;
   }, [defaultValues]);
 
-  useEffect(() => {
-    isEnabledRef.current = enabled;
-  }, [enabled]);
-
   const markAsSaved = useCallback(() => {
     const currentValues = watch();
     initialValuesRef.current = currentValues;
+    hasChangesRef.current = false;
     isSubmittingRef.current = false;
+    if (handleBeforeUnloadRef.current) {
+      window.removeEventListener("beforeunload", handleBeforeUnloadRef.current);
+      handleBeforeUnloadRef.current = null;
+    }
   }, [watch]);
 
   const setSubmitting = useCallback((value: boolean) => {
@@ -40,33 +42,36 @@ export function useUnsavedChanges<T extends FieldValues>({
   }, [watch]);
 
   useEffect(() => {
-    if (!isEnabledRef.current) return;
+    if (!enabled) return;
 
     const unsubscribe = watch((values) => {
       if (isSubmittingRef.current) return;
-      
-      const hasChanges = JSON.stringify(values) !== JSON.stringify(initialValuesRef.current);
-      
-      const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-        if (hasChanges) {
+
+      const changed = JSON.stringify(values) !== JSON.stringify(initialValuesRef.current);
+      hasChangesRef.current = changed;
+
+      if (changed && !handleBeforeUnloadRef.current) {
+        const handler = (e: BeforeUnloadEvent) => {
           e.preventDefault();
           e.returnValue = "You have unsaved changes. Are you sure you want to leave?";
           return "You have unsaved changes. Are you sure you want to leave?";
-        }
-      };
-
-      window.addEventListener("beforeunload", handleBeforeUnload);
-
-      return () => {
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-      };
+        };
+        handleBeforeUnloadRef.current = handler;
+        window.addEventListener("beforeunload", handler);
+      } else if (!changed && handleBeforeUnloadRef.current) {
+        window.removeEventListener("beforeunload", handleBeforeUnloadRef.current);
+        handleBeforeUnloadRef.current = null;
+      }
     });
 
     return () => {
       unsubscribe.unsubscribe();
-      window.removeEventListener("beforeunload", () => {});
+      if (handleBeforeUnloadRef.current) {
+        window.removeEventListener("beforeunload", handleBeforeUnloadRef.current);
+        handleBeforeUnloadRef.current = null;
+      }
     };
-  }, [watch]);
+  }, [watch, enabled]);
 
   return {
     setSubmitting,

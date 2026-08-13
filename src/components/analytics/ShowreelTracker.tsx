@@ -8,8 +8,6 @@ export default function ShowreelTracker() {
   const trackedComplete = useRef(false);
 
   useEffect(() => {
-    trackEvent("showreel_click", { path: "/showreel" });
-
     const videos = document.querySelectorAll("video");
     if (videos.length === 0) return;
 

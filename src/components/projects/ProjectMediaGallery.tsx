@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import type { ProjectMediaItem } from "@/types/project-static";
 import { getVideoThumbnailUrl, getPlayableVideoSources, isTrustedCloudinaryMp4 } from "@/lib/media/config";
+import { event } from "@/lib/analytics";
 
 interface ProjectMediaGalleryProps {
   items: ProjectMediaItem[];
@@ -218,18 +219,23 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
   const goTo = useCallback((index: number) => {
     setActiveIndex(Math.max(0, Math.min(index, items.length - 1)));
     setExpandedContext(false);
+    event("project_media_open", { index });
   }, [items.length]);
 
   const goNext = useCallback(() => goTo(activeIndex + 1), [goTo, activeIndex]);
   const goPrev = useCallback(() => goTo(activeIndex - 1), [goTo, activeIndex]);
 
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
+    const container = railRef.current?.closest('[role="region"], [data-gallery]') || document.querySelector('[data-gallery]');
+    const target: EventTarget = container || window;
+
+    const handler = ((e: KeyboardEvent) => {
+      if (target !== window && !("contains" in target && (target as Element).contains(e.target as Node))) return;
       if (e.key === "ArrowLeft") goPrev();
       if (e.key === "ArrowRight") goNext();
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    }) as EventListener;
+    target.addEventListener("keydown", handler);
+    return () => target.removeEventListener("keydown", handler);
   }, [goNext, goPrev]);
 
   useEffect(() => {

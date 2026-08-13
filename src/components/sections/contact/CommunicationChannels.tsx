@@ -5,6 +5,7 @@ import ContactIconImage from "@/components/ui/contact-icon-image";
 import { contactContent as staticContactContent } from "@/content/contact";
 import { SocialLinkItem } from "@/lib/contact-content-normalizer";
 import { trackEvent } from "@/lib/tracker";
+import { event } from "@/lib/analytics";
 
 interface CommunicationChannelsProps {
   email?: string;
@@ -38,6 +39,7 @@ export default function CommunicationChannels({
       >
         <ContactIconImage 
           src="/images/social/whatsapp-pixel-v2.png" 
+          alt="WhatsApp icon"
           wrapperSize={56} 
           scale={1.3} 
           imgClassName="group-hover:scale-105 group-active:scale-105 transition-transform duration-200" 
@@ -53,11 +55,15 @@ export default function CommunicationChannels({
         whileHover={shouldReduceMotion ? {} : { x: 8 }}
         href={`mailto:${contactEmail}`}
         aria-label="Email - Business inquiries"
-        onClick={() => trackEvent("email_click", { path: window.location.pathname })}
+        onClick={() => {
+          trackEvent("email_click", { path: window.location.pathname });
+          event("email_click", { path: window.location.pathname });
+        }}
         className="flex min-h-[56px] items-center gap-4 text-white font-pixel text-xs group transition-colors mb-5 md:mb-6"
       >
         <ContactIconImage 
           src="/images/social/email-pixel-v2.png" 
+          alt="Email icon"
           wrapperSize={56} 
           scale={1.25} 
           imgClassName="group-hover:scale-105 group-active:scale-105 transition-transform duration-200" 
@@ -91,6 +97,7 @@ export default function CommunicationChannels({
             >
               <ContactIconImage 
                 src={cfg.src} 
+                alt={`${social.label} icon`}
                 wrapperSize={48} 
                 scale={cfg.scale} 
                 imgClassName="group-hover:scale-105 group-active:scale-105 transition-transform duration-200" 

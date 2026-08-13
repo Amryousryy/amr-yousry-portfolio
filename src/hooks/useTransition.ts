@@ -120,7 +120,11 @@ export function useTransition(options: TransitionOptions): TransitionResult {
     });
 
     setIsActive(true);
-    await animationRef.current.finished;
+    try {
+      await animationRef.current.finished;
+    } catch {
+      // Animation was cancelled
+    }
     setIsActive(false);
   }, [duration, easing, getKeyframes]);
 
@@ -133,7 +137,11 @@ export function useTransition(options: TransitionOptions): TransitionResult {
     }
 
     animationRef.current.reverse();
-    await animationRef.current.finished;
+    try {
+      await animationRef.current.finished;
+    } catch {
+      // Animation was cancelled
+    }
     setIsActive(false);
   }, []);
 

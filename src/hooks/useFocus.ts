@@ -139,7 +139,11 @@ export function useFocus(options: FocusOptions): FocusResult {
     });
 
     setIsActive(true);
-    await animationRef.current.finished;
+    try {
+      await animationRef.current.finished;
+    } catch {
+      // Animation was cancelled
+    }
     setIsActive(false);
   }, [duration, easing, loop, getKeyframes]);
 

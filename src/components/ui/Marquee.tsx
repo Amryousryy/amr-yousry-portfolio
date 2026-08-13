@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useState } from "react";
 
 /**
  * Sprint 05: Marquee — Continuous Scrolling
@@ -28,23 +28,6 @@ const CLIENTS = [
 
 export default function Marquee() {
   const [isPaused, setIsPaused] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleMouseEnter = () => setIsPaused(true);
-    const handleMouseLeave = () => setIsPaused(false);
-
-    container.addEventListener("mouseenter", handleMouseEnter);
-    container.addEventListener("mouseleave", handleMouseLeave);
-
-    return () => {
-      container.removeEventListener("mouseenter", handleMouseEnter);
-      container.removeEventListener("mouseleave", handleMouseLeave);
-    };
-  }, []);
 
   return (
     <section className="py-12 bg-[#050508] overflow-hidden">
@@ -56,7 +39,6 @@ export default function Marquee() {
       </div>
 
       <div
-        ref={containerRef}
         className="relative"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}

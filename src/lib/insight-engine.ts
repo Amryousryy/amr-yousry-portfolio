@@ -81,7 +81,7 @@ export async function generateBusinessInsights() {
 
   const popularIds = projectViews.filter(p => p.views > 50).map(p => p._id);
   if (popularIds.length > 0) {
-    const projects = await Project.find({ slug: { $in: popularIds } });
+    const projects = await Project.find({ _id: { $in: popularIds } });
     for (const project of projects) {
       const title = safeProjectTitle(project);
       insights.push({

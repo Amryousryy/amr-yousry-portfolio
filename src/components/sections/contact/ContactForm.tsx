@@ -32,6 +32,7 @@ export default function ContactForm({ formData, errors, onChange, onSubmit }: Co
   const handleSubmit = (e: FormEvent) => {
     setSubmitting(true);
     onSubmit(e);
+    setSubmitting(false);
   };
 
   return (

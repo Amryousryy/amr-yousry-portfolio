@@ -166,7 +166,11 @@ export function useStagger(options: StaggerOptions): StaggerResult {
       }
     });
 
-    await Promise.all(animations);
+    try {
+      await Promise.all(animations);
+    } catch {
+      // Animation was cancelled
+    }
     setIsVisible(true);
   }, [duration, easing, stagger, getKeyframes]);
 
@@ -183,7 +187,11 @@ export function useStagger(options: StaggerOptions): StaggerResult {
       animations.push(animation.finished);
     });
 
-    await Promise.all(animations);
+    try {
+      await Promise.all(animations);
+    } catch {
+      // Animation was cancelled
+    }
     setIsVisible(false);
   }, []);
 

@@ -157,7 +157,11 @@ export function useReveal(options: RevealOptions): RevealResult {
       fill: "forwards",
     });
 
-    await animationRef.current.finished;
+    try {
+      await animationRef.current.finished;
+    } catch {
+      // Animation was cancelled
+    }
     setIsVisible(true);
   }, [ref, duration, easing, delay, getKeyframes]);
 
@@ -170,7 +174,11 @@ export function useReveal(options: RevealOptions): RevealResult {
     }
 
     animationRef.current.reverse();
-    await animationRef.current.finished;
+    try {
+      await animationRef.current.finished;
+    } catch {
+      // Animation was cancelled
+    }
     setIsVisible(false);
   }, [ref]);
 
@@ -198,6 +206,8 @@ export function useReveal(options: RevealOptions): RevealResult {
 
         animationRef.current.finished.then(() => {
           setIsVisible(true);
+        }).catch(() => {
+          // Animation was cancelled
         });
       } else {
         setIsVisible(true);

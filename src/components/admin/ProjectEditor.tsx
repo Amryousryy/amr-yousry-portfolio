@@ -171,12 +171,9 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
 
   const handleSubmitClick = () => {
     setSubmitAttempted(true);
-    handleSubmit(onSubmit)();
-    setTimeout(() => {
-      if (Object.keys(errors).length > 0) {
-        scrollToFirstError(errors as unknown as Record<string, unknown>);
-      }
-    }, 0);
+    handleSubmit(onSubmit, (validationErrors) => {
+      scrollToFirstError(validationErrors as unknown as Record<string, unknown>);
+    })();
   };
 
   return (

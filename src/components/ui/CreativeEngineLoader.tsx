@@ -27,13 +27,15 @@ export function CreativeEngineLoader({ children }: { children: React.ReactNode }
   const completingRef = useRef(false);
   const startTimeRef = useRef(0);
 
+  const exitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const complete = useCallback(() => {
     if (completingRef.current) return;
     completingRef.current = true;
     setPhase("exiting");
     unlockScroll();
     try { sessionStorage.setItem(SESSION_KEY, "true"); } catch {}
-    setTimeout(() => setPhase("done"), EXIT_FADE_MS);
+    exitTimerRef.current = setTimeout(() => setPhase("done"), EXIT_FADE_MS);
   }, []);
 
   useEffect(() => {
@@ -86,6 +88,10 @@ export function CreativeEngineLoader({ children }: { children: React.ReactNode }
 
     return () => {
       timers.forEach(clearTimeout);
+      if (exitTimerRef.current) {
+        clearTimeout(exitTimerRef.current);
+        exitTimerRef.current = null;
+      }
       unlockScroll();
     };
   }, [complete]);
