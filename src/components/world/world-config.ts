@@ -20,10 +20,10 @@ export const WORLD_ZONES: Record<WorldZone, WorldZoneConfig> = {
   },
   forest: {
     sky: { gradientDirection: "180deg", gradientStops: [{ position: 0 }, { position: 50 }, { position: 100 }] },
-    mountains: { visible: true, layers: 3, silhouette: "mountains-forest" },
+    mountains: { visible: false, layers: 0, silhouette: "" },
     features: {
       city: { visible: false, density: 0 },
-      forest: { visible: true, density: 0.6 },
+      forest: { visible: false, density: 0 },
       energyGrid: { visible: false, intensity: 0 },
       observatory: { visible: false, active: false },
     },
@@ -36,9 +36,9 @@ export const WORLD_ZONES: Record<WorldZone, WorldZoneConfig> = {
   },
   city: {
     sky: { gradientDirection: "180deg", gradientStops: [{ position: 0 }, { position: 50 }, { position: 100 }] },
-    mountains: { visible: true, layers: 3, silhouette: "mountains-city" },
+    mountains: { visible: false, layers: 0, silhouette: "" },
     features: {
-      city: { visible: true, density: 0.8 },
+      city: { visible: false, density: 0 },
       forest: { visible: false, density: 0 },
       energyGrid: { visible: false, intensity: 0 },
       observatory: { visible: false, active: false },
@@ -52,28 +52,28 @@ export const WORLD_ZONES: Record<WorldZone, WorldZoneConfig> = {
   },
   energy: {
     sky: { gradientDirection: "180deg", gradientStops: [{ position: 0 }, { position: 50 }, { position: 100 }] },
-    mountains: { visible: true, layers: 3, silhouette: "mountains-energy" },
+    mountains: { visible: false, layers: 0, silhouette: "" },
     features: {
       city: { visible: false, density: 0 },
       forest: { visible: false, density: 0 },
-      energyGrid: { visible: true, intensity: 0.7 },
+      energyGrid: { visible: false, intensity: 0 },
       observatory: { visible: false, active: false },
     },
     atmosphere: {
       starDensity: 0.4,
       ambientParticles: true,
       cometFrequency: 20000,
-      aurora: true,
+      aurora: false,
     },
   },
   observatory: {
     sky: { gradientDirection: "180deg", gradientStops: [{ position: 0 }, { position: 50 }, { position: 100 }] },
-    mountains: { visible: true, layers: 3, silhouette: "mountains-observatory" },
+    mountains: { visible: false, layers: 0, silhouette: "" },
     features: {
       city: { visible: false, density: 0 },
       forest: { visible: false, density: 0 },
       energyGrid: { visible: false, intensity: 0 },
-      observatory: { visible: true, active: true },
+      observatory: { visible: false, active: false },
     },
     atmosphere: {
       starDensity: 1.0,

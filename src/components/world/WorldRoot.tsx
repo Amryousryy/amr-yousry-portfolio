@@ -73,7 +73,6 @@ export default function WorldRoot({ children }: WorldRootProps) {
           <WorldTimeline currentZone={timeline.currentZone} onZoneChange={updateZone}>
             <Environment />
           </WorldTimeline>
-          <div className="world-connection" aria-hidden="true" />
         </div>
       )}
       {children}
