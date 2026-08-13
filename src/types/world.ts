@@ -20,7 +20,6 @@ export interface WorldState {
   timeline: WorldTimeline;
   reducedMotion: boolean;
   pageHidden: boolean;
-  activeTheme: string;
 }
 
 export interface WorldContextValue {
@@ -46,7 +45,6 @@ export interface WorldZoneConfig {
 }
 
 export interface WorldTheme {
-  name: string;
   sky: { start: string; mid: string; end: string };
   mountains: {
     base: string; layer1: string; layer2: string; layer3: string;
@@ -76,7 +74,6 @@ export interface WorldTheme {
 
 export interface RenderCapabilities {
   stars: boolean;
-  moon: boolean;
   mountains: boolean;
   city: boolean;
   cityLights: boolean;

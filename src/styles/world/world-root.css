@@ -7,9 +7,7 @@
   contain: layout style paint;
   transform: translateZ(0);
   will-change: transform;
-}
 
-.world-root[data-theme="night"] {
   --world-sky-start: #06030F;
   --world-sky-mid: #1E1B4B;
   --world-sky-end: #2D1B69;
@@ -26,33 +24,6 @@
   --world-comet-color: #22D3EE;
   --world-comet-trail: rgba(109, 40, 217, 0.4);
   --world-comet-glow: rgba(34, 211, 238, 0.15);
-  --world-moon-color: rgba(251, 191, 36, 0.03);
-  --world-moon-glow: rgba(251, 191, 36, 0.015);
-}
-
-/* Light world: cyan/light-cyan sky, dark navy stars, purple comet accents.
-   Keyed off the app-level theme on <html>; the world root itself stays
-   data-theme="night" so dark rendering is untouched. */
-:root[data-theme="light"] .world-root[data-theme="night"] {
-  --world-sky-start: #EAF7FB;
-  --world-sky-mid: #D9EFF6;
-  --world-sky-end: #C4E6F2;
-  --world-mountain-base: rgba(30, 27, 75, 0.06);
-  --world-mountain-layer1: rgba(30, 27, 75, 0.05);
-  --world-mountain-layer2: rgba(30, 27, 75, 0.04);
-  --world-mountain-layer3: rgba(30, 27, 75, 0.03);
-  --world-accent-glow: rgba(109, 40, 217, 0.05);
-  --world-ambient-light: rgba(109, 40, 217, 0.04);
-  --world-fog: rgba(217, 239, 246, 0.4);
-  --world-star-color: #2D2B63;
-  --world-star-warm: #6D28D9;
-  --world-star-cool: #155E75;
-  --star-base-opacity: 0.3;
-  --world-comet-color: #6D28D9;
-  --world-comet-trail: rgba(109, 40, 217, 0.35);
-  --world-comet-glow: rgba(109, 40, 217, 0.12);
-  --world-moon-color: rgba(251, 191, 36, 0.3);
-  --world-moon-glow: rgba(251, 191, 36, 0.1);
 }
 
 [data-page-hidden="true"] .world-root * {

@@ -6,7 +6,6 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/ui/container";
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { event } from "@/lib/analytics";
@@ -69,7 +68,7 @@ export function Navbar() {
       <Container>
         <nav aria-label="Main navigation" className="flex min-w-0 items-center justify-between gap-3">
           {/* Logo */}
-          <Link href="/" onClick={() => event("navigation_click", { label: "LOGO", destination: "/" })} className="group flex min-w-0 items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue">
+          <Link href="/" onClick={() => event("navigation_click", { label: "LOGO", destination: "/" })} className="group flex min-w-0 items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background">
             <Image src="/images/logo.svg" alt="AMR YOUSRY" width={32} height={32} className="w-9 h-9 md:w-10 md:h-10 transition-transform group-hover:scale-105" unoptimized />
             <span className="font-pixel text-[10px] sm:text-sm text-accent tracking-[0.2em]">AMR YOUSRY</span>
           </Link>
@@ -82,9 +81,9 @@ export function Navbar() {
                 href={link.href}
                 onClick={() => trackNavigation(link)}
                 className={cn(
-                  "font-pixel text-[10px] tracking-[0.2em] transition-all duration-200 relative group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue",
+                  "font-pixel text-[10px] tracking-[0.2em] transition-all duration-200 relative group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                   link.isCTA 
-                    ? "bg-brand-cyan text-brand-blue px-5 py-2 border-2 border-brand-cyan shadow-[2px_2px_0px_0px_rgba(0,0,0,0.8)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,0.8)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none" 
+                    ? "bg-brand-cyan text-ink px-5 py-2 border-2 border-brand-cyan shadow-[2px_2px_0px_0px_rgba(0,0,0,0.8)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,0.8)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none" 
                     : "text-text-dim hover:text-accent"
                 )}
               >
@@ -94,13 +93,12 @@ export function Navbar() {
                 )}
               </Link>
             ))}
-            <ThemeToggle />
           </div>
 
           {/* Mobile Menu Toggle */}
           <button 
             ref={menuToggleRef}
-            className="md:hidden text-strong p-3 hover:text-accent transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
+            className="md:hidden text-strong p-3 hover:text-accent transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             onClick={() => setIsOpen(!isOpen)}
             onKeyDown={(e) => { if (e.key === "Escape" && isOpen) { setIsOpen(false); menuToggleRef.current?.focus(); } }}
             aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
@@ -132,14 +130,13 @@ export function Navbar() {
                   href={link.href}
                   onClick={() => trackNavigation(link)}
                   className={cn(
-                    "font-pixel text-sm tracking-widest py-3 min-h-[44px] flex items-center justify-center w-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue",
+                    "font-pixel text-sm tracking-widest py-3 min-h-[44px] flex items-center justify-center w-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                     link.isCTA ? "text-accent" : "text-text-dim hover:text-accent active:text-accent transition-colors"
                   )}
                 >
                   {link.label}
                 </Link>
               ))}
-              <ThemeToggle />
             </div>
           </motion.div>
         )}

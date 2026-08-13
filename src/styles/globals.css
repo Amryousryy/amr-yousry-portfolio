@@ -15,8 +15,10 @@
   --color-bg-deep: #1E1B4B;
   --color-text-main: #F8FAFC;
   --color-text-dim: #94A3B8;
+  --color-ink: #1E1B4B;
 
   --color-accent: #22D3EE;
+  --color-on-accent: #1E1B4B;
   --color-background: #1E1B4B;
   --color-foreground: #F8FAFC;
 
@@ -186,12 +188,6 @@
   .hero-vignette {
     background: radial-gradient(ellipse at center, transparent 0%, rgba(15, 8, 3, 0.55) 100%);
   }
-}
-
-/* Theme-aware adjustments that live outside the utility layer so they
-   always win over the theme-layer defaults (dark stays untouched). */
-:root[data-theme="light"] .hero-vignette {
-  background: radial-gradient(ellipse at center, transparent 0%, rgba(23, 18, 59, 0.16) 100%);
 }
 
 /* ═══════════════════════════════════════════════

@@ -61,15 +61,14 @@ export default function WorldRoot({ children }: WorldRootProps) {
     timeline,
     reducedMotion,
     pageHidden,
-    activeTheme: "night",
   };
 
   return (
     <WorldContext.Provider value={{ state: worldState, updateZone }}>
       {isMobile ? (
-        <div className="world-root world-root--mobile" data-theme={worldState.activeTheme} aria-hidden="true" />
+        <div className="world-root world-root--mobile" aria-hidden="true" />
       ) : (
-        <div className="world-root" data-theme={worldState.activeTheme} data-zone={timeline.currentZone} aria-hidden="true">
+        <div className="world-root" data-zone={timeline.currentZone} aria-hidden="true">
           <WorldTimeline currentZone={timeline.currentZone} onZoneChange={updateZone}>
             <Environment />
           </WorldTimeline>

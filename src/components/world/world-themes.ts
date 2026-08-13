@@ -1,9 +1,7 @@
 import type { WorldTheme } from "@/types/world";
 
-export const WORLD_THEMES: Record<string, WorldTheme> = {
-  night: {
-    name: "night",
-    sky: { start: "#0D0A1A", mid: "#1E1B4B", end: "#2D1B69" },
+export const NIGHT_WORLD: WorldTheme = {
+  sky: { start: "#0D0A1A", mid: "#1E1B4B", end: "#2D1B69" },
     mountains: {
       base: "rgba(45,27,105,0.3)",
       layer1: "rgba(45,27,105,0.25)",
@@ -31,5 +29,4 @@ export const WORLD_THEMES: Record<string, WorldTheme> = {
       glowIntensity: 0.08,
       fogDensity: 0.3,
     },
-  },
 };

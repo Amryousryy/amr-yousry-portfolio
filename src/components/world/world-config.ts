@@ -1,5 +1,5 @@
-import type { WorldZone, WorldZoneConfig, WorldTimeline, WorldTheme, RenderCapabilities, RenderConfig } from "@/types/world";
-import { WORLD_THEMES } from "./world-themes";
+import type { WorldZone, WorldZoneConfig, WorldTimeline, RenderCapabilities, RenderConfig } from "@/types/world";
+import { NIGHT_WORLD } from "./world-themes";
 
 export const WORLD_ZONES: Record<WorldZone, WorldZoneConfig> = {
   entrance: {
@@ -84,15 +84,14 @@ export const WORLD_ZONES: Record<WorldZone, WorldZoneConfig> = {
   },
 };
 
-export function computeCapabilities(zone: WorldZoneConfig, theme: WorldTheme): RenderCapabilities {
+export function computeCapabilities(zone: WorldZoneConfig): RenderCapabilities {
   return {
     stars: zone.atmosphere.starDensity > 0,
-    moon: true,
     mountains: zone.mountains.visible,
     city: zone.features.city.visible,
     cityLights: zone.features.city.visible && zone.features.city.density > 0,
     forest: zone.features.forest.visible,
-    forestMist: zone.features.forest.visible && theme.name === "night",
+    forestMist: zone.features.forest.visible,
     energyGrid: zone.features.energyGrid.visible,
     observatory: zone.features.observatory.visible,
     comets: zone.atmosphere.cometFrequency > 0,
@@ -102,10 +101,10 @@ export function computeCapabilities(zone: WorldZoneConfig, theme: WorldTheme): R
   };
 }
 
-export function resolveRenderConfig(timeline: WorldTimeline, themeName: string): RenderConfig {
+export function resolveRenderConfig(timeline: WorldTimeline): RenderConfig {
   const zone = WORLD_ZONES[timeline.currentZone];
-  const theme = WORLD_THEMES[themeName] || WORLD_THEMES.night;
-  const capabilities = computeCapabilities(zone, theme);
+  const theme = NIGHT_WORLD;
+  const capabilities = computeCapabilities(zone);
 
   return {
     sky: { ...zone.sky, ...theme.sky },

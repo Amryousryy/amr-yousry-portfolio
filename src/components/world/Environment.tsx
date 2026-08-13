@@ -10,18 +10,18 @@ import WorldComets from "./WorldComets";
 
 export default function Environment() {
   const { state } = useWorld();
-  const { timeline, activeTheme } = state;
+  const { timeline } = state;
 
   const config = useMemo(
-    () => resolveRenderConfig(timeline, activeTheme),
-    [timeline, activeTheme]
+    () => resolveRenderConfig(timeline),
+    [timeline]
   );
 
   useWorldParallax();
 
   return (
     <>
-      <SkyLayer config={config} />
+      <SkyLayer />
       <StarField config={config} />
       <WorldComets config={config} />
     </>
