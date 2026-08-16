@@ -28,9 +28,6 @@ interface DataTableProps<TData, TValue> {
   searchPlaceholder?: string;
   onSearchChange?: (value: string) => void;
   searchValue?: string;
-  sortField?: string;
-  sortOrder?: "asc" | "desc";
-  onSortChange?: (field: string, currentOrder: "asc" | "desc") => void;
   children?: React.ReactNode;
 }
 

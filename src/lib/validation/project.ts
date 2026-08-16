@@ -102,50 +102,6 @@ export const projectDefaultValues: ProjectCreateInput = {
   sections: [],
 };
 
-export function createProjectFormValues(existing?: Partial<ProjectCreateInput>): ProjectCreateInput {
-  return {
-    slug: existing?.slug || "",
-    title: existing?.title || "",
-    shortDescription: existing?.shortDescription || "",
-    fullDescription: existing?.fullDescription || "",
-    category: existing?.category || "",
-    categories: existing?.categories || [],
-    image: existing?.image || "",
-    video: existing?.video,
-    problem: existing?.problem || "",
-    strategy: existing?.strategy || "",
-    solution: existing?.solution || "",
-    execution: existing?.execution || "",
-    results: existing?.results || "",
-    idea: existing?.idea || "",
-    mainResult: existing?.mainResult || "",
-    client: existing?.client,
-    services: existing?.services || [],
-    detailedResults: existing?.detailedResults || [],
-    caseStudyMedia: existing?.caseStudyMedia || [],
-    featured: existing?.featured || false,
-    featuredOrder: existing?.featuredOrder ?? 0,
-    status: existing?.status || "draft",
-    displayOrder: existing?.displayOrder || 0,
-    year: existing?.year || new Date().getFullYear().toString(),
-    clientName: existing?.clientName || "",
-    seo: existing?.seo || { title: "", description: "", keywords: [] },
-    gallery: existing?.gallery || [],
-    tags: existing?.tags || [],
-    sections: existing?.sections || [],
-  };
-}
-
-export function mapProjectFormToPayload(formData: Partial<ProjectCreateInput>): Partial<ProjectCreateInput> {
-  return {
-    ...formData,
-  };
-}
-
 export function generateSlugFromTitle(title: string): string {
   return normalizeSlug(title);
-}
-
-export function shouldAutoGenerateSlug(existingSlug: string | undefined, isEditMode: boolean): boolean {
-  return isEditMode ? !existingSlug : true;
 }

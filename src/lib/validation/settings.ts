@@ -1,53 +1,5 @@
 import { z } from "zod";
-import { stringSchema, optionalUrlSchema, contentStatusSchema, optionalStringSchema, optionalEmailSchema, safeUrlSchema } from "./shared";
-
-const socialLinksSchema = z.object({
-  instagram: optionalUrlSchema,
-  twitter: optionalUrlSchema,
-  youtube: optionalUrlSchema,
-  linkedin: optionalUrlSchema,
-});
-
-export const siteContentSchema = z.object({
-  about: stringSchema,
-  servicesTitle: stringSchema,
-  servicesDescription: stringSchema,
-  contactEmail: z.string().email("Valid email is required"),
-  whatsappNumber: z.string().optional(),
-  socialLinks: socialLinksSchema.optional(),
-});
-
-export const settingsCreateSchema = z.object({
-  hero: z.object({
-    headline: stringSchema,
-    subheadline: stringSchema,
-    primaryCTA: stringSchema,
-    primaryCTALink: z.string().default("/contact"),
-    secondaryCTA: stringSchema,
-    secondaryCTALink: z.string().default("/projects"),
-    posterImage: optionalUrlSchema,
-    showreelVideo: optionalUrlSchema,
-    status: contentStatusSchema.default("draft"),
-  }),
-  about: z.object({
-    content: stringSchema,
-    stats: z.array(z.object({
-      label: stringSchema,
-      value: z.string(),
-    })).default([]),
-  }),
-  siteContent: siteContentSchema,
-  services: z.array(z.object({
-    title: stringSchema,
-    description: stringSchema,
-    icon: z.string(),
-  })).default([]),
-});
-
-export const settingsUpdateSchema = settingsCreateSchema.partial();
-
-export type SettingsCreateInput = z.infer<typeof settingsCreateSchema>;
-export type SettingsUpdateInput = z.infer<typeof settingsUpdateSchema>;
+import { stringSchema, contentStatusSchema, optionalStringSchema, optionalEmailSchema, safeUrlSchema } from "./shared";
 
 // ============================================================================
 // CONTENT-ONLY SCHEMAS - For the Content admin page
@@ -161,39 +113,3 @@ export const contentDefaultValues: ContentCreateInput = {
     { title: "UGC Production", description: "Authentic creator-style content that builds trust and drives conversions.", icon: "users" },
   ],
 };
-
-export function createContentFormValues(existing?: Partial<ContentCreateInput>): ContentCreateInput {
-  return {
-    about: existing?.about || "",
-    aboutTitle: existing?.aboutTitle || "",
-    aboutBadge: existing?.aboutBadge || "",
-    aboutCtaLabel: existing?.aboutCtaLabel || "",
-    aboutCtaLink: existing?.aboutCtaLink || "",
-    aboutStats: existing?.aboutStats || [],
-    aboutSkills: existing?.aboutSkills || [],
-    aboutIndustries: existing?.aboutIndustries || [],
-    servicesTitle: existing?.servicesTitle || "What I Deliver",
-    servicesSubtitle: existing?.servicesSubtitle || "Premium video content that drives real business results.",
-    servicesDescription: existing?.servicesDescription || "",
-    contactEmail: existing?.contactEmail || "",
-    whatsappNumber: existing?.whatsappNumber || "",
-    contactHeading: existing?.contactHeading || "",
-    contactSubheading: existing?.contactSubheading || "",
-    contactAvailability: existing?.contactAvailability || "",
-    socialLinks: existing?.socialLinks || {
-      instagram: socialLinks.instagram,
-      facebook: socialLinks.facebook,
-      behance: socialLinks.behance,
-      twitter: "",
-      youtube: "",
-      linkedin: socialLinks.linkedin,
-    },
-    status: existing?.status || "draft",
-    servicesCards: existing?.servicesCards || [
-      { title: "Video Editing", description: "Turn raw footage into scroll-stopping content that converts viewers into buyers.", icon: "play-circle" },
-      { title: "Motion Design", description: "Animated graphics that grab attention and hold it across every platform.", icon: "sparkles" },
-      { title: "Content Strategy", description: "Strategic video content that aligns with your brand and drives growth.", icon: "target" },
-      { title: "UGC Production", description: "Authentic creator-style content that builds trust and drives conversions.", icon: "users" },
-    ],
-  };
-}

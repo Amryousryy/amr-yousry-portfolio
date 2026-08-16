@@ -17,15 +17,3 @@ export const heroUpdateSchema = heroCreateSchema.partial();
 
 export type HeroCreateInput = z.infer<typeof heroCreateSchema>;
 export type HeroUpdateInput = z.infer<typeof heroUpdateSchema>;
-
-export const heroDefaultValues: HeroCreateInput = {
-  headline: "",
-  subheadline: "",
-  primaryCTA: "",
-  primaryCTALink: "",
-  secondaryCTA: "",
-  secondaryCTALink: "",
-  posterImage: "",
-  showreelVideo: "",
-  status: "draft",
-};
