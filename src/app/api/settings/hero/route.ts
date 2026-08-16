@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Settings, { type LeanSettings } from "@/models/Settings";
-import { heroCreateSchema } from "@/lib/validation";
+import { heroUpdateSchema } from "@/lib/validation";
 import { resolveStatusMetadata } from "@/lib/status-metadata";
 import { getString } from "@/lib/text";
 
@@ -103,9 +103,9 @@ export async function PUT(req: Request) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await req.json();
-    
-    const parsed = heroCreateSchema.safeParse(body);
+    const body = await req.json() as Record<string, unknown>;
+
+    const parsed = heroUpdateSchema.safeParse(body);
     if (!parsed.success) {
       const firstError = parsed.error.issues[0]?.message || "Validation failed";
       return NextResponse.json({ success: false, error: firstError }, { status: 400 });
@@ -118,28 +118,33 @@ export async function PUT(req: Request) {
     }
 
     await dbConnect();
-    
+
     const currentSettings = await Settings.findOne({}).lean() as unknown as LeanSettings | null;
+    const currentHero = currentSettings?.hero ?? {};
     const currentStatus = currentSettings?.hero?.status || "draft";
-    const newStatus = validated.status || "draft";
-    
+    const newStatus = Object.prototype.hasOwnProperty.call(body, "status")
+      ? validated.status || "draft"
+      : currentStatus;
+
     const statusMetadata = resolveStatusMetadata(newStatus, currentStatus);
-    
+
+    const fieldsToApply = Object.fromEntries(
+      Object.entries(validated).filter(([key]) =>
+        Object.prototype.hasOwnProperty.call(body, key)
+      )
+    );
+
+    const mergedHero = {
+      ...currentHero,
+      ...fieldsToApply,
+      status: newStatus,
+      ...statusMetadata,
+    };
+
     const settings = await Settings.findOneAndUpdate(
       {}, 
       { $set: { 
-        hero: { 
-          headline: validated.headline,
-          subheadline: validated.subheadline,
-          primaryCTA: validated.primaryCTA,
-          primaryCTALink: validated.primaryCTALink,
-          secondaryCTA: validated.secondaryCTA,
-          secondaryCTALink: validated.secondaryCTALink,
-          posterImage: validated.posterImage || "",
-          showreelVideo: validated.showreelVideo || "",
-          status: newStatus,
-          ...statusMetadata,
-        }, 
+        hero: mergedHero,
         updatedAt: new Date() 
       } }, 
       { upsert: true, new: true }
