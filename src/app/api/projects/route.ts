@@ -6,10 +6,10 @@ import dbConnect from "@/lib/db";
 import Project from "@/models/Project";
 import { projectCreateSchema } from "@/lib/validation";
 import { logActivity } from "@/lib/activity";
-import { checkReadiness, detectExpectedMediaType } from "@/lib/validation/project-readiness";
+import { checkReadiness } from "@/lib/validation/project-readiness";
 import { paginationSchema, getPagination } from "@/lib/pagination";
 import { successResponse } from "@/lib/api-response";
-import { normalizeProject } from "@/lib/project-utils";
+import { normalizeCaseStudyMedia, normalizeProject } from "@/lib/project-utils";
 
 const SORT_FIELDS: Record<string, 1 | -1> = {
   createdAt: -1,
@@ -110,17 +110,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
-  if (Array.isArray(body.caseStudyMedia)) {
-    body.caseStudyMedia = body.caseStudyMedia.map((item: Record<string, unknown>) => {
-      const src = typeof item.src === "string" ? item.src : "";
-      const type = typeof item.type === "string" ? item.type : "";
-      if (!type) {
-        const detected = detectExpectedMediaType(src);
-        if (detected) item.type = detected;
-      }
-      return item;
-    });
-  }
+  body.caseStudyMedia = normalizeCaseStudyMedia(body.caseStudyMedia);
 
   const validation = projectCreateSchema.safeParse(body);
   if (!validation.success) {

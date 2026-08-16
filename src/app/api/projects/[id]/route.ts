@@ -7,8 +7,8 @@ import Project from "@/models/Project";
 import { projectUpdateSchema } from "@/lib/validation";
 import { deleteCloudinaryResources } from "@/lib/cloudinary";
 import { logActivity } from "@/lib/activity";
-import { checkReadiness, detectExpectedMediaType } from "@/lib/validation/project-readiness";
-import { normalizeProject } from "@/lib/project-utils";
+import { checkReadiness } from "@/lib/validation/project-readiness";
+import { normalizeCaseStudyMedia, normalizeProject } from "@/lib/project-utils";
 import type { Project as ProjectType } from "@/types/project";
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -66,17 +66,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
     }
 
-    if (Array.isArray(body.caseStudyMedia)) {
-      body.caseStudyMedia = body.caseStudyMedia.map((item: Record<string, unknown>) => {
-        const src = typeof item.src === "string" ? item.src : "";
-        const type = typeof item.type === "string" ? item.type : "";
-        if (!type) {
-          const detected = detectExpectedMediaType(src);
-          if (detected) item.type = detected;
-        }
-        return item;
-      });
-    }
+    body.caseStudyMedia = normalizeCaseStudyMedia(body.caseStudyMedia);
 
     const validation = projectUpdateSchema.safeParse(body);
     
