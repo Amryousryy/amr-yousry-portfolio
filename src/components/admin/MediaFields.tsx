@@ -14,18 +14,9 @@ import type { CloudinaryUploadWidgetResults } from "next-cloudinary";
 import { ProjectCreateInput } from "@/lib/validation";
 import FormSection from "@/components/admin/FormSection";
 import FormField, { FormInput, FormSelect } from "@/components/admin/FormField";
+import { getFieldError } from "@/lib/form-field-error";
 
 type FormData = ProjectCreateInput;
-
-function getFieldError(errors: FieldErrors<FormData>, path: string): string | undefined {
-  const parts = path.split(".");
-  let current: Record<string, unknown> = errors;
-  for (const part of parts) {
-    if (current === undefined) return undefined;
-    current = current[part] as Record<string, unknown>;
-  }
-  return current?.message as string | undefined;
-}
 
 type CaseStudyMediaType = "image" | "video" | "process" | "before-after" | "result";
 

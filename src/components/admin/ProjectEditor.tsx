@@ -13,6 +13,7 @@ import {
   generateSlugFromTitle,
 } from "@/lib/validation";
 import { useUnsavedChanges } from "@/lib/hooks";
+import { getString } from "@/lib/text";
 import { ErrorSummary, scrollToFirstError } from "@/components/admin/ErrorSummary";
 import ProjectFormActions from "@/components/admin/ProjectFormActions";
 import BasicInfoFields from "@/components/admin/BasicInfoFields";
@@ -87,11 +88,6 @@ export default function ProjectEditor({ initialData, onSave, isSaving, lastSaved
 
   useEffect(() => {
     if (initialData) {
-      const getString = (val: string | { en: string; ar: string } | undefined): string => {
-        if (!val) return "";
-        if (typeof val === "string") return val;
-        return val.en || "";
-      };
       const hasVideo = !!initialData.video;
       setEnableVideo(hasVideo);
       reset({

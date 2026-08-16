@@ -6,6 +6,7 @@ import dbConnect from "@/lib/db";
 import Settings, { type LeanSettings } from "@/models/Settings";
 import { heroCreateSchema } from "@/lib/validation";
 import { resolveStatusMetadata } from "@/lib/status-metadata";
+import { getString } from "@/lib/text";
 
 const DEFAULT_HERO = {
   headline: "Creative Strategist & Video Editor",
@@ -16,12 +17,6 @@ const DEFAULT_HERO = {
   secondaryCTALink: "/contact",
   status: "published"
 };
-
-function getString(value: string | { en: string; ar: string } | undefined): string {
-  if (!value) return "";
-  if (typeof value === "string") return value;
-  return value.en || "";
-}
 
 export async function GET(req: Request) {
   const responseConfig: ResponseInit = {

@@ -11,6 +11,7 @@ import { ErrorSummary, scrollToFirstError } from "@/components/admin/ErrorSummar
 import { useUnsavedChanges } from "@/lib/hooks";
 import { z } from "zod";
 import { stringSchema, contentStatusSchema } from "@/lib/validation";
+import { getFieldError } from "@/lib/form-field-error";
 
 const heroPageSchema = z.object({
   headline: stringSchema,
@@ -33,16 +34,6 @@ const heroDefaultValues: HeroPageData = {
   secondaryCTALink: "",
   status: "draft",
 };
-
-function getFieldError(errors: Record<string, unknown>, path: string): string | undefined {
-  const parts = path.split(".");
-  let current: Record<string, unknown> = errors;
-  for (const part of parts) {
-    if (current === undefined) return undefined;
-    current = current[part] as Record<string, unknown>;
-  }
-  return current?.message as string | undefined;
-}
 
 function convertToForm(content: Record<string, unknown>): HeroPageData {
   if (!content) return heroDefaultValues;

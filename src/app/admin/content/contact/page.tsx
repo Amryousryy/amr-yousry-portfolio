@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { useForm, Controller, FieldErrors, FieldPath } from "react-hook-form";
+import { useForm, Controller, FieldPath } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Save, Loader2, Clock, Eye } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SettingsService } from "@/lib/api-client";
 import { contentCreateSchema, ContentCreateInput, contentDefaultValues } from "@/lib/validation";
+import { getString } from "@/lib/text";
+import { getFieldError } from "@/lib/form-field-error";
 import { toast } from "sonner";
 import StringInput from "@/components/admin/BilingualInput";
 import { ErrorSummary, scrollToFirstError } from "@/components/admin/ErrorSummary";
@@ -15,22 +17,6 @@ import { socialLinks } from "@/data/social-links";
 import type { SiteContent } from "@/types";
 
 type FormData = ContentCreateInput;
-
-function getFieldError(errors: FieldErrors<FormData>, path: string): string | undefined {
-  const parts = path.split(".");
-  let current: Record<string, unknown> = errors;
-  for (const part of parts) {
-    if (current === undefined) return undefined;
-    current = current[part] as Record<string, unknown>;
-  }
-  return current?.message as string | undefined;
-}
-
-function getString(value: string | { en: string; ar: string } | undefined): string {
-  if (!value) return "";
-  if (typeof value === "string") return value;
-  return value.en || "";
-}
 
 function convertToForm(content: SiteContent): FormData {
   if (!content) return contentDefaultValues;

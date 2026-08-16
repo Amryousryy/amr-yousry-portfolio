@@ -16,6 +16,7 @@
 import { describe, it, expect } from "vitest";
 import { projectUpdateSchema } from "@/lib/validation";
 import { stringSchema } from "@/lib/validation/shared";
+import { getString } from "@/lib/text";
 
 // ─── The exact bug: stringSchema.optional() with empty string ───
 
@@ -100,13 +101,6 @@ describe("REGRESSION: onSubmit empty string cleanup", () => {
   });
 
   it("BUG SCENARIO: getString(undefined) → '' → cleanup → undefined → validates", () => {
-    // Simulate getString from ProjectEditor
-    function getString(val: string | { en: string; ar: string } | undefined): string {
-      if (!val) return "";
-      if (typeof val === "string") return val;
-      return val.en || "";
-    }
-
     // Simulate API project with no idea/mainResult
     const apiProject = { idea: undefined, mainResult: undefined };
 

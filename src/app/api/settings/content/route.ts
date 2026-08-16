@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Settings, { type LeanSettings } from "@/models/Settings";
 import { resolveStatusMetadata } from "@/lib/status-metadata";
+import { getString } from "@/lib/text";
 
 const DEFAULT_CONTENT = {
   about: "",
@@ -34,12 +35,6 @@ const DEFAULT_CONTENT = {
 };
 
 const ALLOWED_PROTOCOLS = ["http:", "https:"];
-
-function getString(value: string | { en: string; ar: string } | undefined): string {
-  if (!value) return "";
-  if (typeof value === "string") return value;
-  return value.en || "";
-}
 
 function isValidEmail(value: string): boolean {
   const trimmed = value.trim();

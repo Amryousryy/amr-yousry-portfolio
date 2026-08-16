@@ -8,3 +8,9 @@ export function toPlainText(value: unknown, fallback = ""): string {
   }
   return fallback;
 }
+
+export function getString(value: string | { en: string; ar: string } | undefined): string {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  return value.en || "";
+}
