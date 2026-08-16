@@ -4,22 +4,7 @@ import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import ActivityLog from "@/models/ActivityLog";
 import { paginationSchema, getPagination } from "@/lib/pagination";
-
-function successResponse<T>(data: T, pagination?: ReturnType<typeof getPagination>) {
-  return NextResponse.json({
-    success: true,
-    data,
-    ...(pagination && {
-      meta: {
-        current: pagination.page,
-        pages: pagination.totalPages,
-        total: pagination.total,
-        hasNext: pagination.hasNextPage,
-        hasPrev: pagination.hasPrevPage,
-      }
-    })
-  });
-}
+import { successResponse } from "@/lib/api-response";
 
 export async function GET(req: Request) {
   let session = null;

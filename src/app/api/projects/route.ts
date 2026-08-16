@@ -8,6 +8,7 @@ import { projectCreateSchema } from "@/lib/validation";
 import { logActivity } from "@/lib/activity";
 import { checkReadiness, detectExpectedMediaType } from "@/lib/validation/project-readiness";
 import { paginationSchema, getPagination } from "@/lib/pagination";
+import { successResponse } from "@/lib/api-response";
 import { normalizeProject } from "@/lib/project-utils";
 
 const SORT_FIELDS: Record<string, 1 | -1> = {
@@ -20,22 +21,6 @@ const SORT_FIELDS: Record<string, 1 | -1> = {
   year: 1,
   displayOrder: 1,
 };
-
-function successResponse<T>(data: T, pagination?: ReturnType<typeof getPagination>) {
-  return NextResponse.json({
-    success: true,
-    data,
-    ...(pagination && {
-      meta: {
-        current: pagination.page,
-        pages: pagination.totalPages,
-        total: pagination.total,
-        hasNext: pagination.hasNextPage,
-        hasPrev: pagination.hasPrevPage,
-      }
-    })
-  });
-}
 
 export async function GET(req: Request) {
   try {
