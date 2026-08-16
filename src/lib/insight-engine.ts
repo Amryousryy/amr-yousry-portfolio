@@ -2,6 +2,7 @@ import dbConnect from "./db";
 import Analytics from "@/models/Analytics";
 import Project from "@/models/Project";
 import { safeProjectTitle } from "./safe-project-title";
+import { getPopularProjectSlugs } from "./popular-projects";
 
 export interface Insight {
   type: "positive" | "negative" | "opportunity";
@@ -79,9 +80,9 @@ export async function generateBusinessInsights() {
     projectViews = [];
   }
 
-  const popularIds = projectViews.filter(p => p.views > 50).map(p => p._id);
-  if (popularIds.length > 0) {
-    const projects = await Project.find({ _id: { $in: popularIds } });
+  const popularSlugs = getPopularProjectSlugs(projectViews);
+  if (popularSlugs.length > 0) {
+    const projects = await Project.find({ slug: { $in: popularSlugs } });
     for (const project of projects) {
       const title = safeProjectTitle(project);
       insights.push({
