@@ -7,52 +7,15 @@ import { Save, Loader2, Clock, Eye } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SettingsService } from "@/lib/api-client";
 import { contentCreateSchema, ContentCreateInput, contentDefaultValues } from "@/lib/validation";
-import { getString } from "@/lib/text";
+import { convertSiteContentToForm } from "@/lib/content-form";
 import { getFieldError } from "@/lib/form-field-error";
 import { toast } from "sonner";
 import StringInput from "@/components/admin/BilingualInput";
 import { ErrorSummary, scrollToFirstError } from "@/components/admin/ErrorSummary";
 import { useUnsavedChanges } from "@/lib/hooks";
 import { socialLinks } from "@/data/social-links";
-import type { SiteContent } from "@/types";
 
 type FormData = ContentCreateInput;
-
-function convertToForm(content: SiteContent): FormData {
-  if (!content) return contentDefaultValues;
-  return {
-    about: getString(content.about),
-    aboutTitle: getString(content.aboutTitle),
-    aboutBadge: getString(content.aboutBadge),
-    aboutCtaLabel: getString(content.aboutCtaLabel),
-    aboutCtaLink: getString(content.aboutCtaLink),
-    aboutStats: content.aboutStats?.map(s => ({ label: s.label || "", value: s.value || "" })) || [],
-    aboutSkills: content.aboutSkills?.map(s => s) || [],
-    aboutIndustries: content.aboutIndustries?.map(s => s) || [],
-    servicesTitle: getString(content.servicesTitle),
-    servicesSubtitle: getString(content.servicesSubtitle),
-    servicesDescription: getString(content.servicesDescription),
-    contactEmail: content.contactEmail ?? "",
-    whatsappNumber: content.whatsappNumber ?? "",
-    contactHeading: getString(content.contactHeading),
-    contactSubheading: getString(content.contactSubheading),
-    contactAvailability: getString(content.contactAvailability),
-    socialLinks: {
-      instagram: content.socialLinks?.instagram ?? "",
-      facebook: content.socialLinks?.facebook ?? "",
-      behance: content.socialLinks?.behance ?? "",
-      twitter: content.socialLinks?.twitter ?? "",
-      youtube: content.socialLinks?.youtube ?? "",
-      linkedin: content.socialLinks?.linkedin ?? "",
-    },
-    status: content.status || "draft",
-    servicesCards: content.servicesCards?.map((card: SiteContent["servicesCards"][number]) => ({
-      title: getString(card.title),
-      description: getString(card.description),
-      icon: card.icon
-    })) || []
-  };
-}
 
 export default function ContactSettingsPage() {
   const queryClient = useQueryClient();
@@ -80,7 +43,7 @@ export default function ContactSettingsPage() {
 
   React.useEffect(() => {
     if (content && Object.keys(content).length > 0) {
-      const formValues = convertToForm(content);
+      const formValues = convertSiteContentToForm(content);
       reset(formValues);
     }
   }, [content, reset]);
