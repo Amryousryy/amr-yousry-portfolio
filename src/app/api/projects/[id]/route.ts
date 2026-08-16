@@ -9,6 +9,7 @@ import { deleteCloudinaryResources } from "@/lib/cloudinary";
 import { logActivity } from "@/lib/activity";
 import { checkReadiness } from "@/lib/validation/project-readiness";
 import { normalizeCaseStudyMedia, normalizeProject } from "@/lib/project-utils";
+import { resolveStatusMetadata } from "@/lib/status-metadata";
 import type { Project as ProjectType } from "@/types/project";
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -95,13 +96,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     const currentStatus = currentProject?.status || "draft";
     const newStatus = validation.data.status || "draft";
     
-    const statusMetadata: Record<string, Date> = {
-      lastStatusChangeAt: new Date(),
-    };
-    
-    if (newStatus === "published" && currentStatus !== "published") {
-      statusMetadata.publishedAt = new Date();
-    }
+    const statusMetadata = resolveStatusMetadata(newStatus, currentStatus);
     
     const existing = currentProject as unknown as Record<string, unknown> | null;
     const guardedArrayFields = new Set(["services", "detailedResults", "caseStudyMedia", "gallery", "tags", "sections", "categories"]);

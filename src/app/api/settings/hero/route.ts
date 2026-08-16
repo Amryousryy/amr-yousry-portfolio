@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Settings, { type LeanSettings } from "@/models/Settings";
 import { heroCreateSchema } from "@/lib/validation";
+import { resolveStatusMetadata } from "@/lib/status-metadata";
 
 const DEFAULT_HERO = {
   headline: "Creative Strategist & Video Editor",
@@ -127,13 +128,7 @@ export async function PUT(req: Request) {
     const currentStatus = currentSettings?.hero?.status || "draft";
     const newStatus = validated.status || "draft";
     
-    const statusMetadata: Record<string, Date> = {
-      lastStatusChangeAt: new Date(),
-    };
-    
-    if (newStatus === "published" && currentStatus !== "published") {
-      statusMetadata.publishedAt = new Date();
-    }
+    const statusMetadata = resolveStatusMetadata(newStatus, currentStatus);
     
     const settings = await Settings.findOneAndUpdate(
       {}, 

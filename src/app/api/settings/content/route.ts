@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Settings, { type LeanSettings } from "@/models/Settings";
+import { resolveStatusMetadata } from "@/lib/status-metadata";
 
 const DEFAULT_CONTENT = {
   about: "",
@@ -190,13 +191,7 @@ export async function PUT(req: Request) {
     const currentStatus = currentSettings?.siteContent?.status || "draft";
     const newStatus = body.status || currentStatus;
     
-    const statusMetadata: Record<string, Date> = {
-      lastStatusChangeAt: new Date(),
-    };
-    
-    if (newStatus === "published" && currentStatus !== "published") {
-      statusMetadata.publishedAt = new Date();
-    }
+    const statusMetadata = resolveStatusMetadata(newStatus, currentStatus);
 
     const mergedSocialLinks = {
       ...(currentContent.socialLinks || {}),

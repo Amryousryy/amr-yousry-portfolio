@@ -10,6 +10,7 @@ import { checkReadiness } from "@/lib/validation/project-readiness";
 import { paginationSchema, getPagination } from "@/lib/pagination";
 import { successResponse } from "@/lib/api-response";
 import { normalizeCaseStudyMedia, normalizeProject } from "@/lib/project-utils";
+import { resolveStatusMetadata } from "@/lib/status-metadata";
 
 const SORT_FIELDS: Record<string, 1 | -1> = {
   createdAt: -1,
@@ -139,9 +140,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const statusMetadata = validation.data.status === "published" 
-      ? { publishedAt: new Date(), lastStatusChangeAt: new Date() }
-      : { lastStatusChangeAt: new Date() };
+    const statusMetadata = resolveStatusMetadata(validation.data.status, "");
 
     const project = await Project.create({ ...validation.data, ...statusMetadata });
 
