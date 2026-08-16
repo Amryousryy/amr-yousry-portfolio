@@ -10,6 +10,7 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD } from "../../helpers/test-admin";
 
 const BASE_URL = process.env.TEST_BASE_URL || "http://localhost:3000";
 
@@ -65,8 +66,8 @@ async function ensureAuth() {
 
   const params = new URLSearchParams({
     csrfToken,
-    email: "amryousryy@gmail.com",
-    password: "1937468250Aa@",
+    email: TEST_ADMIN_EMAIL,
+    password: TEST_ADMIN_PASSWORD,
   });
 
   const url = `${BASE_URL}/api/auth/callback/credentials`;
@@ -96,7 +97,7 @@ async function ensureAuth() {
   }
 
   const session = await request("GET", "/api/auth/session");
-  AUTHENTICATED = session.json?.user?.email === "amryousryy@gmail.com";
+  AUTHENTICATED = session.json?.user?.email === TEST_ADMIN_EMAIL;
   if (!AUTHENTICATED) throw new Error("Authentication failed — check credentials");
 }
 

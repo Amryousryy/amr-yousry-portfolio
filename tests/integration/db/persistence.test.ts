@@ -9,6 +9,7 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD } from "../../helpers/test-admin";
 
 const BASE_URL = process.env.TEST_BASE_URL || "http://localhost:3000";
 
@@ -48,7 +49,7 @@ async function ensureAuth() {
   const token = csrf.json?.csrfToken;
   if (!token) throw new Error("No CSRF token — is dev server running?");
 
-  const params = new URLSearchParams({ csrfToken: token, email: "amryousryy@gmail.com", password: "1937468250Aa@" });
+  const params = new URLSearchParams({ csrfToken: token, email: TEST_ADMIN_EMAIL, password: TEST_ADMIN_PASSWORD });
   const url = `${BASE_URL}/api/auth/callback/credentials`;
   const h: Record<string, string> = {};
   if (cookieJar) h["Cookie"] = cookieJar;
@@ -74,7 +75,7 @@ async function ensureAuth() {
   }
 
   const session = await req("GET", "/api/auth/session");
-  if (session.json?.user?.email !== "amryousryy@gmail.com") throw new Error("Auth failed");
+  if (session.json?.user?.email !== TEST_ADMIN_EMAIL) throw new Error("Auth failed");
 }
 
 const CLEANUP: string[] = [];

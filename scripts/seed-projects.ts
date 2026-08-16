@@ -21,6 +21,15 @@ if (fs.existsSync(envPath)) {
 const args = process.argv.slice(2);
 const isWriteMode = args.includes("--write");
 
+const testDataArg = args.find((arg) => arg.startsWith("--test-data"));
+let testDataCount = 0;
+if (testDataArg !== undefined) {
+  const inline = testDataArg.split("=")[1];
+  const next = args[args.indexOf(testDataArg) + 1];
+  const raw = inline ?? (next !== undefined && /^\d+$/.test(next) ? next : undefined);
+  testDataCount = raw !== undefined ? Math.max(1, parseInt(raw, 10)) : 30;
+}
+
 interface StaticProject {
   slug: string;
   title: string;
@@ -85,6 +94,41 @@ function buildDocument(p: StaticProject, index: number): Record<string, unknown>
   };
 }
 
+function buildTestDocument(index: number): Record<string, unknown> {
+  const isTraining = index === 1;
+  const title = isTraining ? "Training Management System" : `QA Test Project ${index}`;
+  return {
+    title,
+    slug: isTraining ? "training-management-system" : `qa-test-project-${index}`,
+    shortDescription: `Automated QA seed project ${index}.`,
+    fullDescription: `Synthetic project created for deterministic pagination E2E tests (index ${index}).`,
+    category: "QA",
+    categories: ["web"],
+    services: ["QA Automation"],
+    image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=1200",
+    client: "QA Fixtures",
+    clientName: "QA Fixtures",
+    mainResult: "Deterministic seed data",
+    detailedResults: [],
+    caseStudyMedia: [],
+    gallery: [],
+    tags: isTraining ? ["qa", "e2e", "training"] : ["qa", "e2e"],
+    sections: [],
+    featured: false,
+    featuredOrder: 0,
+    displayOrder: 1000 + index,
+    status: "published",
+    year: "2026",
+    seo: {
+      title,
+      description: `Automated QA seed project ${index}.`,
+      keywords: ["qa"],
+    },
+    publishedAt: new Date(),
+    lastStatusChangeAt: new Date(),
+  };
+}
+
 async function seedProjects() {
   if (!isWriteMode) {
     console.log("DRY RUN MODE — no database writes will be performed.\n");
@@ -143,6 +187,37 @@ async function seedProjects() {
     }
   }
 
+  if (testDataCount > 0) {
+    console.log(`\nSeeding ${testDataCount} synthetic test projects...`);
+    for (let i = 1; i <= testDataCount; i++) {
+      const doc = buildTestDocument(i);
+      const slug = String(doc.slug);
+      const title = String(doc.title);
+
+      try {
+        const existing = await Project.findOne({ slug }).lean();
+
+        if (existing) {
+          console.log(`  [SKIPPED] ${slug} — ${title} (already exists)`);
+          report.skipped++;
+          continue;
+        }
+
+        if (isWriteMode) {
+          await Project.create(doc);
+          console.log(`  [CREATED] ${slug} — ${title}`);
+          report.created++;
+        } else {
+          console.log(`  [WOULD CREATE] ${slug} — ${title}`);
+          report.wouldCreate++;
+        }
+      } catch (error) {
+        console.error(`  [ERROR] ${slug} — ${title}:`, error);
+        report.errors++;
+      }
+    }
+  }
+
   console.log("\nSummary:");
   if (isWriteMode) {
     console.log(`  Created: ${report.created}`);
@@ -154,6 +229,10 @@ async function seedProjects() {
 
   await mongoose.default.disconnect();
   console.log("\nDisconnected from MongoDB");
+
+  if (report.errors > 0) {
+    process.exit(1);
+  }
 }
 
 seedProjects().catch((error) => {
