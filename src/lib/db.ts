@@ -3,10 +3,6 @@ import dns from "dns";
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
-if (!MONGODB_URI) {
-  throw new Error("Please define the MONGODB_URI environment variable inside .env.local");
-}
-
 interface MongooseCache {
   conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
@@ -21,6 +17,9 @@ const cached: MongooseCache = global.mongoose ?? (global.mongoose = { conn: null
 let resolvedUri: string | null = null;
 
 async function getResolvedUri(): Promise<string> {
+  if (!MONGODB_URI) {
+    throw new Error("Please define the MONGODB_URI environment variable inside .env.local");
+  }
   if (resolvedUri) return resolvedUri;
 
   let uri = MONGODB_URI!;
