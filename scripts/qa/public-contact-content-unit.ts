@@ -2,7 +2,7 @@
  * Unit tests for public contact/social content helpers.
  *
  * Tests the pure normalizeContactContent(), normalizeSocialLinks(),
- * isValidEmail(), isValidUrl(), isPublished(), and toStr() functions
+ * isValidEmail(), isValidUrl(), isPublished(), and toPlainText() functions
  * without DB or network.
  */
 import {
@@ -11,10 +11,10 @@ import {
   isValidEmail,
   isValidUrl,
   isPublished,
-  toStr,
   FALLBACK_CONTACT,
   FALLBACK_SOCIALS,
 } from "../../src/lib/contact-content-normalizer";
+import { toPlainText } from "../../src/lib/text";
 
 let passed = 0;
 let failed = 0;
@@ -151,13 +151,13 @@ assert(isPublished(null) === false, "null returns false");
 assert(isPublished(undefined) === false, "undefined returns false");
 assert(isPublished({}) === false, "missing status returns false");
 
-// 6. toStr
-console.log("\n## toStr\n");
-assert(toStr("hello") === "hello", "string returns as-is");
-assert(toStr({ en: "hello", ar: "مرحبا" }) === "hello", "bilingual extracts en");
-assert(toStr(42) === "", "number returns empty");
-assert(toStr(null) === "", "null returns empty");
-assert(toStr(undefined) === "", "undefined returns empty");
+// 6. toPlainText
+console.log("\n## toPlainText\n");
+assert(toPlainText("hello") === "hello", "string returns as-is");
+assert(toPlainText({ en: "hello", ar: "مرحبا" }) === "hello", "bilingual extracts en");
+assert(toPlainText(42) === "42", "number converts to string");
+assert(toPlainText(null) === "", "null returns empty");
+assert(toPlainText(undefined) === "", "undefined returns empty");
 
 // ────────────────────────────────────────────────────────────────────
 console.log(`\n## Results: ${passed} passed, ${failed} failed${failed > 0 ? ' — FAIL' : ' — PASS'}\n`);

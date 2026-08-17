@@ -7,14 +7,7 @@ export interface PublicHeroContent {
   secondaryCTALink: string;
 }
 
-export function toStr(value: unknown): string {
-  if (typeof value === "string") return value;
-  if (value && typeof value === "object") {
-    const o = value as { en?: unknown };
-    if (typeof o.en === "string") return o.en;
-  }
-  return "";
-}
+import { toPlainText } from "./text";
 
 export const FALLBACK_HERO: PublicHeroContent = {
   headline: "MAKE IDEAS\nMATTER",
@@ -55,15 +48,15 @@ export function normalizeHeroContent(
 ): PublicHeroContent {
   if (!hero) return fallback;
 
-  const status = toStr(hero.status);
+  const status = toPlainText(hero.status);
   if (status !== "published") return fallback;
 
-  const headline = toStr(hero.headline).trim();
-  const subheadline = toStr(hero.subheadline).trim();
-  const primaryCTA = toStr(hero.primaryCTA).trim();
-  const rawPrimaryCTALink = toStr(hero.primaryCTALink).trim();
-  const secondaryCTA = toStr(hero.secondaryCTA).trim();
-  const rawSecondaryCTALink = toStr(hero.secondaryCTALink).trim();
+  const headline = toPlainText(hero.headline).trim();
+  const subheadline = toPlainText(hero.subheadline).trim();
+  const primaryCTA = toPlainText(hero.primaryCTA).trim();
+  const rawPrimaryCTALink = toPlainText(hero.primaryCTALink).trim();
+  const secondaryCTA = toPlainText(hero.secondaryCTA).trim();
+  const rawSecondaryCTALink = toPlainText(hero.secondaryCTALink).trim();
 
   const primaryCTALink = normalizeHeroCtaLink(rawPrimaryCTALink, "/projects", 'primary');
   const secondaryCTALink = normalizeHeroCtaLink(rawSecondaryCTALink, "#contact", 'secondary');

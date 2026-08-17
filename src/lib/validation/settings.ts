@@ -76,7 +76,6 @@ export const contentCreateSchema = z.object({
 export const contentUpdateSchema = contentCreateSchema.partial();
 
 export type ContentCreateInput = z.infer<typeof contentCreateSchema>;
-export type ContentUpdateInput = z.infer<typeof contentUpdateSchema>;
 
 import { socialLinks } from "../../data/social-links";
 

@@ -27,13 +27,6 @@ export function toEnglishOnly<T extends Record<string, unknown>>(
   return result;
 }
 
-export function toEnglishOnlyArray<T extends Record<string, unknown>>(
-  data: T,
-  fields: (keyof T)[]
-): T {
-  return toEnglishOnly(data, fields);
-}
-
 // ============================================================================
 // MEDIA SCHEMAS
 // ============================================================================
@@ -60,8 +53,6 @@ export const seoSchema = z.object({
 // ============================================================================
 
 export const optionalStringSchema = z.string().optional().default("");
-
-export const optionalUrlSchema = z.string().url().optional().or(z.literal(""));
 
 export const safeUrlSchema = z.string().optional().default("").refine(
   (val) => {
@@ -101,19 +92,9 @@ export function normalizeSlug(input: string): string {
     .replace(/-+/g, "-");
 }
 
-export const slugSchema = z
-  .string()
-  .min(1, "Slug is required")
-  .transform(normalizeSlug);
-
 // ============================================================================
 // DEFAULT VALUE FACTORIES
 // ============================================================================
-
-export const createEmptyMediaItem = (): { type: "image" | "video"; url: string } => ({
-  type: "image",
-  url: "",
-});
 
 export const createEmptyProjectSection = (): {
   id: string;
@@ -126,29 +107,6 @@ export const createEmptyProjectSection = (): {
   content: "",
   media: [],
 });
-
-// ============================================================================
-// ARRAY MAPPING HELPERS (string <-> string[])
-// ============================================================================
-
-export function stringToStringArray(value: string | string[] | undefined): string[] {
-  if (!value) return [];
-  if (Array.isArray(value)) return value;
-  return value.split(",").map(s => s.trim()).filter(Boolean);
-}
-
-export function stringArrayToString(values: string[] | undefined): string {
-  if (!values || !Array.isArray(values)) return "";
-  return values.join(", ");
-}
-
-export function commaStringToArray(input: string): string[] {
-  return input.split(",").map(s => s.trim()).filter(Boolean);
-}
-
-export function arrayToCommaString(values: string[]): string {
-  return values.join(", ");
-}
 
 // ============================================================================
 // DERIVED TYPES

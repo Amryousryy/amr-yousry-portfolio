@@ -11,7 +11,7 @@ export {
   contentUpdateSchema,
   contentDefaultValues,
 } from "./settings";
-export type { ContentCreateInput, ContentUpdateInput } from "./settings";
+export type { ContentCreateInput } from "./settings";
 
 export { 
   heroCreateSchema,
@@ -23,21 +23,12 @@ export {
   contentStatusSchema,
   stringSchema,
   optionalStringSchema,
-  mediaItemSchema,
   mediaArraySchema,
   seoSchema,
-  optionalUrlSchema,
   safeUrlSchema,
   optionalEmailSchema,
   normalizeSlug,
-  slugSchema,
-  createEmptyMediaItem,
   createEmptyProjectSection,
-  stringToStringArray,
-  stringArrayToString,
-  commaStringToArray,
-  arrayToCommaString,
   toEnglishOnly,
-  toEnglishOnlyArray,
 } from "./shared";
 export type { MediaItem, MediaArray, SEO, ContentStatus } from "./shared";

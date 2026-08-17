@@ -37,20 +37,13 @@ const LABEL_MAP: Record<string, string> = {
   tiktok: "TIKTOK",
 };
 
-const ALLOWED_PROTOCOLS = ["http:", "https:"];
+import { toPlainText } from "./text";
 
-export function toStr(value: unknown): string {
-  if (typeof value === "string") return value;
-  if (value && typeof value === "object") {
-    const o = value as { en?: unknown };
-    if (typeof o.en === "string") return o.en;
-  }
-  return "";
-}
+const ALLOWED_PROTOCOLS = ["http:", "https:"];
 
 export function getPublishedStatus(siteContent: Record<string, unknown> | null | undefined): string {
   if (!siteContent) return "";
-  return toStr(siteContent.status);
+  return toPlainText(siteContent.status);
 }
 
 export function isPublished(siteContent: Record<string, unknown> | null | undefined): boolean {
@@ -111,7 +104,7 @@ export function normalizeSocialLinks(
 
   for (const key of orderedKeys) {
     const raw = socialLinks[key];
-    const href = toStr(raw).trim();
+    const href = toPlainText(raw).trim();
     if (!href) continue;
     if (!isValidUrl(href)) continue;
 
@@ -134,13 +127,13 @@ export function normalizeContactContent(
   if (!siteContent) return fallback;
   if (!isPublished(siteContent)) return fallback;
 
-  const email = toStr(siteContent.contactEmail).trim();
-  const whatsappNumber = toStr(siteContent.whatsappNumber).trim();
+  const email = toPlainText(siteContent.contactEmail).trim();
+  const whatsappNumber = toPlainText(siteContent.whatsappNumber).trim();
   const socialLinks = siteContent.socialLinks as Record<string, unknown> | undefined;
 
-  const heading = toStr(siteContent.contactHeading).trim() || fallback.heading;
-  const subheading = toStr(siteContent.contactSubheading).trim() || fallback.subheading;
-  const availability = toStr(siteContent.contactAvailability).trim() || fallback.availability;
+  const heading = toPlainText(siteContent.contactHeading).trim() || fallback.heading;
+  const subheading = toPlainText(siteContent.contactSubheading).trim() || fallback.subheading;
+  const availability = toPlainText(siteContent.contactAvailability).trim() || fallback.availability;
 
   const validEmail = isValidEmail(email) ? email : fallback.email;
   const validWhatsapp = whatsappNumber || fallback.whatsappNumber;
