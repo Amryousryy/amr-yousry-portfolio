@@ -14,6 +14,8 @@ import { useUnsavedChanges } from "@/lib/hooks";
 import ContactIntroFields from "@/components/admin/ContactIntroFields";
 import DirectContactFields from "@/components/admin/DirectContactFields";
 import SocialLinksFields from "@/components/admin/SocialLinksFields";
+import AdminLoadingSpinner from "@/components/admin/AdminLoadingSpinner";
+import AdminQueryError from "@/components/admin/AdminQueryError";
 
 type FormData = ContentCreateInput;
 
@@ -82,30 +84,16 @@ export default function ContactSettingsPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="h-screen w-full flex items-center justify-center">
-        <Loader2 className="animate-spin text-accent" size={48} />
-      </div>
-    );
+    return <AdminLoadingSpinner />;
   }
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] p-8">
-        <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-6">
-          <span className="text-red-500 text-2xl font-bold">!</span>
-        </div>
-        <h2 className="text-xl font-display font-bold uppercase tracking-tight mb-2">Failed to Load Contact Settings</h2>
-        <p className="text-foreground/50 text-sm mb-6 text-center max-w-md">
-          {error?.message || "Could not fetch contact settings. Please try again."}
-        </p>
-        <button
-          onClick={() => queryClient.invalidateQueries({ queryKey: ["site-content"] })}
-          className="flex items-center space-x-2 px-6 py-3 bg-accent text-background font-bold uppercase tracking-widest text-xs pixel-border hover:scale-105 transition-all"
-        >
-          Retry
-        </button>
-      </div>
+      <AdminQueryError
+        title="Failed to Load Contact Settings"
+        queryKey={["site-content"]}
+        message={error?.message || "Could not fetch contact settings. Please try again."}
+      />
     );
   }
 

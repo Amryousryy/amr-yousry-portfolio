@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import AdminLoadingSpinner from "@/components/admin/AdminLoadingSpinner";
 import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ProjectService } from "@/lib/api-client";
@@ -59,11 +60,7 @@ export default function EditProjectPage() {
   }, [mutation, syncResetMutation]);
 
   if (isLoading) {
-    return (
-      <div className="h-screen w-full flex items-center justify-center">
-        <Loader2 className="animate-spin text-accent" size={48} />
-      </div>
-    );
+    return <AdminLoadingSpinner />;
   }
 
   if (isError || !project) {
