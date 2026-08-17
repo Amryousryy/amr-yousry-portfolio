@@ -8,16 +8,7 @@ import {
   featuredProjects as staticFeaturedProjects,
 } from "@/data/projects";
 import { formatCategory } from "@/lib/projects/categories";
-
-function toPlainText(value: unknown, fallback = ""): string {
-  if (typeof value === "string") return value;
-  if (value && typeof value === "object") {
-    const localized = value as { en?: unknown; ar?: unknown };
-    if (typeof localized.en === "string") return localized.en;
-    if (typeof localized.ar === "string") return localized.ar;
-  }
-  return fallback;
-}
+import { toPlainText } from "@/lib/text";
 
 function normalizeStrings(arr: unknown): string[] {
   if (!Array.isArray(arr)) return [];
@@ -91,10 +82,8 @@ function normalizeMediaItems(doc: Record<string, unknown>, title: string): Proje
 function withMedia(project: Project): Project {
   if (project.media && project.media.length > 0) return project;
   const items: ProjectMediaItem[] = [];
-  const seen = new Set<string>();
   const addItem = (src: string, alt?: string, caption?: string, title?: string, description?: string) => {
-    if (!src || seen.has(src)) return;
-    seen.add(src);
+    if (!src) return;
     const kind = getMediaKind(src);
     items.push({ kind, src, embedUrl: getEmbeddableVideoUrl(src) || undefined, provider: getMediaProvider(src), alt, caption, title, description });
   };
