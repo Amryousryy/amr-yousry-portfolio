@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -9,57 +9,31 @@ import { ProjectService } from "@/lib/api-client";
 import { toast } from "sonner";
 import { NewProject } from "@/types";
 import ProjectEditor from "@/components/admin/ProjectEditor";
-
-const SAVE_TIMEOUT_MS = 30_000;
+import { useSaveWithTimeout } from "@/hooks/useSaveWithTimeout";
 
 export default function NewProjectPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const mountedRef = useRef(true);
-  const resetMutationRef = useRef<() => void>(() => {});
-
-  const clearSaveTimeout = useCallback(() => {
-    if (saveTimeoutRef.current !== null) {
-      clearTimeout(saveTimeoutRef.current);
-      saveTimeoutRef.current = null;
-    }
-  }, []);
-
-  useEffect(() => {
-    mountedRef.current = true;
-    return () => {
-      mountedRef.current = false;
-      clearSaveTimeout();
-    };
-  }, [clearSaveTimeout]);
+  const { saveTimeoutConfig, syncResetMutation } = useSaveWithTimeout();
 
   const mutation = useMutation({
     mutationFn: (data: NewProject) => ProjectService.create(data),
-    onMutate: () => {
-      clearSaveTimeout();
-      saveTimeoutRef.current = setTimeout(() => {
-        if (!mountedRef.current) return;
-        saveTimeoutRef.current = null;
-        resetMutationRef.current();
-        toast.error("Save timed out. Please try again.");
-      }, SAVE_TIMEOUT_MS);
-    },
+    ...saveTimeoutConfig,
     onSuccess: () => {
-      clearSaveTimeout();
+      saveTimeoutConfig.onSuccess();
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       toast.success("Project saved successfully!");
       router.push("/admin");
     },
     onError: (error: Error) => {
-      clearSaveTimeout();
+      saveTimeoutConfig.onError();
       toast.error(error.message || "Failed to save project");
     }
   });
 
   useEffect(() => {
-    resetMutationRef.current = () => mutation.reset();
-  }, [mutation]);
+    syncResetMutation(() => mutation.reset());
+  }, [mutation, syncResetMutation]);
 
   return (
     <div className="space-y-12">

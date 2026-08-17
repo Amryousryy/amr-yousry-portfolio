@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -9,31 +9,14 @@ import { ProjectService } from "@/lib/api-client";
 import { toast } from "sonner";
 import { Project } from "@/types";
 import ProjectEditor from "@/components/admin/ProjectEditor";
-
-const SAVE_TIMEOUT_MS = 30_000;
+import { useSaveWithTimeout } from "@/hooks/useSaveWithTimeout";
 
 export default function EditProjectPage() {
   const router = useRouter();
   const { id } = useParams();
   const queryClient = useQueryClient();
   const [lastSaved, setLastSaved] = useState<string | null>(null);
-  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const mountedRef = useRef(true);
-
-  const clearSaveTimeout = useCallback(() => {
-    if (saveTimeoutRef.current !== null) {
-      clearTimeout(saveTimeoutRef.current);
-      saveTimeoutRef.current = null;
-    }
-  }, []);
-
-  useEffect(() => {
-    mountedRef.current = true;
-    return () => {
-      mountedRef.current = false;
-      clearSaveTimeout();
-    };
-  }, [clearSaveTimeout]);
+  const { saveTimeoutConfig, syncResetMutation } = useSaveWithTimeout();
 
   const { data: project, isLoading, isError, error } = useQuery({
     queryKey: ["project", id],
@@ -45,23 +28,13 @@ export default function EditProjectPage() {
     enabled: !!id,
   });
 
-  const resetMutationRef = useRef<() => void>(() => {});
-
   const mutation = useMutation({
     mutationFn: ({ data }: { data: Partial<Project>; isAutoSave?: boolean }) => {
       return ProjectService.update(id as string, data);
     },
-    onMutate: () => {
-      clearSaveTimeout();
-      saveTimeoutRef.current = setTimeout(() => {
-        if (!mountedRef.current) return;
-        saveTimeoutRef.current = null;
-        resetMutationRef.current();
-        toast.error("Save timed out. Please try again.");
-      }, SAVE_TIMEOUT_MS);
-    },
+    ...saveTimeoutConfig,
     onSuccess: (_, variables) => {
-      clearSaveTimeout();
+      saveTimeoutConfig.onSuccess();
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       queryClient.invalidateQueries({ queryKey: ["project", id] });
       setLastSaved(new Date().toLocaleTimeString());
@@ -72,7 +45,7 @@ export default function EditProjectPage() {
       }
     },
     onError: (error: Error, variables) => {
-      clearSaveTimeout();
+      saveTimeoutConfig.onError();
       if (!variables.isAutoSave) {
         toast.error(error.message || "Failed to update project");
       } else {
@@ -82,8 +55,8 @@ export default function EditProjectPage() {
   });
 
   useEffect(() => {
-    resetMutationRef.current = () => mutation.reset();
-  }, [mutation]);
+    syncResetMutation(() => mutation.reset());
+  }, [mutation, syncResetMutation]);
 
   if (isLoading) {
     return (
