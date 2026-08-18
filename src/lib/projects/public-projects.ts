@@ -182,7 +182,7 @@ export async function getFeaturedProjects(limit = 3): Promise<Project[]> {
 }
 
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
-  return tryDb(
+  const dbProject = await tryDb(
     async () => {
       const doc = await ProjectModel
         .findOne({ slug, status: "published" })
@@ -192,6 +192,8 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
 
       return toPublicProject(doc as unknown as Record<string, unknown>);
     },
-    () => getStaticProjectBySlug(slug) || null,
+    () => null,
   );
+
+  return dbProject ?? getStaticProjectBySlug(slug) ?? null;
 }
