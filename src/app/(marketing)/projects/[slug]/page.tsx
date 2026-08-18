@@ -118,6 +118,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
                 src={project.bannerImage}
                 alt={project.title}
                 fill
+                sizes="100vw"
                 className="object-cover"
                 priority
               />
@@ -165,6 +166,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
               src={project.bannerImage}
               alt={project.title}
               fill
+              sizes="100vw"
               className="object-cover"
               priority
             />
