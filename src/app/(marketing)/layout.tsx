@@ -3,7 +3,7 @@ import { Footer } from "@/components/layout/footer";
 import PageViewTracker from "@/components/analytics/PageViewTracker";
 import { CreativeEngineLoader } from "@/components/ui/CreativeEngineLoader";
 import JsonLd from "@/components/seo/JsonLd";
-import WorldRoot from "@/components/world/WorldRoot";
+import WorldRoot from "./WorldRootLazy";
 
 export default function MarketingLayout({
   children,
@@ -11,13 +11,15 @@ export default function MarketingLayout({
   children: React.ReactNode;
 }) {
   return (
-    <CreativeEngineLoader>
-      <JsonLd />
-      <PageViewTracker />
+    <>
       <Navbar />
-      <WorldRoot />
-      <main id="main-content" className="pt-20 flex-grow">{children}</main>
-      <Footer />
-    </CreativeEngineLoader>
+      <CreativeEngineLoader>
+        <JsonLd />
+        <PageViewTracker />
+        <WorldRoot />
+        <main id="main-content" className="pt-20 flex-grow">{children}</main>
+        <Footer />
+      </CreativeEngineLoader>
+    </>
   );
 }
