@@ -3,6 +3,7 @@ import { Press_Start_2P, Inter } from "next/font/google";
 import "@/styles/globals.css";
 import "@/styles/pixel-system.css";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const pressStart2P = Press_Start_2P({
   subsets: ["latin"],
@@ -78,6 +79,7 @@ export default function RootLayout({
           Skip to main content
         </a>
         <GoogleAnalytics />
+        <SpeedInsights />
         {children}
       </body>
     </html>
