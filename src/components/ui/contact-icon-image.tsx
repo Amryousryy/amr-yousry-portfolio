@@ -29,12 +29,12 @@ export default function ContactIconImage({
         alt={alt}
         width={inner}
         height={inner}
+        sizes={`${inner}px`}
         className={`block image-pixel ${imgClassName}`}
         style={{
           maxWidth: "none",
           imageRendering: "pixelated",
         }}
-        unoptimized
       />
     </div>
   );

@@ -57,11 +57,16 @@ export default function CharacterSelector() {
   const showArrows = total > 1;
 
   useEffect(() => {
-    characters.forEach(({ src }) => {
-      const img = new window.Image();
-      img.src = src;
-    });
-  }, []);
+    const img = new window.Image();
+    img.src = characters[0].src;
+    const t = setTimeout(() => {
+      [1, total - 1].forEach((idx) => {
+        const preload = new window.Image();
+        preload.src = characters[idx].src;
+      });
+    }, 2000);
+    return () => clearTimeout(t);
+  }, [total]);
 
   const handleTransition = useCallback((newDirection: 'next' | 'prev') => {
     if (isTransitioningRef.current) return;
