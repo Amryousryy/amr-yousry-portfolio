@@ -69,7 +69,7 @@ export function Navbar() {
         <nav aria-label="Main navigation" className="flex min-w-0 items-center justify-between gap-3">
           {/* Logo */}
           <Link href="/" onClick={() => event("navigation_click", { label: "LOGO", destination: "/" })} className="group flex min-w-0 items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background">
-            <Image src="/images/logo.svg" alt="AMR YOUSRY" width={32} height={32} className="w-9 h-9 md:w-10 md:h-10 transition-transform group-hover:scale-105" unoptimized />
+            <Image src="/images/logo.svg" alt="AMR YOUSRY" width={32} height={32} className="w-9 h-9 md:w-10 md:h-10 transition-transform group-hover:scale-105" unoptimized loading="eager" fetchPriority="high" />
             <span className="font-pixel text-[10px] sm:text-sm text-accent tracking-[0.2em]">AMR YOUSRY</span>
           </Link>
 
