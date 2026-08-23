@@ -1,12 +1,10 @@
-"use client";
-
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { useState } from "react";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { aboutContent as staticAboutContent } from "@/content/about";
 import { normalizeAboutContent, type PublicAboutContent } from "@/lib/about-content-normalizer";
+import AboutLeft from "./about-left";
+import AboutSkills from "./about-skills";
+import AboutStats from "./about-stats";
 import CharacterSelector from "./CharacterSelector";
 
 interface AboutSectionProps {
@@ -15,182 +13,41 @@ interface AboutSectionProps {
 
 export default function AboutSection({ aboutData }: AboutSectionProps) {
   const aboutContent = normalizeAboutContent(aboutData, staticAboutContent);
-  const [storyExpanded, setStoryExpanded] = useState(false);
 
   return (
     <Section id="about" className="relative py-14 md:py-20">
-      {/* Atmospheric overlay - warm personal tone */}
       <div className="absolute inset-0 bg-gradient-to-br from-brand-pink/3 via-transparent to-surface/98 pointer-events-none" />
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-pink/15 to-transparent pointer-events-none" />
-      
+
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-stretch">
-            
-          {/* Left Column - Story + Cards */}
-          <div className="lg:col-span-7 flex flex-col space-y-6">
-            {/* Story Content */}
-            <div className="max-w-[620px]">
-              <motion.span 
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="font-pixel text-accent text-[10px] sm:text-[11px] tracking-[0.24em] sm:tracking-[0.3em] uppercase mb-3 block"
-              >
-                {aboutContent.badge}
-              </motion.span>
-              <motion.h2 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="font-bold tracking-tighter text-strong break-words"
-                style={{ fontSize: 'clamp(1.6rem, 5.5vw, 3rem)', lineHeight: '1.1', maxWidth: '14ch' }}
-              >
-                {(() => {
-                  const parts = aboutContent.heading.split("\n");
-                  return parts.map((part, i) => (
-                    <span key={i} className="block">
-                      <span className={i === parts.length - 1 ? "text-accent" : "text-strong"}>{part}</span>
-                    </span>
-                  ));
-                })()}
-              </motion.h2>
-              
-              <div className="space-y-4 mt-6">
-                {aboutContent.story.slice(0, 2).map((paragraph, index) => (
-                  <motion.p 
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.1 }}
-                    className="text-sm md:text-base text-foreground/70 leading-relaxed"
-                    style={{ textWrap: 'pretty', maxWidth: '60ch' }}
-                  >
-                    {paragraph}
-                  </motion.p>
-                ))}
-                {aboutContent.story.length > 2 && !storyExpanded && (
-                  <button
-                    type="button"
-                    onClick={() => setStoryExpanded(true)}
-                    className="font-pixel text-[11px] text-accent/70 hover:text-accent tracking-wider transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
-                  >
-                    Continue the story →
-                  </button>
-                )}
-                {storyExpanded && aboutContent.story.slice(2).map((paragraph, index) => (
-                  <motion.p
-                    key={index + 2}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                    className="text-sm md:text-base text-foreground/70 leading-relaxed"
-                    style={{ textWrap: 'pretty', maxWidth: '60ch' }}
-                  >
-                    {paragraph}
-                  </motion.p>
-                ))}
-              </div>
 
-              {/* CTA */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.3 }}
-                className="mt-8"
-              >
-                <p className="text-sm text-foreground/60 mb-3">
-                  {aboutContent.ctaIntro}
-                </p>
-                <Link href={aboutContent.ctaLink} className="group inline-flex min-h-[44px] max-w-full items-center gap-3 sm:gap-4 text-sm font-bold uppercase tracking-[0.16em] sm:tracking-[0.2em] border-b border-brand-cyan py-2">
-                  <span>{aboutContent.ctaLabel}</span>
-                  <div className="w-8 h-[1px] bg-brand-cyan transition-all group-hover:w-16" />
-                </Link>
-              </motion.div>
+          <div className="lg:col-span-7 flex flex-col space-y-6">
+            <div className="max-w-[620px]">
+              <AboutLeft content={aboutContent} />
             </div>
 
-            {/* Capability Cards - Below Text */}
             <div className="flex sm:grid sm:grid-cols-2 gap-4 pt-4 w-full max-w-[620px] overflow-x-auto snap-x snap-mandatory scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent" style={{ scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}>
-              {aboutContent.skillClusters.map((cluster) => (
-                <motion.div 
-                  key={cluster.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="bg-panel-soft border-2 border-line p-4 w-full min-w-[260px] sm:min-w-0 shrink-0 snap-start"
-                >
-                  <h4 className="font-pixel text-[11px] text-accent tracking-wider mb-3">{cluster.title}</h4>
-                  <div className="flex flex-wrap gap-1.5">
-                    {cluster.skills.map((skill) => (
-                      <span
-                        key={skill}
-                        className="border border-line-soft bg-tag px-2 py-1 text-[10px] sm:text-[11px] font-modern text-strong-dim uppercase tracking-wider hover:border-accent hover:text-strong active:border-accent active:text-strong transition-colors"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </motion.div>
-              ))}
-
-              {/* Mission Sectors Card */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="bg-panel-soft border-2 border-line p-4 w-full min-w-[260px] sm:min-w-0 shrink-0 snap-start sm:col-span-2"
-              >
-                <h4 className="font-pixel text-[10px] text-accent tracking-wider mb-3">MISSION SECTORS</h4>
-                <div className="flex flex-wrap gap-1.5">
-                  {aboutContent.industries.map((industry) => (
-                    <span
-                      key={industry}
-                      className="border border-line-soft bg-tag px-2 py-1 text-[10px] sm:text-[11px] font-modern text-strong-dim uppercase tracking-wider"
-                    >
-                      {industry}
-                    </span>
-                  ))}
-                </div>
-              </motion.div>
+              <AboutSkills clusters={aboutContent.skillClusters} industries={aboutContent.industries} />
             </div>
           </div>
 
-          {/* Right Column - Stats + Character */}
           <aside className="lg:col-span-5 flex flex-col space-y-6 h-full">
-            {/* Character Stats */}
             <div className="space-y-0">
-              {aboutContent.stats.map((stat, index) => (
-                <motion.div 
-                  key={stat.label}
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.08 }}
-                  className="flex items-baseline justify-between gap-4 border-t-2 border-line py-3"
-                >
-                  <span className="font-pixel text-[9px] sm:text-[10px] text-accent/70 tracking-[0.2em] uppercase min-w-0">{stat.label}</span>
-                  <span className="font-pixel text-[11px] sm:text-xs text-strong whitespace-nowrap leading-none text-right tracking-wide">{stat.value}</span>
-                </motion.div>
-              ))}
+              <AboutStats stats={aboutContent.stats} />
             </div>
 
-             {/* Character Visual - Fills Right Column */}
-             <motion.div 
-               initial={{ opacity: 0, y: 20 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               viewport={{ once: true }}
-               transition={{ duration: 0.8, ease: "easeOut" }}
-                className="relative group w-full flex-1 min-h-[300px] md:min-h-[520px]"
-             >
-               <div className="relative w-full h-full bg-panel-soft border-2 border-line p-4 flex items-center justify-center overflow-hidden">
-                 <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
-                   style={{ backgroundImage: 'radial-gradient(var(--color-brand-cyan) 1px, transparent 1px)', backgroundSize: '24px 24px' }} 
-                 />
-                 
-                  <CharacterSelector />
-               </div>
-             </motion.div>
+            <div
+              className="relative group w-full aspect-[950/1187] min-h-[300px] md:min-h-[520px]"
+            >
+              <div className="relative w-full h-full bg-panel-soft border-2 border-line p-4 flex items-center justify-center overflow-hidden">
+                <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                  style={{ backgroundImage: 'radial-gradient(var(--color-brand-cyan) 1px, transparent 1px)', backgroundSize: '24px 24px' }}
+                />
+
+                <CharacterSelector />
+              </div>
+            </div>
           </aside>
 
         </div>

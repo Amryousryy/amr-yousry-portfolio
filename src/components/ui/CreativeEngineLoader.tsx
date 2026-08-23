@@ -144,12 +144,7 @@ export function CreativeEngineLoader({ children }: { children: React.ReactNode }
         </div>
       </div>
 
-      <div
-        className={`boot-portfolio${phase === "exiting" ? " boot-portfolio--enter" : ""}`}
-        aria-hidden={phase === "loading" || phase === "ready"}
-      >
-        {children}
-      </div>
+      {children}
     </>
   );
 }

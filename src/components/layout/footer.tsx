@@ -34,8 +34,8 @@ export async function Footer() {
             
           {/* Brand & Tagline */}
           <div className="lg:col-span-6">
-            <Link href="/" className="group block mb-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue">
-              <Image src="/images/footer-logo.svg" alt="AMR YOUSRY" width={120} height={28} className="w-30 md:w-36 h-auto transition-transform group-hover:scale-105" unoptimized />
+            <Link href="/" className="group block mb-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background">
+              <Image src="/images/footer-logo.svg" alt="AMR YOUSRY" width={120} height={28} className="w-30 md:w-36 h-auto aspect-[120/28] transition-transform group-hover:scale-105" unoptimized />
             </Link>
             <p className="font-modern text-text-dim text-sm sm:text-base max-w-[520px] leading-relaxed antialiased" style={{ textWrap: 'pretty' }}>
               {footerContent.tagline}
@@ -50,7 +50,7 @@ export async function Footer() {
                 <li key={link.label}>
                   <Link 
                     href={link.href}
-                    className="font-modern text-text-dim hover:text-accent active:text-accent transition-all duration-200 text-sm uppercase tracking-wider inline-flex items-center min-h-[44px] py-2 hover:translate-x-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
+                    className="font-modern text-text-dim hover:text-accent active:text-accent transition-all duration-200 text-sm uppercase tracking-wider inline-flex items-center min-h-[44px] py-2 hover:translate-x-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
                     {link.label}
                   </Link>
@@ -69,7 +69,7 @@ export async function Footer() {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-modern text-text-dim hover:text-accent active:text-accent transition-all duration-200 text-sm uppercase tracking-wider inline-flex flex-wrap items-center gap-2 group min-h-[44px] py-2 hover:translate-x-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue"
+                    className="font-modern text-text-dim hover:text-accent active:text-accent transition-all duration-200 text-sm uppercase tracking-wider inline-flex flex-wrap items-center gap-2 group min-h-[44px] py-2 hover:translate-x-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
                     <span>{social.label}</span>
                     <span className="font-pixel text-[8px] opacity-0 group-hover:opacity-100 transition-opacity">LVL. UP</span>

@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import HeroSection from "@/components/sections/hero";
 import { HeroAmbience } from "@/components/sections/hero/HeroAmbience";
 import BrandMarquee from "@/components/ui/BrandMarquee";
-import ClientDynamicSections from "./ClientDynamicSections";
+import ProjectsSection from "@/components/sections/projects";
+import AboutSection from "@/components/sections/about";
+import ContactSection from "@/components/sections/contact";
 import { Section } from "@/components/ui/section";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { getFeaturedProjects } from "@/lib/projects/public-projects";
@@ -33,7 +35,7 @@ export default async function Home() {
 
       {/* Section transition: Hero → BrandMarquee */}
       <div className="h-px md:h-[2px] bg-gradient-to-r from-transparent via-line-faint to-transparent" />
-      
+
       <Section className="py-0" data-reveal>
         <BrandMarquee />
       </Section>
@@ -41,8 +43,9 @@ export default async function Home() {
       {/* Section transition: BrandMarquee → Projects */}
       <div className="h-px md:h-[2px] bg-gradient-to-r from-transparent via-line-faint to-transparent" />
 
-      <ClientDynamicSections projects={featuredProjects} aboutData={aboutContent} contactData={contactData} />
-      {/* Other sections will be added here as we rebuild */}
+      <div data-reveal><ProjectsSection projects={featuredProjects} /></div>
+      <div data-reveal><AboutSection aboutData={aboutContent} /></div>
+      <div data-reveal><ContactSection contactData={contactData} /></div>
     </ScrollReveal>
   );
 }

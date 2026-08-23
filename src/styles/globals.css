@@ -489,15 +489,6 @@ body.boot-locked {
   }
 }
 
-/* ── Portfolio wrapper (hidden during loading, fades in on exit) ── */
-.boot-portfolio {
-  transition: opacity 350ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.boot-portfolio--enter {
-  opacity: 1;
-}
-
 /* ═══════════════════════════════════════════════
    ACCESSIBILITY
    ═══════════════════════════════════════════════ */
