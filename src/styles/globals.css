@@ -916,3 +916,9 @@ body.boot-locked {
     cursor: url('/images/cursor/cursor-hover.svg') 12 2, pointer;
   }
 }
+
+/* Hide footer while the boot overlay is mounted so the RSC-stream reveal
+   cannot displace it and register a CLS; it re-appears at final layout. */
+.boot-overlay ~ footer {
+  visibility: hidden;
+}

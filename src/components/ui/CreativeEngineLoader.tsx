@@ -96,54 +96,55 @@ export function CreativeEngineLoader({ children }: { children: React.ReactNode }
     };
   }, [complete]);
 
-  if (phase === "done") return <>{children}</>;
+  const showOverlay = phase !== "done";
 
   return (
     <>
-      <div
-        className={`boot-overlay${phase === "ready" ? " boot-overlay--ready" : ""}${phase === "exiting" ? " boot-overlay--exit" : ""}`}
-        role="status"
-        aria-live="polite"
-        aria-label="Loading"
-      >
-        <div className="boot-scanlines" aria-hidden="true" />
-        <div className="boot-stars" aria-hidden="true" />
-        <div className="boot-grid" aria-hidden="true" />
+      {showOverlay ? (
+        <div
+          className={`boot-overlay${phase === "ready" ? " boot-overlay--ready" : ""}${phase === "exiting" ? " boot-overlay--exit" : ""}`}
+          role="status"
+          aria-live="polite"
+          aria-label="Loading"
+        >
+          <div className="boot-scanlines" aria-hidden="true" />
+          <div className="boot-stars" aria-hidden="true" />
+          <div className="boot-grid" aria-hidden="true" />
 
-        <div className="boot-content">
-          <div className="boot-logo">
-            <Image
-              src="/images/logo.svg"
-              alt="AMR YOUSRY"
-              width={72}
-              height={72}
-              className="boot-logo-img"
-              unoptimized
-              priority
-            />
-          </div>
+          <div className="boot-content">
+            <div className="boot-logo">
+              <Image
+                src="/images/logo.svg"
+                alt="AMR YOUSRY"
+                width={72}
+                height={72}
+                className="boot-logo-img"
+                unoptimized
+                priority
+              />
+            </div>
 
-          <p className="boot-tagline">MAKE IDEAS MATTER</p>
+            <p className="boot-tagline">MAKE IDEAS MATTER</p>
 
-          <div className="boot-bar-frame">
-            <div
-              className={`boot-bar${phase === "ready" || phase === "exiting" ? " boot-bar--ready" : ""}`}
-              role="progressbar"
-              aria-valuenow={activeCells}
-              aria-valuemin={0}
-              aria-valuemax={CELL_COUNT}
-            >
-              {Array.from({ length: CELL_COUNT }, (_, i) => (
-                <div
-                  key={i}
-                  className={`boot-cell${i < activeCells ? " boot-cell--active" : ""}`}
-                />
-              ))}
+            <div className="boot-bar-frame">
+              <div
+                className={`boot-bar${phase === "ready" || phase === "exiting" ? " boot-bar--ready" : ""}`}
+                role="progressbar"
+                aria-valuenow={activeCells}
+                aria-valuemin={0}
+                aria-valuemax={CELL_COUNT}
+              >
+                {Array.from({ length: CELL_COUNT }, (_, i) => (
+                  <div
+                    key={i}
+                    className={`boot-cell${i < activeCells ? " boot-cell--active" : ""}`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-
+      ) : null}
       {children}
     </>
   );
