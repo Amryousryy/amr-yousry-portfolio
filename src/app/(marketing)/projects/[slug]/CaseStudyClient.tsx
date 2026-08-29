@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -85,6 +85,47 @@ function ChapterLabel({ number, question }: { number: string; question: string }
     <span className="font-pixel text-[10px] text-foreground/30 tracking-widest uppercase block mb-1">
       <span className="text-foreground/50">{number}</span> / {question}
     </span>
+  );
+}
+
+function RelatedProjectLink({ project }: { project: RelatedProjectItem }) {
+  const [intent, setIntent] = useState(false);
+
+  return (
+    <Link
+      href={`/projects/${project.slug}`}
+      prefetch={intent ? null : false}
+      onPointerEnter={() => setIntent(true)}
+      onFocus={() => setIntent(true)}
+      className="group flex flex-col bg-[rgba(8,10,20,0.45)] border border-[rgba(255,255,255,0.05)] hover:border-accent/30 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)] transition-all duration-300 overflow-hidden"
+    >
+      <div className="relative aspect-[4/3] shrink-0">
+        <Image
+          src={project.thumbnail}
+          alt={project.title}
+          fill
+          className="object-contain object-top transition-transform duration-700 group-hover:scale-102"
+          sizes="(max-width: 640px) 100vw, 50vw"
+        />
+      </div>
+      <div className="flex flex-col justify-between flex-1 pt-2 sm:pt-2 px-3 sm:px-3 pb-3 sm:pb-4">
+        <div>
+          <span className="font-pixel text-[10px] sm:text-[11px] text-accent tracking-widest uppercase block mb-2">
+            {project.category}
+          </span>
+          <h3 className="font-display font-bold text-sm sm:text-base text-strong uppercase leading-tight tracking-tight mb-1.5">
+            {project.title}
+          </h3>
+          <p className="font-modern text-xs text-foreground/60 leading-normal line-clamp-3">
+            {project.summary}
+          </p>
+        </div>
+        <span className="font-pixel text-[10px] text-foreground/50 tracking-widest uppercase inline-flex items-center gap-1.5 self-start">
+          View Project
+          <ArrowRight size={10} className="text-foreground/50" />
+        </span>
+      </div>
+    </Link>
   );
 }
 
@@ -404,38 +445,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-5">
             {relatedProjects.map((rp) => (
-              <Link
-                key={rp.slug}
-                href={`/projects/${rp.slug}`}
-                className="group flex flex-col bg-[rgba(8,10,20,0.45)] border border-[rgba(255,255,255,0.05)] hover:border-accent/30 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)] transition-all duration-300 overflow-hidden"
-              >
-                <div className="relative aspect-[4/3] shrink-0">
-                  <Image
-                    src={rp.thumbnail}
-                    alt={rp.title}
-                    fill
-                    className="object-contain object-top transition-transform duration-700 group-hover:scale-102"
-                    sizes="(max-width: 640px) 100vw, 50vw"
-                  />
-                </div>
-                <div className="flex flex-col justify-between flex-1 pt-2 sm:pt-2 px-3 sm:px-3 pb-3 sm:pb-4">
-                  <div>
-                    <span className="font-pixel text-[10px] sm:text-[11px] text-accent tracking-widest uppercase block mb-2">
-                      {rp.category}
-                    </span>
-                    <h3 className="font-display font-bold text-sm sm:text-base text-strong uppercase leading-tight tracking-tight mb-1.5">
-                      {rp.title}
-                    </h3>
-                    <p className="font-modern text-xs text-foreground/60 leading-normal line-clamp-3">
-                      {rp.summary}
-                    </p>
-                  </div>
-                  <span className="font-pixel text-[10px] text-foreground/50 tracking-widest uppercase inline-flex items-center gap-1.5 self-start">
-                    View Project
-                    <ArrowRight size={10} className="text-foreground/50" />
-                  </span>
-                </div>
-              </Link>
+              <RelatedProjectLink key={rp.slug} project={rp} />
             ))}
           </div>
         </motion.div>
