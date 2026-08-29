@@ -2,11 +2,14 @@ import Image from "next/image";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { getProjectBySlug, getPublicProjects } from "@/lib/projects/public-projects";
+import { getRelatedProjects, buildRelatedSeed } from "@/lib/projects/related-projects";
+import { getProjectViewCounts } from "@/lib/projects/project-views";
 import { getMediaKind, getEmbeddableVideoUrl, getMediaProvider } from "@/lib/media/config";
 import { ExternalLink } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { formatCategory } from "@/lib/projects/categories";
+import { getCanonicalProjectSlug } from "@/lib/projects/canonical-slugs";
 import { CaseStudyClient } from "./CaseStudyClient";
 
 export const revalidate = 60;
@@ -21,11 +24,15 @@ export async function generateMetadata({ params }: CaseStudyPageProps): Promise<
 
   if (!project) return {};
 
+  // Canonical URL must always reference the canonical project identity so old
+  // inbound URLs (redirect sources) never become the canonical reference.
+  const canonicalSlug = getCanonicalProjectSlug(slug);
+
   const seoTitle = project.seo?.title || project.title;
   const seoDescription = project.seo?.description || project.summary || `${project.title} — A project by Amr Yousry.`;
   const title = seoTitle;
   const ogTitle = `${seoTitle} | Amr Yousry Portfolio`;
-  const url = `https://amryousry.com/projects/${slug}`;
+  const url = `https://amryousry.com/projects/${canonicalSlug}`;
   const imageUrl = project.bannerImage || project.thumbnail || "/images/meta/og-preview-v6.jpg";
   const absoluteImageUrl = imageUrl.startsWith("http")
     ? imageUrl
@@ -69,9 +76,12 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
   if (!project) return notFound();
 
   const allProjects = await getPublicProjects();
-  const relatedProjects = allProjects
-    .filter((p) => p.slug !== slug)
-    .slice(0, 2);
+  const viewsBySlug = await getProjectViewCounts();
+  const relatedProjects = getRelatedProjects(project, allProjects, {
+    limit: 2,
+    viewsBySlug,
+    seed: buildRelatedSeed(),
+  }).map((item) => item.project);
 
   const heroStatement = project.outcomeNarrative
     ? firstSentence(project.outcomeNarrative)
@@ -193,10 +203,10 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
             title: project.title,
           }}
           relatedProjects={relatedProjects.map((p) => ({
-            slug: p.slug,
+            slug: getCanonicalProjectSlug(p.slug),
             title: p.title,
             category: p.category,
-            thumbnail: p.thumbnail,
+            thumbnail: p.thumbnail || p.bannerImage,
             summary: p.summary,
           }))}
         />

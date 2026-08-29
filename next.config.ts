@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { LEGACY_PROJECT_REDIRECTS } from "./src/lib/projects/canonical-slugs";
 
 const securityHeaders = [
   {
@@ -57,13 +58,13 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['gsap'],
   },
   async redirects() {
-    return [
-      {
-        source: '/projects/al-ghazal-exhibition',
-        destination: '/projects/al-ghazal-egc',
-        permanent: true,
-      },
-    ];
+    // Redirect rules are derived from the canonical slug registry so that URL
+    // routing can never drift from the internal link generation sources.
+    return LEGACY_PROJECT_REDIRECTS.map(({ legacy, canonical }) => ({
+      source: `/projects/${legacy}`,
+      destination: `/projects/${canonical}`,
+      permanent: true,
+    }));
   },
   async headers() {
     return [

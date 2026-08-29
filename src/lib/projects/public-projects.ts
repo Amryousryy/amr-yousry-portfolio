@@ -8,6 +8,7 @@ import {
   featuredProjects as staticFeaturedProjects,
 } from "@/data/projects";
 import { formatCategory } from "@/lib/projects/categories";
+import { getCanonicalProjectSlug } from "@/lib/projects/canonical-slugs";
 import { toPlainText } from "@/lib/text";
 
 function normalizeStrings(arr: unknown): string[] {
@@ -108,7 +109,7 @@ function toPublicProject(doc: Record<string, unknown>): Project {
     : undefined;
   return {
     id: (doc._id as { toString(): string }).toString(),
-    slug: toPlainText(doc.slug),
+    slug: getCanonicalProjectSlug(toPlainText(doc.slug)),
     title,
     client: clientVal,
     category: formatCategory(toPlainText(doc.category)),
@@ -182,10 +183,15 @@ export async function getFeaturedProjects(limit = 3): Promise<Project[]> {
 }
 
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
+  // A legacy slug (e.g. one referenced by an old inbound link) is resolved to
+  // its canonical identity BEFORE any lookup, so it can never materialize a
+  // stale project page even if a redirect was bypassed.
+  const canonicalSlug = getCanonicalProjectSlug(slug);
+
   const dbProject = await tryDb(
     async () => {
       const doc = await ProjectModel
-        .findOne({ slug, status: "published" })
+        .findOne({ slug: canonicalSlug, status: "published" })
         .lean();
 
       if (!doc) return null;
@@ -195,5 +201,5 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
     () => null,
   );
 
-  return dbProject ?? getStaticProjectBySlug(slug) ?? null;
+  return dbProject ?? getStaticProjectBySlug(canonicalSlug) ?? null;
 }
