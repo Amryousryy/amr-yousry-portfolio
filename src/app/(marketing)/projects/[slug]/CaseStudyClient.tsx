@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { trackEvent } from "@/lib/tracker";
 import { event } from "@/lib/analytics";
@@ -88,6 +89,14 @@ function ChapterLabel({ number, question }: { number: string; question: string }
   );
 }
 
+// Scoped, in-memory flag: set by a Related Project card click just before
+// Next.js client-side navigation starts (Link invokes user onClick first).
+// CaseStudyClient consumes it on the destination so ONLY Related navigation
+// forces an instant scroll-to-top after the route transition completes.
+// Direct loads, navbar links, and back/forward history restoration are
+// intentionally untouched.
+let pendingRelatedScrollReset = false;
+
 function RelatedProjectLink({ project }: { project: RelatedProjectItem }) {
   const [intent, setIntent] = useState(false);
 
@@ -95,6 +104,11 @@ function RelatedProjectLink({ project }: { project: RelatedProjectItem }) {
     <Link
       href={`/projects/${project.slug}`}
       prefetch={intent ? null : false}
+      onClick={(e) => {
+        if (e.defaultPrevented) return;
+        if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        pendingRelatedScrollReset = true;
+      }}
       onPointerEnter={() => setIntent(true)}
       onFocus={() => setIntent(true)}
       className="group flex flex-col bg-[rgba(8,10,20,0.45)] border border-[rgba(255,255,255,0.05)] hover:border-accent/30 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)] transition-all duration-300 overflow-hidden"
@@ -167,6 +181,32 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
     event("project_detail_view", { project_slug: slug, project_title: title });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (!pendingRelatedScrollReset) return;
+    pendingRelatedScrollReset = false;
+    // Run after Next.js's own transition scroll handling has been applied so
+    // this instant reset is the final commit. "behavior: instant" is explicit
+    // and takes precedence over CSS `scroll-behavior: smooth`, guaranteeing a
+    // deterministic destination-top state with no animated interference.
+    const resetToTop = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      if (window.scrollY !== 0) {
+        window.scrollTo(0, 0);
+      }
+    };
+    const raf = requestAnimationFrame(() => {
+      resetToTop();
+      requestAnimationFrame(resetToTop);
+    });
+    const timeout = setTimeout(resetToTop, 50);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(timeout);
+    };
+  }, [pathname]);
 
   return (
     <>
