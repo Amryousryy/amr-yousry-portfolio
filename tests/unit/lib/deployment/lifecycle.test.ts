@@ -303,10 +303,11 @@ describe("reconcileDeployment", () => {
     expect(result.deployment?.error).toContain("Deployment cannot be verified");
   });
 
-  it("fails when the deployment times out before reaching Vercel", async () => {
+  it("fails when deployment discovery times out (deployment may still exist on Vercel)", async () => {
     const result = await reconcileDeployment(makeProject({ deployment: timedOutDeployment() }), { now: nowFn });
     expect(result.deployment?.state).toBe("failed");
-    expect(result.deployment?.error).toContain("timed out before reaching Vercel");
+    expect(result.deployment?.error).toContain("Deployment discovery timed out");
+    expect(result.deployment?.error).not.toContain("before reaching Vercel");
   });
 
   it("resumes a straggler pending trigger", async () => {
@@ -404,6 +405,28 @@ describe("reconcileDeployment", () => {
     const result = await reconcileDeployment(makeProject({ deployment: { ...makeProject().deployment, deploymentId: "" } }), { now: nowFn });
 
     expect(result.deployment?.state).toBe("deploying");
+  });
+
+  it("discovers the Vercel deployment from the list and persists its deploymentId", async () => {
+    mockList.mockResolvedValue([]);
+    mockFindRelevant.mockReturnValue({
+      id: "dpl_discovered_1",
+      readyState: "BUILDING",
+      meta: { deployHookId: "hook_myHookId" },
+    } as never);
+
+    const result = await reconcileDeployment(
+      makeProject({ deployment: { ...makeProject().deployment, deploymentId: "" } }),
+      { now: nowFn }
+    );
+
+    expect(mockList).toHaveBeenCalled();
+    expect(result.deployment?.state).toBe("deploying");
+    expect(result.deployment?.deploymentId).toBe("dpl_discovered_1");
+    const correlated = mockUpdateOne.mock.calls.findIndex(
+      (_call, i) => updateOneDeploymentWrite(i).$set.deployment.deploymentId === "dpl_discovered_1"
+    );
+    expect(correlated).toBeGreaterThanOrEqual(0);
   });
 
   it("keeps deploying when the Vercel API call fails (transient), instead of inventing a failure", async () => {

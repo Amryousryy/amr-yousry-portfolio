@@ -55,7 +55,10 @@ export interface VercelTriggerResult {
 }
 
 export interface VercelDeployment {
+  /** Canonical deployment identifier (see normalizeVercelDeployment: list payloads expose `uid`, singular lookups expose `id`). */
   id?: string;
+  /** Raw list-payload identifier field (GET /v6/deployments). Normalized into `id`. */
+  uid?: string;
   url?: string | null;
   readyState?: string | null;
   target?: string | null;
@@ -212,7 +215,10 @@ export async function listRecentProductionDeployments(sinceMs: number): Promise<
     );
   }
 
-  const url = new URL(`${VERCEL_API_BASE}/v13/deployments`);
+  // NOTE: list discovery must use /v6/deployments. GET /v13/deployments (list)
+  // returns HTTP 400 "Invalid API version" in the deployment environment; the
+  // singular GET /v13/deployments/{id} below remains valid.
+  const url = new URL(`${VERCEL_API_BASE}/v6/deployments`);
   url.searchParams.set("projectId", config.projectId);
   url.searchParams.set("target", "production");
   url.searchParams.set("limit", "100");
@@ -310,8 +316,18 @@ function normalizeVercelDeployment(raw: unknown): VercelDeployment {
     ? record.meta
     : {}) as Record<string, unknown> & { deployHookId?: string };
 
+  // Deployment LIST responses expose the identifier as `uid`; singular
+  // deployment lookups expose `id`. Accept either without guessing other fields.
+  const id =
+    typeof record.uid === "string"
+      ? record.uid
+      : typeof record.id === "string"
+        ? record.id
+        : undefined;
+
   return {
-    id: typeof record.id === "string" ? record.id : undefined,
+    id,
+    uid: typeof record.uid === "string" ? record.uid : undefined,
     url: typeof record.url === "string" ? record.url : (record.url as string | null | undefined) ?? null,
     readyState: typeof record.readyState === "string" ? record.readyState : null,
     target: typeof record.target === "string" ? record.target : (record.target as string | null | undefined) ?? null,

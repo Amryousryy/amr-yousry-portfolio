@@ -125,19 +125,81 @@ describe("listRecentProductionDeployments", () => {
     vi.stubEnv("VERCEL_API_TOKEN", TOKEN);
     vi.stubEnv("VERCEL_PROJECT_ID", PROJECT_ID);
     mockFetch.mockResolvedValue(
-      jsonResponse({ deployments: [{ id: "dpl_1", readyState: "BUILDING", meta: { deployHookId: "hook_myHookId" } }] })
+      jsonResponse({ deployments: [{ uid: "dpl_1", readyState: "BUILDING", meta: { deployHookId: "hook_myHookId" } }] })
     );
     vi.stubGlobal("fetch", mockFetch);
 
     const result = await listRecentProductionDeployments(987654);
 
     const [url, init] = mockFetch.mock.calls[0] as [string, RequestInit];
+    const parsed = new URL(url);
+    expect(parsed.pathname).toBe("/v6/deployments");
     expect(url).toContain("projectId=prj_test");
     expect(url).toContain("target=production");
     expect(url).toContain("since=987654");
     expect((init.headers as Record<string, string>).Authorization).toBe(`Bearer ${TOKEN}`);
     expect(result).toHaveLength(1);
     expect(result[0].meta?.deployHookId).toBe("hook_myHookId");
+  });
+
+  it("regression: targets /v6 for listing and never the /v13 list (400 'Invalid API version' in production)", async () => {
+    vi.stubEnv("VERCEL_BUILD_HOOK_URL", HOOK_URL);
+    vi.stubEnv("VERCEL_API_TOKEN", TOKEN);
+    vi.stubEnv("VERCEL_PROJECT_ID", PROJECT_ID);
+    mockFetch.mockResolvedValue(jsonResponse({ deployments: [] }));
+    vi.stubGlobal("fetch", mockFetch);
+
+    await listRecentProductionDeployments(987654);
+
+    const [url] = mockFetch.mock.calls[0] as [string, RequestInit];
+    expect(url).toContain("/v6/deployments");
+    expect(url).not.toContain("/v13/deployments");
+  });
+
+  it("normalizes the list payload identifier from uid (GET /v6/deployments shape)", async () => {
+    vi.stubEnv("VERCEL_BUILD_HOOK_URL", HOOK_URL);
+    vi.stubEnv("VERCEL_API_TOKEN", TOKEN);
+    vi.stubEnv("VERCEL_PROJECT_ID", PROJECT_ID);
+    mockFetch.mockResolvedValue(
+      jsonResponse({ deployments: [{ uid: "dpl_example", readyState: "READY", target: "production", createdAt: 200, meta: { deployHookId: "hook_myHookId" } }] })
+    );
+    vi.stubGlobal("fetch", mockFetch);
+
+    const [result] = await listRecentProductionDeployments(1);
+
+    expect(result.id).toBe("dpl_example");
+  });
+
+  it("keeps backward compatibility when the payload uses id (singular / list legacy shape)", async () => {
+    vi.stubEnv("VERCEL_BUILD_HOOK_URL", HOOK_URL);
+    vi.stubEnv("VERCEL_API_TOKEN", TOKEN);
+    vi.stubEnv("VERCEL_PROJECT_ID", PROJECT_ID);
+    mockFetch.mockResolvedValue(jsonResponse({ deployments: [{ id: "dpl_legacy" }] }));
+    vi.stubGlobal("fetch", mockFetch);
+
+    const [result] = await listRecentProductionDeployments(1);
+
+    expect(result.id).toBe("dpl_legacy");
+  });
+
+  it("supports correlation on the real list shape (uid + meta.deployHookId) via findRelevantDeployment", async () => {
+    vi.stubEnv("VERCEL_BUILD_HOOK_URL", HOOK_URL);
+    vi.stubEnv("VERCEL_API_TOKEN", TOKEN);
+    vi.stubEnv("VERCEL_PROJECT_ID", PROJECT_ID);
+    mockFetch.mockResolvedValue(
+      jsonResponse({
+        deployments: [
+          { uid: "dpl_unrelated", createdAt: 150, readyState: "READY", meta: { deployHookId: "hook_other" } },
+          { uid: "dpl_older", createdAt: 100, readyState: "READY", meta: { deployHookId: "hook_myHookId" } },
+          { uid: "dpl_newer", createdAt: 200, readyState: "BUILDING", meta: { deployHookId: "hook_myHookId" } },
+        ],
+      })
+    );
+    vi.stubGlobal("fetch", mockFetch);
+
+    const found = findRelevantDeployment(await listRecentProductionDeployments(1), "hook_myHookId");
+
+    expect(found?.id).toBe("dpl_older");
   });
 
   it("fails on non-ok API response", async () => {

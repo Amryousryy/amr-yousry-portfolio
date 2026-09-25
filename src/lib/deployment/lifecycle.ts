@@ -374,7 +374,7 @@ export async function reconcileDeployment(
     const failed = buildDeploymentWrite(deployment, {
       state: "failed",
       completedAt: now,
-      error: "Deployment timed out before reaching Vercel",
+      error: "Deployment discovery timed out before the deployment could be correlated",
     });
     const applied = await writeDeploymentIfCurrent(projectId, attemptId, failed);
     return { deployment: applied ? toDeploymentOutcome(failed) : toDeploymentOutcome(deployment) };
