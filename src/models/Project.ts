@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
+import type { DeploymentState } from "@/types/project";
 
 const ProjectSectionSchema = new Schema({
   id: { type: String, required: true },
@@ -20,6 +21,15 @@ const CaseStudyMediaSchema = new Schema({
 const DetailedResultSchema = new Schema({
   label: { type: String, required: true },
   value: { type: String, required: true },
+}, { _id: false });
+
+const DeploymentSchema = new Schema({
+  state: { type: String, enum: ["not_required", "pending", "deploying", "live", "failed"], default: "not_required" },
+  deploymentId: { type: String, default: "" },
+  attemptId: { type: String, default: "" },
+  requestedAt: { type: Date },
+  completedAt: { type: Date },
+  error: { type: String, default: "" },
 }, { _id: false });
 
 const ProjectSchema: Schema = new Schema({
@@ -58,6 +68,7 @@ const ProjectSchema: Schema = new Schema({
   featuredOrder: { type: Number, default: 0 },
   publishedAt: { type: Date },
   lastStatusChangeAt: { type: Date },
+  deployment: { type: DeploymentSchema },
 }, { timestamps: true });
 
 ProjectSchema.index({ status: 1, displayOrder: 1 });
@@ -65,6 +76,15 @@ ProjectSchema.index({ featured: 1, status: 1 });
 ProjectSchema.index({ status: 1, category: 1 });
 ProjectSchema.index({ status: 1, updatedAt: -1 });
 ProjectSchema.index({ status: 1, publishedAt: -1 });
+
+export interface ProjectDeploymentRecord {
+  state: DeploymentState;
+  deploymentId?: string;
+  attemptId?: string;
+  requestedAt?: Date;
+  completedAt?: Date;
+  error?: string;
+}
 
 export interface IProject extends Document {
   title: string;
@@ -107,6 +127,7 @@ export interface IProject extends Document {
   featuredOrder: number;
   publishedAt?: Date;
   lastStatusChangeAt?: Date;
+  deployment?: ProjectDeploymentRecord;
   createdAt: Date;
   updatedAt: Date;
 }

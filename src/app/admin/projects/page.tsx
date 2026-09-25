@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useMemo } from "react";
+import React, { useCallback, useEffect, useRef, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { ProjectService } from "@/lib/api-client";
@@ -12,13 +12,21 @@ import WorkspaceInsights from "@/components/admin/WorkspaceInsights";
 import FilterBar from "@/components/admin/FilterBar";
 import EmptyState from "@/components/admin/EmptyState";
 import StatusIndicator from "@/components/admin/StatusIndicator";
+import QuickCreateProject from "@/components/admin/QuickCreateProject";
+import { DeploymentStatusCell } from "@/components/admin/DeploymentStatusBadge";
+import { getCanonicalProjectPath } from "@/lib/projects/canonical-slugs";
+import { isDeploymentBlockingLive } from "@/lib/projects/deployment-status";
+import type { ProjectDeployment } from "@/types/project";
 import {
   Edit2,
   Trash2,
   EyeOff,
   Send,
   Globe,
+  Plus,
+  Star,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -35,13 +43,13 @@ interface ProjectRow {
   tags: string[];
   createdAt: Date;
   updatedAt: Date;
+  deployment?: ProjectDeployment;
 }
 
-type FilterMode = "" | "published" | "draft" | "featured" | "archived";
+type FilterMode = "" | "published" | "draft" | "featured";
 
 function getFilterMode(status: string, featured: string): FilterMode {
   if (featured === "true") return "featured";
-  if (status === "archived") return "archived";
   if (status === "published") return "published";
   if (status === "draft") return "draft";
   return "";
@@ -52,7 +60,6 @@ function getFilterModeLabel(mode: FilterMode): string {
     case "published": return "Published";
     case "draft": return "Draft";
     case "featured": return "Featured";
-    case "archived": return "Archived";
     default: return "";
   }
 }
@@ -68,7 +75,9 @@ function formatDate(date: Date): string {
 }
 
 export default function ProjectsPage() {
+  const router = useRouter();
   const queryClient = useQueryClient();
+  const [quickCreateOpen, setQuickCreateOpen] = useState(false);
   const { filters, updateFilters } = useProjectsFilters();
   const { page, limit, search, sort, order, status, featured } = filters;
 
@@ -148,6 +157,7 @@ export default function ProjectsPage() {
     mutationFn: (id: string) => ProjectService.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["homepage"] });
       toast.success("Project deleted successfully");
     },
     onError: (error: Error) => {
@@ -159,6 +169,7 @@ export default function ProjectsPage() {
     mutationFn: (id: string) => ProjectService.publish(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["homepage"] });
       toast.success("Project published successfully");
     },
     onError: (error: Error) => {
@@ -170,6 +181,7 @@ export default function ProjectsPage() {
     mutationFn: (id: string) => ProjectService.unpublish(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["homepage"] });
       toast.success("Project unpublished");
     },
     onError: (error: Error) => {
@@ -295,6 +307,31 @@ export default function ProjectsPage() {
       ),
     },
     {
+      id: "home",
+      header: "Home",
+      size: 90,
+      cell: ({ row }) =>
+        row.original.featured ? (
+          <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-amber-400/90 whitespace-nowrap" title="Visible on the homepage">
+            <Star size={12} className="fill-amber-400/90 text-amber-400/90" />
+            On Home
+          </span>
+        ) : (
+          <span className="text-xs text-foreground/30">—</span>
+        ),
+    },
+    {
+      accessorKey: "deployment",
+      header: "Deploy",
+      size: 150,
+      cell: ({ row }) => (
+        <DeploymentStatusCell
+          status={row.original.status}
+          deployment={row.original.deployment}
+        />
+      ),
+    },
+    {
       accessorKey: "updatedAt",
       header: ({ column }) => <SortableHeader column={column}>Updated</SortableHeader>,
       size: 130,
@@ -311,6 +348,7 @@ export default function ProjectsPage() {
         const project = row.original;
         const isPublished = project.status === "published";
         const isMutating = publishMutation.isPending || unpublishMutation.isPending || deleteMutation.isPending;
+        const viewLiveBlocked = isPublished && isDeploymentBlockingLive(project.deployment?.state);
 
         return (
           <div className="flex items-center gap-0.5">
@@ -344,15 +382,26 @@ export default function ProjectsPage() {
               </button>
             )}
 
-            <Link
-              href={`/projects/${project.slug}`}
-              target="_blank"
-              className="p-1.5 text-foreground/40 hover:text-accent hover:bg-accent/10 transition-colors rounded"
-              title="View live"
-              aria-label="View project on live site"
-            >
-              <Globe size={14} />
-            </Link>
+            {viewLiveBlocked ? (
+              <span
+                className="p-1.5 text-foreground/20 cursor-not-allowed"
+                title="Deployment is still in progress. The live link becomes available once the build completes."
+                aria-label="View live unavailable while deployment is in progress"
+              >
+                <Globe size={14} />
+              </span>
+            ) : (
+              <Link
+                href={getCanonicalProjectPath(project.slug)}
+                target="_blank"
+                prefetch={false}
+                className="p-1.5 text-foreground/40 hover:text-accent hover:bg-accent/10 transition-colors rounded"
+                title="View live"
+                aria-label="View project on live site"
+              >
+                <Globe size={14} />
+              </Link>
+            )}
 
             <Link
               href={`/admin/projects/edit/${project._id}`}
@@ -408,7 +457,6 @@ export default function ProjectsPage() {
         published={metrics.published}
         drafts={metrics.drafts}
         featured={metrics.featured}
-        archived={metrics.archived}
         activeFilter={filterMode}
         onFilterChange={handleFilterModeChange}
       />
@@ -422,49 +470,69 @@ export default function ProjectsPage() {
       />
 
       <div className="space-y-1">
-        <div className="relative max-w-sm">
-          <input
-            type="text"
-            value={localSearch}
-            onChange={(e) => handleSearch(e.target.value)}
-            placeholder="Search projects..."
-            className="w-full bg-background border border-primary/20 p-3 pl-10 outline-none focus:border-accent transition-colors text-sm"
-            aria-label="Search projects"
-          />
-          <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="relative max-w-sm flex-1 min-w-[220px]">
+            <input
+              type="text"
+              value={localSearch}
+              onChange={(e) => handleSearch(e.target.value)}
+              placeholder="Search projects..."
+              className="w-full bg-background border border-primary/20 p-3 pl-10 outline-none focus:border-accent transition-colors text-sm"
+              aria-label="Search projects"
+            />
+            <svg
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <button
+            type="button"
+            onClick={() => setQuickCreateOpen(true)}
+            className="shrink-0 flex items-center gap-1.5 px-4 py-3 bg-accent/10 border border-accent/25 text-accent text-[10px] font-bold uppercase tracking-widest hover:bg-accent/20 transition-colors"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+            <Plus size={14} />
+            Quick Add
+          </button>
         </div>
+
+        {quickCreateOpen && (
+          <QuickCreateProject
+            onClose={() => setQuickCreateOpen(false)}
+            onCreated={(id) => {
+              setQuickCreateOpen(false);
+              router.replace(`/admin/projects/edit/${id}`);
+            }}
+          />
+        )}
+
+        {emptyStateType && (
+          <EmptyState
+            type={emptyStateType}
+            filterLabel={getFilterModeLabel(filterMode)}
+            onClearSearch={hasActiveSearch ? handleClearSearch : undefined}
+            onClearFilter={hasActiveFilter ? handleClearFilter : undefined}
+          />
+        )}
+
+        {!emptyStateType && (
+          <DataTable
+            columns={columns}
+            data={projectsData as ProjectRow[]}
+            currentPage={page}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            pageSize={limit}
+            isLoading={isLoading}
+            isFetching={isFetching}
+            onPageChange={handlePageChange}
+            onPageSizeChange={handlePageSizeChange}
+          />
+        )}
       </div>
-
-      {emptyStateType && (
-        <EmptyState
-          type={emptyStateType}
-          filterLabel={getFilterModeLabel(filterMode)}
-          onClearSearch={hasActiveSearch ? handleClearSearch : undefined}
-          onClearFilter={hasActiveFilter ? handleClearFilter : undefined}
-        />
-      )}
-
-      {!emptyStateType && (
-        <DataTable
-          columns={columns}
-          data={projectsData as ProjectRow[]}
-          currentPage={page}
-          totalPages={totalPages}
-          totalItems={totalItems}
-          pageSize={limit}
-          isLoading={isLoading}
-          isFetching={isFetching}
-          onPageChange={handlePageChange}
-          onPageSizeChange={handlePageSizeChange}
-        />
-      )}
     </div>
   );
 }

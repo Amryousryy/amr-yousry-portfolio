@@ -13,9 +13,10 @@ const CATEGORY_SUGGESTIONS = ["Real Estate", "UGC / Ads", "Social Media", "Corpo
 interface BasicInfoFieldsProps {
   register: UseFormRegister<FormData>;
   errors: FieldErrors<FormData>;
+  onSlugTouched?: () => void;
 }
 
-export default function BasicInfoFields({ register, errors }: BasicInfoFieldsProps) {
+export default function BasicInfoFields({ register, errors, onSlugTouched }: BasicInfoFieldsProps) {
   return (
     <FormSection title="Basic Information" accent>
       <FormField label="Title" required error={getFieldError(errors, "title")}>
@@ -30,6 +31,7 @@ export default function BasicInfoFields({ register, errors }: BasicInfoFieldsPro
           <FormInput
             {...register("slug")}
             placeholder="project-slug"
+            onFocus={() => onSlugTouched?.()}
           />
         </FormField>
 

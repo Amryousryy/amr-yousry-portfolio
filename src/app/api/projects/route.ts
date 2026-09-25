@@ -11,6 +11,7 @@ import { paginationSchema, getPagination } from "@/lib/pagination";
 import { successResponse } from "@/lib/api-response";
 import { normalizeCaseStudyMedia, normalizeProject } from "@/lib/project-utils";
 import { resolveStatusMetadata } from "@/lib/status-metadata";
+import { escapeRegExp } from "@/lib/regex";
 
 const SORT_FIELDS: Record<string, 1 | -1> = {
   createdAt: -1,
@@ -24,16 +25,32 @@ const SORT_FIELDS: Record<string, 1 | -1> = {
 };
 
 export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const isAdmin = searchParams.get("admin") === "true";
+
+  if (isAdmin) {
+    let session = null;
+    try {
+      session = await getServerSession(authOptions);
+    } catch (error) {
+      console.error("SESSION_ERROR:", error);
+    }
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  }
+
   try {
     await dbConnect();
   } catch (error) {
     console.error("DB_CONNECT_ERROR:", error);
+    if (isAdmin) {
+      return NextResponse.json({ error: "Failed to connect to database" }, { status: 500 });
+    }
     return successResponse([]);
   }
 
   try {
-    const { searchParams } = new URL(req.url);
-    const isAdmin = searchParams.get("admin") === "true";
     const featured = searchParams.get("featured");
     const category = searchParams.get("category");
     const status = searchParams.get("status");
@@ -41,13 +58,6 @@ export async function GET(req: Request) {
     const sortParam = searchParams.get("sort");
     const orderParam = searchParams.get("order");
     
-    if (isAdmin) {
-      const session = await getServerSession(authOptions);
-      if (!session) {
-        return successResponse([]);
-      }
-    }
-
     const query: Record<string, unknown> = isAdmin ? {} : { status: "published" };
     
     if (featured === "true") query.featured = true;
@@ -56,12 +66,16 @@ export async function GET(req: Request) {
       query.status = status;
     }
     if (search) {
+      // Escape the user-controlled term so it can never inject regex
+      // semantics (ReDoS / regex-injection defense). Each field is matched
+      // against the escaped literal pattern.
+      const escapedSearch = escapeRegExp(search);
       query.$or = [
-        { title: { $regex: search, $options: "i" } },
-        { slug: { $regex: search, $options: "i" } },
-        { tags: { $regex: search, $options: "i" } },
-        { category: { $regex: search, $options: "i" } },
-        { clientName: { $regex: search, $options: "i" } },
+        { title: { $regex: escapedSearch, $options: "i" } },
+        { slug: { $regex: escapedSearch, $options: "i" } },
+        { tags: { $regex: escapedSearch, $options: "i" } },
+        { category: { $regex: escapedSearch, $options: "i" } },
+        { clientName: { $regex: escapedSearch, $options: "i" } },
       ];
     }
     
@@ -83,11 +97,18 @@ export async function GET(req: Request) {
       Project.countDocuments(query)
     ]);
 
-    const normalized = projects.map((p) => normalizeProject(p as unknown as Record<string, unknown>)) as typeof projects;
+    const normalized = projects.map((p) => {
+      const doc = normalizeProject(p as unknown as Record<string, unknown>);
+      if (!isAdmin) delete doc.deployment;
+      return doc;
+    }) as typeof projects;
     const pagination = getPagination(page, limit, total);
     return successResponse(normalized, pagination);
   } catch (error) {
     console.error("GET_PROJECTS_ERROR:", error);
+    if (isAdmin) {
+      return NextResponse.json({ error: "Failed to fetch projects" }, { status: 500 });
+    }
     return successResponse([]);
   }
 }

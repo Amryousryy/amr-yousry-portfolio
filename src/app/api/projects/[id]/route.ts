@@ -5,11 +5,13 @@ import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Project from "@/models/Project";
 import { projectUpdateSchema } from "@/lib/validation";
-import { deleteCloudinaryResources } from "@/lib/cloudinary";
+import { deleteCloudinaryResources, collectProjectMediaUrls } from "@/lib/cloudinary";
 import { logActivity } from "@/lib/activity";
 import { checkReadiness } from "@/lib/validation/project-readiness";
 import { normalizeCaseStudyMedia, normalizeProject } from "@/lib/project-utils";
 import { resolveStatusMetadata } from "@/lib/status-metadata";
+import { applyDeploymentForPublish, type DeploymentOutcome } from "@/lib/deployment/lifecycle";
+import { getCanonicalProjectSlug } from "@/lib/projects/canonical-slugs";
 import type { Project as ProjectType } from "@/types/project";
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -45,7 +47,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     if (!project) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
-    return NextResponse.json({ success: true, data: normalizeProject(project as unknown as Record<string, unknown>) });
+    const data = normalizeProject(project as unknown as Record<string, unknown>);
+    if (!isAdmin) delete data.deployment;
+    return NextResponse.json({ success: true, data });
   } catch (error) {
     console.error("GET_PROJECT_ERROR:", error);
     return NextResponse.json({ error: "Failed to fetch project" }, { status: 500 });
@@ -82,7 +86,14 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
-    if (validation.data.status === "published") {
+    const currentStatus = currentProject?.status || "draft";
+    const newStatus = validation.data.status || "draft";
+
+    // The strict publish-readiness gate applies ONLY to the draft→published
+    // transition. Saving an already-published project persists valid edits
+    // without re-running the full gate, so routine adjustments never get
+    // blocked by unrelated recommendations (Phase D: save vs publish).
+    if (newStatus === "published" && currentStatus !== "published") {
       const mergedData = { ...currentProject, ...validation.data };
       const readiness = checkReadiness(mergedData as unknown as Record<string, unknown>);
       if (!readiness.isPublishReady) {
@@ -93,9 +104,6 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       }
     }
 
-    const currentStatus = currentProject?.status || "draft";
-    const newStatus = validation.data.status || "draft";
-    
     const statusMetadata = resolveStatusMetadata(newStatus, currentStatus);
     
     const existing = currentProject as unknown as Record<string, unknown> | null;
@@ -136,6 +144,22 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       }
     }
 
+    // Homepage placement is curated on the Homepage screen (drag-and-drop), so
+    // the editor never sends an order number. When the editor promotes a
+    // project, the server appends it to the tail of the homepage order; when it
+    // demotes one, the stale order is cleared so a later re-promote starts from
+    // a neutral position.
+    if (safeUpdate.featured === true && !bodyKeysForUpdate.has("featuredOrder") && currentProject?.featured !== true) {
+      const maxFeatured = await Project.findOne({ status: "published", featured: true })
+        .sort({ featuredOrder: -1 })
+        .select("featuredOrder")
+        .lean();
+      const maxOrder = (maxFeatured as unknown as { featuredOrder?: number } | null)?.featuredOrder ?? -1;
+      safeUpdate.featuredOrder = maxOrder + 1;
+    } else if (safeUpdate.featured === false && currentProject?.featured === true) {
+      safeUpdate.featuredOrder = 0;
+    }
+
     const project = await Project.findByIdAndUpdate(
       id, 
       { ...safeUpdate, ...statusMetadata }, 
@@ -174,8 +198,28 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         metadata: { id, status: (project as unknown as ProjectType).status }
       });
     }
-    
-    return NextResponse.json({ data: normalizeProject(project as unknown as Record<string, unknown>) });
+
+    const normalized = normalizeProject(project as unknown as Record<string, unknown>);
+
+    let deployment: DeploymentOutcome | undefined;
+    if (newStatus === "published") {
+      const finalSlug = validation.data.slug
+        ? getCanonicalProjectSlug(validation.data.slug)
+        : getCanonicalProjectSlug(currentProject.slug);
+      deployment = await applyDeploymentForPublish(id, {
+        slug: finalSlug,
+        deployment: (project as unknown as ProjectType).deployment ?? null,
+      });
+    } else if ((project as unknown as ProjectType).deployment) {
+      await Project.updateOne({ _id: id }, { $set: { deployment: { state: "not_required" } } });
+      deployment = { state: "not_required" };
+    }
+
+    if (deployment) {
+      (normalized as unknown as { deployment?: DeploymentOutcome }).deployment = deployment;
+    }
+
+    return NextResponse.json({ data: normalized });
   } catch (error: unknown) {
     const mongoErr = error as { code?: number; keyPattern?: Record<string, unknown> };
     if (mongoErr?.code === 11000 && mongoErr?.keyPattern?.slug) {
@@ -200,12 +244,13 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
-    const urlsToDelete: string[] = [
-      project.image,
-      project.video,
-      ...(project.gallery || []),
-      ...(project.sections || []).flatMap((s: { media?: Array<{ url: string }> }) => (s.media || []).map((m: { url: string }) => m.url))
-    ].filter((url): url is string => !!url);
+    const urlsToDelete = collectProjectMediaUrls({
+      image: project.image,
+      video: project.video,
+      gallery: project.gallery,
+      sections: project.sections,
+      caseStudyMedia: project.caseStudyMedia,
+    });
 
     await deleteCloudinaryResources(urlsToDelete);
 

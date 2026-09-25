@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { FolderKanban, Globe, FileEdit, Star, Archive } from "lucide-react";
+import { FolderKanban, Globe, FileEdit, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface InsightCard {
@@ -17,7 +17,6 @@ interface WorkspaceInsightsProps {
   published: number;
   drafts: number;
   featured: number;
-  archived: number;
   activeFilter: string;
   onFilterChange: (filter: string) => void;
 }
@@ -27,7 +26,6 @@ export default function WorkspaceInsights({
   published,
   drafts,
   featured,
-  archived,
   activeFilter,
   onFilterChange,
 }: WorkspaceInsightsProps) {
@@ -59,13 +57,6 @@ export default function WorkspaceInsights({
       filterValue: "featured",
       icon: <Star size={14} />,
       color: "text-amber-400",
-    },
-    {
-      label: "Archived",
-      count: archived,
-      filterValue: "archived",
-      icon: <Archive size={14} />,
-      color: "text-foreground/40",
     },
   ];
 

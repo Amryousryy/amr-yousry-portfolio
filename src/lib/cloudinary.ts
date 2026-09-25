@@ -38,6 +38,40 @@ export function getPublicIdFromUrl(url: string) {
 }
 
 /**
+ * Single source of truth for every Cloudinary URL a Project document owns.
+ * Used by the project DELETE handler so no project-owned asset is orphaned
+ * (image, video, gallery, section media, and caseStudyMedia all included).
+ * Missing/invalid entries are skipped and duplicates are collapsed.
+ */
+export interface CloudinaryProjectMediaShape {
+  image?: string | null;
+  video?: string | null;
+  gallery?: Array<string | null> | null;
+  sections?: Array<{ media?: Array<{ url?: string | null } | null> | null } | null> | null;
+  caseStudyMedia?: Array<{ src?: string | null } | null> | null;
+}
+
+export function collectProjectMediaUrls(project: CloudinaryProjectMediaShape): string[] {
+  const urls: string[] = [];
+  const add = (value?: string | null) => {
+    if (value && value.trim()) urls.push(value.trim());
+  };
+
+  add(project?.image);
+  add(project?.video);
+
+  for (const url of project?.gallery ?? []) add(url);
+
+  for (const section of project?.sections ?? []) {
+    for (const media of section?.media ?? []) add(media?.url);
+  }
+
+  for (const item of project?.caseStudyMedia ?? []) add(item?.src);
+
+  return Array.from(new Set(urls));
+}
+
+/**
  * Deletes multiple resources from Cloudinary by their URLs.
  */
 export async function deleteCloudinaryResources(urls: string[]) {

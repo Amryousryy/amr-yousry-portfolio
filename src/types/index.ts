@@ -1,10 +1,12 @@
 import type { ContentStatus } from "./project";
 
-export type { ContentStatus, Project, ProjectSection, CaseStudyMediaItem, DetailedResult, ProjectSEO, NewProject } from "./project";
+export type { ContentStatus, Project, ProjectSection, CaseStudyMediaItem, DetailedResult, ProjectSEO, NewProject, DeploymentState, ProjectDeployment } from "./project";
 
 export type { ApiSuccess, ApiError, ApiResponse, PaginationMeta } from "./api";
 
 export type { ActivityAction, ActivityTargetType, ActivityMetadata, ActivityEntry } from "./activity";
+
+export type { HomepageProject, HomepageState } from "./homepage";
 
 export interface HeroSettings {
   _id: string;

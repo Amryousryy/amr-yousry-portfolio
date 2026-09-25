@@ -1,5 +1,16 @@
 export type ContentStatus = "draft" | "published";
 
+export type DeploymentState = "not_required" | "pending" | "deploying" | "live" | "failed";
+
+export interface ProjectDeployment {
+  state: DeploymentState;
+  deploymentId?: string;
+  attemptId?: string;
+  requestedAt?: Date;
+  completedAt?: Date;
+  error?: string;
+}
+
 export interface ProjectSection {
   id: string;
   title: string;
@@ -60,6 +71,7 @@ export interface Project {
   seo?: ProjectSEO;
   publishedAt?: Date;
   lastStatusChangeAt?: Date;
+  deployment?: ProjectDeployment;
   createdAt: Date;
   updatedAt: Date;
 }

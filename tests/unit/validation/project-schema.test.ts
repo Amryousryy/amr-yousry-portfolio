@@ -445,6 +445,11 @@ describe("defaults and helpers", () => {
     expect(slug).toMatch(/^[a-z0-9-]*$/);
   });
 
+  it("generateSlugFromTitle keeps numbers in the suggestion (ICCE 2026 case)", () => {
+    const slug = generateSlugFromTitle("ICCE 2026 Event Coverage");
+    expect(slug).toBe("icce-2026-event-coverage");
+  });
+
   it("normalizeSlug handles multiple hyphens", () => {
     expect(normalizeSlug("a---b")).toBe("a-b");
   });
@@ -515,5 +520,24 @@ describe("shared schemas", () => {
   it("contentStatusSchema rejects other values", () => {
     expect(contentStatusSchema.safeParse("archived").success).toBe(false);
     expect(contentStatusSchema.safeParse("").success).toBe(false);
+  });
+
+  it("create schema rejects a client-supplied deployment object (server-only field)", () => {
+    const r = projectCreateSchema.safeParse({
+      ...validMinimal(),
+      deployment: { state: "live", deploymentId: "dpl_client" },
+    });
+    expect(r.success).toBe(true);
+    if (r.success) {
+      expect(r.data).not.toHaveProperty("deployment");
+    }
+  });
+
+  it("update schema rejects a client-supplied deployment object (server-only field)", () => {
+    const r = projectUpdateSchema.safeParse({ deployment: { state: "live" } });
+    expect(r.success).toBe(true);
+    if (r.success) {
+      expect(r.data).not.toHaveProperty("deployment");
+    }
   });
 });

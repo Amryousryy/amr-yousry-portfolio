@@ -1,4 +1,6 @@
 import { Project, NewProject, HeroSettings, SiteContent } from "@/types";
+import type { HomepageState } from "@/types/homepage";
+import type { DeploymentOutcome, ReconciliationResult } from "@/lib/deployment/lifecycle";
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -128,8 +130,29 @@ export const ProjectService = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: "draft" }),
     }),
+  getDeployment: (id: string) =>
+    apiRequest<ReconciliationResult>(`/api/projects/${id}/deployment`),
+  retryDeployment: (id: string) =>
+    apiRequest<DeploymentOutcome>(`/api/projects/${id}/deployment/retry`, {
+      method: "POST",
+    }),
 };
 
+
+export const HomepageService = {
+  get: async () => apiRequest<HomepageState>("/api/homepage"),
+  save: async (projectIds: string[]) => {
+    const { data, error } = await apiRequest<HomepageState>("/api/homepage", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ projectIds }),
+    });
+    if (error) {
+      throw new Error(typeof error === "string" ? error : "Failed to save homepage");
+    }
+    return data as HomepageState;
+  },
+};
 
 export const SettingsService = {
   getHero: (isAdmin = false) => {
