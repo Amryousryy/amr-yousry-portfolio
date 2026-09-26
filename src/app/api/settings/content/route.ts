@@ -194,6 +194,7 @@ export async function PUT(req: Request) {
     };
     
     const merged: Record<string, unknown> = {
+      ...currentContent,
       about: body.about !== undefined ? body.about : (currentContent.about || ""),
       aboutTitle: body.aboutTitle !== undefined ? body.aboutTitle : (currentContent.aboutTitle || ""),
       aboutBadge: body.aboutBadge !== undefined ? body.aboutBadge : (currentContent.aboutBadge || ""),
@@ -203,6 +204,7 @@ export async function PUT(req: Request) {
       aboutSkills: body.aboutSkills !== undefined ? body.aboutSkills : (currentContent.aboutSkills || []),
       aboutIndustries: body.aboutIndustries !== undefined ? body.aboutIndustries : (currentContent.aboutIndustries || []),
       servicesTitle: body.servicesTitle !== undefined ? body.servicesTitle : (currentContent.servicesTitle || "Services"),
+      servicesSubtitle: body.servicesSubtitle !== undefined ? body.servicesSubtitle : (currentContent.servicesSubtitle || "Premium video content that drives real business results."),
       servicesDescription: body.servicesDescription !== undefined ? body.servicesDescription : (currentContent.servicesDescription || ""),
       contactEmail: body.contactEmail !== undefined ? body.contactEmail : (currentContent.contactEmail || ""),
       whatsappNumber: body.whatsappNumber !== undefined ? body.whatsappNumber : (currentContent.whatsappNumber || ""),
