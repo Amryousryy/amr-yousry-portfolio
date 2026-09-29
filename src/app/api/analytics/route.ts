@@ -82,36 +82,3 @@ export async function GET() {
     return NextResponse.json({ data: { dailyViews: [], topProjects: [] } });
   }
 }
-
-export async function POST(req: Request) {
-  let body;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
-  }
-
-  const { type, page, projectId, interactionType, metadata } = body;
-
-  try {
-    await dbConnect();
-  } catch (error) {
-    console.error("DB_CONNECT_ERROR:", error);
-    return NextResponse.json({ error: "Database error" }, { status: 500 });
-  }
-
-  try {
-    await Analytics.create({
-      type,
-      page,
-      projectId,
-      interactionType,
-      metadata
-    });
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("POST_ANALYTICS_ERROR:", error);
-    return NextResponse.json({ error: "Failed to log analytics" }, { status: 500 });
-  }
-}
