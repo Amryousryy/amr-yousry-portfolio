@@ -252,6 +252,9 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
   const active = items[safeIndex];
   const hasMultiple = items.length > 1;
   const hasContext = !!(active.title || active.description);
+  // Keeps the arrow labels accurate per item instead of hardcoding "video"
+  // for galleries that also carry images, embeds, or external links.
+  const navNoun = active.kind === "video" ? "video" : "media";
 
   const renderThumbnail = (item: ProjectMediaItem, index: number) => {
     const isActive = index === safeIndex;
@@ -260,21 +263,21 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
         key={`${item.src}-${index}`}
         type="button"
         onClick={() => goTo(index)}
-        aria-label={`View media ${index + 1}${item.caption ? `: ${item.caption}` : ""}`}
+        aria-label={`View ${item.kind === "video" ? "video" : "media"} ${index + 1} of ${items.length}${item.caption ? `: ${item.caption}` : ""}`}
         aria-current={isActive ? "true" : undefined}
-        className={`relative shrink-0 w-20 h-14 sm:w-24 sm:h-16 overflow-hidden border focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+        className={`relative shrink-0 w-36 sm:w-40 lg:w-44 aspect-[16/9] overflow-hidden border focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-all duration-[160ms] ${
           isActive
-            ? "border-accent/80 shadow-[0_0_12px_rgba(0,255,255,0.15)]"
-            : "border-line-faint hover:border-line-soft opacity-70 hover:opacity-100 transition-all duration-300"
+            ? "border-accent shadow-[0_0_16px_rgba(34,211,238,0.2)]"
+            : "border-line-faint hover:border-line-soft opacity-60 hover:opacity-100"
         }`}
       >
         {item.kind === "image" && item.src ? (
-          <Image src={item.src} alt="" fill className="object-cover" sizes="96px" />
+          <Image src={item.src} alt="" fill className="object-cover" sizes="(max-width: 640px) 144px, (max-width: 1024px) 160px, 176px" />
         ) : item.kind === "video" && item.src ? (
           <>
             <VideoThumbnailImage src={item.src} />
-            <span className="absolute inset-0 flex items-center justify-center bg-background/40">
-              <Play size={16} className="text-accent" />
+            <span className="absolute inset-0 flex items-center justify-center bg-background/50">
+              <Play size={20} className="text-accent" />
             </span>
           </>
         ) : item.kind === "embed" && item.embedUrl ? (
@@ -284,17 +287,22 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
               className="w-full h-full pointer-events-none"
               title=""
             />
-            <span className="absolute inset-0 flex items-center justify-center bg-background/20">
-              <Play size={16} className="text-accent" />
+            <span className="absolute inset-0 flex items-center justify-center bg-background/30">
+              <Play size={20} className="text-accent" />
             </span>
           </>
         ) : (
           <span className="absolute inset-0 flex items-center justify-center bg-primary/10">
             {item.kind === "external" ? (
-              <ExternalLink size={14} className="text-accent/60" />
+              <ExternalLink size={18} className="text-accent/60" />
             ) : (
-              <Film size={14} className="text-accent/60" />
+              <Film size={18} className="text-accent/60" />
             )}
+          </span>
+        )}
+        {isActive && (
+          <span className="absolute top-1.5 left-1.5 z-10 px-1.5 py-0.5 bg-accent text-on-accent text-[9px] font-pixel leading-none">
+            {String(index + 1).padStart(2, "0")}
           </span>
         )}
         {item.provider && (
@@ -320,60 +328,69 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
         )}
       </div>
 
-      {/* Featured Media Stage */}
-      <div className="relative w-full bg-panel border border-line-faint overflow-hidden">
-        <div className="aspect-[16/9] md:aspect-[16/9] relative">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={safeIndex}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="absolute inset-0"
-            >
-              <FeaturedMedia item={active} title={title} />
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* Nav arrows */}
+      {/* Featured Media Stage + external navigation.
+          The arrows are siblings of the media frame, never children of it, so
+          their contrast never depends on the footage's brightness. From lg up
+          the flex row stays unwrapped and they flank the stage; below lg the
+          row wraps and the full-width buttons stack above it, leaving the
+          video itself completely unobstructed on small screens. */}
+      <div className="flex flex-wrap items-center gap-3 sm:gap-4 lg:flex-nowrap">
         {hasMultiple && (
-          <>
-              <button
-                type="button"
-                onClick={goPrev}
-                disabled={safeIndex === 0}
-                aria-label="Previous media"
-                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 sm:p-3 bg-background/90 border border-line-faint text-foreground/50 hover:text-foreground/80 hover:border-line-soft transition-all duration-200 disabled:opacity-20 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-accent min-w-[44px] min-h-[44px] flex items-center justify-center active:scale-[0.95]"
-              >
-                <ChevronLeft size={18} />
-              </button>
-              <button
-                type="button"
-                onClick={goNext}
-                disabled={safeIndex === items.length - 1}
-                aria-label="Next media"
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 sm:p-3 bg-background/90 border border-line-faint text-foreground/50 hover:text-foreground/80 hover:border-line-soft transition-all duration-200 disabled:opacity-20 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-accent min-w-[44px] min-h-[44px] flex items-center justify-center active:scale-[0.95]"
-              >
-                <ChevronRight size={18} />
-              </button>
-          </>
+          <button
+            type="button"
+            onClick={goPrev}
+            disabled={safeIndex === 0}
+            aria-label={`Previous ${navNoun}`}
+            className="order-1 flex-1 h-14 sm:h-[64px] lg:flex-none lg:w-[64px] shrink-0 flex items-center justify-center bg-background border border-accent/40 text-accent hover:bg-accent/10 hover:border-accent active:scale-[0.95] transition-all duration-[160ms] disabled:opacity-25 disabled:hover:bg-background disabled:hover:border-accent/40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          >
+            <ChevronLeft size={22} />
+          </button>
         )}
 
-        {/* Caption overlay */}
-        {active.caption && !hasContext && (
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/80 via-background/30 to-transparent p-4 sm:p-5 pointer-events-none">
-            <p className="text-[10px] sm:text-xs text-foreground/60 font-modern leading-relaxed max-w-[75%] pointer-events-auto">
-              {active.caption}
-            </p>
+        <div className="order-3 w-full lg:order-2 lg:flex-1 min-w-0">
+          <div className="relative w-full bg-panel border border-line-faint overflow-hidden">
+            <div className="aspect-[16/9] md:aspect-[16/9] relative">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={safeIndex}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute inset-0"
+                >
+                  <FeaturedMedia item={active} title={title} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Caption overlay */}
+            {active.caption && !hasContext && (
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/80 via-background/30 to-transparent p-4 sm:p-5 pointer-events-none">
+                <p className="text-[10px] sm:text-xs text-foreground/60 font-modern leading-relaxed max-w-[75%] pointer-events-auto">
+                  {active.caption}
+                </p>
+              </div>
+            )}
+
+            {/* Type badge top-right */}
+            <div className="absolute top-3 right-3">
+              <MediaTypeBadge kind={active.kind} provider={active.provider} />
+            </div>
           </div>
-        )}
-
-        {/* Type badge top-right */}
-        <div className="absolute top-3 right-3">
-          <MediaTypeBadge kind={active.kind} provider={active.provider} />
         </div>
+
+        {hasMultiple && (
+          <button
+            type="button"
+            onClick={goNext}
+            disabled={safeIndex === items.length - 1}
+            aria-label={`Next ${navNoun}`}
+            className="order-2 lg:order-3 flex-1 h-14 sm:h-[64px] lg:flex-none lg:w-[64px] shrink-0 flex items-center justify-center bg-background border border-accent/40 text-accent hover:bg-accent/10 hover:border-accent active:scale-[0.95] transition-all duration-[160ms] disabled:opacity-25 disabled:hover:bg-background disabled:hover:border-accent/40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          >
+            <ChevronRight size={22} />
+          </button>
+        )}
       </div>
 
       {/* Media Context Panel */}
@@ -437,7 +454,7 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
 function VideoThumbnailImage({ src }: { src: string }) {
   const thumbUrl = getVideoThumbnailUrl(src);
   if (thumbUrl) {
-    return <Image src={thumbUrl} alt="" fill className="object-cover" sizes="96px" />;
+    return <Image src={thumbUrl} alt="" fill className="object-cover" sizes="(max-width: 640px) 144px, (max-width: 1024px) 160px, 176px" />;
   }
   return <video src={src} className="w-full h-full object-cover" muted preload="metadata" />;
 }
