@@ -22,7 +22,7 @@ interface ProjectMediaGalleryProps {
   title?: string;
 }
 
-function MediaTypeBadge({ kind, provider }: { kind: string; provider?: string | null }) {
+function MediaTypeBadge({ kind }: { kind: string }) {
   const label =
     kind === "video" ? "Video"
     : kind === "embed" ? "Embed"
@@ -39,7 +39,7 @@ function MediaTypeBadge({ kind, provider }: { kind: string; provider?: string | 
   return (
     <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-background/80 border border-primary/20 text-[9px] font-bold uppercase tracking-wider text-foreground/60">
       {icon}
-      {provider || label}
+      {label}
     </span>
   );
 }
@@ -123,7 +123,7 @@ function FeaturedMedia({ item, title }: { item: ProjectMediaItem; title?: string
         className="w-full h-full object-contain"
       >
         <p className="text-foreground/40 text-xs p-4">
-          Your browser does not support the video tag.{item.provider ? ` Open in ${item.provider} instead.` : ""}
+          Your browser does not support the video tag. Open the video directly instead.
         </p>
       </video>
     );
@@ -174,7 +174,7 @@ function FeaturedMedia({ item, title }: { item: ProjectMediaItem; title?: string
           }}
         >
           <p className="text-foreground/40 text-xs p-4">
-            Your browser does not support the video tag.{item.provider ? ` Open in ${item.provider} instead.` : ""}
+            Your browser does not support the video tag. Open the video directly instead.
           </p>
         </video>
       );
@@ -305,11 +305,6 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
             {String(index + 1).padStart(2, "0")}
           </span>
         )}
-        {item.provider && (
-          <span className="absolute bottom-0 left-0 right-0 bg-background/80 text-[8px] text-foreground/50 text-center uppercase leading-tight py-0.5 truncate px-1">
-            {item.provider}
-          </span>
-        )}
       </button>
     );
   };
@@ -375,7 +370,7 @@ export default function ProjectMediaGallery({ items, title }: ProjectMediaGaller
 
             {/* Type badge top-right */}
             <div className="absolute top-3 right-3">
-              <MediaTypeBadge kind={active.kind} provider={active.provider} />
+              <MediaTypeBadge kind={active.kind} />
             </div>
           </div>
         </div>
@@ -469,7 +464,7 @@ function ExternalVideoCard({ item }: { item: ProjectMediaItem }) {
     >
       <ExternalLink size={32} className="text-accent/60 group-hover:text-accent transition-colors" />
       <span className="text-xs font-bold uppercase tracking-widest text-accent">
-        Open {item.provider || "external video"}
+        Open external video
       </span>
       {item.alt && (
         <span className="text-[10px] text-foreground/40 text-center px-4 line-clamp-2 max-w-xs">
