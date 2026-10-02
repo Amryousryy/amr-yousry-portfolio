@@ -1,4 +1,4 @@
-﻿@import "tailwindcss";
+@import "tailwindcss";
 @import "./tokens/foundation.css";
 @import "./tokens/semantic.css";
 @import "./world/world.css";
@@ -74,7 +74,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-modern antialiased overflow-x-hidden;
+    @apply bg-background text-foreground font-modern antialiased overflow-x-clip;
     width: 100%;
     max-width: 100%;
     transition: background-color 0.4s ease, color 0.4s ease;
@@ -193,13 +193,13 @@
 /* ═══════════════════════════════════════════════
    BOOT SEQUENCE v4 — Premium SNES Pixel Refinement
    
-   Three-element hierarchy: Logo → Tagline → Loading Bar
+   Three-element hierarchy: Logo ? Tagline ? Loading Bar
    Staged entrance, smart timing, accessibility-first.
    Purple identity (#7C3AED) with cyan accent light (#22D3EE).
    All transform/opacity. GPU-friendly.
    ═══════════════════════════════════════════════ */
 
-/* ── Overlay: Near-black with subtle purple atmosphere ── */
+/* -- Overlay: Near-black with subtle purple atmosphere -- */
 .boot-overlay {
   position: fixed;
   inset: 0;
@@ -254,7 +254,7 @@ body.boot-locked {
   touch-action: none;
 }
 
-/* ── Scanline overlay (subtle CRT) ── */
+/* -- Scanline overlay (subtle CRT) -- */
 .boot-scanlines {
   position: absolute;
   inset: 0;
@@ -269,7 +269,7 @@ body.boot-locked {
   );
 }
 
-/* ── Ambient pixel stars (reduced density, 6–12% opacity) ── */
+/* -- Ambient pixel stars (reduced density, 6–12% opacity) -- */
 .boot-stars {
   position: absolute;
   inset: 0;
@@ -285,7 +285,7 @@ body.boot-locked {
     radial-gradient(1px 1px at 10% 55%, rgba(255,255,255,0.05), transparent);
 }
 
-/* ── Pixel grid (almost invisible, 24px spacing) ── */
+/* -- Pixel grid (almost invisible, 24px spacing) -- */
 .boot-grid {
   position: absolute;
   inset: 0;
@@ -296,7 +296,7 @@ body.boot-locked {
     repeating-linear-gradient(90deg, transparent, transparent 23px, rgba(124, 58, 237, 0.008) 23px, rgba(124, 58, 237, 0.008) 24px);
 }
 
-/* ── Content container (optical centering + 8pt spacing) ── */
+/* -- Content container (optical centering + 8pt spacing) -- */
 .boot-content {
   position: relative;
   z-index: 10;
@@ -308,7 +308,7 @@ body.boot-locked {
   transform: translateY(-5%);
 }
 
-/* ── Logo (dominant element, responsive sizing) ── */
+/* -- Logo (dominant element, responsive sizing) -- */
 .boot-logo {
   animation: bootLogoIn 250ms cubic-bezier(0.22, 1, 0.36, 1) 100ms both;
 }
@@ -329,7 +329,7 @@ body.boot-locked {
   50% { transform: translateY(-1.5px) scale(1.004); opacity: 0.92; }
 }
 
-/* ── Brand signature: energy transfers from bar to logo ── */
+/* -- Brand signature: energy transfers from bar to logo -- */
 .boot-overlay--ready .boot-logo-img {
   animation: bootLogoBreath 4s ease-in-out 500ms infinite, brandTransfer 500ms ease-out 150ms forwards;
 }
@@ -341,7 +341,7 @@ body.boot-locked {
   100% { opacity: 0.93; }
 }
 
-/* ── Tagline: MAKE IDEAS MATTER ── */
+/* -- Tagline: MAKE IDEAS MATTER -- */
 .boot-tagline {
   font-family: var(--font-pixel);
   font-size: clamp(9px, 2.5vw, 13px);
@@ -358,7 +358,7 @@ body.boot-locked {
   to { opacity: 1; }
 }
 
-/* ── Pixel Loading Bar (SNES-inspired 3D bevel frame) ── */
+/* -- Pixel Loading Bar (SNES-inspired 3D bevel frame) -- */
 .boot-bar-frame {
   width: min(65vw, 460px);
   padding: 4px;
@@ -386,7 +386,7 @@ body.boot-locked {
   height: 16px;
 }
 
-/* ── Pixel Energy Cells ── */
+/* -- Pixel Energy Cells -- */
 .boot-cell {
   flex: 1;
   min-width: 6px;
@@ -401,7 +401,7 @@ body.boot-locked {
   will-change: background, box-shadow;
 }
 
-/* ── Cell activation: Purple → Accent Purple + cyan rim light ── */
+/* -- Cell activation: Purple ? Accent Purple + cyan rim light -- */
 .boot-cell--active {
   background: #A855F7;
   box-shadow:
@@ -450,7 +450,7 @@ body.boot-locked {
   }
 }
 
-/* ── Final glow: synchronous pulse across all cells ── */
+/* -- Final glow: synchronous pulse across all cells -- */
 .boot-bar--ready .boot-cell--active {
   animation: cellFinalGlow 400ms ease-in-out 150ms forwards;
 }
@@ -555,7 +555,7 @@ body.boot-locked {
    All transform/opacity/blur only. GPU-friendly.
    ═══════════════════════════════════════════════ */
 
-/* ── P1: Focal Light — the dominant visual anchor ── */
+/* -- P1: Focal Light — the dominant visual anchor -- */
 /* A single warm light behind the headline. You feel it,
    you don't see it. Feathered edges, no hard boundaries. */
 .hero-focal {
@@ -584,7 +584,7 @@ body.boot-locked {
   50% { opacity: 1; transform: translate(-50%, -50%) scale(1.02); }
 }
 
-/* ── LAYER 1: Background — large, blurry, very slow ── */
+/* -- LAYER 1: Background — large, blurry, very slow -- */
 .hero-layer-bg {
   position: absolute;
   border-radius: 50%;
@@ -624,7 +624,7 @@ body.boot-locked {
   65% { transform: translate(-10px, 8px); }
 }
 
-/* ── LAYER 2: Mid — moderate blur, moderate speed ── */
+/* -- LAYER 2: Mid — moderate blur, moderate speed -- */
 .hero-layer-mid {
   position: absolute;
   border-radius: 50%;
@@ -665,7 +665,7 @@ body.boot-locked {
   60% { transform: translate(-8px, 4px); }
 }
 
-/* ── LAYER 3: Foreground — smaller, faster, barely visible ── */
+/* -- LAYER 3: Foreground — smaller, faster, barely visible -- */
 .hero-layer-fg {
   position: absolute;
   border-radius: 50%;
@@ -705,7 +705,7 @@ body.boot-locked {
   70% { transform: translate(4px, -5px); }
 }
 
-/* ── Light sweep — barely perceptible horizontal shimmer ── */
+/* -- Light sweep — barely perceptible horizontal shimmer -- */
 .hero-sweep {
   position: absolute;
   top: 0;
@@ -730,7 +730,7 @@ body.boot-locked {
   100% { transform: translateX(700%); }
 }
 
-/* ── Atmospheric dust — 2 particles max, barely visible ── */
+/* -- Atmospheric dust — 2 particles max, barely visible -- */
 .hero-dust {
   position: absolute;
   border-radius: 50%;
@@ -767,7 +767,7 @@ body.boot-locked {
   50% { transform: translate(-6px, 8px); opacity: 0.1; }
 }
 
-/* ── Cursor glow — light that follows, never leads ── */
+/* -- Cursor glow — light that follows, never leads -- */
 .hero-cursor-glow {
   position: absolute;
   width: 450px;
@@ -824,7 +824,7 @@ body.boot-locked {
   to { opacity: 1; transform: scale(1); }
 }
 
-/* ── Scroll reveal animation ── */
+/* -- Scroll reveal animation -- */
 @keyframes revealFadeUp {
   from {
     opacity: 0;
@@ -854,7 +854,7 @@ body.boot-locked {
   }
 }
 
-/* ── Reduced motion: freeze everything, show content immediately ── */
+/* -- Reduced motion: freeze everything, show content immediately -- */
 @media (prefers-reduced-motion: reduce) {
   .hero-focal,
   .hero-layer-bg,
@@ -881,6 +881,243 @@ body.boot-locked {
   }
   .hero-cursor-glow {
     display: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   HERO SCROLL-DRIVEN FRAME SEQUENCE (V1.1-E)
+
+   Scroll position maps deterministically to a frame index:
+     frameIndex = round(progress * (FRAME_COUNT - 1))
+   No video, no autoplay, no looping, no time-based motion.
+   The scroll position is the only source of truth, so the
+   sequence is perfectly reversible for free.
+
+   Track 300svh with a 100svh sticky stage gives 200svh of
+   travel across 187 frames (~1 frame per 1.07svh of scroll).
+   ═══════════════════════════════════════════════ */
+
+.hero-scroll-track {
+  position: relative;
+  height: 300svh;
+}
+
+/* The marketing shell wraps every section in <main class="pt-20">, so the hero
+   track used to begin 80px down the document. The stage is 100svh tall, which
+   meant its lower 80px - including the CTA - sat below the fold until the
+   visitor had scrolled. On stacked viewports the track cancels that offset so
+   the stage fills the viewport exactly at rest. This also removes the 80px
+   upward slide the hero used to make when it pinned, which is what pushed the
+   headline into the fixed navigation. Desktop keeps the original offset: it
+   clears the navigation comfortably already and its composition is unchanged. */
+@media (max-width: 1023.98px) {
+  .hero-scroll-track {
+    margin-top: -5rem;
+  }
+}
+
+.hero-scroll-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════
+   VERTICAL BUDGET
+   The stage is 100svh. Section padding decides how much of it the character may
+   use, so it is set explicitly here (the Section primitive and the utility layer
+   both ship their own py-* and would otherwise win by source order).
+   ═══════════════════════════════════════════════ */
+.hero-scroll-stage > section {
+  --hero-nav-safe: 6.5rem;
+  padding-top: var(--hero-nav-safe);
+  padding-bottom: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .hero-scroll-stage > section {
+    padding-bottom: 1rem;
+  }
+}
+
+/* The navigation is 88px tall expanded (65px collapsed) from 768px up, so the
+   safe band is 8px shorter than below that breakpoint. */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .hero-scroll-stage > section {
+    --hero-nav-safe: 6rem;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   COMPOSITION
+   Mobile and tablet keep the centred poster: headline, character, CTAs.
+   Desktop becomes a two-column editorial composition so the character can be the
+   primary visual element instead of being squeezed between two text blocks.
+   ═══════════════════════════════════════════════ */
+.hero-composition {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 1024px) {
+  .hero-scroll-stage > section {
+    padding-block: 2.5rem;
+  }
+
+  .hero-composition {
+    display: grid;
+    grid-template-areas:
+      "head frames"
+      "cta  frames";
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+    grid-template-rows: 1fr 1fr;
+    column-gap: clamp(1.5rem, 3vw, 3.5rem);
+  }
+
+  .hero-headline-block {
+    grid-area: head;
+    align-self: end;
+    margin-bottom: 0;
+  }
+
+  .hero-cta-block {
+    grid-area: cta;
+    align-self: start;
+    margin-top: clamp(1.75rem, 2.6vw, 2.75rem);
+  }
+
+  /* The canvas is absolutely positioned, so the box has no content height of its
+     own and would collapse to 0 inside a grid. It takes the height of the row
+     span, then the shared 88svh cap trims it to the deliberate character size. */
+  .hero-frames {
+    grid-area: frames;
+    align-self: center;
+    height: 100%;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   CHARACTER SCALE
+   The renderer fits the frame to the box height, and the character's visible
+   body is 72.22% of the 1080px frame height (measured envelope y 154..934), so
+   the box height sets the character height directly.
+
+   On the stacked mobile/tablet composition the box is a flex item that simply
+   absorbs whatever the viewport leaves after the navigation safe band, the
+   headline and the CTA, so the caps below only act as a ceiling and never bind.
+   The measured box height therefore varies with aspect ratio - 336px at
+   320x720 up to 716px at 768x1024 - rather than tracking one svh figure.
+
+   Desktop is a grid item spanning both rows, so its 88svh cap IS the governing
+   constraint there and keeps the character at 63.6svh on large screens.
+   ═══════════════════════════════════════════════ */
+.hero-frames {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  max-height: 58svh;
+}
+
+@media (min-width: 640px) {
+  .hero-frames {
+    max-height: 68svh;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-frames {
+    max-height: 88svh;
+  }
+}
+
+/* The global reset clamps every canvas to max-width:100%, which squashed the
+   16:9 frame down to the column width and visibly distorted the character on
+   every viewport whose box was narrower than 16:9 - 320px was being squeezed to
+   0.83:1 instead of 1.78:1. The frame keeps its exact source ratio; only the
+   transparent margin is clipped by .hero-frames' overflow. */
+.hero-frames-canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* The opening frame is the composition the visitor lands on, so it is optically
+     centred rather than geometrically centred. Its body spans x = 783..1063, i.e. a
+     centre of 923/1920 = 48.07%, which leaves it 1.93% of the canvas width left of
+     the canvas midpoint. Adding exactly that fraction re-centres the opening frame
+     in pure CSS at every viewport, with no measurement code and no change to the
+     renderer. Later frames drift right as the character turns; that travel is the
+     sequence's own motion and is deliberately not cancelled out. */
+  transform: translate(calc(-50% + 1.93%), -50%);
+  display: block;
+  max-width: none;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* First-frame placeholder. Occupies exactly the box the canvas will take, so the
+   handover is pixel-aligned. It carries the identical optical nudge as the canvas
+   so the two overlap perfectly for the few frames before the canvas takes over. */
+.hero-frames-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(calc(-50% + 1.93%), -50%);
+  height: 100%;
+  width: auto;
+  aspect-ratio: 16 / 9;
+  max-width: none;
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.hero-frames--painted .hero-frames-placeholder {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Reduced motion: no scroll scrubbing and no tall track. The canvas holds the
+   real first frame as a stable static state, and the two-column composition
+   collapses back to the centred poster so the character is not flattened into a
+   single short grid row. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-track {
+    height: auto;
+  }
+  .hero-scroll-stage {
+    position: static;
+    height: auto;
+    min-height: 82svh;
+  }
+  .hero-composition {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero-headline-block {
+    align-self: auto;
+    margin-bottom: 1rem;
+  }
+  .hero-cta-block {
+    align-self: auto;
+    margin-top: 1.5rem;
+  }
+  .hero-frames {
+    flex: 0 1 auto;
+    height: auto;
+    min-height: 42svh;
+    max-height: 52svh;
   }
 }
 
