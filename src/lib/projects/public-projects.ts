@@ -115,13 +115,13 @@ function toPublicProject(doc: Record<string, unknown>): Project {
     category: formatCategory(toPlainText(doc.category)),
     categories: normalizeStrings(doc.categories),
     services: normalizeStrings(doc.services),
-    summary: toPlainText(doc.shortDescription) || "",
+    summary: toPlainText(doc.shortDescription) || toPlainText(doc.fullDescription) || "",
     thumbnail: imageUrl,
-    mainResult: toPlainText(doc.mainResult) || "",
+    mainResult: toPlainText(doc.mainResult) || toPlainText(doc.results) || "",
     featured: (doc.featured as boolean) || false,
     bannerImage: imageUrl,
     problem: toPlainText(doc.problem) || "",
-    solution: toPlainText(doc.solution) || toPlainText(doc.idea) || "",
+    solution: toPlainText(doc.solution) || toPlainText(doc.idea) || toPlainText(doc.strategy) || "",
     execution: toPlainText(doc.execution) || "",
     detailedResults: normalizeDetailedResults(doc.detailedResults),
     keyDecisions: doc.keyDecisions as { decision: string; reason: string; alternativeConsidered?: string; whyRejected?: string; impact: string }[] | undefined,
@@ -202,4 +202,53 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
   );
 
   return dbProject ?? getStaticProjectBySlug(canonicalSlug) ?? null;
+}
+
+/**
+ * Admin-only preview lookup by id (used by /preview/project/[id]).
+ *
+ * Unlike `getProjectBySlug` there is NO status filter here: drafts and
+ * published projects are both returned so an authorized editor can preview
+ * exactly what the public renderer will produce after publishing. The SAME
+ * `toPublicProject` mapping is applied, so a preview is pixel-identical to the
+ * live page. This must never be reachable by anonymous visitors — callers are
+ * required to gate on an authenticated admin session (see the preview route).
+ * Static-fallback projects have no CMS/editor record, so the static fallback
+ * here is `null` (renders 404) when the DB is unavailable or the id is unknown.
+ */
+export async function getPublicProjectForPreview(id: string): Promise<Project | null> {
+  return tryDb(
+    async () => {
+      const doc = await ProjectModel.findById(id).lean();
+      if (!doc) return null;
+      return toPublicProject(doc as unknown as Record<string, unknown>);
+    },
+    () => null,
+  );
+}
+
+/**
+ * Canonical slugs served by /projects/[slug]: the union of published DB slugs
+ * and static-fallback slugs (deduped). Used by generateStaticParams and the
+ * sitemap so static-only projects are always reachable and indexed, and so the
+ * two sources can never drift apart regardless of DB availability.
+ */
+export async function getPublicProjectSlugs(): Promise<string[]> {
+  const staticSlugs = getStaticAllProjects().map((p) => p.slug);
+
+  const dbSlugs = await tryDb(
+    async () => {
+      const docs = await ProjectModel
+        .find({ status: "published" })
+        .select("slug")
+        .lean();
+
+      return (docs as Array<Record<string, unknown>>)
+        .map((doc) => getCanonicalProjectSlug(toPlainText(doc.slug)))
+        .filter((slug): slug is string => Boolean(slug));
+    },
+    () => [] as string[],
+  );
+
+  return Array.from(new Set([...dbSlugs, ...staticSlugs]));
 }

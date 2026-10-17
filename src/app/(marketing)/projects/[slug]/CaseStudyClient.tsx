@@ -37,6 +37,12 @@ interface CaseStudyClientProps {
     title: string;
   };
   relatedProjects: RelatedProjectItem[];
+  /**
+   * When false, the detail-view tracking event is skipped. The admin draft
+   * preview reuses this exact public component, but previewing must not
+   * inflate a project's public "detail view" counter.
+   */
+  trackView?: boolean;
 }
 
 function ReadingCard({ children }: { children: React.ReactNode }) {
@@ -155,7 +161,7 @@ function restAfterFirstSentence(text: string): string {
   return rest.startsWith(".") ? rest.slice(1).trim() : rest;
 }
 
-export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientProps) {
+export function CaseStudyClient({ project, relatedProjects, trackView = true }: CaseStudyClientProps) {
   const {
     problem, solution, execution, mainResult, outcomeNarrative,
     detailedResults, keyDecisions, quickFacts, beforeAfter, socialProof,
@@ -173,6 +179,7 @@ export function CaseStudyClient({ project, relatedProjects }: CaseStudyClientPro
   const hasSocialProof = !!(socialProof && socialProof.length > 0);
 
   useEffect(() => {
+    if (!trackView) return;
     const slug = window.location.pathname.split("/").pop() || "";
     trackEvent("project_detail_view", {
       path: window.location.pathname,

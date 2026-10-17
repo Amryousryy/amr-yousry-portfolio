@@ -1,18 +1,16 @@
-import Image from "next/image";
-import { Container } from "@/components/ui/container";
-import { Section } from "@/components/ui/section";
-import { getProjectBySlug, getPublicProjects } from "@/lib/projects/public-projects";
-import { getRelatedProjects, buildRelatedSeed } from "@/lib/projects/related-projects";
-import { getProjectViewCounts } from "@/lib/projects/project-views";
-import { getMediaKind, getEmbeddableVideoUrl, getMediaProvider } from "@/lib/media/config";
-import { ExternalLink } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { formatCategory } from "@/lib/projects/categories";
+import { getProjectBySlug, getPublicProjectSlugs } from "@/lib/projects/public-projects";
 import { getCanonicalProjectSlug } from "@/lib/projects/canonical-slugs";
-import { CaseStudyClient } from "./CaseStudyClient";
+import { ProjectCaseStudy } from "@/components/public/ProjectCaseStudy";
+import { getRelatedProjectItems } from "@/lib/projects/case-study";
 
 export const revalidate = 60;
+
+// Only slugs returned by generateStaticParams are served. Any other dynamic
+// slug (unknown or stray) returns a true HTTP 404 instead of the empty shell /
+// 200 soft-404 that on-demand ISR rendering otherwise produces for this route.
+export const dynamicParams = false;
 
 interface CaseStudyPageProps {
   params: Promise<{ slug: string }>;
@@ -60,13 +58,8 @@ export async function generateMetadata({ params }: CaseStudyPageProps): Promise<
 }
 
 export async function generateStaticParams() {
-  const projects = await getPublicProjects();
-  return projects.map((p) => ({ slug: p.slug }));
-}
-
-function firstSentence(text: string): string {
-  const parts = text.split(/[.!?]/).filter((s) => s.trim().length > 0);
-  return parts.length > 0 ? parts[0].trim() + "." : text;
+  const slugs = await getPublicProjectSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
@@ -75,142 +68,9 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
 
   if (!project) return notFound();
 
-  const allProjects = await getPublicProjects();
-  const viewsBySlug = await getProjectViewCounts();
-  const relatedProjects = getRelatedProjects(project, allProjects, {
-    limit: 2,
-    viewsBySlug,
-    seed: buildRelatedSeed(),
-  }).map((item) => item.project);
+  const relatedProjects = await getRelatedProjectItems(project);
 
-  const heroStatement = project.outcomeNarrative
-    ? firstSentence(project.outcomeNarrative)
-    : (project.mainResult || project.summary);
-
-  return (
-    <Section className="min-h-screen bg-background overflow-hidden">
-      {/* HERO — metadata first, media below */}
-      <Container>
-        <div className="pt-16 sm:pt-20 md:pt-28 pb-8 sm:pb-10 md:pb-14">
-          <span className="font-pixel text-brand-cyan text-[10px] sm:text-sm tracking-widest uppercase mb-4 block">
-            {formatCategory(project.category)}
-          </span>
-          <h1
-            className="text-[clamp(1.75rem,6.5vw,3.5rem)] md:text-6xl lg:text-7xl font-display font-bold uppercase tracking-tighter break-words leading-tight"
-            style={{ textWrap: "balance", maxWidth: "16ch" }}
-          >
-            {project.title}
-          </h1>
-          {heroStatement && (
-            <p
-              className="font-modern text-xl md:text-2xl text-white leading-[1.4] max-w-[680px] mt-6 mb-5"
-              style={{ textWrap: "balance" }}
-            >
-              {heroStatement}
-            </p>
-          )}
-          <p
-            className="font-modern text-sm sm:text-base text-foreground/60 max-w-[600px] leading-relaxed"
-            style={{ textWrap: "balance" }}
-          >
-            {project.summary}
-          </p>
-        </div>
-      </Container>
-
-      {/* HERO MEDIA */}
-      <div className="relative h-[40vh] sm:h-[56vh] md:h-[64vh] min-h-[280px] sm:min-h-[400px] overflow-hidden">
-        {(() => {
-          const hv = project.heroVideo;
-          if (!hv) {
-            return (
-              <Image
-                src={project.bannerImage}
-                alt={project.title}
-                fill
-                sizes="100vw"
-                className="object-cover"
-                priority
-              />
-            );
-          }
-          const kind = getMediaKind(hv);
-          const embedUrl = getEmbeddableVideoUrl(hv);
-          const provider = getMediaProvider(hv);
-          if (kind === "embed" && embedUrl) {
-            return (
-              <div className="absolute inset-0">
-                <iframe
-                  src={embedUrl}
-                  className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-            );
-          }
-          if (kind === "video") {
-            return (
-              <div className="absolute inset-0">
-                <video src={hv} controls playsInline className="w-full h-full object-cover" />
-              </div>
-            );
-          }
-          if (kind === "external" || kind === "embed") {
-            return (
-              <a
-                href={hv}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-accent/5 hover:bg-accent/10 transition-colors group"
-              >
-                <ExternalLink size={32} className="text-accent/60 group-hover:text-accent" />
-                <span className="font-bold text-xs uppercase tracking-widest text-accent">
-                  Open {provider || "external video"}
-                </span>
-              </a>
-            );
-          }
-          return (
-            <Image
-              src={project.bannerImage}
-              alt={project.title}
-              fill
-              sizes="100vw"
-              className="object-cover"
-              priority
-            />
-          );
-        })()}
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/10 to-transparent" />
-      </div>
-
-      <Container>
-        <CaseStudyClient
-          project={{
-            problem: project.problem,
-            solution: project.solution,
-            execution: project.execution,
-            mainResult: project.mainResult,
-            outcomeNarrative: project.outcomeNarrative,
-            detailedResults: project.detailedResults,
-            keyDecisions: project.keyDecisions,
-            quickFacts: project.quickFacts,
-            beforeAfter: project.beforeAfter,
-            socialProof: project.socialProof,
-            services: project.services || [],
-            media: project.media,
-            title: project.title,
-          }}
-          relatedProjects={relatedProjects.map((p) => ({
-            slug: getCanonicalProjectSlug(p.slug),
-            title: p.title,
-            category: p.category,
-            thumbnail: p.thumbnail || p.bannerImage,
-            summary: p.summary,
-          }))}
-        />
-      </Container>
-    </Section>
-  );
+  // Single shared visual implementation (hero, hero media, case-study body,
+  // related grid) — identical markup to the admin draft preview route.
+  return <ProjectCaseStudy project={project} relatedProjects={relatedProjects} />;
 }
