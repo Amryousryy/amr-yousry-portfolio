@@ -91,13 +91,14 @@ async function main() {
   // ═══ SECURITY: Admin endpoints without auth ═══
   console.log("\n## Security: Unauthenticated Admin Endpoints\n");
 
-  // /api/projects?admin=true → 200, empty array (not 401)
+  // /api/projects?admin=true → 401 Unauthorized (server-side admin guard).
+  // Authoritative contract: tests/unit/app/api/projects-route.test.ts
+  // ("returns 401 (not 200 empty success) for an unauthenticated admin list request").
   {
     const r = await fetchJSON(`${BASE}/api/projects?admin=true`, "/api/projects?admin=true");
-    assert(r.status === 200, "/api/projects?admin=true → HTTP 200 (got ${r.status})");
-    if (r.body && r.body.success !== undefined) {
-      assert(r.body.success === true, "/api/projects?admin=true → success === true");
-      assert(Array.isArray(r.body.data), "/api/projects?admin=true → data is array");
+    assert(r.status === 401, `/api/projects?admin=true → HTTP 401 (got ${r.status})`);
+    if (r.body && r.body.error !== undefined) {
+      assert(r.body.error === "Unauthorized", "/api/projects?admin=true → error === Unauthorized");
     }
   }
 
@@ -113,7 +114,7 @@ async function main() {
     if (r.status === 200 && r.body && r.body.data) {
       assert(r.body.data._preview === false, "/api/settings/content?admin=true → data._preview false");
     } else {
-      assert(false, "/api/settings/content?admin=true → HTTP 200 (got ${r.status})");
+      assert(false, `/api/settings/content?admin=true → HTTP 200 (got ${r.status})`);
     }
   }
 
@@ -123,7 +124,7 @@ async function main() {
     if (r.status === 200 && r.body && r.body.data) {
       assert(r.body.data._preview === false, "/api/settings/hero?preview=true → data._preview false");
     } else {
-      assert(false, "/api/settings/hero?preview=true → HTTP 200 (got ${r.status})");
+      assert(false, `/api/settings/hero?preview=true → HTTP 200 (got ${r.status})`);
     }
   }
 
