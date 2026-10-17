@@ -31,6 +31,7 @@ function validPublishBody(overrides: Record<string, unknown> = {}) {
     title: "New CMS Project",
     slug: "new-cms-project",
     shortDescription: "A concise project description",
+    fullDescription: "A longer CMS project description",
     category: "Web",
     categories: ["Web"],
     image: "https://res.cloudinary.com/demo/image.png",
